@@ -1,0 +1,387 @@
+{
+  "module": {
+    "personalInfo": "个人信息",
+    "education": "教育经历",
+    "workExperience": "工作经历",
+    "projects": "项目经验",
+    "skills": "专业技能",
+    "certificates": "证书资质",
+    "languages": "语言能力",
+    "custom": "自定义模块",
+    "honors": "荣誉奖项",
+    "portfolio": "作品展示"
+  },
+  "field": {
+    "name": "姓名",
+    "email": "邮箱",
+    "phone": "手机",
+    "location": "期望地点",
+    "jobTitle": "期望岗位",
+    "jobStatus": "求职状态",
+    "summary": "个人简介",
+    "school": "学校",
+    "major": "专业",
+    "degree": "学历",
+    "startDate": "开始时间",
+    "endDate": "结束时间",
+    "present": "至今",
+    "company": "公司",
+    "position": "职位",
+    "workLocation": "工作地点",
+    "workHighlights": "工作职责与成果",
+    "description": "描述",
+    "skills": "专业技能",
+    "skillName": "技能名称",
+    "skillLevel": "掌握程度",
+    "projectName": "项目名称",
+    "projectRole": "担任角色",
+    "projectLink": "项目链接",
+    "projectHighlights": "项目亮点与贡献",
+    "honorName": "奖项名称",
+    "awardDate": "获奖年月",
+    "certName": "证书名称",
+    "certDate": "获得日期",
+    "languageName": "语言",
+    "languageLevel": "熟练程度",
+    "portfolioName": "作品名称",
+    "portfolioLink": "作品链接",
+    "portfolioDescription": "作品介绍",
+    "moduleTitle": "模块标题",
+    "customFieldName": "自定义字段 {{index}}"
+  },
+  "placeholder": {
+    "previewName": "你的姓名",
+    "schoolName": "学校名称",
+    "companyName": "公司名称",
+    "nameExample": "张三",
+    "phoneExample": "13800138000",
+    "emailExample": "zhangsan@example.com",
+    "locationExample": "深圳",
+    "jobTitleExample": "高级前端工程师",
+    "schoolExample": "北京大学",
+    "majorExample": "计算机科学",
+    "degreeExample": "本科 / 硕士 / 博士",
+    "degreeInput": "选择或输入学历",
+    "educationStartDateExample": "2018",
+    "educationEndDateExample": "2022",
+    "companyExample": "腾讯",
+    "positionExample": "前端工程师",
+    "workLocationExample": "深圳",
+    "workStartDateExample": "2022",
+    "presentExample": "至今",
+    "workHighlightsExample": "负责前端架构设计，主导核心模块开发...",
+    "projectNameExample": "电商平台重构",
+    "projectRoleExample": "前端负责人",
+    "projectStartDateExample": "2023-01",
+    "projectEndDateExample": "2023-06",
+    "projectHighlightsExample": "使用 React+TypeScript 重构，性能提升 40%...",
+    "honorNameExample": "全国数学建模大赛一等奖",
+    "certNameExample": "AWS Solutions Architect",
+    "portfolioNameExample": "个人博客网站",
+    "skillsExample": "React、TypeScript、Node.js、Tailwind CSS...",
+    "summaryExample": "5年前端开发经验，擅长 React 生态...",
+    "jobStatus": "选择或输入求职状态"
+  },
+  "status": {
+    "available": "随时到岗",
+    "employed": "在职",
+    "newGraduate": "应届毕业生"
+  },
+  "degree": {
+    "associate": "专科",
+    "bachelor": "本科",
+    "master": "硕士研究生",
+    "mba": "MBA",
+    "phd": "博士研究生"
+  },
+  "watermark": {
+    "defaultContent": "布丁简历"
+  },
+  "photo": {
+    "alt": "证件照"
+  },
+  "import": {
+    "button": "导入简历",
+    "storageRequired": "请先登录或配置本地存储目录后再导入",
+    "failedRetry": "导入失败，请重试",
+    "savedLocal": "「{{name}}」已保存到本地",
+    "imported": "「{{name}}」导入成功",
+    "saveFailed": "保存失败",
+    "saveFailedRetry": "保存失败，请重试",
+    "saveLocalFailed": "保存到本地失败，请检查本地目录权限",
+    "parsingFormat": "解析 {{format}} 中...",
+    "options": {
+      "pdf": {
+        "title": "PDF 导入",
+        "description": "智能识别简历内容"
+      },
+      "json": {
+        "title": "JSON 导入",
+        "description": "直接解析结构化数据"
+      },
+      "word": {
+        "title": "Word 导入",
+        "description": "支持 .doc / .docx 格式"
+      },
+      "markdown": {
+        "title": "Markdown 导入",
+        "description": "支持 .md / .markdown 格式"
+      }
+    },
+    "error": {
+      "jsonInvalid": "JSON 格式无效，请检查文件内容",
+      "jsonEmpty": "JSON 文件内容为空或格式不正确",
+      "jsonMissingRequiredFields": "JSON 文件缺少必要的简历字段（至少需要 personalInfo.fullName）",
+      "pdfNoText": "PDF 文件中未检测到文本内容，可能是扫描件或图片格式",
+      "wordNoText": "Word 文件中未检测到文本内容",
+      "markdownEmpty": "Markdown 文件内容为空",
+      "aiParseFailed": "AI 解析失败",
+      "smartParseFailed": "智能解析失败：{{message}}"
+    },
+    "aiParsePrompt": "请根据以下简历文本，提取并填充为一份结构化的 JSON 简历数据。\n\n要求：\n1. 提取个人信息（姓名、电话、邮箱、状态、岗位、所在城市等）\n2. 提取教育经历（学校、专业、学位、起止时间）\n3. 提取工作经历（公司、职位、时间、职责描述）\n4. 提取项目经历（项目名称、角色、时间、描述）\n5. 提取技能（汇总为 skills 字符串）\n6. 提取荣誉奖项、资质证书、作品集（如有）\n7. 提取个人简介/自我评价（放入 summary 字段）\n8. 所有时间格式使用 \"YYYY-MM\" 或 \"YYYY-MM-DD\"\n9. 如果某项信息在原文本中不存在，对应字段留空字符串或空数组\n\n简历文本内容：\n{{text}}\n\n请直接返回一个合法的 JSON 对象，不要包含 markdown 代码块标记或其他说明文字。JSON 的结构如下：\n{\n  \"personalInfo\": { \"fullName\": \"\", \"phone\": \"\", \"email\": \"\", \"photoUrl\": \"\", \"jobStatus\": \"\", \"jobTarget\": \"\", \"location\": \"\" },\n  \"summary\": \"\",\n  \"education\": [{ \"id\": \"\", \"school\": \"\", \"major\": \"\", \"degree\": \"\", \"startDate\": \"\", \"endDate\": \"\" }],\n  \"workExperience\": [{ \"id\": \"\", \"company\": \"\", \"position\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"highlights\": \"\" }],\n  \"projects\": [{ \"id\": \"\", \"name\": \"\", \"role\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"highlights\": \"\" }],\n  \"skills\": \"\",\n  \"honors\": [],\n  \"certifications\": [],\n  \"portfolio\": []\n}"
+  },
+  "export": {
+    "defaultFileName": "简历",
+    "untitledName": "未命名",
+    "documentTitle": "简历导出",
+    "previewNotFound": "预览区域未找到",
+    "fontLoadTimeout": "字体加载超时，{{format}} 排版可能与预览不一致",
+    "jsonSuccess": "JSON 导出成功",
+    "jsonFailed": "JSON 导出失败",
+    "markdownSuccess": "Markdown 导出成功",
+    "markdownFailed": "Markdown 导出失败",
+    "pdfFailed": "PDF 导出失败，请稍后重试",
+    "pngFailed": "PNG 导出失败，请稍后重试"
+  },
+  "share": {
+    "title": "分享",
+    "enable": "开启分享",
+    "disable": "关闭分享",
+    "copyLink": "复制链接",
+    "linkCopied": "链接已复制",
+    "shareLink": "分享链接",
+    "preview": "预览分享页",
+    "qrCode": "分享二维码",
+    "qrCodeHint": "扫描二维码查看简历",
+    "permissionSettings": "权限设置",
+    "enableDesensitized": "脱敏分享",
+    "disableDesensitized": "关闭脱敏",
+    "desensitizedEnabled": "已开启脱敏分享",
+    "desensitizedDisabled": "已关闭脱敏分享",
+    "settingsTitle": "分享权限设置",
+    "settingsDescription": "设置谁可以访问，以及访问者可以执行的操作。",
+    "settingsSaved": "分享设置已保存",
+    "settingsFailed": "保存分享设置失败",
+    "saveSettings": "保存设置",
+    "createFailed": "创建分享设置失败",
+    "copyFailed": "复制失败，请手动复制",
+    "copyFailedRetry": "复制失败，请稍后重试",
+    "copying": "复制中...",
+    "copyAndEdit": "复制并编辑",
+    "localResumeCannotShare": "本地简历无法分享，请先上传到云端",
+    "localResumeCannotCopyLink": "本地简历无法生成分享链接，请先上传到云端",
+    "localResumeCannotShowQrCode": "本地简历无法生成二维码，请先上传到云端",
+    "localResumeCannotConfigurePermissions": "本地简历不支持权限设置，请先上传到云端",
+    "localResumeCannotDesensitize": "本地简历不支持脱敏分享，请先上传到云端",
+    "closeCopyEditHint": "关闭提示",
+    "exportResume": "导出简历",
+    "exportDisabled": "导出已禁用",
+    "exportDisabledTooltip": "作者未开放导出权限",
+    "badge": {
+      "readOnly": "只读",
+      "copyEditable": "可复制"
+    },
+    "copyEditHint": {
+      "loggedIn": "你正在查看别人分享的简历，可以复制一份到自己的账号后编辑。",
+      "loggedOut": "这份简历支持复制，登录后可复制到你的账号中编辑。"
+    },
+    "permission": {
+      "title": "访问范围",
+      "selfOnly": {
+        "title": "仅自己可见",
+        "description": "只有本人登录后可以查看"
+      },
+      "anyoneWithLink": {
+        "title": "互联网获得链接的人",
+        "description": "任何获得分享链接的人均可访问"
+      }
+    },
+    "access": {
+      "title": "链接权限",
+      "viewOnly": {
+        "title": "可查看",
+        "description": "无需登录即可浏览简历内容"
+      },
+      "editable": {
+        "title": "可复制",
+        "description": "登录后可复制为自己的简历"
+      }
+    },
+    "desensitize": {
+      "title": "隐私保护",
+      "enabled": {
+        "title": "分享时脱敏个人信息",
+        "description": "隐藏姓名、手机、邮箱、头像和自定义个人字段"
+      }
+    },
+    "otherSettings": {
+      "title": "其他设置"
+    },
+    "exportPermission": {
+      "title": "操作权限",
+      "allowExport": {
+        "title": "允许导出",
+        "description": "获得链接的人可以导出简历"
+      }
+    }
+  },
+  "list": {
+    "myResumes": "我的简历",
+    "resumeCount": "{{count}} 份",
+    "pageDescription": "管理、创建和维护你的个人简历",
+    "selectedResume": "已选择：{{name}}",
+    "selectOneResume": "请选择一份简历",
+    "unnamedResume": "未命名简历",
+    "newResume": "新建简历",
+    "newResumeDesc": "从空白简历开始",
+    "copyResume": "复制简历",
+    "copyName": "{{name}} - 副本",
+    "renameResume": "重命名",
+    "deleteResume": "删除简历",
+    "loadingResumes": "加载简历列表中...",
+    "loadFailed": "加载失败",
+    "loadFailedDesc": "加载简历列表失败，请检查网络连接后重试",
+    "reload": "重新加载",
+    "deleted": "简历已删除",
+    "deleteFailed": "删除失败，请重试",
+    "copied": "简历已复制",
+    "localCopied": "本地简历已复制",
+    "copyFailed": "复制失败，请重试",
+    "copyLocalFailed": "复制失败，请检查本地目录权限",
+    "renamed": "重命名成功",
+    "renameFailed": "重命名失败，请重试",
+    "renameLocalFailed": "重命名失败，请检查本地目录权限",
+    "uploadedToCloud": "{name} 已上传到云端",
+    "uploadFailed": "上传失败，请重试",
+    "confirmDeleteTitle": "确认删除",
+    "confirmDeleteMerged": "确定要删除「{name}」吗？将同时删除云端和本地存档。",
+    "confirmDeleteLocal": "确定要删除本地文件「{name}」吗？文件将被永久删除。",
+    "confirmDeleteCloud": "确定要删除「{name}」吗？删除后无法恢复。",
+    "confirmDeleteText": "删除",
+    "updatedAt": "更新于",
+    "rename": "重命名",
+    "confirm": "确定",
+    "copy": "复制",
+    "localStorageHint": "配置本地存储，将简历保存到本地文件夹，无需登录也可随时编辑",
+    "goConfig": "去配置",
+    "settings": "设置",
+    "moreActions": "更多操作",
+    "moreActionsAria": "更多操作",
+    "copyResumeText": "复制简历",
+    "selectResume": "选择简历",
+    "renameResumeText": "重命名",
+    "deleteResumeText": "删除",
+    "uploadToCloud": "上传到云端",
+    "alreadyInCloud": "已同步",
+    "localOnly": "仅本地保存",
+    "noCopyableResume": "暂无可复制的简历",
+    "deleteCannotUndo": "删除后无法恢复",
+    "loginOrLocalRequired": "请先登录或开启本地存储后再保存简历",
+    "fixCurrentModuleBeforeSave": "请先修正当前模块内容",
+    "saveFailedRetry": "保存失败，请稍后重试"
+  },
+  "create": {
+    "enteringEditor": "正在进入编辑器...",
+    "description": "选择一种方式，开始创建你的简历",
+    "createNow": "立即创建",
+    "blank": {
+      "title": "空白简历",
+      "description": "从默认结构开始，自由填写内容"
+    },
+    "fromTemplate": {
+      "title": "从模板开始",
+      "description": "选择一个已有主题，快速创建一份简历",
+      "empty": "暂无可用主题"
+    }
+  },
+  "templateNames": {
+    "skyveil": "浅蓝通栏",
+    "cyanblu": "青蓝圆标",
+    "ordrin": "黑白简线",
+    "leftSidebarTwoColumn": "青影侧栏",
+    "centerline": "居中单栏",
+    "classicHorizontal": "经典横线",
+    "blueprintIcons": "蓝环职线",
+    "monochromeRings": "黑杠灰条",
+    "tealRibbonWave": "弧顶青签",
+    "blueBannerIcons": "蓝幕圆标",
+    "azureSidebar": "蔚蓝侧栏",
+    "unknownLayout": "未知布局",
+    "pudding": "浅蓝通栏",
+    "qingse": "青蓝圆标",
+    "odin": "黑白简线"
+  },
+  "pageTitle": "布丁简历 - 在线简历编辑器",
+  "invalidShareLink": "无效的分享链接",
+  "requireLogin": "需要登录",
+  "notPublic": "该简历未公开分享",
+  "loadResume": "加载简历...",
+  "cantLoadResume": "无法加载简历",
+  "aiUsage": {
+    "title": "AI 用量统计",
+    "back": "返回",
+    "description": "统计当前账号的 AI tokens 消耗、请求次数和最近调用记录。",
+    "monthlyTrend": "月度 Token 消耗趋势",
+    "monthlyTrendDesc": "按模型叠加展示当前月份每天的 Token 消耗。",
+    "noTrendData": "暂无趋势数据",
+    "recentCalls": "最近 AI 调用记录",
+    "recentCallsDesc": "每页展示 10 条最近调用记录，超过后可分页切换。",
+    "noCallRecords": "暂无调用记录",
+    "loadingFailed": "用量信息加载失败",
+    "loadingUsage": "正在加载用量信息",
+    "noRecords": "暂无 AI 用量记录",
+    "noRecordsHint": "使用 AI 功能后，这里会展示 Token 消耗和调用趋势。",
+    "table": {
+      "time": "时间",
+      "feature": "功能",
+      "providerModel": "厂商 / 模型",
+      "promptTokens": "输入 Tokens",
+      "completionTokens": "输出 Tokens",
+      "reasoningTokens": "推理 Tokens",
+      "totalTokens": "总计 Tokens",
+      "status": "状态"
+    },
+    "feature": {
+      "service": "简历生成",
+      "diagnose": "简历诊断",
+      "polish": "文本润色"
+    },
+    "status": {
+      "failed": "失败",
+      "tracked": "已统计",
+      "unknown": "未知"
+    },
+    "tooltip": {
+      "date": "日期",
+      "prompt": "输入",
+      "completion": "输出",
+      "reasoning": "推理",
+      "requests": "请求"
+    },
+    "metric": {
+      "prompt": "输入",
+      "completion": "输出",
+      "reasoning": "推理",
+      "total": "总计"
+    },
+    "pagination": {
+      "range": "显示第 {{start}}-{{end}} 条，共 {{total}} 条",
+      "page": "第 {{page}} / {{totalPages}} 页",
+      "previous": "上一页",
+      "next": "下一页"
+    },
+    "types": {
+      "ats": "ATS 检测"
+    }
+  }
+}

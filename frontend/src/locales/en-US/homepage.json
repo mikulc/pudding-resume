@@ -1,0 +1,143 @@
+{
+  "brand": {
+    "fullName": "Pudding Resume",
+    "shortName": "Pudding"
+  },
+  "brandTagline": "AI-Powered Online Resume Editor",
+  "siteDefaults": {
+    "copyright": "© 2024 Pudding Resume",
+    "slogan": "Make resume building simple again"
+  },
+  "hero": {
+    "badge": "AI-Powered Online Resume Editor",
+    "heading1": "Write, format, and optimize,",
+    "heading2": "finish a professional resume in one place",
+    "subtitle": "Use structured editing, live A4 preview, and AI suggestions to build an application-ready resume faster.",
+    "ctaPrimary": "Start Building",
+    "ctaSecondary": "View Resume Templates",
+    "trustBadge1": "Live A4 preview",
+    "trustBadge2": "AI content optimization",
+    "trustBadge3": "Multi-format export",
+    "mock": {
+      "tabs": [
+        "Content",
+        "Share",
+        "Export"
+      ],
+      "modules": [
+        {
+          "name": "Education",
+          "status": "Done",
+          "tone": "success"
+        },
+        {
+          "name": "Work",
+          "status": "Done",
+          "tone": "success"
+        },
+        {
+          "name": "Projects",
+          "status": "Needs work",
+          "tone": "warning"
+        }
+      ],
+      "templateTags": [
+        "Tech / Product",
+        "Campus / Intern",
+        "Ops / Marketing",
+        "Minimal Apply"
+      ],
+      "ai": {
+        "title": "3 expressions can be improved",
+        "priority": "Medium",
+        "description": "\"Responsible for development\" lacks action, scope, and outcome. Try \"Independently built the export pipeline and reduced generation time by 42%.\""
+      },
+      "aiStats": [
+        {
+          "label": "Metrics",
+          "value": "2 items"
+        },
+        {
+          "label": "Weak wording",
+          "value": "1 item"
+        },
+        {
+          "label": "Replace",
+          "value": "Preview"
+        }
+      ],
+      "export": "PDF / PNG and more exports"
+    }
+  },
+  "features": {
+    "heading": "Build a Professional Resume in Just a Few Steps",
+    "subtitle": "From content creation to layout polish, powered by AI capabilities that make resume building effortless and efficient",
+    "items": [
+      {
+        "title": "AI Smart Writing",
+        "desc": "LLM-powered resume content generation and polishing. Fill experiences and skill descriptions in one click."
+      },
+      {
+        "title": "Beautiful Templates",
+        "desc": "Multiple professional templates such as Light Blue Bar, Cyan Round Icons, and Black Line Minimal. Switch freely and create your own visual style."
+      },
+      {
+        "title": "Real-Time Preview",
+        "desc": "A WYSIWYG editor with drag-and-drop sorting, rich text editing, and live A4 paper preview."
+      },
+      {
+        "title": "Multi-Format Export",
+        "desc": "Export to PDF, PNG, Markdown, JSON, and more formats for different application scenarios."
+      },
+      {
+        "title": "Flexible Layout",
+        "desc": "Flexible modular configuration for profile, education, and work experience, fully under your control."
+      },
+      {
+        "title": "AI Diagnosis",
+        "desc": "Analyze resume content, identify potential issues, and receive optimization suggestions."
+      }
+    ]
+  },
+  "steps": {
+    "heading": "A Great Resume in Four Steps",
+    "subtitle": "From zero to finished, a simple and efficient workflow",
+    "items": [
+      {
+        "title": "Choose Template",
+        "desc": "Pick your favorite style from multiple professional templates"
+      },
+      {
+        "title": "Fill Content",
+        "desc": "Use AI to quickly complete your resume information"
+      },
+      {
+        "title": "Fine-Tune",
+        "desc": "Drag modules and adjust styles with every detail under your control"
+      },
+      {
+        "title": "Export & Apply",
+        "desc": "Export to PDF/PNG in one click, ready to submit"
+      }
+    ]
+  },
+  "footer": {
+    "description": "Pudding Resume helps you create clear, polished resumes faster.",
+    "productTitle": "Features",
+    "product": {
+      "start": "Start creating",
+      "templates": "Resume Templates",
+      "settings": "Preferences"
+    },
+    "supportTitle": "Explore",
+    "support": {
+      "about": "About",
+      "changelog": "Changelog"
+    },
+    "socialTitle": "Follow us",
+    "copyright": "© 2026 Pudding Resume. All rights reserved.",
+    "icp": "{{icp}}",
+    "securityRecord": "Public Security Record: {{record}}"
+  }
+}
+

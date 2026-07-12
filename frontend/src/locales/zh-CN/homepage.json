@@ -1,0 +1,143 @@
+{
+  "brand": {
+    "fullName": "布丁简历",
+    "shortName": "布丁简历"
+  },
+  "brandTagline": "AI 驱动的新一代在线简历编辑器",
+  "siteDefaults": {
+    "copyright": "© 2024 布丁简历",
+    "slogan": "让简历制作回归简单"
+  },
+  "hero": {
+    "badge": "AI 驱动的在线简历编辑器",
+    "heading1": "写内容、调排版、做优化，",
+    "heading2": "一次完成专业简历",
+    "subtitle": "用结构化编辑、实时 A4 预览和 AI 建议，更快完成一份真正能够投递的专业简历。",
+    "ctaPrimary": "开始制作简历",
+    "ctaSecondary": "查看简历模板",
+    "trustBadge1": "实时 A4 预览",
+    "trustBadge2": "AI 内容优化",
+    "trustBadge3": "多格式导出",
+    "mock": {
+      "tabs": [
+        "内容",
+        "分享",
+        "导出"
+      ],
+      "modules": [
+        {
+          "name": "教育经历",
+          "status": "已填写",
+          "tone": "success"
+        },
+        {
+          "name": "工作经历",
+          "status": "已填写",
+          "tone": "success"
+        },
+        {
+          "name": "项目经历",
+          "status": "待完善",
+          "tone": "warning"
+        }
+      ],
+      "templateTags": [
+        "技术 / 产品",
+        "校招 / 实习",
+        "运营 / 市场",
+        "极简投递"
+      ],
+      "ai": {
+        "title": "发现 3 处可优化表达",
+        "priority": "中优先级",
+        "description": "“负责系统开发”缺少动作、范围和结果，可改为“独立实现导出链路，将生成耗时降低 42%”。"
+      },
+      "aiStats": [
+        {
+          "label": "量化结果",
+          "value": "2 条"
+        },
+        {
+          "label": "弱表达",
+          "value": "1 条"
+        },
+        {
+          "label": "一键替换",
+          "value": "可预览"
+        }
+      ],
+      "export": "PDF / PNG 等多格式导出"
+    }
+  },
+  "features": {
+    "heading": "打造专业简历，只需简单几步",
+    "subtitle": "从内容创作到排版美化，全方位 AI 能力加持，让简历制作变得轻松高效",
+    "items": [
+      {
+        "title": "AI 智能写作",
+        "desc": "基于大语言模型的简历内容生成与润色，一键填充经历、技能描述，告别写作难题。"
+      },
+      {
+        "title": "多套精美模板",
+        "desc": "浅蓝通栏、青蓝圆标、黑白简线等多款专业模板，随心切换，打造专属视觉风格。"
+      },
+      {
+        "title": "实时预览编辑",
+        "desc": "所见即所得的编辑器，支持拖拽排序、富文本编辑，实时预览 A4 纸效果。"
+      },
+      {
+        "title": "多格式导出",
+        "desc": "支持 PDF、PNG、Markdown、JSON 等多种格式导出，满足不同场景的投递需求。"
+      },
+      {
+        "title": "自由布局定制",
+        "desc": "灵活的模块化配置，个人信息、教育经历、工作履历任意组合，完全由你掌控。"
+      },
+      {
+        "title": "AI 诊断优化",
+        "desc": "智能分析简历内容，发现潜在问题并给出优化建议，让简历脱颖而出。"
+      }
+    ]
+  },
+  "steps": {
+    "heading": "四步搞定一份好简历",
+    "subtitle": "从零到成品，简单高效的工作流",
+    "items": [
+      {
+        "title": "选择模板",
+        "desc": "从多款专业模板中挑选心仪的风格"
+      },
+      {
+        "title": "填写内容",
+        "desc": "借助 AI 智能填充，快速完善简历信息"
+      },
+      {
+        "title": "精细调整",
+        "desc": "拖拽模块、调整样式，细节尽在掌控"
+      },
+      {
+        "title": "导出投递",
+        "desc": "一键导出 PDF/PNG，即刻投递心仪岗位"
+      }
+    ]
+  },
+  "footer": {
+    "description": "布丁简历，让简历制作更清晰、更高效。",
+    "productTitle": "功能",
+    "product": {
+      "start": "开始制作",
+      "templates": "简历模板",
+      "settings": "偏好设置"
+    },
+    "supportTitle": "了解",
+    "support": {
+      "about": "关于本站",
+      "changelog": "更新日志"
+    },
+    "socialTitle": "关注我们",
+    "copyright": "© 2026 布丁简历. All rights reserved.",
+    "icp": "{{icp}}",
+    "securityRecord": "公安备案号：{{record}}"
+  }
+}
+

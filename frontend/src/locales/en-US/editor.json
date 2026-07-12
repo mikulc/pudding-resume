@@ -1,0 +1,784 @@
+{
+  "title": "Editor",
+  "save": "Save",
+  "saveSuccess": "Saved successfully",
+  "saveFailed": "Save failed",
+  "autoSave": "Auto save",
+  "exporting": "Exporting...",
+  "exportPDF": "Export PDF",
+  "exportPNG": "Export PNG",
+  "exportJSON": "Export JSON",
+  "exportMarkdown": "Export Markdown",
+  "exportSuccess": "Export successful",
+  "exportFailed": "Export failed",
+  "undo": "Undo",
+  "redo": "Redo",
+  "diagnosis": "AI Diagnosis",
+  "diagnosisRunning": "Diagnosing...",
+  "diagnosisComplete": "Diagnosis complete",
+  "diagnosisFailed": "Diagnosis failed",
+  "aiPolish": "AI Polish",
+  "aiPolishRunning": "Polishing...",
+  "aiPolishComplete": "Polish complete",
+  "aiPolishFailed": "Polish failed",
+  "translate": "Translate",
+  "translating": "Translating...",
+  "translation": {
+    "confirmTitle": "Translate to English?",
+    "confirmMessage": "AI will translate the current resume into English and replace the original content. Save first if needed. Continue?",
+    "confirmAction": "Translate",
+    "cancelAction": "Cancel",
+    "loadingTitle": "Translating resume",
+    "loadingDescription": "AI is translating the current resume into English. Please wait.",
+    "successTitle": "Translation complete",
+    "successDescription": "The resume has been translated into English. Keep this translation?",
+    "undoAction": "Undo translation",
+    "keepAction": "Keep result",
+    "undoChangedTitle": "Cannot undo translation directly",
+    "undoChangedDescription": "New edits were made after translation. Use the bottom toolbar undo action to avoid overwriting later changes.",
+    "errorTitle": "Translation failed. Please retry.",
+    "fallbackError": "AI translation service is temporarily unavailable."
+  },
+  "addModule": "Add module",
+  "deleteModule": "Delete module",
+  "moveUp": "Move up",
+  "moveDown": "Move down",
+  "preview": "Preview",
+  "edit": "Edit",
+  "template": "Template",
+  "switchTemplate": "Switch template",
+  "fontFamily": "Font",
+  "fontSize": "Font size",
+  "pageMargin": "Page margin",
+  "spacing": "Line spacing",
+  "back": "Back",
+  "backToResumes": "Back to my resumes",
+  "closeBanner": "Close notice",
+  "unnamedResume": "Untitled resume",
+  "noLoginWarn": "You are not logged in or have not configured local storage. Current edits will be lost after refreshing.",
+  "loginNow": "Log in now",
+  "autoFitDone": "Adjusted to one page",
+  "autoFitMinReached": "Page settings are at their minimum and the content still cannot fit on one page. The compressed result is kept; click One page again to restore the original settings.",
+  "autoFitRestored": "Original page settings restored",
+  "autoFitAlreadyOne": "Already one page",
+  "loadingResume": "Loading resume data...",
+  "mobileBackTooltip": "Back",
+  "mobileBackAria": "Back",
+  "placeholder": {
+    "name": "Enter name",
+    "email": "Enter email",
+    "phone": "Enter phone number",
+    "location": "Enter city",
+    "jobTitle": "Enter desired position",
+    "summary": "Enter personal summary",
+    "school": "Enter school name",
+    "major": "Enter major",
+    "degree": "Select degree",
+    "company": "Enter company name",
+    "position": "Enter position",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "description": "Describe work content or experience"
+  },
+  "label": {
+    "personalInfo": "Personal Info",
+    "education": "Education",
+    "workExperience": "Work Experience",
+    "skills": "Skills",
+    "projects": "Projects",
+    "certificates": "Certificates",
+    "languages": "Languages",
+    "customModule": "Custom Module"
+  },
+  "panel": {
+    "title": "Editor Panel"
+  },
+  "settingsPanel": {
+    "expand": "Expand settings panel",
+    "collapse": "Collapse settings panel",
+    "documentSettings": "Document Settings"
+  },
+  "mobileDock": {
+    "aria": "Mobile editor mode",
+    "edit": "Edit",
+    "settings": "Settings",
+    "ats": "ATS Check",
+    "preview": "Preview"
+  },
+  "customModule": {
+    "defaultName": "Custom Module",
+    "add": "Add custom module"
+  },
+  "customModuleEditor": {
+    "editTitle": "Edit {{name}}",
+    "content": "Content",
+    "emptyContent": "Nothing written yet. Click to add content."
+  },
+  "sectionSort": {
+    "collapseBeforeDrag": "Collapse sections before dragging to reorder."
+  },
+  "resumeList": "My Resumes",
+  "createResume": "Create Resume",
+  "noResume": "No resumes yet. Create one to get started.",
+  "resumeCount": "{{count}} resumes total",
+  "renameResume": "Rename",
+  "deleteResume": "Delete Resume",
+  "copyResume": "Copy Resume",
+  "lastSaved": "Last saved: {{time}}",
+  "sectionMenu": {
+    "renameLabel": "Rename label",
+    "showModule": "Show module",
+    "hideModule": "Hide module"
+  },
+  "sectionRename": {
+    "title": "Rename",
+    "placeholder": "Enter a new name",
+    "required": "Module name is required",
+    "maxLength": "Module name cannot exceed 12 characters",
+    "saveName": "Save name",
+    "cancelEdit": "Cancel edit"
+  },
+  "fieldMenu": {
+    "renameCustomField": "Rename",
+    "renameLabel": "Rename label",
+    "resetLabel": "Restore name",
+    "changeIcon": "Change icon",
+    "showField": "Show field",
+    "hideField": "Hide field",
+    "deleteField": "Delete field"
+  },
+  "fieldCard": {
+    "pinnedFieldTooltip": "The name field cannot be dragged",
+    "iconAria": "{{label}} field icon",
+    "contentPlaceholder": "Enter content",
+    "rename": {
+      "title": "Rename",
+      "placeholder": "Enter a new name",
+      "required": "Field name is required",
+      "maxLength": "Field name cannot exceed 12 characters",
+      "duplicate": "A field with this name already exists in this section"
+    }
+  },
+  "fieldIcon": {
+    "searchPlaceholder": "Search icons...",
+    "selectAria": "Choose {{label}} icon",
+    "empty": "No matching icons",
+    "categories": {
+      "all": "All",
+      "personalInfo": "Personal Info",
+      "education": "Education",
+      "workExperience": "Work",
+      "skills": "Skills",
+      "languages": "Languages",
+      "projects": "Projects",
+      "achievements": "Achievements",
+      "hobbies": "Hobbies",
+      "social": "Social",
+      "other": "Other"
+    },
+    "icons": {
+      "user": "User",
+      "circleUserRound": "Avatar",
+      "idCard": "ID",
+      "phone": "Phone",
+      "mail": "Email",
+      "atSign": "Account",
+      "mapPin": "Location",
+      "home": "Home",
+      "graduationCap": "Degree",
+      "school": "School",
+      "bookOpen": "Knowledge",
+      "scrollText": "Course",
+      "briefcase": "Work",
+      "building2": "Company",
+      "calendar": "Calendar",
+      "clock": "Time",
+      "target": "Target",
+      "code": "Code",
+      "wrench": "Tools",
+      "laptop": "Computer",
+      "cpu": "Chip",
+      "server": "Server",
+      "terminal": "Terminal",
+      "database": "Database",
+      "settings": "Settings",
+      "languages": "Language",
+      "globe": "Web",
+      "messageCircle": "Chat",
+      "folderGit2": "Project",
+      "layers": "Layers",
+      "rocket": "Launch",
+      "cloud": "Cloud",
+      "externalLink": "External Link",
+      "link": "Link",
+      "award": "Award",
+      "trophy": "Trophy",
+      "medal": "Medal",
+      "checkCircle": "Certification",
+      "star": "Star",
+      "zap": "Highlight",
+      "thumbsUp": "Like",
+      "heart": "Favorite",
+      "palette": "Palette",
+      "camera": "Camera",
+      "music": "Music",
+      "coffee": "Coffee",
+      "gamepad2": "Game",
+      "share2": "Share",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "tag": "Tag",
+      "fileText": "Document",
+      "bookmark": "Bookmark",
+      "bell": "Notification",
+      "hash": "Number"
+    }
+  },
+  "photo": {
+    "title": "Photo",
+    "alt": "Profile photo",
+    "upload": "Upload",
+    "uploaded": "Photo uploaded",
+    "notUploaded": "No photo",
+    "hint": "Any image format, up to 2MB",
+    "adjust": "Adjust photo",
+    "description": "Set how the photo appears in the resume",
+    "size": "Size",
+    "width": "Width",
+    "height": "Height",
+    "aspectRatio": "Aspect ratio",
+    "originalRatio": "Original ratio",
+    "original": "Original",
+    "lockRatio": "Lock aspect ratio",
+    "unlockRatio": "Unlock aspect ratio",
+    "cornerRadius": "Corner radius",
+    "radius": {
+      "square": "Square",
+      "rounded": "Rounded"
+    },
+    "error": {
+      "fileTooLarge": "Image size cannot exceed 2MB"
+    }
+  },
+  "personalInfo": {
+    "addCustomField": "Add custom info"
+  },
+  "education": {
+    "autoHint": {
+      "fromStart": "Graduation date auto-calculated based on {{degree}} duration – editable",
+      "fromEnd": "Enrollment date auto-calculated based on {{degree}} duration – editable"
+    }
+  },
+  "sectionAction": {
+    "addEducation": "Add education",
+    "addWork": "Add work experience",
+    "addProject": "Add project",
+    "addHonor": "Add honor or award",
+    "addCertification": "Add certification",
+    "addPortfolio": "Add portfolio item"
+  },
+  "longText": {
+    "skillsTitle": "Edit skills description",
+    "workTitle": "Edit work highlights",
+    "projectTitle": "Edit project highlights",
+    "portfolioTitle": "Edit portfolio description",
+    "summaryTitle": "Edit profile summary"
+  },
+  "longTextEntry": {
+    "emptyAction": "No content yet. Click to add content.",
+    "editing": "Editing",
+    "filledLines": "{{count}} lines filled",
+    "empty": "Empty",
+    "open": "Open editor"
+  },
+  "longTextContext": {
+    "discard": {
+      "title": "Discard current edit?",
+      "message": "This long text field has unsaved changes. Switching fields will discard them.",
+      "confirm": "Discard and switch",
+      "cancel": "Keep editing"
+    }
+  },
+  "longTextEditor": {
+    "description": "Supports Markdown. Changes apply to the resume when done.",
+    "aiOptimizeShort": "AI optimize",
+    "aiOptimize": {
+      "title": "AI optimization result",
+      "description": "Compare the original and optimized content before applying changes.",
+      "loadingTitle": "AI is optimizing content",
+      "loadingDescription": "Your original text will not be overwritten before the result is ready.",
+      "errorTitle": "AI optimization failed",
+      "errorDescription": "Please try again later.",
+      "retry": "Retry",
+      "restoreOriginal": "Restore original",
+      "applyOptimization": "Apply optimization",
+      "optimizedAria": "Optimized content",
+      "tabs": {
+        "aria": "AI optimization result views",
+        "compare": "Compare",
+        "optimized": "Optimized",
+        "original": "Original"
+      },
+      "discard": {
+        "title": "Discard AI optimization?",
+        "message": "The AI result has not been applied. Closing now will discard it and keep the resume unchanged.",
+        "confirm": "Discard result",
+        "cancel": "Keep reviewing"
+      }
+    },
+    "markdownAria": "Markdown source editor",
+    "richTextAria": "Rich text editor",
+    "markdownPlaceholder": "Edit long-form content here. Supports Markdown markers like **bold**, *italic*, __underline__, and lists...",
+    "richTextPlaceholder": "Edit long-form content here. Supports bold, italic, underline, lists, and other formatting...",
+    "tooltip": {
+      "markdownMode": "Markdown mode",
+      "previewMode": "Switch to preview mode",
+      "aiOptimize": "AI optimize"
+    },
+    "toast": {
+      "featureUnavailable": "This feature is not available yet",
+      "applied": "Changes applied",
+      "selectTextForFormatting": "Select text before using formatting tools",
+      "selectTextForClearFormat": "Select text before clearing formatting",
+      "selectTextForList": "Select text before converting it to a list",
+      "selectionNotRecognized": "Selection could not be recognized. Select the text again and retry.",
+      "textTooShort": "Text is too short. Please enter at least 5 characters.",
+      "aiConfigMissing": "AI service is not configured. Please configure it in Settings first."
+    },
+    "discard": {
+      "title": "Discard this edit?",
+      "message": "Current changes have not been applied and will be lost if you close.",
+      "confirm": "Discard changes",
+      "cancel": "Keep editing"
+    }
+  },
+  "diagnosisPanel": {
+    "title": "Resume Diagnosis",
+    "aiResults": "AI Diagnosis Results",
+    "currentSuggestions": "Current Suggestions",
+    "suggestionCount": "{{count}} suggestions",
+    "noSuggestions": "Your resume looks complete. No suggestions for now.",
+    "emptyDescription": "AI scans for vague wording, overclaims, and other expression issues, then suggests improvements.",
+    "panelEmptyDescription": "Click AI Check in the bottom toolbar to diagnose wording issues in your resume.",
+    "replacementPrefix": "Suggested replacement",
+    "issueType": {
+      "overclaim": "Overclaim",
+      "vague": "Vague wording",
+      "noMetric": "Missing data",
+      "emptyWord": "Empty phrase",
+      "weak": "Weak wording"
+    },
+    "severity": {
+      "high": "Must fix",
+      "medium": "Suggested",
+      "low": "Optional"
+    },
+    "loading": {
+      "initial": "AI is analyzing...",
+      "scanning": "Scanning resume sections...",
+      "thinking": "AI is reviewing the details...",
+      "reviewing": "Your resume has a lot of content. Checking each detail...",
+      "polishing": "Refining the diagnosis...",
+      "stillWorking": "Still analyzing. Thanks for waiting."
+    },
+    "action": {
+      "supplement": "Add",
+      "clearResults": "Clear diagnosis results",
+      "clear": "Clear",
+      "analyzing": "Analyzing...",
+      "startAnalysis": "Start analysis",
+      "ignore": "Ignore",
+      "optimize": "Optimize"
+    },
+    "popover": {
+      "title": "Revision suggestion",
+      "original": "Original",
+      "replacement": "Suggested rewrite",
+      "noReplacement": "No rewrite available",
+      "ignore": "Ignore",
+      "replace": "Replace"
+    },
+    "clearConfirm": {
+      "title": "Clear previous diagnosis?",
+      "message": "This will remove diagnosis highlights and close the current suggestion.",
+      "confirm": "Clear",
+      "cancel": "Cancel"
+    },
+    "runConfirm": {
+      "title": "Start AI diagnosis?",
+      "message": "AI will scan the current resume for vague or exaggerated wording and provide improvement suggestions. This may consume some quota. Continue?",
+      "confirm": "Start diagnosis",
+      "cancel": "Cancel"
+    }
+  },
+  "diagnosisAnalysis": {
+    "sectionSeparator": ", ",
+    "missingName": {
+      "title": "Missing name",
+      "description": "Your name is the most basic resume information. Add it before sharing."
+    },
+    "missingContact": {
+      "title": "Missing contact information",
+      "description": "Add at least a phone number or email so recruiters can reach you."
+    },
+    "missingPhone": {
+      "title": "Add a phone number",
+      "description": "A phone number is the most direct contact method and is worth including."
+    },
+    "missingEmail": {
+      "title": "Add an email address",
+      "description": "Email is the standard professional contact channel and is worth including."
+    },
+    "missingJobTarget": {
+      "title": "Missing target role",
+      "description": "A clear target role helps recruiters judge fit quickly."
+    },
+    "missingSummary": {
+      "title": "Missing profile summary",
+      "description": "A concise summary builds a first impression quickly. Aim for 50-150 characters."
+    },
+    "summaryTooShort": {
+      "title": "Profile summary is too short",
+      "description": "Currently about {{count}} characters. Expand it to 50-150 characters and highlight your core strengths and career target."
+    },
+    "missingEducation": {
+      "title": "Missing education",
+      "description": "Education is an important part of a resume. Add it if available."
+    },
+    "missingSkills": {
+      "title": "Missing professional skills",
+      "description": "Core skills improve keyword matching in ATS systems."
+    },
+    "skillsTooSimple": {
+      "title": "Skills section is too thin",
+      "description": "Currently about {{count}} characters. Add more skill keywords, ideally grouped by category such as languages, frameworks, and tools."
+    },
+    "missingWork": {
+      "title": "Missing work experience",
+      "description": "Work experience is a core resume section and matters most for experienced candidates."
+    },
+    "emptyWorkResults": {
+      "title": "Work experience lacks result descriptions",
+      "all": "None of the work entries include concrete results. This is a critical resume gap.",
+      "some": "{{count}} work entries are missing results. Add quantified outcomes where possible."
+    },
+    "weakWorkResults": {
+      "title": "Work experience could be richer",
+      "description": "{{count}} entries have very little detail. Add at least 2-3 highlights per entry."
+    },
+    "workMissingMetrics": {
+      "title": "Work results lack metrics",
+      "all": "None of the work descriptions include measurable results. Add percentages, counts, or other metrics.",
+      "some": "{{count}} entries would benefit from metrics such as improved X% or delivered N items."
+    },
+    "missingProjects": {
+      "title": "Missing projects",
+      "description": "Projects show hands-on ability and technical depth."
+    },
+    "emptyProjectDescription": {
+      "title": "Project entries lack descriptions",
+      "all": "None of the projects include concrete descriptions.",
+      "some": "{{count}} projects are missing descriptions."
+    },
+    "weakProjectDescription": {
+      "title": "Project descriptions could be more detailed",
+      "description": "{{count}} project descriptions are thin. Consider adding context, action, and result."
+    },
+    "projectMissingMetrics": {
+      "title": "Project results lack metrics",
+      "description": "Add measurable outcomes to project descriptions to make them more convincing."
+    },
+    "missingHonorOrCert": {
+      "title": "Consider adding honors or certifications",
+      "description": "Awards or professional certifications can strengthen the resume when relevant."
+    },
+    "duplicateWord": {
+      "title": "Frequent term \"{{word}}\" appears {{count}} times",
+      "description": "It appears repeatedly in {{sections}}. Consider synonyms or tighter wording."
+    }
+  },
+  "diagnosisPrompt": {
+    "summary": "Profile Summary",
+    "skills": "Professional Skills",
+    "education": "Education",
+    "courses": "Courses",
+    "workExperience": "Work Experience",
+    "projects": "Projects",
+    "honors": "Honors and Awards",
+    "certifications": "Certifications",
+    "portfolio": "Portfolio",
+    "customSection": "Custom Section"
+  },
+  "diagnosisError": {
+    "failed": "Diagnosis failed. Please try again.",
+    "aiNotConfigured": "Please set a custom API URL and key in Page Settings.",
+    "networkFailed": "Network request failed. Please check your connection.",
+    "requestFailed": "Request failed ({{status}})",
+    "streamUnsupported": "This browser does not support streaming responses.",
+    "streamReadFailed": "An error occurred while reading the streaming response.",
+    "unknown": "Unknown error"
+  },
+  "document": {
+    "resumeTheme": {
+      "title": "Resume Theme",
+      "current": "Current theme",
+      "active": "Active",
+      "switch": "Change theme",
+      "random": "Random theme"
+    },
+    "toast": {
+      "themeApplied": "Theme applied",
+      "themeApplyFailed": "Failed to apply theme, please try again",
+      "resetDone": "Document settings reset",
+      "randomThemeApplied": "Randomly switched to: {{name}}",
+      "randomThemeNoOther": "No other themes available"
+    },
+    "color": {
+      "title": "Theme Color",
+      "titleBackground": "Title background",
+      "tagBackground": "Tag background",
+      "tagText": "Tag text",
+      "more": "More colors"
+    },
+    "colors": {
+      "blue": "Blue",
+      "deepBlue": "Deep Blue",
+      "black": "Black",
+      "terracotta": "Terracotta",
+      "peacockBlue": "Peacock Blue",
+      "grassGreen": "Grass Green",
+      "slateBlue": "Slate Blue",
+      "deepCyanBlue": "Deep Cyan Blue",
+      "warmOrange": "Warm Orange",
+      "khakiGold": "Khaki Gold",
+      "violet": "Violet",
+      "slateGray": "Slate Gray",
+      "rose": "Rose",
+      "celadonGreen": "Celadon Green",
+      "caramelBrown": "Caramel Brown",
+      "lavenderBlue": "Lavender Blue"
+    },
+    "page": {
+      "title": "Page Settings",
+      "pageMargin": "Page margin",
+      "lineSpacing": "Line spacing"
+    },
+    "font": {
+      "title": "Font Settings",
+      "family": "Font family",
+      "loading": "Loading font files. The preview will update automatically.",
+      "loadingInline": "Loading font...",
+      "loadFailed": "Font loading is slow. The fallback font is being used for now.",
+      "loadFailedInline": "Using fallback font",
+      "systemDefault": "Noto Sans SC (Default)",
+      "misansCopyright": "ⓘ MiSans font copyright belongs to Xiaomi",
+      "baseSize": "Base font size",
+      "sectionTitleSize": "Section title size",
+      "entryTitleSize": "Entry title size",
+      "options": {
+        "systemDefault": "Noto Sans SC (Default)",
+        "misans": "MiSans",
+        "alibabaPuhuiti": "Alibaba PuHuiTi",
+        "sourceHanSerif": "Source Han Serif",
+        "notoSerif": "Noto Serif SC"
+      }
+    },
+    "layout": {
+      "title": "Layout",
+      "fieldLabel": "Field labels",
+      "iconMode": "Icon mode",
+      "textMode": "Text mode",
+      "photoLayout": "Photo layout",
+      "photoRight": "Photo right",
+      "photoLeft": "Photo left",
+      "titleLayout": "Title layout",
+      "compact": "Compact row",
+      "threeColumn": "Three columns",
+      "stacked": "Stacked"
+    },
+    "watermark": {
+      "title": "Watermark",
+      "content": "Watermark text",
+      "contentPlaceholder": "Enter watermark text...",
+      "opacity": "Opacity",
+      "fontSize": "Font size",
+      "rotation": "Rotation",
+      "color": "Watermark color",
+      "colors": {
+        "lightGray": "Light Gray",
+        "mediumGray": "Medium Gray",
+        "red": "Red",
+        "blue": "Blue",
+        "green": "Green"
+      },
+      "density": {
+        "title": "Watermark density",
+        "low": "Sparse",
+        "medium": "Balanced",
+        "high": "Dense"
+      },
+      "restoreDefault": "Restore"
+    },
+    "reset": {
+      "title": "Reset Settings",
+      "message": "Reset all document settings?",
+      "confirm": "Reset",
+      "button": "Reset document settings"
+    }
+  },
+  "themePicker": {
+    "all": "All",
+    "loading": "Loading themes...",
+    "empty": "No themes available",
+    "emptyCategory": "No themes in this category",
+    "selectAria": "Choose theme: {{name}}",
+    "current": "Current",
+    "selected": "Selected: {{name}}",
+    "selectOne": "Choose a theme",
+    "apply": "Apply theme",
+    "applying": "Applying theme...",
+    "currentIs": "Current: {{name}}"
+  },
+  "previewToolbar": {
+    "expand": "Expand preview toolbar",
+    "drag": "Drag toolbar",
+    "moveCanvas": "Move canvas",
+    "undo": "Undo",
+    "redo": "Redo",
+    "zoomOut": "Zoom out",
+    "resetZoom": "Reset zoom to 100%",
+    "zoomIn": "Zoom in",
+    "fitWidth": "Fit width",
+    "fitPage": "Fit page",
+    "smartOnePage": "One page",
+    "aiDiagnosis": "AI Diagnosis",
+    "atsCheck": "ATS Check"
+  },
+  "atsPanel": {
+    "title": "ATS Check",
+    "description": "Paste a job description to compare keyword fit, content gaps, and ATS readability.",
+    "jdLabel": "Job description",
+    "jdPlaceholder": "Paste a job description to analyze keyword matches and content gaps",
+    "jobDescriptionTooShort": "Paste a longer job description before analyzing.",
+    "analyze": "Analyze ATS fit",
+    "analyzing": "Analyzing...",
+    "clear": "Clear ATS result",
+    "score": "ATS fit score",
+    "matchedKeywords": "Matched keywords",
+    "missingKeywords": "Missing keywords",
+    "formatIssues": "Format risks",
+    "contentSuggestions": "Content suggestions",
+    "noMatchedKeywords": "No matched keywords yet.",
+    "noMissingKeywords": "No missing keywords found.",
+    "noFormatIssues": "No obvious format risks found.",
+    "noContentSuggestions": "No content suggestions yet.",
+    "history": "Recent JD analyses",
+    "clearHistory": "Clear history",
+    "clearHistoryAction": "Clear",
+    "recentlyAnalyzed": "Last analyzed",
+    "reuseHistory": "Reuse",
+    "expandHistory": "Show {{count}} more",
+    "collapseHistory": "Show less",
+    "focusSection": "Go to section",
+    "copyHint": "Copy hint",
+    "copied": "Copied",
+    "copyFailed": "Copy failed",
+    "recommendedLayouts": "ATS-friendly templates",
+    "applyLayout": "Apply",
+    "layoutApplied": "Template applied",
+    "emptyTitle": "No ATS result yet",
+    "emptyDescription": "Paste a job description to start analyzing keyword fit and suggestions.",
+    "severity": {
+      "high": "Must fix",
+      "medium": "Should fix",
+      "low": "Optional"
+    },
+    "exportConfirm": {
+      "title": "Export with low ATS score?",
+      "message": "The current ATS score is {{score}}/100. You can still export, but reviewing the ATS suggestions first may improve delivery results.",
+      "confirm": "Export anyway",
+      "cancel": "Review first"
+    },
+    "jdCharCount": "{{count}} / {{recommended}} chars",
+    "jdLength": {
+      "ok": "This length is usually safe for ATS analysis.",
+      "warning": "This JD is a bit long. Consider keeping the core responsibilities and requirements.",
+      "danger": "This JD may be too long and could make AI analysis unstable. Remove boilerplate, benefits, and duplicate text if possible."
+    },
+    "error": {
+      "network": "Network request failed. Please check your connection and retry.",
+      "failed": "ATS analysis failed. Please retry or switch to another model."
+    },
+    "progress": {
+      "title": "Analyzing ATS match",
+      "request": "Preparing ATS analysis",
+      "parsing": "Parsing the job description",
+      "keywords": "Extracting core keywords",
+      "resume": "Analyzing resume content",
+      "matching": "Calculating ATS match",
+      "suggestions": "Generating optimization suggestions",
+      "streaming": "AI is analyzing the JD and resume...",
+      "complete": "Preparing ATS result...",
+      "received": "Received {{count}} characters from AI",
+      "successTitle": "ATS analysis complete",
+      "successDescription": "Match score, keywords, and suggestions are ready",
+      "errorTitle": "ATS analysis failed",
+      "close": "Close ATS progress",
+      "retry": "Retry"
+    }
+  },
+  "saveStatus": {
+    "saved": "Saved",
+    "unsaved": "Unsaved",
+    "saving": "Saving",
+    "savingWithDots": "Saving...",
+    "error": "Save failed",
+    "errorRetry": "Save failed, click to retry",
+    "retryTooltip": "Click to retry saving",
+    "manualSaveTooltip": "Click to save manually",
+    "justSaved": "Just saved"
+  },
+  "formatting": {
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "orderedList": "Ordered list",
+    "unorderedList": "Bulleted list",
+    "clear": "Clear formatting"
+  },
+  "export": {
+    "action": "Export",
+    "exporting": "Exporting...",
+    "pdf": "Export PDF",
+    "png": "Export PNG",
+    "markdown": "Export Markdown",
+    "json": "Export JSON",
+    "progressTitlePdf": "PDF Export",
+    "progressTitlePng": "PNG Export",
+    "progressPreparePdf": "Preparing PDF export",
+    "progressPreparePng": "Preparing PNG export",
+    "progressPagination": "Checking pagination",
+    "progressFontsReady": "Fonts ready",
+    "progressClone": "Cloning preview page",
+    "progressProcessPage": "Processing page {{current}}/{{total}}",
+    "progressBuildPage": "Preparing export page",
+    "progressUpload": "Sending render job",
+    "progressConnected": "Export task created",
+    "progressServerPrepare": "Creating export environment",
+    "progressServerFonts": "Preparing font resources",
+    "progressServerPage": "Loading export page",
+    "progressRenderingPdf": "Backend is generating PDF",
+    "progressRenderingPng": "Backend is generating PNG",
+    "progressDownload": "Preparing download",
+    "progressCompletePdf": "PDF export complete",
+    "progressCompletePng": "PNG export complete"
+  },
+  "aiTask": {
+    "diagnosis": "AI diagnosis",
+    "ats": "ATS check",
+    "translate": "resume translation",
+    "busy": "Please wait until {{task}} is complete."
+  }
+}

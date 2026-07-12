@@ -1,0 +1,25 @@
+# universal
+.DS_Store
+.vscode
+.idea
+*.log
+.agents
+
+# frontend/
+frontend/node_modules
+frontend/dist
+frontend/.env.production
+frontend/.env.preview
+
+# backend/
+backend/.env
+backend/*.log
+backend/.gocache
+backend/uploads/avatars/*.jpg
+!backend/uploads/avatars/demo-avatar.jpg
+backend/fonts/*.woff2
+backend/fonts/*.ttf
+backend/fonts/*.otf
+!backend/fonts/.gitkeep
+backend/pudding-resume-backend
+backend/pudding-resume-backend.exe

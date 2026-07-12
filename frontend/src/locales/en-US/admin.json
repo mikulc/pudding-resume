@@ -1,0 +1,325 @@
+{
+  "layout": {
+    "title": "Admin Console",
+    "subtitle": "PUDDING RESUME",
+    "backToSite": "Back to Site",
+    "logout": "Log Out"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "models": "AI Model Pool",
+    "changelogs": "Changelogs",
+    "usage": "AI Usage",
+    "audit": "Audit Logs"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of user growth, resumes and AI usage trends",
+    "loadFailed": "Failed to load",
+    "metrics": {
+      "totalUsers": "Total Users",
+      "todayNewUsers": "New Today",
+      "totalResumes": "Total Resumes",
+      "activeUsers30d": "Active Users (30d)"
+    },
+    "tokens": {
+      "todayRequests": "AI Requests Today",
+      "todayTokens": "Tokens Today",
+      "monthTokens": "Tokens This Month",
+      "totalTokens": "Total Tokens",
+      "unit": "Tokens"
+    },
+    "charts": {
+      "newUsersTrend": "New Users (Last 30 Days)",
+      "newUsersLine": "New Users",
+      "tokenTrend": "Token Usage (Last 30 Days)",
+      "tokenLine": "Tokens",
+      "modelRanking": "Top Models",
+      "requests": "Requests"
+    }
+  },
+  "users": {
+    "title": "User Management",
+    "subtitle": "Manage accounts, roles, quotas and sign-in status",
+    "userCount": "{{count}} users",
+    "searchPlaceholder": "Search by username or email...",
+    "roleAll": "All Roles",
+    "roleUser": "Regular User",
+    "roleAdmin": "Administrator",
+    "table": {
+      "user": "User",
+      "email": "Email",
+      "role": "Role",
+      "resumes": "Resumes",
+      "registeredAt": "Registered",
+      "lastLogin": "Last Login",
+      "actions": "Actions"
+    },
+    "deleted": "Deleted",
+    "notLimited": "Unlimited",
+    "empty": "No user data yet",
+    "pagination": "Page {{page}} of {{totalPages}} · {{total}} entries",
+    "detail": {
+      "title": "User Details",
+      "id": "ID",
+      "role": "Role",
+      "status": "Status",
+      "statusActive": "Active",
+      "statusDeleted": "Deleted",
+      "registeredAt": "Registered",
+      "lastLogin": "Last Login",
+      "lastActive": "Last Active",
+      "resumeCount": "Resumes",
+      "totalResumes": "Total Created",
+      "exportQuota": "Export Quota",
+      "totalExports": "Total Exports",
+      "editingTime": "Total Editing Time",
+      "dailyTokenLimit": "Daily Token Limit",
+      "monthlyTokenLimit": "Monthly Token Limit"
+    },
+    "quota": {
+      "title": "Edit Quota — {{username}}",
+      "maxResumes": "Max Resumes",
+      "exportCount": "Export Count",
+      "dailyLimit": "Daily Token Limit (0 = unlimited)",
+      "monthlyLimit": "Monthly Token Limit (0 = unlimited)",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "password": {
+      "title": "Reset Password — {{username}}",
+      "placeholder": "Enter new password (at least 6 characters)",
+      "hint": "All of this user's devices will be signed out after resetting",
+      "cancel": "Cancel",
+      "reset": "Reset"
+    },
+    "confirm": {
+      "deleteTitle": "Delete User",
+      "deleteMessage": "Delete user \"{{username}}\"? They will no longer be able to sign in.",
+      "deleteConfirm": "Delete",
+      "roleTitle": "Change Role",
+      "roleMessage": "Change the role of \"{{username}}\" to {{role}}?",
+      "roleConfirm": "Confirm Change",
+      "logoutTitle": "Force Sign Out",
+      "logoutMessage": "Force \"{{username}}\" to sign out?",
+      "logoutConfirm": "Force Sign Out"
+    },
+    "toast": {
+      "deleted": "User deleted",
+      "deleteFailed": "Failed to delete",
+      "roleUpdated": "Role updated",
+      "roleFailed": "Failed to update",
+      "forceLogout": "User signed out",
+      "forceLogoutFailed": "Operation failed",
+      "detailFailed": "Failed to load user info",
+      "quotaUpdated": "Quota updated",
+      "quotaFailed": "Failed to update",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "passwordReset": "Password reset",
+      "passwordFailed": "Failed to reset"
+    },
+    "tooltip": {
+      "detail": "Details",
+      "quota": "Quota",
+      "role": "Change Role",
+      "forceLogout": "Force Sign Out",
+      "resetPassword": "Reset Password",
+      "delete": "Delete"
+    },
+    "mobile": {
+      "delete": "Delete",
+      "noMatch": "No matching users",
+      "noMatchHint": "No users match the current filter",
+      "noUserHint": "No registered users yet",
+      "clearFilter": "Clear Filter",
+      "loadMore": "Load More"
+    }
+  },
+  "models": {
+    "title": "AI Model Pool",
+    "subtitle": "Manage available AI models, balances and enabled status",
+    "addModel": "Add Model",
+    "active": "Enabled",
+    "disabled": "Disabled",
+    "api": "API",
+    "balance": "Balance",
+    "balanceRefreshedAt": "Last refreshed: {{time}}",
+    "balanceNotRefreshed": "Not refreshed",
+    "sortOrder": "Order",
+    "userCount": "Users",
+    "createdAt": "Created {{time}}",
+    "edit": "Edit",
+    "toggleDisable": "Disable",
+    "toggleEnable": "Enable",
+    "delete": "Delete",
+    "empty": "No models yet. Click \"Add Model\" to add one.",
+    "modal": {
+      "create": "Add Model",
+      "edit": "Edit Model",
+      "cancel": "Cancel",
+      "save": "Save",
+      "createSave": "Create"
+    },
+    "fields": {
+      "name": "Display Name *",
+      "namePlaceholder": "e.g. DeepSeek V3",
+      "apiUrl": "API URL *",
+      "apiUrlPlaceholder": "https://api.deepseek.com/v1",
+      "apiKey": "API Key *",
+      "apiKeyPlaceholderCreate": "sk-xxxx",
+      "apiKeyPlaceholderEdit": "Leave blank to keep unchanged",
+      "model": "Model Name *",
+      "modelPlaceholder": "deepseek-chat",
+      "sortOrder": "Sort Order",
+      "enable": "Enable model"
+    },
+    "toast": {
+      "fillRequired": "Please fill in all required fields",
+      "created": "Model created",
+      "updated": "Model updated",
+      "failed": "Operation failed",
+      "inUse": "{{count}} users are still using this model and it cannot be deleted",
+      "deleteConfirmTitle": "Delete Model",
+      "deleteConfirmMessage": "Delete the model \"{{name}}\"?",
+      "deleteConfirm": "Delete",
+      "deleted": "Model deleted",
+      "deleteFailed": "Failed to delete",
+      "disabled": "Model disabled",
+      "enabled": "Model enabled",
+      "toggleFailed": "Operation failed"
+    }
+  },
+  "usage": {
+    "title": "AI Usage",
+    "subtitle": "View requests, tokens and model distribution by month",
+    "metrics": {
+      "todayRequests": "Requests Today",
+      "monthTokens": "Tokens This Month",
+      "totalTokens": "Total Tokens",
+      "unit": "Tokens"
+    },
+    "charts": {
+      "provider": "Provider Distribution",
+      "modelRanking": "Top Models by Usage",
+      "dailyTrend": "Daily Token Trend",
+      "tokenLine": "Tokens",
+      "topUsers": "Top 10 Token Consumers"
+    },
+    "topUsersTable": {
+      "rank": "#",
+      "user": "User",
+      "requests": "Requests",
+      "tokens": "Tokens"
+    },
+    "audit": {
+      "title": "Audit Logs",
+      "subtitle": "Track sensitive admin actions and their targets",
+      "recordCount": "{{count}} records",
+      "actionAll": "All Actions",
+      "table": {
+        "admin": "Admin",
+        "action": "Action",
+        "target": "Target",
+        "ip": "IP",
+        "time": "Time"
+      },
+      "empty": "No audit logs yet",
+      "noResult": "No matching records",
+      "loadMore": "Load More",
+      "originalAction": "Original Action",
+      "pagination": "Page {{page}} of {{totalPages}}",
+      "prev": "Previous",
+      "next": "Next",
+      "actions": {
+        "user_delete": "Delete User",
+        "quota_update": "Update Quota",
+        "role_update": "Change Role",
+        "force_logout": "Force Sign Out",
+        "password_reset": "Reset Password",
+        "model_create": "Create Model",
+        "model_update": "Update Model",
+        "model_delete": "Delete Model",
+        "model_balance_refresh": "Refresh Model Balance Cache",
+        "changelog_create": "Create Changelog",
+        "changelog_update": "Update Changelog",
+        "changelog_delete": "Delete Changelog"
+      }
+    }
+  },
+  "changelog": {
+    "title": "Changelogs",
+    "subtitle": "Maintain release notes and their visibility on the site",
+    "addLog": "Add Changelog",
+    "table": {
+      "version": "Version",
+      "title": "Title",
+      "tone": "Tone",
+      "status": "Status",
+      "sort": "Order",
+      "createdAt": "Created",
+      "actions": "Actions"
+    },
+    "published": "Published",
+    "draft": "Draft",
+    "empty": "No changelogs yet",
+    "togglePublish": "Publish",
+    "toggleUnpublish": "Unpublish",
+    "edit": "Edit",
+    "delete": "Delete",
+    "modal": {
+      "create": "Add Changelog",
+      "edit": "Edit Changelog",
+      "cancel": "Cancel",
+      "save": "Save",
+      "createSave": "Create"
+    },
+    "sections": {
+      "basicInfo": "Basic Info",
+      "changes": "Changes",
+      "publishSettings": "Publish Settings"
+    },
+    "fields": {
+      "version": "Version *",
+      "versionPlaceholder": "v1.2.0",
+      "date": "Date *",
+      "title": "Title *",
+      "titlePlaceholder": "New feature release",
+      "summary": "Summary",
+      "summaryPlaceholder": "Short description (optional)",
+      "itemsLabel": "Changes",
+      "itemPlaceholder": "Change {{index}}",
+      "addItem": "Add Item",
+      "tone": "Tone",
+      "sortOrder": "Sort Order",
+      "publishNow": "Publish immediately",
+      "publishNowDesc": "Show on the public changelog right after creation"
+    },
+    "toneOptions": {
+      "blue": "Blue",
+      "emerald": "Emerald",
+      "amber": "Amber"
+    },
+    "toast": {
+      "fillRequired": "Please fill in version, date and title",
+      "atLeastOneItem": "Add at least one change item",
+      "updated": "Changelog updated",
+      "created": "Changelog created",
+      "failed": "Operation failed",
+      "deleteConfirmTitle": "Delete Changelog",
+      "deleteConfirmMessage": "Delete \"{{title}}\"?",
+      "deleteConfirm": "Delete",
+      "deleted": "Changelog deleted",
+      "deleteFailed": "Failed to delete",
+      "unpublished": "Unpublished",
+      "published": "Published",
+      "publishFailed": "Operation failed"
+    },
+    "validation": {
+      "versionRequired": "Please enter the version",
+      "dateRequired": "Please select a date",
+      "titleRequired": "Please enter a title",
+      "itemsRequired": "Add at least one change item"
+    }
+  }
+}

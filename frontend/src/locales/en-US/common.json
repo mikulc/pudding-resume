@@ -1,0 +1,179 @@
+{
+  "save": "Save",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "delete": "Delete",
+  "edit": "Edit",
+  "create": "Create",
+  "back": "Back",
+  "close": "Close",
+  "reset": "Reset",
+  "loading": "Loading...",
+  "saving": "Saving...",
+  "saved": "Saved",
+  "saveFailed": "Save failed",
+  "deleteConfirm": "Confirm delete?",
+  "deleteSuccess": "Deleted successfully",
+  "deleteFailed": "Delete failed",
+  "noData": "No data",
+  "more": "More",
+  "search": "Search",
+  "upload": "Upload",
+  "download": "Download",
+  "export": "Export",
+  "import": "Import",
+  "preview": "Preview",
+  "copy": "Copy",
+  "copied": "Copied",
+  "yes": "Yes",
+  "no": "No",
+  "on": "On",
+  "off": "Off",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
+  "required": "Required",
+  "optional": "Optional",
+  "selectFile": "Select File",
+  "dragOrClick": "Drag and drop files here or click to upload",
+  "networkError": "Network error, please try again later",
+  "unknownError": "Unknown error",
+  "retry": "Retry",
+  "success": "Operation successful",
+  "error": "Operation failed",
+  "warning": "Warning",
+  "info": "Info",
+  "rename": "Rename",
+  "confirmDelete": "Confirm delete",
+  "deleteWarning": "This cannot be undone",
+  "permanentlyDelete": "Delete permanently",
+  "noDataYet": "No data yet",
+  "ok": "OK",
+  "uploadSuccess": "Uploaded successfully",
+  "uploadFailed": "Upload failed",
+  "exportSuccess": "Exported successfully",
+  "exportFailed": "Export failed",
+  "importSuccess": "Imported successfully",
+  "importFailed": "Import failed",
+  "resetSuccess": "Reset successfully",
+  "resetFailed": "Reset failed",
+  "operationFailed": "Operation failed",
+  "pleaseRetry": "Please try again",
+  "restoreDefault": "Restore default",
+  "changeAvatar": "Change avatar",
+  "uploadAvatar": "Upload avatar",
+  "confirmUpload": "Confirm upload",
+  "reSelect": "Select again",
+  "reselect": "Select again",
+  "saveChanges": "Save changes",
+  "confirmChange": "Confirm change",
+  "loadingData": "Loading resume data...",
+  "loadFailed": "Load failed",
+  "reload": "Reload",
+  "settings": "Settings",
+  "createNew": "Create new",
+  "noPermission": "Access denied",
+  "details": "Details",
+  "actions": "Actions",
+  "updating": "Updating...",
+  "deleting": "Deleting...",
+  "button": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "close": "Close",
+    "clear": "Clear",
+    "ok": "OK",
+    "reset": "Reset",
+    "done": "Done",
+    "backHome": "Back home",
+    "discardChanges": "Discard changes",
+    "exitWithoutSaving": "Exit without saving",
+    "saveAndExit": "Save and exit"
+  },
+  "language": {
+    "currentShort": "EN",
+    "switchToChinese": "Switch to Chinese",
+    "switchToEnglish": "Switch to English",
+    "syncFailed": "Failed to sync language preference"
+  },
+  "date": {
+    "yearLabel": "{{year}}",
+    "monthNumber": "{{month}}",
+    "thisMonth": "This month",
+    "secondsAgo": "{{count}}s ago",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "monthDayTime": "{{month}}/{{day}} {{time}}"
+  },
+  "dialog": {
+    "logout": {
+      "title": "Log out",
+      "message": "Are you sure you want to log out?",
+      "confirm": "Log out"
+    },
+    "delete": {
+      "title": "Confirm delete",
+      "message": "This cannot be undone. Continue?",
+      "confirm": "Delete"
+    },
+    "unsavedChanges": {
+      "title": "Unsaved changes",
+      "message": "You have unsaved changes. If you leave now, those changes will be lost.",
+      "loginRequiredHint": "You are not logged in, so changes cannot be saved to the cloud. Log in before saving.",
+      "localStorageHint": "Local storage is enabled, so changes can be saved to your local folder."
+    }
+  },
+  "toast": {
+    "saveSuccess": "Saved successfully",
+    "saveFailed": "Save failed",
+    "copySuccess": "Copied successfully",
+    "deleteSuccess": "Deleted successfully"
+  },
+  "validation": {
+    "required": "Required",
+    "emailInvalid": "Invalid email format",
+    "passwordTooShort": "Password must be at least 6 characters"
+  },
+  "theme": {
+    "syncFailed": "Appearance changed locally, but cloud sync failed.",
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
+  },
+  "error": {
+    "network": "Network connection failed. Check your connection and try again.",
+    "requestFailed": "Request failed",
+    "uploadFailed": "Upload failed",
+    "authExpired": "Your session has expired. Please log in again.",
+    "invalidResponse": "Unexpected server response: {{preview}}",
+    "emptyResponse": "No response body",
+    "requestFailedWithPreview": "Request failed ({{status}}): {{preview}}",
+    "requestFailedWithStatus": "Request failed ({{status}})",
+    "uploadFailedWithStatus": "Upload failed ({{status}})"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "description": "The app hit an unexpected error. Reloading the page usually fixes it."
+  },
+  "errorAccess": {
+    "linkExpired": {
+      "title": "Link expired",
+      "body": "This share link has been disabled or no longer exists.",
+      "helper": "Ask the owner for a new share link."
+    },
+    "notPublic": {
+      "title": "Access unavailable",
+      "body": "This resume is not publicly shared.",
+      "helper": "Go back home to view your own resumes, or ask the owner to enable access."
+    },
+    "deleted": {
+      "title": "Resume not found",
+      "body": "This resume may have been deleted or moved.",
+      "helper": "Go back home to view your own resumes."
+    },
+    "fallback": {
+      "title": "Access unavailable",
+      "helper": "Go back home to view your own resumes."
+    }
+  }
+}

@@ -1,0 +1,784 @@
+{
+  "title": "编辑器",
+  "save": "保存",
+  "saveSuccess": "保存成功",
+  "saveFailed": "保存失败",
+  "autoSave": "自动保存",
+  "exporting": "导出中...",
+  "exportPDF": "导出 PDF",
+  "exportPNG": "导出 PNG",
+  "exportJSON": "导出 JSON",
+  "exportMarkdown": "导出 Markdown",
+  "exportSuccess": "导出成功",
+  "exportFailed": "导出失败",
+  "undo": "撤销",
+  "redo": "重做",
+  "diagnosis": "AI 诊断",
+  "diagnosisRunning": "诊断中...",
+  "diagnosisComplete": "诊断完成",
+  "diagnosisFailed": "诊断失败",
+  "aiPolish": "AI 润色",
+  "aiPolishRunning": "润色中...",
+  "aiPolishComplete": "润色完成",
+  "aiPolishFailed": "润色失败",
+  "translate": "翻译",
+  "translating": "翻译中...",
+  "translation": {
+    "confirmTitle": "翻译为英文？",
+    "confirmMessage": "将使用 AI 把当前简历翻译为英文，原内容会被替换，建议先保存。是否继续？",
+    "confirmAction": "继续翻译",
+    "cancelAction": "取消",
+    "loadingTitle": "正在翻译简历",
+    "loadingDescription": "AI 正在将当前简历翻译为英文，请稍候",
+    "successTitle": "翻译完成",
+    "successDescription": "简历已翻译为英文，是否保留本次翻译结果？",
+    "undoAction": "撤销翻译",
+    "keepAction": "保留结果",
+    "undoChangedTitle": "无法直接撤销翻译",
+    "undoChangedDescription": "检测到翻译后已有新的编辑，为避免覆盖后续修改，请使用底部工具栏撤销。",
+    "errorTitle": "翻译失败，请重试",
+    "fallbackError": "AI 翻译服务暂时不可用"
+  },
+  "addModule": "添加模块",
+  "deleteModule": "删除模块",
+  "moveUp": "上移",
+  "moveDown": "下移",
+  "preview": "预览",
+  "edit": "编辑",
+  "template": "模板",
+  "switchTemplate": "切换模板",
+  "fontFamily": "字体",
+  "fontSize": "字号",
+  "pageMargin": "页边距",
+  "spacing": "行距",
+  "back": "返回",
+  "backToResumes": "返回我的简历",
+  "closeBanner": "关闭提示",
+  "unnamedResume": "未命名简历",
+  "noLoginWarn": "您尚未登录或未配置本地存储，刷新页面后当前编辑的数据将丢失。",
+  "loginNow": "立即登录",
+  "autoFitDone": "已自动调整为一页",
+  "autoFitMinReached": "页面设置已压缩到最小值，仍无法自动调整为一页；已保留当前压缩结果，再次点击一页纸可恢复原设置",
+  "autoFitRestored": "已恢复原始页面设置",
+  "autoFitAlreadyOne": "当前已是一页纸",
+  "loadingResume": "加载简历数据...",
+  "mobileBackTooltip": "返回",
+  "mobileBackAria": "返回",
+  "placeholder": {
+    "name": "请输入姓名",
+    "email": "请输入邮箱",
+    "phone": "请输入手机号",
+    "location": "请输入城市",
+    "jobTitle": "请输入期望岗位",
+    "summary": "请输入个人简介",
+    "school": "请输入学校名称",
+    "major": "请输入专业",
+    "degree": "请选择学历",
+    "company": "请输入公司名称",
+    "position": "请输入职位",
+    "startDate": "开始时间",
+    "endDate": "结束时间",
+    "description": "描述工作内容或经历"
+  },
+  "label": {
+    "personalInfo": "个人信息",
+    "education": "教育经历",
+    "workExperience": "工作经历",
+    "projects": "项目经验",
+    "skills": "专业技能",
+    "certificates": "证书资质",
+    "languages": "语言能力",
+    "customModule": "自定义模块"
+  },
+  "panel": {
+    "title": "编辑面板"
+  },
+  "settingsPanel": {
+    "expand": "展开设置面板",
+    "collapse": "收起面板",
+    "documentSettings": "文档设置"
+  },
+  "mobileDock": {
+    "aria": "移动端编辑器模式",
+    "edit": "编辑",
+    "settings": "设置",
+    "ats": "ATS检测",
+    "preview": "预览"
+  },
+  "customModule": {
+    "defaultName": "自定义模块",
+    "add": "添加自定义模块"
+  },
+  "customModuleEditor": {
+    "editTitle": "编辑{{name}}",
+    "content": "内容",
+    "emptyContent": "暂未填写，点击添加内容"
+  },
+  "sectionSort": {
+    "collapseBeforeDrag": "请先收起模块后再拖动排序"
+  },
+  "resumeList": "我的简历",
+  "createResume": "创建简历",
+  "noResume": "暂无简历，点击创建一份",
+  "resumeCount": "共 {{count}} 份简历",
+  "renameResume": "重命名",
+  "deleteResume": "删除简历",
+  "copyResume": "复制简历",
+  "lastSaved": "上次保存：{{time}}",
+  "sectionMenu": {
+    "renameLabel": "重命名标签",
+    "showModule": "显示模块",
+    "hideModule": "隐藏模块"
+  },
+  "sectionRename": {
+    "title": "修改名称",
+    "placeholder": "输入新名称",
+    "required": "模块名称不能为空",
+    "maxLength": "模块名称最多 12 个字",
+    "saveName": "保存名称",
+    "cancelEdit": "取消修改"
+  },
+  "fieldMenu": {
+    "renameCustomField": "修改名称",
+    "renameLabel": "重命名标签",
+    "resetLabel": "恢复默认名称",
+    "changeIcon": "更换图标",
+    "showField": "显示字段",
+    "hideField": "隐藏字段",
+    "deleteField": "删除字段"
+  },
+  "fieldCard": {
+    "pinnedFieldTooltip": "姓名字段不可拖动",
+    "iconAria": "{{label}}字段图标",
+    "contentPlaceholder": "请输入内容",
+    "rename": {
+      "title": "修改名称",
+      "placeholder": "输入新名称",
+      "required": "字段名称不能为空",
+      "maxLength": "字段名称最多 12 个字",
+      "duplicate": "同一模块内已存在相同名称"
+    }
+  },
+  "fieldIcon": {
+    "searchPlaceholder": "搜索图标...",
+    "selectAria": "选择{{label}}图标",
+    "empty": "没有匹配的图标",
+    "categories": {
+      "all": "全部",
+      "personalInfo": "个人信息",
+      "education": "教育背景",
+      "workExperience": "工作经验",
+      "skills": "技能",
+      "languages": "语言",
+      "projects": "项目",
+      "achievements": "成就证书",
+      "hobbies": "兴趣爱好",
+      "social": "社交媒体",
+      "other": "其他"
+    },
+    "icons": {
+      "user": "用户",
+      "circleUserRound": "头像",
+      "idCard": "证件",
+      "phone": "电话",
+      "mail": "邮箱",
+      "atSign": "账号",
+      "mapPin": "位置",
+      "home": "主页",
+      "graduationCap": "学历",
+      "school": "学校",
+      "bookOpen": "知识",
+      "scrollText": "课程",
+      "briefcase": "工作",
+      "building2": "公司",
+      "calendar": "日历",
+      "clock": "时间",
+      "target": "目标",
+      "code": "代码",
+      "wrench": "工具",
+      "laptop": "电脑",
+      "cpu": "芯片",
+      "server": "服务",
+      "terminal": "终端",
+      "database": "数据库",
+      "settings": "设置",
+      "languages": "语言",
+      "globe": "网页",
+      "messageCircle": "聊天",
+      "folderGit2": "项目",
+      "layers": "层级",
+      "rocket": "火箭",
+      "cloud": "云",
+      "externalLink": "外链",
+      "link": "链接",
+      "award": "奖项",
+      "trophy": "奖杯",
+      "medal": "勋章",
+      "checkCircle": "认证",
+      "star": "星星",
+      "zap": "亮点",
+      "thumbsUp": "点赞",
+      "heart": "喜欢",
+      "palette": "调色板",
+      "camera": "相机",
+      "music": "音乐",
+      "coffee": "咖啡",
+      "gamepad2": "游戏",
+      "share2": "分享",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "tag": "标签",
+      "fileText": "文档",
+      "bookmark": "书签",
+      "bell": "通知",
+      "hash": "编号"
+    }
+  },
+  "photo": {
+    "title": "证件照",
+    "alt": "证件照",
+    "upload": "点击上传",
+    "uploaded": "已上传照片",
+    "notUploaded": "未上传照片",
+    "hint": "支持任意格式，大小限制 2MB",
+    "adjust": "调整头像",
+    "description": "设置头像在简历中的显示方式",
+    "size": "尺寸",
+    "width": "宽度",
+    "height": "高度",
+    "aspectRatio": "头像比例",
+    "originalRatio": "原图比例",
+    "original": "原图",
+    "lockRatio": "锁定宽高比例",
+    "unlockRatio": "取消锁定比例",
+    "cornerRadius": "圆角",
+    "radius": {
+      "square": "直角",
+      "rounded": "圆角"
+    },
+    "error": {
+      "fileTooLarge": "图片大小不得超过 2MB"
+    }
+  },
+  "personalInfo": {
+    "addCustomField": "添加自定义信息"
+  },
+  "education": {
+    "autoHint": {
+      "fromStart": "已根据 {{degree}} 默认学制自动推算毕业时间，可手动修改",
+      "fromEnd": "已根据 {{degree}} 默认学制自动推算入学时间，可手动修改"
+    }
+  },
+  "sectionAction": {
+    "addEducation": "添加教育经历",
+    "addWork": "添加工作经历",
+    "addProject": "添加项目经历",
+    "addHonor": "添加荣誉奖项",
+    "addCertification": "添加资质证书",
+    "addPortfolio": "添加作品展示"
+  },
+  "longText": {
+    "skillsTitle": "编辑技能描述",
+    "workTitle": "编辑工作要点",
+    "projectTitle": "编辑项目要点",
+    "portfolioTitle": "编辑作品介绍",
+    "summaryTitle": "编辑个人简介"
+  },
+  "longTextEntry": {
+    "emptyAction": "暂未填写，点击添加内容",
+    "editing": "正在编辑",
+    "filledLines": "已填写 {{count}} 行内容",
+    "empty": "暂未填写",
+    "open": "展开编辑"
+  },
+  "longTextContext": {
+    "discard": {
+      "title": "放弃当前编辑？",
+      "message": "当前长文本内容有未保存的修改，切换字段会放弃这些修改。",
+      "confirm": "放弃并切换",
+      "cancel": "继续编辑"
+    }
+  },
+  "longTextEditor": {
+    "description": "支持 Markdown 格式，完成后应用到简历",
+    "aiOptimizeShort": "AI 优化",
+    "aiOptimize": {
+      "title": "AI 优化结果",
+      "description": "对比原文和优化后内容，确认后再应用。",
+      "loadingTitle": "AI 正在优化内容",
+      "loadingDescription": "结果生成前不会覆盖你的原文。",
+      "errorTitle": "AI 优化失败",
+      "errorDescription": "请稍后重试。",
+      "retry": "重新优化",
+      "restoreOriginal": "恢复原文",
+      "applyOptimization": "应用优化",
+      "optimizedAria": "优化后内容",
+      "tabs": {
+        "aria": "AI 优化结果视图",
+        "compare": "对比",
+        "optimized": "优化后",
+        "original": "原文"
+      },
+      "discard": {
+        "title": "放弃 AI 优化结果？",
+        "message": "AI 优化结果尚未应用，现在关闭会放弃该结果，简历内容保持不变。",
+        "confirm": "放弃结果",
+        "cancel": "继续查看"
+      }
+    },
+    "markdownAria": "Markdown 源码编辑区域",
+    "richTextAria": "富文本编辑区域",
+    "markdownPlaceholder": "在此编辑长文本内容，支持 **加粗**、*斜体*、__下划线__、列表等 Markdown 标记...",
+    "richTextPlaceholder": "在此编辑长文本内容，支持加粗、斜体、下划线、列表等格式...",
+    "tooltip": {
+      "markdownMode": "Markdown 模式",
+      "previewMode": "切换为预览模式",
+      "aiOptimize": "AI 优化"
+    },
+    "toast": {
+      "featureUnavailable": "开发中，功能不可用",
+      "applied": "已应用修改",
+      "selectTextForFormatting": "请先选中文字再使用格式工具",
+      "selectTextForClearFormat": "请先选中文字再清除格式",
+      "selectTextForList": "请先选中要转换为列表的文字",
+      "selectionNotRecognized": "无法识别当前选区，请重新选中文字后再试",
+      "textTooShort": "文本内容过短，请至少输入 5 个字符",
+      "aiConfigMissing": "AI 服务未配置，请先在设置中完成配置"
+    },
+    "discard": {
+      "title": "是否放弃本次修改？",
+      "message": "当前内容尚未应用，关闭后修改将不会保留。",
+      "confirm": "放弃修改",
+      "cancel": "继续编辑"
+    }
+  },
+  "diagnosisPanel": {
+    "title": "简历诊断",
+    "aiResults": "AI 诊断结果",
+    "currentSuggestions": "当前建议",
+    "suggestionCount": "{{count}} 条建议",
+    "noSuggestions": "简历内容完整，暂无优化建议",
+    "emptyDescription": "AI 将扫描简历中的空泛描述、夸大表达等问题，并给出优化建议",
+    "panelEmptyDescription": "点击底部工具栏「AI 检查」按钮，智能诊断简历表达问题",
+    "replacementPrefix": "建议替换",
+    "issueType": {
+      "overclaim": "夸大表达",
+      "vague": "空泛描述",
+      "noMetric": "缺少数据",
+      "emptyWord": "空洞词",
+      "weak": "表述偏弱"
+    },
+    "severity": {
+      "high": "必须修改",
+      "medium": "建议修改",
+      "low": "可选优化"
+    },
+    "loading": {
+      "initial": "AI 分析中...",
+      "scanning": "正在逐项扫描简历模块...",
+      "thinking": "AI 正在深度思考，请耐心等待...",
+      "reviewing": "简历内容丰富，仔细斟酌每一个细节...",
+      "polishing": "好事多磨，为您精雕细琢中...",
+      "stillWorking": "仍在努力分析，感谢您的等待"
+    },
+    "action": {
+      "supplement": "补充",
+      "clearResults": "清空诊断结果",
+      "clear": "清空",
+      "analyzing": "分析中...",
+      "startAnalysis": "开始分析",
+      "ignore": "忽略",
+      "optimize": "一键优化"
+    },
+    "popover": {
+      "title": "修改建议",
+      "original": "原句",
+      "replacement": "建议改写",
+      "noReplacement": "暂无建议改写",
+      "ignore": "忽略",
+      "replace": "一键替换"
+    },
+    "clearConfirm": {
+      "title": "清除上一次诊断结果？",
+      "message": "清除后，简历正文中的诊断高亮和当前修改建议都会关闭。",
+      "confirm": "清除结果",
+      "cancel": "取消"
+    },
+    "runConfirm": {
+      "title": "开始 AI 诊断？",
+      "message": "将使用 AI 扫描当前简历中的空泛描述、夸大表达等问题并给出优化建议，可能消耗一定额度。是否继续？",
+      "confirm": "开始诊断",
+      "cancel": "取消"
+    }
+  },
+  "diagnosisAnalysis": {
+    "sectionSeparator": "、",
+    "missingName": {
+      "title": "缺少姓名",
+      "description": "姓名是简历最基本的信息，请务必填写"
+    },
+    "missingContact": {
+      "title": "缺少联系方式",
+      "description": "至少填写手机号或邮箱，否则 HR 无法联系到你"
+    },
+    "missingPhone": {
+      "title": "建议补充手机号",
+      "description": "手机号是最直接的联系方式，建议填写"
+    },
+    "missingEmail": {
+      "title": "建议补充邮箱",
+      "description": "邮箱是正式的沟通渠道，建议填写"
+    },
+    "missingJobTarget": {
+      "title": "缺少岗位",
+      "description": "明确岗位方向可让 HR 快速判断匹配度"
+    },
+    "missingSummary": {
+      "title": "缺少个人简介",
+      "description": "一段简洁的自我评价能快速建立第一印象，建议 50-150 字"
+    },
+    "summaryTooShort": {
+      "title": "个人简介过于简短",
+      "description": "当前约 {{count}} 字，建议扩充到 50-150 字，突出核心优势和职业目标"
+    },
+    "missingEducation": {
+      "title": "缺少教育经历",
+      "description": "教育背景是简历的重要组成部分，请补充"
+    },
+    "missingSkills": {
+      "title": "缺少专业技能",
+      "description": "列出核心技能可提升简历在 ATS 系统中的匹配度"
+    },
+    "skillsTooSimple": {
+      "title": "技能描述过于简单",
+      "description": "当前约 {{count}} 字，建议补充更多技能关键词，最好按类别分组（如编程语言、框架、工具）"
+    },
+    "missingWork": {
+      "title": "缺少工作经历",
+      "description": "工作经历是简历的核心板块，有经验的候选人更受青睐"
+    },
+    "emptyWorkResults": {
+      "title": "工作经历缺少成果描述",
+      "all": "所有工作经历均未填写具体成果，这是简历最关键的缺失",
+      "some": "有 {{count}} 段工作经历未填写成果，建议补充量化数据"
+    },
+    "weakWorkResults": {
+      "title": "工作经历描述可更丰富",
+      "description": "有 {{count}} 段经历描述较少（仅 1 条），建议每条至少补充 2-3 个亮点"
+    },
+    "workMissingMetrics": {
+      "title": "工作成果缺少量化数据",
+      "all": "所有工作描述均未体现数据指标，建议加入提升百分比、完成数量等量化成果",
+      "some": "有 {{count}} 段经历建议加入量化数据（如提升 X%、完成 N 个等）"
+    },
+    "missingProjects": {
+      "title": "缺少项目经历",
+      "description": "项目经历能体现实战能力和技术深度"
+    },
+    "emptyProjectDescription": {
+      "title": "项目经历缺少描述",
+      "all": "所有项目均未填写具体描述",
+      "some": "有 {{count}} 个项目未填写描述"
+    },
+    "weakProjectDescription": {
+      "title": "项目描述可更详细",
+      "description": "有 {{count}} 个项目描述较少，建议使用 STAR 法则补充"
+    },
+    "projectMissingMetrics": {
+      "title": "项目成果缺少量化指标",
+      "description": "建议在项目描述中补充量化数据以增强说服力"
+    },
+    "missingHonorOrCert": {
+      "title": "可补充荣誉或证书",
+      "description": "如有获奖经历或专业证书（如四六级、职业资格证），可增加竞争力"
+    },
+    "duplicateWord": {
+      "title": "高频词「{{word}}」出现 {{count}} 次",
+      "description": "在 {{sections}} 中反复出现，建议使用同义替换或精简表达"
+    }
+  },
+  "diagnosisPrompt": {
+    "summary": "个人简介",
+    "skills": "专业技能",
+    "education": "教育经历",
+    "courses": "课程",
+    "workExperience": "工作经历",
+    "projects": "项目经历",
+    "honors": "荣誉奖项",
+    "certifications": "资质证书",
+    "portfolio": "作品展示",
+    "customSection": "自定义模块"
+  },
+  "diagnosisError": {
+    "failed": "诊断失败，请重试",
+    "aiNotConfigured": "请在页面设置中配置自定义 AI 接口地址和密钥",
+    "networkFailed": "网络请求失败，请检查网络连接",
+    "requestFailed": "请求失败（{{status}}）",
+    "streamUnsupported": "浏览器不支持流式响应",
+    "streamReadFailed": "读取流式响应时发生错误",
+    "unknown": "未知错误"
+  },
+  "document": {
+    "resumeTheme": {
+      "title": "简历主题",
+      "current": "当前主题",
+      "active": "使用中",
+      "switch": "更换主题",
+      "random": "随机主题"
+    },
+    "toast": {
+      "themeApplied": "主题已应用",
+      "themeApplyFailed": "主题应用失败，请重试",
+      "resetDone": "文档设置已重置",
+      "randomThemeApplied": "已随机切换为：{{name}}",
+      "randomThemeNoOther": "没有其他可用的主题"
+    },
+    "color": {
+      "title": "主题颜色",
+      "titleBackground": "标题背景",
+      "tagBackground": "标签背景",
+      "tagText": "标签文字",
+      "more": "更多颜色"
+    },
+    "colors": {
+      "blue": "蓝色",
+      "deepBlue": "深蓝",
+      "black": "黑色",
+      "terracotta": "陶土红",
+      "peacockBlue": "孔雀蓝",
+      "grassGreen": "草绿",
+      "slateBlue": "灰蓝",
+      "deepCyanBlue": "深青蓝",
+      "warmOrange": "暖橙",
+      "khakiGold": "卡其金",
+      "violet": "紫罗兰",
+      "slateGray": "石板灰",
+      "rose": "玫瑰红",
+      "celadonGreen": "青瓷绿",
+      "caramelBrown": "焦糖棕",
+      "lavenderBlue": "薰衣草蓝"
+    },
+    "page": {
+      "title": "页面设置",
+      "pageMargin": "页边距",
+      "lineSpacing": "行间距"
+    },
+    "font": {
+      "title": "字体设置",
+      "family": "字体样式",
+      "loading": "字体正在加载，完成后预览会自动更新",
+      "loadingInline": "字体加载中...",
+      "loadFailed": "字体加载较慢，已先使用备用字体",
+      "loadFailedInline": "加载较慢，使用备用字体",
+      "systemDefault": "Noto Sans SC（默认）",
+      "misansCopyright": "ⓘ MiSans 字体版权归小米公司所有",
+      "baseSize": "基础字号",
+      "sectionTitleSize": "标题字号",
+      "entryTitleSize": "条目标题行",
+      "options": {
+        "systemDefault": "Noto Sans SC（默认）",
+        "misans": "MiSans",
+        "alibabaPuhuiti": "阿里巴巴普惠体",
+        "sourceHanSerif": "思源宋体",
+        "notoSerif": "Noto Serif SC"
+      }
+    },
+    "layout": {
+      "title": "布局",
+      "fieldLabel": "字段标签",
+      "iconMode": "图标模式",
+      "textMode": "文字模式",
+      "photoLayout": "头像布局",
+      "photoRight": "头像在右",
+      "photoLeft": "头像在左",
+      "titleLayout": "标题布局",
+      "compact": "紧凑横排",
+      "threeColumn": "三栏对齐",
+      "stacked": "上下分层"
+    },
+    "watermark": {
+      "title": "水印设置",
+      "content": "水印内容",
+      "contentPlaceholder": "输入水印文字...",
+      "opacity": "透明度",
+      "fontSize": "字体大小",
+      "rotation": "旋转角度",
+      "color": "水印颜色",
+      "colors": {
+        "lightGray": "浅灰",
+        "mediumGray": "中灰",
+        "red": "红色",
+        "blue": "蓝色",
+        "green": "绿色"
+      },
+      "density": {
+        "title": "水印密度",
+        "low": "稀疏",
+        "medium": "适中",
+        "high": "密集"
+      },
+      "restoreDefault": "恢复"
+    },
+    "reset": {
+      "title": "重置设置",
+      "message": "确定要重置所有文档设置吗？",
+      "confirm": "确认重置",
+      "button": "重置文档设置"
+    }
+  },
+  "themePicker": {
+    "all": "全部",
+    "loading": "加载主题中...",
+    "empty": "暂无可用主题",
+    "emptyCategory": "暂无该分类的主题",
+    "selectAria": "选择主题：{{name}}",
+    "current": "当前",
+    "selected": "已选择：{{name}}",
+    "selectOne": "请选择一个主题",
+    "apply": "应用主题",
+    "applying": "应用主题中...",
+    "currentIs": "当前：{{name}}"
+  },
+  "previewToolbar": {
+    "expand": "展开预览工具栏",
+    "drag": "拖拽工具栏",
+    "moveCanvas": "移动画布",
+    "undo": "撤销",
+    "redo": "重做",
+    "zoomOut": "缩小",
+    "resetZoom": "重置缩放到 100%",
+    "zoomIn": "放大",
+    "fitWidth": "适应宽度",
+    "fitPage": "适应页面",
+    "smartOnePage": "一页纸",
+    "aiDiagnosis": "AI 诊断",
+    "atsCheck": "ATS 检测"
+  },
+  "saveStatus": {
+    "saved": "已保存",
+    "unsaved": "未保存",
+    "saving": "保存中",
+    "savingWithDots": "保存中...",
+    "error": "保存失败",
+    "errorRetry": "保存失败，点击重试",
+    "retryTooltip": "点击重试保存",
+    "manualSaveTooltip": "点击手动保存",
+    "justSaved": "刚刚保存"
+  },
+  "formatting": {
+    "bold": "加粗",
+    "italic": "斜体",
+    "underline": "下划线",
+    "orderedList": "有序列表",
+    "unorderedList": "无序列表",
+    "clear": "清除格式"
+  },
+  "export": {
+    "action": "导出",
+    "exporting": "导出中...",
+    "pdf": "导出 PDF",
+    "png": "导出 PNG",
+    "markdown": "导出 Markdown",
+    "json": "导出 JSON",
+    "progressTitlePdf": "PDF 导出",
+    "progressTitlePng": "PNG 导出",
+    "progressPreparePdf": "准备 PDF 导出",
+    "progressPreparePng": "准备 PNG 导出",
+    "progressPagination": "确认分页结果",
+    "progressFontsReady": "字体准备完成",
+    "progressClone": "克隆预览页面",
+    "progressProcessPage": "处理第 {{current}}/{{total}} 页",
+    "progressBuildPage": "整理导出页面",
+    "progressUpload": "发送后端渲染任务",
+    "progressConnected": "导出任务已创建",
+    "progressServerPrepare": "创建导出环境",
+    "progressServerFonts": "准备字体资源",
+    "progressServerPage": "加载导出页面",
+    "progressRenderingPdf": "后端正在生成 PDF",
+    "progressRenderingPng": "后端正在生成 PNG",
+    "progressDownload": "准备下载文件",
+    "progressCompletePdf": "PDF 导出完成",
+    "progressCompletePng": "PNG 导出完成"
+  },
+  "atsPanel": {
+    "title": "ATS 检测",
+    "description": "粘贴岗位 JD，分析关键词匹配、内容缺口和 ATS 可读性。",
+    "jdLabel": "岗位 JD",
+    "jdPlaceholder": "粘贴岗位 JD，分析关键词匹配和内容缺口",
+    "jobDescriptionTooShort": "请粘贴更完整的岗位 JD 后再分析。",
+    "analyze": "分析 ATS 匹配",
+    "analyzing": "分析中...",
+    "clear": "清空 ATS 结果",
+    "score": "ATS 匹配分",
+    "matchedKeywords": "已匹配关键词",
+    "missingKeywords": "缺失关键词",
+    "formatIssues": "格式风险",
+    "contentSuggestions": "内容建议",
+    "noMatchedKeywords": "暂无已匹配关键词。",
+    "noMissingKeywords": "未发现明显缺失关键词。",
+    "noFormatIssues": "未发现明显格式风险。",
+    "noContentSuggestions": "暂无内容建议。",
+    "history": "最近 JD 分析",
+    "clearHistory": "清空历史",
+    "clearHistoryAction": "清空",
+    "recentlyAnalyzed": "最近分析",
+    "reuseHistory": "重新使用",
+    "expandHistory": "展开更多 {{count}} 条",
+    "collapseHistory": "收起记录",
+    "focusSection": "跳到模块",
+    "copyHint": "复制提示",
+    "copied": "已复制",
+    "copyFailed": "复制失败",
+    "recommendedLayouts": "ATS 友好模板",
+    "applyLayout": "应用",
+    "layoutApplied": "模板已应用",
+    "emptyTitle": "暂无 ATS 分析结果",
+    "emptyDescription": "粘贴岗位 JD 后开始分析，查看关键词匹配与优化建议。",
+    "severity": {
+      "high": "必须修改",
+      "medium": "建议修改",
+      "low": "可选优化"
+    },
+    "exportConfirm": {
+      "title": "ATS 分数偏低，仍要导出吗？",
+      "message": "当前 ATS 分数为 {{score}}/100。你可以继续导出，但先处理 ATS 建议可能会提高投递效果。",
+      "confirm": "仍然导出",
+      "cancel": "先看建议"
+    },
+    "jdCharCount": "{{count}} / {{recommended}} 字符",
+    "jdLength": {
+      "ok": "",
+      "warning": "这段 JD 有点长，建议保留核心职责和任职要求。",
+      "danger": "这段 JD 可能过长，会增加 AI 分析不稳定的概率。建议删除福利、公司介绍和重复文本。"
+    },
+    "error": {
+      "network": "网络请求失败，请检查连接后重试。",
+      "failed": "ATS 分析失败，请重试或切换其他模型。"
+    },
+    "progress": {
+      "title": "正在分析 ATS 匹配",
+      "request": "正在准备 ATS 分析",
+      "parsing": "正在解析岗位 JD",
+      "keywords": "正在提取核心关键词",
+      "resume": "正在分析简历内容",
+      "matching": "正在计算 ATS 匹配度",
+      "suggestions": "正在生成优化建议",
+      "streaming": "AI 正在分析 JD 和简历...",
+      "complete": "正在整理 ATS 结果...",
+      "received": "已接收 AI 返回 {{count}} 个字符",
+      "successTitle": "ATS 分析完成",
+      "successDescription": "已生成匹配分、关键词和优化建议",
+      "errorTitle": "ATS 分析失败",
+      "close": "关闭 ATS 进度",
+      "retry": "重试"
+    }
+  },
+  "aiTask": {
+    "diagnosis": "AI 诊断",
+    "ats": "ATS 检测",
+    "translate": "翻译简历",
+    "busy": "请等待当前{{task}}完成后再操作。"
+  }
+}

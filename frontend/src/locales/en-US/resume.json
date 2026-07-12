@@ -1,0 +1,385 @@
+{
+  "module": {
+    "personalInfo": "Personal Info",
+    "education": "Education",
+    "workExperience": "Work Experience",
+    "projects": "Projects",
+    "skills": "Skills & Expertise",
+    "certificates": "Certificates",
+    "languages": "Languages",
+    "custom": "Custom Module",
+    "honors": "Honors & Awards",
+    "portfolio": "Portfolio"
+  },
+  "field": {
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "location": "Location",
+    "jobTitle": "Desired Position",
+    "jobStatus": "Status",
+    "summary": "Summary",
+    "school": "School",
+    "major": "Major",
+    "degree": "Degree",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "present": "Present",
+    "company": "Company",
+    "position": "Position",
+    "workLocation": "Work Location",
+    "workHighlights": "Responsibilities and Results",
+    "description": "Description",
+    "skills": "Professional Skills",
+    "skillName": "Skill Name",
+    "skillLevel": "Proficiency",
+    "projectName": "Project Name",
+    "projectRole": "Role",
+    "projectLink": "Project Link",
+    "projectHighlights": "Project Highlights and Contributions",
+    "honorName": "Award Name",
+    "awardDate": "Award Date",
+    "certName": "Certificate Name",
+    "certDate": "Issue Date",
+    "languageName": "Language",
+    "languageLevel": "Proficiency",
+    "portfolioName": "Portfolio Item",
+    "portfolioLink": "Portfolio Link",
+    "portfolioDescription": "Portfolio Description",
+    "moduleTitle": "Module Title",
+    "customFieldName": "Custom Field {{index}}"
+  },
+  "placeholder": {
+    "previewName": "Your Name",
+    "schoolName": "School Name",
+    "companyName": "Company Name",
+    "nameExample": "Alex Chen",
+    "phoneExample": "(555) 123-4567",
+    "emailExample": "alex@example.com",
+    "locationExample": "San Francisco",
+    "jobTitleExample": "Senior Frontend Engineer",
+    "schoolExample": "Stanford University",
+    "majorExample": "Computer Science",
+    "degreeExample": "Bachelor / Master / PhD",
+    "degreeInput": "Select or enter degree",
+    "educationStartDateExample": "2018",
+    "educationEndDateExample": "2022",
+    "companyExample": "Acme Inc.",
+    "positionExample": "Frontend Engineer",
+    "workLocationExample": "San Francisco",
+    "workStartDateExample": "2022",
+    "presentExample": "Present",
+    "workHighlightsExample": "Designed the frontend architecture and led core module development...",
+    "projectNameExample": "E-commerce Platform Refactor",
+    "projectRoleExample": "Frontend Lead",
+    "projectStartDateExample": "2023-01",
+    "projectEndDateExample": "2023-06",
+    "projectHighlightsExample": "Rebuilt with React and TypeScript, improving performance by 40%...",
+    "honorNameExample": "First Prize, National Mathematical Modeling Contest",
+    "certNameExample": "AWS Solutions Architect",
+    "portfolioNameExample": "Personal blog website",
+    "skillsExample": "React, TypeScript, Node.js, Tailwind CSS...",
+    "summaryExample": "Frontend engineer with 5 years of experience specializing in the React ecosystem...",
+    "jobStatus": "Select or enter status"
+  },
+  "status": {
+    "available": "Available immediately",
+    "employed": "Currently employed",
+    "newGraduate": "New graduate"
+  },
+  "degree": {
+    "associate": "Associate Degree",
+    "bachelor": "Bachelor's Degree",
+    "master": "Master's Degree",
+    "mba": "MBA",
+    "phd": "PhD"
+  },
+  "watermark": {
+    "defaultContent": "Pudding Resume"
+  },
+  "photo": {
+    "alt": "Profile photo"
+  },
+  "import": {
+    "button": "Import resume",
+    "storageRequired": "Log in or configure a local storage folder before importing.",
+    "failedRetry": "Import failed. Please try again.",
+    "savedLocal": "\"{{name}}\" saved locally",
+    "imported": "\"{{name}}\" imported successfully",
+    "saveFailed": "Save failed",
+    "saveFailedRetry": "Save failed. Please try again.",
+    "saveLocalFailed": "Failed to save locally. Check local folder permissions.",
+    "parsingFormat": "Parsing {{format}}...",
+    "options": {
+      "pdf": {
+        "title": "Import PDF",
+        "description": "Extract resume content with AI"
+      },
+      "json": {
+        "title": "Import JSON",
+        "description": "Parse structured resume data directly"
+      },
+      "word": {
+        "title": "Import Word",
+        "description": "Supports .doc and .docx files"
+      },
+      "markdown": {
+        "title": "Import Markdown",
+        "description": "Supports .md and .markdown files"
+      }
+    },
+    "error": {
+      "jsonInvalid": "Invalid JSON. Check the file contents.",
+      "jsonEmpty": "The JSON file is empty or malformed.",
+      "jsonMissingRequiredFields": "The JSON file is missing required resume fields (at least personalInfo.fullName).",
+      "pdfNoText": "No text was detected in this PDF. It may be a scanned file or image-only PDF.",
+      "wordNoText": "No text was detected in this Word file.",
+      "markdownEmpty": "The Markdown file is empty.",
+      "aiParseFailed": "AI parsing failed",
+      "smartParseFailed": "Smart parsing failed: {{message}}"
+    },
+    "aiParsePrompt": "Extract the following resume text into structured JSON resume data.\n\nRequirements:\n1. Extract personal information (name, phone, email, status, target role, city, etc.)\n2. Extract education history (school, major, degree, start and end dates)\n3. Extract work experience (company, position, dates, responsibilities)\n4. Extract project experience (project name, role, dates, description)\n5. Extract skills into the skills string\n6. Extract honors, certifications, and portfolio items when available\n7. Extract the professional summary or self-evaluation into the summary field\n8. Use \"YYYY-MM\" or \"YYYY-MM-DD\" for all dates\n9. If a field is missing from the source text, return an empty string or empty array for that field\n\nResume text:\n{{text}}\n\nReturn only a valid JSON object. Do not include markdown code fences or explanatory text. The JSON structure is:\n{\n  \"personalInfo\": { \"fullName\": \"\", \"phone\": \"\", \"email\": \"\", \"photoUrl\": \"\", \"jobStatus\": \"\", \"jobTarget\": \"\", \"location\": \"\" },\n  \"summary\": \"\",\n  \"education\": [{ \"id\": \"\", \"school\": \"\", \"major\": \"\", \"degree\": \"\", \"startDate\": \"\", \"endDate\": \"\" }],\n  \"skills\": \"\",\n  \"workExperience\": [{ \"id\": \"\", \"company\": \"\", \"position\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"highlights\": \"\" }],\n  \"projects\": [{ \"id\": \"\", \"name\": \"\", \"role\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"highlights\": \"\" }],\n  \"honors\": [],\n  \"certifications\": [],\n  \"portfolio\": []\n}"
+  },
+  "export": {
+    "defaultFileName": "Resume",
+    "untitledName": "Untitled",
+    "documentTitle": "Resume Export",
+    "previewNotFound": "Preview area not found",
+    "fontLoadTimeout": "Font loading timed out. The {{format}} layout may differ from the preview.",
+    "jsonSuccess": "JSON exported",
+    "jsonFailed": "JSON export failed",
+    "markdownSuccess": "Markdown exported",
+    "markdownFailed": "Markdown export failed",
+    "pdfFailed": "PDF export failed. Please try again later.",
+    "pngFailed": "PNG export failed. Please try again later."
+  },
+  "share": {
+    "title": "Share",
+    "enable": "Enable Sharing",
+    "disable": "Disable Sharing",
+    "copyLink": "Copy Link",
+    "linkCopied": "Link copied",
+    "shareLink": "Share Link",
+    "preview": "Preview Shared Page",
+    "qrCode": "Share QR Code",
+    "qrCodeHint": "Scan the QR code to view this resume",
+    "permissionSettings": "Permission settings",
+    "enableDesensitized": "Desensitized sharing",
+    "disableDesensitized": "Disable desensitization",
+    "desensitizedEnabled": "Desensitized sharing enabled",
+    "desensitizedDisabled": "Desensitized sharing disabled",
+    "settingsTitle": "Share permissions",
+    "settingsDescription": "Choose who can access this resume and what visitors can do.",
+    "settingsSaved": "Share settings saved",
+    "settingsFailed": "Failed to save share settings",
+    "saveSettings": "Save settings",
+    "createFailed": "Failed to create share settings",
+    "copyFailed": "Copy failed. Please copy manually.",
+    "copyFailedRetry": "Copy failed. Please try again later.",
+    "copying": "Copying...",
+    "copyAndEdit": "Copy and edit",
+    "localResumeCannotShare": "Local resumes cannot be shared. Upload this resume to the cloud first.",
+    "localResumeCannotCopyLink": "Local resumes cannot generate share links. Upload this resume to the cloud first.",
+    "localResumeCannotShowQrCode": "Local resumes cannot generate QR codes. Upload this resume to the cloud first.",
+    "localResumeCannotConfigurePermissions": "Local resumes do not support permission settings. Upload this resume to the cloud first.",
+    "localResumeCannotDesensitize": "Local resumes cannot use desensitized sharing. Upload this resume to the cloud first.",
+    "closeCopyEditHint": "Close notice",
+    "exportResume": "Export resume",
+    "exportDisabled": "Export disabled",
+    "exportDisabledTooltip": "The owner has not enabled export permission.",
+    "badge": {
+      "readOnly": "Read only",
+      "copyEditable": "Copyable"
+    },
+    "copyEditHint": {
+      "loggedIn": "You are viewing a shared resume. Copy it to your account before editing.",
+      "loggedOut": "This resume can be copied — log in to copy it to your account."
+    },
+    "permission": {
+      "title": "Access scope",
+      "selfOnly": {
+        "title": "Only me",
+        "description": "Only you can view this resume after logging in."
+      },
+      "anyoneWithLink": {
+        "title": "Anyone with the link",
+        "description": "Anyone with the share link can access it."
+      }
+    },
+    "access": {
+      "title": "Link permissions",
+      "viewOnly": {
+        "title": "View only",
+        "description": "View the resume without logging in."
+      },
+      "editable": {
+        "title": "Copyable",
+        "description": "Log in to copy it to your own account."
+      }
+    },
+    "desensitize": {
+      "title": "Privacy protection",
+      "enabled": {
+        "title": "Desensitize personal info before sharing",
+        "description": "Hide name, phone, email, photo, and custom personal fields."
+      }
+    },
+    "otherSettings": {
+      "title": "Other settings"
+    },
+    "exportPermission": {
+      "title": "Allowed actions",
+      "allowExport": {
+        "title": "Allow export",
+        "description": "People with the link can export the resume."
+      }
+    }
+  },
+  "list": {
+    "myResumes": "My Resumes",
+    "resumeCount": "{{count}} resumes",
+    "pageDescription": "Manage, create, and maintain your resumes",
+    "selectedResume": "Selected: {{name}}",
+    "selectOneResume": "Select a resume",
+    "unnamedResume": "Untitled resume",
+    "newResume": "New Resume",
+    "newResumeDesc": "Start from a blank resume",
+    "copyResume": "Copy Resume",
+    "copyName": "{{name}} - Copy",
+    "renameResume": "Rename",
+    "deleteResume": "Delete Resume",
+    "loadingResumes": "Loading resumes...",
+    "loadFailed": "Failed to load",
+    "loadFailedDesc": "Failed to load the resume list. Check your network connection and try again.",
+    "reload": "Reload",
+    "deleted": "Resume deleted",
+    "deleteFailed": "Delete failed. Please try again.",
+    "copied": "Resume copied",
+    "localCopied": "Local resume copied",
+    "copyFailed": "Copy failed. Please try again.",
+    "copyLocalFailed": "Copy failed. Check local folder permissions.",
+    "renamed": "Renamed successfully",
+    "renameFailed": "Rename failed. Please try again.",
+    "renameLocalFailed": "Rename failed. Check local folder permissions.",
+    "uploadedToCloud": "{name} uploaded to the cloud",
+    "uploadFailed": "Upload failed. Please try again.",
+    "confirmDeleteTitle": "Confirm Delete",
+    "confirmDeleteMerged": "Delete \"{name}\"? This will remove both the cloud copy and the local archive.",
+    "confirmDeleteLocal": "Delete local file \"{name}\"? The file will be permanently removed.",
+    "confirmDeleteCloud": "Delete \"{name}\"? This cannot be undone.",
+    "confirmDeleteText": "Delete",
+    "updatedAt": "Updated",
+    "rename": "Rename",
+    "confirm": "Confirm",
+    "copy": "Copy",
+    "localStorageHint": "Configure local storage to save resumes in a local folder and edit anytime without logging in.",
+    "goConfig": "Configure",
+    "settings": "Settings",
+    "moreActions": "More actions",
+    "moreActionsAria": "More actions",
+    "copyResumeText": "Copy resume",
+    "selectResume": "Select resume",
+    "renameResumeText": "Rename",
+    "deleteResumeText": "Delete",
+    "uploadToCloud": "Upload to cloud",
+    "alreadyInCloud": "Synced",
+    "localOnly": "Local only",
+    "noCopyableResume": "No resumes available to copy",
+    "deleteCannotUndo": "This cannot be undone.",
+    "loginOrLocalRequired": "Log in or enable local storage before saving your resume.",
+    "fixCurrentModuleBeforeSave": "Fix the current section before saving.",
+    "saveFailedRetry": "Save failed. Please try again later."
+  },
+  "create": {
+    "enteringEditor": "Opening the editor...",
+    "description": "Choose how you want to start your resume.",
+    "createNow": "Create now",
+    "blank": {
+      "title": "Blank resume",
+      "description": "Start with the default structure and fill it freely."
+    },
+    "fromTemplate": {
+      "title": "Start from a template",
+      "description": "Choose an existing theme to create a resume quickly.",
+      "empty": "No themes available"
+    }
+  },
+  "templateNames": {
+    "skyveil": "Light Blue Bar",
+    "cyanblu": "Cyan Round Icons",
+    "ordrin": "Black Line Minimal",
+    "leftSidebarTwoColumn": "Teal Sidebar",
+    "centerline": "Centered Single Column",
+    "classicHorizontal": "Classic Horizontal",
+    "blueprintIcons": "Blueprint Icons",
+    "monochromeRings": "Monochrome Bar",
+    "tealRibbonWave": "Teal Ribbon Wave",
+    "blueBannerIcons": "Blue Banner Icons",
+    "azureSidebar": "Azure Sidebar",
+    "unknownLayout": "Unknown layout",
+    "pudding": "Light Blue Bar",
+    "qingse": "Cyan Round Icons",
+    "odin": "Black Line Minimal"
+  },
+  "pageTitle": "Pudding Resume - Online Resume Editor",
+  "invalidShareLink": "Invalid share link",
+  "requireLogin": "Login required",
+  "notPublic": "This resume is not publicly shared",
+  "loadResume": "Loading resume...",
+  "cantLoadResume": "Unable to load resume",
+  "aiUsage": {
+    "title": "AI Usage",
+    "back": "Back",
+    "description": "Track your AI token consumption, request count, and recent call history.",
+    "monthlyTrend": "Monthly Token Consumption Trend",
+    "monthlyTrendDesc": "Daily token consumption stacked by model for the current month.",
+    "noTrendData": "No trend data available",
+    "recentCalls": "Recent AI Call History",
+    "recentCallsDesc": "Shows 10 recent call records per page, with pagination for additional records.",
+    "noCallRecords": "No call records yet",
+    "loadingFailed": "Failed to load usage data",
+    "loadingUsage": "Loading usage data...",
+    "noRecords": "No AI usage records yet",
+    "noRecordsHint": "Once you use AI features, token consumption and call trends will appear here.",
+    "table": {
+      "time": "Time",
+      "feature": "Feature",
+      "providerModel": "Provider / Model",
+      "promptTokens": "Prompt Tokens",
+      "completionTokens": "Completion Tokens",
+      "reasoningTokens": "Reasoning Tokens",
+      "totalTokens": "Total Tokens",
+      "status": "Status"
+    },
+    "feature": {
+      "service": "Resume Generation",
+      "diagnose": "Resume Diagnosis",
+      "polish": "Text Polish",
+      "ats": "ATS Check"
+    },
+    "status": {
+      "failed": "Failed",
+      "tracked": "Tracked",
+      "unknown": "Unknown"
+    },
+    "tooltip": {
+      "date": "Date",
+      "prompt": "Prompt",
+      "completion": "Completion",
+      "reasoning": "Reasoning",
+      "requests": "Requests"
+    },
+    "metric": {
+      "prompt": "Prompt",
+      "completion": "Completion",
+      "reasoning": "Reasoning",
+      "total": "Total"
+    },
+    "pagination": {
+      "range": "Showing {{start}}-{{end}} of {{total}}",
+      "page": "Page {{page}} / {{totalPages}}",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  }
+}

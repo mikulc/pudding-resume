@@ -1,0 +1,7 @@
+packages:
+  - '.'
+
+allowBuilds:
+  core-js: false
+  esbuild: true
+  live2d-widget: true

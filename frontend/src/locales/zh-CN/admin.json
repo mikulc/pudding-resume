@@ -1,0 +1,325 @@
+{
+  "layout": {
+    "title": "后台管理",
+    "subtitle": "PUDDING RESUME",
+    "backToSite": "返回前台",
+    "logout": "退出登录"
+  },
+  "nav": {
+    "dashboard": "仪表盘",
+    "users": "用户管理",
+    "models": "AI 模型池",
+    "changelogs": "更新日志",
+    "usage": "AI 用量统计",
+    "audit": "审计日志"
+  },
+  "dashboard": {
+    "title": "仪表盘",
+    "subtitle": "概览用户增长、简历与 AI 使用趋势",
+    "loadFailed": "加载失败",
+    "metrics": {
+      "totalUsers": "总用户数",
+      "todayNewUsers": "今日新增",
+      "totalResumes": "总简历数",
+      "activeUsers30d": "30 天活跃用户"
+    },
+    "tokens": {
+      "todayRequests": "今日 AI 请求",
+      "todayTokens": "今日 Token",
+      "monthTokens": "本月 Token",
+      "totalTokens": "累计 Token",
+      "unit": "Token"
+    },
+    "charts": {
+      "newUsersTrend": "近 30 天新增用户",
+      "newUsersLine": "新增用户",
+      "tokenTrend": "近 30 天 Token 消耗",
+      "tokenLine": "Token",
+      "modelRanking": "热门模型排行",
+      "requests": "请求次数"
+    }
+  },
+  "users": {
+    "title": "用户管理",
+    "subtitle": "管理账户、角色、配额与登录状态",
+    "userCount": "{{count}} 个用户",
+    "searchPlaceholder": "搜索用户名或邮箱...",
+    "roleAll": "所有角色",
+    "roleUser": "普通用户",
+    "roleAdmin": "管理员",
+    "table": {
+      "user": "用户",
+      "email": "邮箱",
+      "role": "角色",
+      "resumes": "简历数",
+      "registeredAt": "注册时间",
+      "lastLogin": "最近登录",
+      "actions": "操作"
+    },
+    "deleted": "已删除",
+    "notLimited": "不限",
+    "empty": "暂无用户数据",
+    "pagination": "第 {{page}}/{{totalPages}} 页，共 {{total}} 条",
+    "detail": {
+      "title": "用户详情",
+      "id": "ID",
+      "role": "角色",
+      "status": "状态",
+      "statusActive": "正常",
+      "statusDeleted": "已删除",
+      "registeredAt": "注册时间",
+      "lastLogin": "最近登录",
+      "lastActive": "最近活跃",
+      "resumeCount": "简历数",
+      "totalResumes": "累计创建",
+      "exportQuota": "导出次数(配额)",
+      "totalExports": "累计导出",
+      "editingTime": "累计编辑时长",
+      "dailyTokenLimit": "日 Token 限额",
+      "monthlyTokenLimit": "月 Token 限额"
+    },
+    "quota": {
+      "title": "修改配额 — {{username}}",
+      "maxResumes": "最大简历数",
+      "exportCount": "导出次数",
+      "dailyLimit": "每日 Token 限额 (0=不限)",
+      "monthlyLimit": "每月 Token 限额 (0=不限)",
+      "cancel": "取消",
+      "save": "保存"
+    },
+    "password": {
+      "title": "重置密码 — {{username}}",
+      "placeholder": "输入新密码 (至少 6 位)",
+      "hint": "重置后用户所有设备将退出登录",
+      "cancel": "取消",
+      "reset": "重置"
+    },
+    "confirm": {
+      "deleteTitle": "删除用户",
+      "deleteMessage": "确定要删除用户「{{username}}」吗？删除后用户将无法登录。",
+      "deleteConfirm": "删除",
+      "roleTitle": "修改角色",
+      "roleMessage": "确定将「{{username}}」的角色改为 {{role}} 吗？",
+      "roleConfirm": "确认修改",
+      "logoutTitle": "强制下线",
+      "logoutMessage": "确定强制「{{username}}」下线吗？",
+      "logoutConfirm": "确认下线"
+    },
+    "toast": {
+      "deleted": "用户已删除",
+      "deleteFailed": "删除失败",
+      "roleUpdated": "角色已更新",
+      "roleFailed": "更新失败",
+      "forceLogout": "用户已强制下线",
+      "forceLogoutFailed": "操作失败",
+      "detailFailed": "获取用户信息失败",
+      "quotaUpdated": "配额已更新",
+      "quotaFailed": "更新失败",
+      "passwordTooShort": "密码至少 6 位",
+      "passwordReset": "密码已重置",
+      "passwordFailed": "重置失败"
+    },
+    "tooltip": {
+      "detail": "详情",
+      "quota": "配额",
+      "role": "角色切换",
+      "forceLogout": "强制下线",
+      "resetPassword": "重置密码",
+      "delete": "删除"
+    },
+    "mobile": {
+      "delete": "删除",
+      "noMatch": "没有匹配的用户",
+      "noMatchHint": "当前没有符合筛选条件的用户",
+      "noUserHint": "还没有任何注册用户",
+      "clearFilter": "清除筛选",
+      "loadMore": "加载更多"
+    }
+  },
+  "models": {
+    "title": "AI 模型池",
+    "subtitle": "管理可用的 AI 模型、余额与启用状态",
+    "addModel": "新增模型",
+    "active": "启用",
+    "disabled": "禁用",
+    "api": "API",
+    "balance": "余额",
+    "balanceRefreshedAt": "最后刷新: {{time}}",
+    "balanceNotRefreshed": "未刷新",
+    "sortOrder": "排序",
+    "userCount": "使用人数",
+    "createdAt": "创建于 {{time}}",
+    "edit": "编辑",
+    "toggleDisable": "禁用",
+    "toggleEnable": "启用",
+    "delete": "删除",
+    "empty": "暂无模型，点击“新增模型”添加",
+    "modal": {
+      "create": "新增模型",
+      "edit": "编辑模型",
+      "cancel": "取消",
+      "save": "保存",
+      "createSave": "创建"
+    },
+    "fields": {
+      "name": "显示名称 *",
+      "namePlaceholder": "如：DeepSeek V3",
+      "apiUrl": "API URL *",
+      "apiUrlPlaceholder": "https://api.deepseek.com/v1",
+      "apiKey": "API Key *",
+      "apiKeyPlaceholderCreate": "sk-xxxx",
+      "apiKeyPlaceholderEdit": "留空则不修改",
+      "model": "模型名 *",
+      "modelPlaceholder": "deepseek-chat",
+      "sortOrder": "排序权重",
+      "enable": "启用模型"
+    },
+    "toast": {
+      "fillRequired": "请填写所有必填字段",
+      "created": "模型已创建",
+      "updated": "模型已更新",
+      "failed": "操作失败",
+      "inUse": "有 {{count}} 个用户正在使用此模型，无法删除",
+      "deleteConfirmTitle": "删除模型",
+      "deleteConfirmMessage": "确定删除模型「{{name}}」吗？",
+      "deleteConfirm": "删除",
+      "deleted": "模型已删除",
+      "deleteFailed": "删除失败",
+      "disabled": "模型已禁用",
+      "enabled": "模型已启用",
+      "toggleFailed": "操作失败"
+    }
+  },
+  "usage": {
+    "title": "AI 用量统计",
+    "subtitle": "按月份查看请求、Token 与模型使用分布",
+    "metrics": {
+      "todayRequests": "今日请求",
+      "monthTokens": "本月 Token",
+      "totalTokens": "累计 Token",
+      "unit": "Token"
+    },
+    "charts": {
+      "provider": "Provider 分布",
+      "modelRanking": "模型用量排行",
+      "dailyTrend": "每日 Token 趋势",
+      "tokenLine": "Token",
+      "topUsers": "Token 消耗 Top 10"
+    },
+    "topUsersTable": {
+      "rank": "#",
+      "user": "用户",
+      "requests": "请求次数",
+      "tokens": "Token"
+    },
+    "audit": {
+      "title": "审计日志",
+      "subtitle": "追踪后台敏感操作与目标记录",
+      "recordCount": "{{count}} 条记录",
+      "actionAll": "所有操作",
+      "table": {
+        "admin": "管理员",
+        "action": "操作",
+        "target": "目标",
+        "ip": "IP",
+        "time": "时间"
+      },
+      "empty": "暂无审计日志",
+      "noResult": "没有匹配记录",
+      "loadMore": "加载更多",
+      "originalAction": "原始操作",
+      "pagination": "第 {{page}}/{{totalPages}} 页",
+      "prev": "上一页",
+      "next": "下一页",
+      "actions": {
+        "user_delete": "删除用户",
+        "quota_update": "修改配额",
+        "role_update": "修改角色",
+        "force_logout": "强制下线",
+        "password_reset": "重置密码",
+        "model_create": "创建模型",
+        "model_update": "更新模型",
+        "model_delete": "删除模型",
+        "model_balance_refresh": "刷新模型余额缓存",
+        "changelog_create": "创建日志",
+        "changelog_update": "更新日志",
+        "changelog_delete": "删除日志"
+      }
+    }
+  },
+  "changelog": {
+    "title": "更新日志",
+    "subtitle": "维护版本发布记录与前台展示状态",
+    "addLog": "新增日志",
+    "table": {
+      "version": "版本",
+      "title": "标题",
+      "tone": "色调",
+      "status": "状态",
+      "sort": "排序",
+      "createdAt": "创建时间",
+      "actions": "操作"
+    },
+    "published": "已发布",
+    "draft": "草稿",
+    "empty": "暂无更新日志",
+    "togglePublish": "发布",
+    "toggleUnpublish": "下架",
+    "edit": "编辑",
+    "delete": "删除",
+    "modal": {
+      "create": "新增日志",
+      "edit": "编辑日志",
+      "cancel": "取消",
+      "save": "保存",
+      "createSave": "创建"
+    },
+    "sections": {
+      "basicInfo": "基本信息",
+      "changes": "更新内容",
+      "publishSettings": "发布设置"
+    },
+    "fields": {
+      "version": "版本号 *",
+      "versionPlaceholder": "v1.2.0",
+      "date": "日期 *",
+      "title": "标题 *",
+      "titlePlaceholder": "新功能上线",
+      "summary": "摘要",
+      "summaryPlaceholder": "简短描述（可选）",
+      "itemsLabel": "更新条目",
+      "itemPlaceholder": "更新内容 {{index}}",
+      "addItem": "添加条目",
+      "tone": "色调",
+      "sortOrder": "排序权重",
+      "publishNow": "立即发布",
+      "publishNowDesc": "创建后立即显示在前台更新日志中"
+    },
+    "toneOptions": {
+      "blue": "蓝色",
+      "emerald": "翠绿",
+      "amber": "琥珀"
+    },
+    "toast": {
+      "fillRequired": "请填写版本号、日期和标题",
+      "atLeastOneItem": "至少添加一条更新内容",
+      "updated": "日志已更新",
+      "created": "日志已创建",
+      "failed": "操作失败",
+      "deleteConfirmTitle": "删除日志",
+      "deleteConfirmMessage": "确定删除「{{title}}」吗？",
+      "deleteConfirm": "删除",
+      "deleted": "日志已删除",
+      "deleteFailed": "删除失败",
+      "unpublished": "已下架",
+      "published": "已发布",
+      "publishFailed": "操作失败"
+    },
+    "validation": {
+      "versionRequired": "请输入版本号",
+      "dateRequired": "请选择日期",
+      "titleRequired": "请输入标题",
+      "itemsRequired": "至少添加一条更新内容"
+    }
+  }
+}

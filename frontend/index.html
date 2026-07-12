@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>布丁简历</title>
+    <script>
+      (function () {
+        try {
+          var mode = localStorage.getItem('pudding_resume_theme_mode') || 'system';
+          var rawSettings = localStorage.getItem('pudding_resume_settings');
+          if (rawSettings) {
+            var parsed = JSON.parse(rawSettings);
+            if (parsed && parsed.theme_mode) mode = parsed.theme_mode;
+          }
+          var dark = mode === 'dark' || (
+            mode === 'system' &&
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches
+          );
+          if (dark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          }
+          document.documentElement.dataset.themeMode = mode;
+
+          var savedHomeTheme = localStorage.getItem('home-active-theme');
+          if (savedHomeTheme) {
+            var homeTheme = JSON.parse(savedHomeTheme);
+            if (homeTheme && (homeTheme.color || homeTheme.primary)) {
+              document.documentElement.style.setProperty('--home-theme-showcase-primary', homeTheme.color || homeTheme.primary);
+              document.documentElement.style.setProperty('--home-theme-showcase-base', homeTheme.base || '#f8fafc');
+              document.documentElement.style.setProperty('--home-theme-showcase-panel', homeTheme.panel || '#f1f5f9');
+              document.documentElement.style.setProperty('--home-theme-showcase-wedge', homeTheme.wedge || '#334155');
+              document.documentElement.dataset.homeThemeReady = 'true';
+            }
+          }
+        } catch (e) {
+          document.documentElement.dataset.themeMode = 'system';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

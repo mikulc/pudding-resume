@@ -1,0 +1,179 @@
+{
+  "save": "保存",
+  "cancel": "取消",
+  "confirm": "确认",
+  "delete": "删除",
+  "edit": "编辑",
+  "create": "创建",
+  "back": "返回",
+  "close": "关闭",
+  "reset": "重置",
+  "loading": "加载中...",
+  "saving": "保存中...",
+  "saved": "已保存",
+  "saveFailed": "保存失败",
+  "deleteConfirm": "确认删除？",
+  "deleteSuccess": "删除成功",
+  "deleteFailed": "删除失败",
+  "noData": "暂无数据",
+  "more": "更多",
+  "search": "搜索",
+  "upload": "上传",
+  "download": "下载",
+  "export": "导出",
+  "import": "导入",
+  "preview": "预览",
+  "copy": "复制",
+  "copied": "已复制",
+  "yes": "是",
+  "no": "否",
+  "on": "开",
+  "off": "关",
+  "enabled": "已启用",
+  "disabled": "已禁用",
+  "required": "必填",
+  "optional": "选填",
+  "selectFile": "选择文件",
+  "dragOrClick": "拖拽文件到此处或点击上传",
+  "networkError": "网络错误，请稍后重试",
+  "unknownError": "未知错误",
+  "retry": "重试",
+  "success": "操作成功",
+  "error": "操作失败",
+  "warning": "警告",
+  "info": "提示",
+  "rename": "重命名",
+  "confirmDelete": "确认删除",
+  "deleteWarning": "删除后无法恢复",
+  "permanentlyDelete": "永久删除",
+  "noDataYet": "暂无数据",
+  "ok": "确定",
+  "uploadSuccess": "上传成功",
+  "uploadFailed": "上传失败",
+  "exportSuccess": "导出成功",
+  "exportFailed": "导出失败",
+  "importSuccess": "导入成功",
+  "importFailed": "导入失败",
+  "resetSuccess": "重置成功",
+  "resetFailed": "重置失败",
+  "operationFailed": "操作失败",
+  "pleaseRetry": "请重试",
+  "restoreDefault": "恢复默认",
+  "changeAvatar": "更换头像",
+  "uploadAvatar": "上传头像",
+  "confirmUpload": "确认上传",
+  "reSelect": "重新选择",
+  "reselect": "重新选择",
+  "saveChanges": "保存修改",
+  "confirmChange": "确认修改",
+  "loadingData": "加载简历数据...",
+  "loadFailed": "加载失败",
+  "reload": "重新加载",
+  "settings": "设置",
+  "createNew": "新建",
+  "noPermission": "无权访问",
+  "details": "详情",
+  "actions": "操作",
+  "updating": "更新中...",
+  "deleting": "删除中...",
+  "button": {
+    "save": "保存",
+    "cancel": "取消",
+    "confirm": "确认",
+    "delete": "删除",
+    "close": "关闭",
+    "clear": "清除",
+    "ok": "确定",
+    "reset": "重置",
+    "done": "完成",
+    "backHome": "返回首页",
+    "discardChanges": "丢弃修改",
+    "exitWithoutSaving": "不保存退出",
+    "saveAndExit": "保存并退出"
+  },
+  "language": {
+    "currentShort": "中",
+    "switchToChinese": "切换到中文",
+    "switchToEnglish": "切换到 English",
+    "syncFailed": "语言偏好同步失败"
+  },
+  "date": {
+    "yearLabel": "{{year}} 年",
+    "monthNumber": "{{month}}月",
+    "thisMonth": "本月",
+    "secondsAgo": "{{count}} 秒前",
+    "minutesAgo": "{{count}} 分钟前",
+    "hoursAgo": "{{count}} 小时前",
+    "monthDayTime": "{{month}}月{{day}}日 {{time}}"
+  },
+  "dialog": {
+    "logout": {
+      "title": "退出登录",
+      "message": "确定要退出登录吗？",
+      "confirm": "确定退出"
+    },
+    "delete": {
+      "title": "确认删除",
+      "message": "删除后无法恢复，确定要继续吗？",
+      "confirm": "确认删除"
+    },
+    "unsavedChanges": {
+      "title": "内容未保存",
+      "message": "您有未保存的修改内容，离开后修改将会丢失。",
+      "loginRequiredHint": "当前为未登录状态，无法保存到云端。建议登录后再保存。",
+      "localStorageHint": "已开启本地存储，可保存到本地目录。"
+    }
+  },
+  "toast": {
+    "saveSuccess": "保存成功",
+    "saveFailed": "保存失败",
+    "copySuccess": "复制成功",
+    "deleteSuccess": "删除成功"
+  },
+  "validation": {
+    "required": "必填",
+    "emailInvalid": "邮箱格式不正确",
+    "passwordTooShort": "密码长度不能少于 6 位"
+  },
+  "theme": {
+    "syncFailed": "外观已在本地切换，云端同步失败",
+    "switchToLight": "切换到亮色模式",
+    "switchToDark": "切换到深色模式"
+  },
+  "error": {
+    "network": "网络连接失败，请检查网络后重试",
+    "requestFailed": "请求失败",
+    "uploadFailed": "上传失败",
+    "authExpired": "登录已过期，请重新登录",
+    "invalidResponse": "服务器返回格式异常: {{preview}}",
+    "emptyResponse": "无响应内容",
+    "requestFailedWithPreview": "请求失败 ({{status}}): {{preview}}",
+    "requestFailedWithStatus": "请求失败 ({{status}})",
+    "uploadFailedWithStatus": "上传失败 ({{status}})"
+  },
+  "errorBoundary": {
+    "title": "页面出现了问题",
+    "description": "应用遇到意外错误，刷新页面通常可以恢复正常。"
+  },
+  "errorAccess": {
+    "linkExpired": {
+      "title": "链接已失效",
+      "body": "该分享链接已被关闭或不存在",
+      "helper": "你可以联系分享者获取新的分享链接。"
+    },
+    "notPublic": {
+      "title": "无法访问",
+      "body": "该简历未公开分享",
+      "helper": "你可以返回首页查看自己的简历，或联系分享者开启访问权限。"
+    },
+    "deleted": {
+      "title": "简历不存在",
+      "body": "该简历可能已被删除或移动",
+      "helper": "你可以返回首页查看自己的简历。"
+    },
+    "fallback": {
+      "title": "无法访问",
+      "helper": "你可以返回首页查看自己的简历。"
+    }
+  }
+}
