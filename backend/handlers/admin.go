@@ -693,6 +693,13 @@ type UpdateChangelogRequest struct {
 	SortOrder   *int     `json:"sort_order"`
 }
 
+func changelogPublishedOrDefault(value *bool) bool {
+	if value == nil {
+		return true
+	}
+	return *value
+}
+
 func ListChangelogsAdmin(c *gin.Context) {
 	var entries []models.ChangelogEntry
 	database.DB.Order("sort_order ASC, created_at DESC").Find(&entries)
@@ -745,8 +752,7 @@ func CreateChangelog(c *gin.Context) {
 	if tone == "" { tone = "blue" }
 
 	itemsJSON, _ := json.Marshal(req.Items)
-	isPublished := false
-	if req.IsPublished != nil { isPublished = *req.IsPublished }
+	isPublished := changelogPublishedOrDefault(req.IsPublished)
 
 	entry := models.ChangelogEntry{
 		Version: req.Version, Date: req.Date, Title: req.Title,

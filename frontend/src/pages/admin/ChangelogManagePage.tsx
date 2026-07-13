@@ -45,7 +45,7 @@ export default function ChangelogManagePage() {
   // Form
   const [form, setForm] = useState({
     version: '', date: '', title: '', summary: '', items: [''],
-    tone: 'blue', is_published: false, sort_order: 0,
+    tone: 'blue', is_published: true, sort_order: 0,
   });
 
   const load = async () => {
@@ -61,7 +61,7 @@ export default function ChangelogManagePage() {
 
   const openCreate = () => {
     setEditing(null);
-    setForm({ version: '', date: '', title: '', summary: '', items: [''], tone: 'blue', is_published: false, sort_order: 0 });
+    setForm({ version: '', date: '', title: '', summary: '', items: [''], tone: 'blue', is_published: true, sort_order: 0 });
     setErrors({});
     setModalOpen(true);
     itemRefs.current = [];
