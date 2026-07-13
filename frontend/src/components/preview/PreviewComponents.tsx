@@ -1319,8 +1319,8 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
   // 椤垫暟鍙樺寲鏃堕€氱煡鐖剁粍浠讹紙渚濊禆 pageOffsets 鑰岄潪 numPages锛岀‘淇濇瘡娆℃祴閲忛兘閫氱煡锛屽嵆浣块〉鏁颁笉鍙橈級
   const numPages = pageOffsets.length > 1 ? pageOffsets.length - 1 : 0;
   useEffect(() => {
-    onPageCountChange?.(numPages);
-  }, [numPages, onPageCountChange]);
+    onPageCountChange?.(pageOffsets.length > 1 ? pageOffsets.length - 1 : 0);
+  }, [pageOffsets, onPageCountChange]);
 
   // Build preview section list from sectionOrder, including built-in and custom sections.
   const sectionInfos = useMemo(() => {
