@@ -370,7 +370,7 @@ export function NavbarAuth({ compact = false, hideUsernameOnMobile = true, setti
         </button>
         <button
           onClick={openRegister}
-          className="navbar-register-btn inline-flex h-8 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-gray-900 px-3 text-sm font-medium text-white transition-all hover:bg-gray-800 max-[380px]:hidden sm:h-9 sm:rounded-xl sm:px-4"
+          className="navbar-register-btn inline-flex h-8 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-gray-900 px-3 text-sm font-medium text-white transition-all hover:bg-gray-800 sm:h-9 sm:rounded-xl sm:px-4"
         >
           {t('register.title')}
           <ArrowRight className="hidden h-3.5 w-3.5 sm:block" />
