@@ -178,7 +178,7 @@ func ListResumes(c *gin.Context) {
 }
 
 // maxResumePhotoBytes is the maximum decoded size (in bytes) for a base64 resume photo.
-const maxResumePhotoBytes = 500 * 1024 // 500 KB
+const maxResumePhotoBytes = 2 * 1024 * 1024 // 2 MB
 
 // validateResumePhotoURL checks the content JSON for an oversized base64 photoUrl.
 // Returns an error message string if invalid, or empty string if valid.
@@ -222,7 +222,7 @@ func validateResumePhotoURL(content json.RawMessage) string {
 		}
 	}
 	if len(decoded) > maxResumePhotoBytes {
-		return fmt.Sprintf("简历照片过大，最大允许 %dKB", maxResumePhotoBytes/1024)
+		return fmt.Sprintf("简历照片过大，最大允许 %dMB", maxResumePhotoBytes/(1024*1024))
 	}
 
 	return ""
