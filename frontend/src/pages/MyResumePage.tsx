@@ -66,11 +66,11 @@ function formatResumeTime(iso: string): string {
 
 export default function MyResumePage() {
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, sessionLoading } = useAuth();
   const { showToast } = useToast();
   const confirm = useConfirm();
   const { t } = useTranslation(['resume', 'common', 'homepage']);
-  const showHintCard = !isLoggedIn && !isLocalStorageEnabled();
+  const showHintCard = !sessionLoading && !isLoggedIn && !isLocalStorageEnabled();
   const [resumes, setResumes] = useState<DisplayResume[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -264,8 +264,9 @@ export default function MyResumePage() {
   }, [isLoadMoreTriggerNearViewport, loadMoreResumes]);
 
   useEffect(() => {
+    if (sessionLoading) return;
     fetchResumes();
-  }, [fetchResumes]);
+  }, [fetchResumes, sessionLoading]);
 
   useEffect(() => {
     if (loading || !hasMore) return;
