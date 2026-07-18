@@ -216,11 +216,15 @@ export function ShareSettingsModal({ open, resumeId, shareState, onClose, onSave
         .share-permission-header p { margin-top: 4px; font-size: 13px; line-height: 20px; color: #7c8798; }
         .share-permission-close { position: absolute; top: 18px; right: 20px; display: grid; width: 32px; height: 32px; place-items: center; border-radius: 9px; color: #7c8798; transition: color 170ms, background-color 170ms; }
         .share-permission-close:hover { color: #374151; background: #f1f5f9; }
-        .share-permission-content { min-height: 0; flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 18px 22px 22px; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: rgba(148,163,184,.35) transparent; }
+        .share-permission-content { min-height: 0; flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 18px 22px 22px; scrollbar-gutter: stable; }
         .share-permission-content::-webkit-scrollbar { width: 4px; }
         .share-permission-content::-webkit-scrollbar-track { background: transparent; }
         .share-permission-content::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(148,163,184,.32); }
         .share-permission-content::-webkit-scrollbar-thumb:hover { background: rgba(148,163,184,.5); }
+        .share-permission-content::-webkit-scrollbar-button { display: none !important; width: 0 !important; height: 0 !important; }
+        @-moz-document url-prefix() {
+          .share-permission-content { scrollbar-width: thin; scrollbar-color: rgba(148,163,184,.35) transparent; }
+        }
         .share-permission-section + .share-permission-section, .share-permission-link-options { margin-top: 22px; }
         .share-permission-link-options .share-permission-section + .share-permission-section { margin-top: 22px; }
         .share-permission-section h4 { margin: 0 0 8px; font-size: 13px; line-height: 19px; font-weight: 600; color: #475467; }

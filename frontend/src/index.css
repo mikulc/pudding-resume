@@ -422,8 +422,14 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+
+  /* Firefox 专属：Firefox 不支持 ::-webkit-scrollbar，使用原生 scrollbar-width 控制滚动条 */
+  @-moz-document url-prefix() {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    }
   }
 
   *::-webkit-scrollbar {
@@ -591,10 +597,6 @@
   }
 
   /* 细滚动条工具类（用于 ATS JD 输入等文本域） */
-  .thin-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(148, 163, 184, 0.5) transparent;
-  }
   .thin-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -609,11 +611,24 @@
   .thin-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: rgba(148, 163, 184, 0.7);
   }
-  .dark .thin-scrollbar {
-    scrollbar-color: rgba(148, 163, 184, 0.32) transparent;
+  .thin-scrollbar::-webkit-scrollbar-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
   .dark .thin-scrollbar::-webkit-scrollbar-thumb {
     background-color: rgba(148, 163, 184, 0.3);
+  }
+
+  /* Firefox 专属：Firefox 不支持 ::-webkit-scrollbar */
+  @-moz-document url-prefix() {
+    .thin-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.5) transparent;
+    }
+    .dark .thin-scrollbar {
+      scrollbar-color: rgba(148, 163, 184, 0.32) transparent;
+    }
   }
 }
 
