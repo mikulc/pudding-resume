@@ -107,6 +107,15 @@ export const blueprintIconsLayout: LayoutDefinition = {
       left: 0 !important;
     }
 
+    .resume-paper[data-layout="blueprint-icons"] [data-page-section="personal"] > .flex-row-reverse .flex-1 {
+      padding: 0 0 0 34mm !important;
+      text-align: right !important;
+    }
+
+    .resume-paper[data-layout="blueprint-icons"] [data-page-section="personal"] > .flex-row-reverse .flex-1 > div {
+      justify-content: flex-end !important;
+    }
+
     .resume-paper[data-layout="blueprint-icons"] .section-header {
       display: flex !important;
       align-items: center !important;
