@@ -177,10 +177,10 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
     return () => document.removeEventListener('keydown', handler);
   }, [open, pickerView, pickYear, pickMonth]);
 
-  const handleConfirm = useCallback(() => {
+  const handleConfirm = useCallback((month = pickMonth) => {
     const formatted = mode === 'date'
-      ? `${pickYear}-${MONTHS[pickMonth - 1]}-${String(pickDay).padStart(2, '0')}`
-      : `${pickYear}.${MONTHS[pickMonth - 1]}`;
+      ? `${pickYear}-${MONTHS[month - 1]}-${String(pickDay).padStart(2, '0')}`
+      : `${pickYear}.${MONTHS[month - 1]}`;
     onChange(formatted);
     setInputValue(formatted);
     setOpen(false);
@@ -223,14 +223,20 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
     setPickMonth(m);
     setPickerView('calendar');
   };
-  // Select a year from the year picker → go back to month picker
+  // Select a year from the year picker. Month-only mode already renders its
+  // month grid in the calendar view; date mode still needs the month sub-view.
   const selectYear = (y: number) => {
     setPickYear(y);
-    setPickerView('months');
+    setPickerView(mode === 'month' ? 'calendar' : 'months');
   };
 
   // Open month/year picker from calendar
   const openMonthPicker = () => {
+    if (pickerView === 'years') {
+      setPickerView(mode === 'month' ? 'calendar' : 'months');
+      return;
+    }
+
     if (mode === 'month') {
       // Month mode: go directly to year picker (months are already shown)
       setYearPage(getYearPageStart(pickYear));
@@ -319,7 +325,12 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
                       <button
                         key={m}
                         type="button"
-                        onClick={() => { setPickMonth(m); handleConfirm(); }}
+                        onClick={() => {
+                          setPickMonth(m);
+                          // React state updates are asynchronous. Pass the clicked
+                          // month through so confirmation never reads the previous one.
+                          handleConfirm(m);
+                        }}
                         className={`aspect-square flex items-center justify-center rounded-lg text-xs font-medium transition-all ${
                           selected
                             ? 'bg-blue-500 text-white shadow-sm'
@@ -454,7 +465,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
             </button>
             <button
               type="button"
-              onClick={handleConfirm}
+              onClick={() => handleConfirm()}
               className="flex items-center gap-1 px-3 py-1 rounded-lg bg-blue-500 text-white text-xs font-medium hover:bg-blue-600 transition-colors"
             >
               <Check size={12} />
