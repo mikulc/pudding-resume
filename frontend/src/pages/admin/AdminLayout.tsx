@@ -104,9 +104,6 @@ function SidebarContent({
               <h1 className="truncate text-[15px] font-bold tracking-tight text-slate-900 dark:text-white">
                 {t('layout.title')}
               </h1>
-              <p className="mt-0.5 truncate text-[11px] font-medium tracking-wide text-slate-400">
-                {t('layout.subtitle')}
-              </p>
             </div>
           </div>
         </div>

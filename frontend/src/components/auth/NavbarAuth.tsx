@@ -329,7 +329,7 @@ export function NavbarAuth({ compact = false, hideUsernameOnMobile = true, setti
               className="flex w-full items-center gap-2 rounded-[10px] px-1.5 py-2.5 text-sm text-gray-700 transition-colors duration-150 hover:bg-purple-500/10 hover:text-purple-600 dark:text-white/88 dark:hover:bg-purple-500/10 dark:hover:text-purple-300"
             >
               <Shield className="w-4 h-4 transition-colors duration-150 dark:text-white/55" />
-              后台管理
+              {t('admin:layout.title')}
             </button>
           )}
           <button
