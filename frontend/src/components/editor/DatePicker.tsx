@@ -214,9 +214,17 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
     setPickYear(year); setPickMonth(month);
   };
 
-  // Year page navigation
-  const goPrevYearPage = () => setYearPage(p => Math.max(YEAR_RANGE.min, p - YEARS_PER_PAGE));
-  const goNextYearPage = () => setYearPage(p => Math.min(YEAR_RANGE.max - YEARS_PER_PAGE + 1, p + YEARS_PER_PAGE));
+  // Year navigation. Keep the selected year visible when crossing a page boundary.
+  const goPrevYear = () => {
+    const year = Math.max(YEAR_RANGE.min, pickYear - 1);
+    setPickYear(year);
+    setYearPage(getYearPageStart(year));
+  };
+  const goNextYear = () => {
+    const year = Math.min(YEAR_RANGE.max, pickYear + 1);
+    setPickYear(year);
+    setYearPage(getYearPageStart(year));
+  };
 
   // Select a month from the month picker → go back to calendar
   const selectMonth = (m: number) => {
@@ -275,9 +283,9 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
           {/* Left arrow */}
           <button
             type="button"
-            aria-label={pickerView === 'years' ? '上一组年份' : '上个月'}
+            aria-label={pickerView === 'years' ? '上一年' : '上个月'}
             onClick={() => {
-              if (pickerView === 'years') goPrevYearPage();
+              if (pickerView === 'years') goPrevYear();
               else goPrevMonth();
             }}
             className={navBtnClass}
@@ -300,9 +308,9 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
           {/* Right arrow */}
           <button
             type="button"
-            aria-label={pickerView === 'years' ? '下一组年份' : '下个月'}
+            aria-label={pickerView === 'years' ? '下一年' : '下个月'}
             onClick={() => {
-              if (pickerView === 'years') goNextYearPage();
+              if (pickerView === 'years') goNextYear();
               else goNextMonth();
             }}
             className={navBtnClass}
