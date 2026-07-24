@@ -1,8 +1,26 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  test: {
+    environment: 'jsdom',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      include: [
+        'src/utils/api.ts',
+        'src/features/resume/model/*.ts',
+      ],
+      exclude: ['src/**/*.d.ts', 'src/**/*.test.ts'],
+      thresholds: {
+        statements: 50,
+        branches: 20,
+        functions: 50,
+        lines: 50,
+      },
+    },
+  },
   build: {
     rollupOptions: {
       output: {

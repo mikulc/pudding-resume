@@ -8,6 +8,7 @@
 # frontend/
 frontend/node_modules
 frontend/dist
+frontend/coverage
 frontend/.env.production
 frontend/.env.preview
 
