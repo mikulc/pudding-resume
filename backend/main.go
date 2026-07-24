@@ -27,6 +27,9 @@ func main() {
 
 	// Load configuration
 	cfg := config.Load()
+	if err := cfg.Validate(); err != nil {
+		log.Fatalf("Invalid configuration: %v", err)
+	}
 
 	// Initialize database
 	database.Init(cfg)
@@ -42,8 +45,10 @@ func main() {
 		log.Fatalf("Failed to create fonts directory: %v", err)
 	}
 
-	// Create Gin router
-	r := gin.Default()
+	// Create Gin router. Request IDs run before logging/recovery so every
+	// response can be correlated with upstream and application logs.
+	r := gin.New()
+	r.Use(middleware.RequestID(), gin.Logger(), gin.Recovery())
 
 	// Set max multipart memory for file uploads (2 MB)
 	r.MaxMultipartMemory = 2 * 1024 * 1024
@@ -59,6 +64,8 @@ func main() {
 	// Security headers
 	r.Use(func(c *gin.Context) {
 		c.Header("X-Content-Type-Options", "nosniff")
+		c.Header("Referrer-Policy", "strict-origin-when-cross-origin")
+		c.Header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
 		c.Next()
 	})
 
@@ -199,8 +206,11 @@ func main() {
 	// Start server with graceful shutdown
 	addr := fmt.Sprintf(":%s", cfg.ServerPort)
 	srv := &http.Server{
-		Addr:    addr,
-		Handler: r,
+		Addr:              addr,
+		Handler:           r,
+		ReadHeaderTimeout: 10 * time.Second,
+		IdleTimeout:       60 * time.Second,
+		MaxHeaderBytes:    1 << 20,
 	}
 
 	go func() {

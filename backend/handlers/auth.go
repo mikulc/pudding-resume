@@ -22,23 +22,23 @@ const refreshTokenCookieName = "pudding_refresh_token"
 
 // setRefreshTokenCookie sets the refresh token as an httpOnly cookie.
 // The cookie path is restricted to /api/auth so it's only sent on refresh/logout endpoints.
-func setRefreshTokenCookie(c *gin.Context, token string, maxAge time.Duration) {
-	secure := c.Request.TLS != nil // true in production (HTTPS), false in dev (HTTP)
-	c.SetCookie(
-		refreshTokenCookieName,      // name
-		token,                        // value
-		int(maxAge.Seconds()),       // maxAge in seconds
-		"/api/auth",                  // path — only sent to auth endpoints
-		"",                           // domain — empty = current domain
-		secure,                       // secure — only over HTTPS
-		true,                         // httpOnly — not accessible by JS
-	)
+func setRefreshTokenCookie(c *gin.Context, token string, maxAge time.Duration, secure bool) {
 	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie(
+		refreshTokenCookieName, // name
+		token,                  // value
+		int(maxAge.Seconds()),  // maxAge in seconds
+		"/api/auth",            // path — only sent to auth endpoints
+		"",                     // domain — empty = current domain
+		secure,                 // secure — only over HTTPS
+		true,                   // httpOnly — not accessible by JS
+	)
 }
 
 // clearRefreshTokenCookie removes the refresh token cookie.
-func clearRefreshTokenCookie(c *gin.Context) {
-	c.SetCookie(refreshTokenCookieName, "", -1, "/api/auth", "", false, true)
+func clearRefreshTokenCookie(c *gin.Context, secure bool) {
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie(refreshTokenCookieName, "", -1, "/api/auth", "", secure, true)
 }
 
 // --- Request / Response types ---
@@ -109,7 +109,7 @@ func generateAndSetTokens(c *gin.Context, user *models.User, cfg *config.Config)
 	}
 
 	// Set refresh token as httpOnly cookie
-	setRefreshTokenCookie(c, pair.RefreshToken, refreshExpiry)
+	setRefreshTokenCookie(c, pair.RefreshToken, refreshExpiry, cfg.CookieSecure)
 
 	// Return access token in response body
 	return pair.AccessToken, nil
@@ -297,7 +297,7 @@ func RefreshToken(cfg *config.Config) gin.HandlerFunc {
 		// Parse and validate the refresh token (must have token_type=refresh)
 		claims, err := utils.ParseTokenStrict(refreshToken, utils.TokenTypeRefresh, cfg.JWTSecret)
 		if err != nil {
-			clearRefreshTokenCookie(c)
+			clearRefreshTokenCookie(c, cfg.CookieSecure)
 			respondError(c, http.StatusUnauthorized, "刷新令牌无效或已过期，请重新登录")
 			return
 		}
@@ -305,13 +305,13 @@ func RefreshToken(cfg *config.Config) gin.HandlerFunc {
 		// Verify user still exists and token_version matches
 		var user models.User
 		if err := database.DB.Where("id = ?", claims.UserID).First(&user).Error; err != nil {
-			clearRefreshTokenCookie(c)
+			clearRefreshTokenCookie(c, cfg.CookieSecure)
 			respondError(c, http.StatusUnauthorized, "用户不存在，请重新登录")
 			return
 		}
 
 		if user.TokenVersion != claims.TokenVersion {
-			clearRefreshTokenCookie(c)
+			clearRefreshTokenCookie(c, cfg.CookieSecure)
 			respondError(c, http.StatusUnauthorized, "会话已失效，请重新登录")
 			return
 		}
@@ -341,7 +341,7 @@ func RefreshToken(cfg *config.Config) gin.HandlerFunc {
 		}
 
 		// Set new refresh cookie
-		setRefreshTokenCookie(c, newRefreshToken, refreshExpiry)
+		setRefreshTokenCookie(c, newRefreshToken, refreshExpiry, cfg.CookieSecure)
 
 		c.JSON(http.StatusOK, RefreshResponse{
 			Token:    newAccessToken,
@@ -361,7 +361,7 @@ func Logout(cfg *config.Config) gin.HandlerFunc {
 
 		// If no valid token found, just clear cookie and respond OK
 		if claims == nil {
-			clearRefreshTokenCookie(c)
+			clearRefreshTokenCookie(c, cfg.CookieSecure)
 			c.JSON(http.StatusOK, gin.H{"message": "已退出登录"})
 			return
 		}
@@ -371,12 +371,12 @@ func Logout(cfg *config.Config) gin.HandlerFunc {
 			Where("id = ?", claims.UserID).
 			Update("token_version", gorm.Expr("token_version + 1")).Error; err != nil {
 			// Log the error but still clear cookie
-			clearRefreshTokenCookie(c)
+			clearRefreshTokenCookie(c, cfg.CookieSecure)
 			respondError(c, http.StatusInternalServerError, "退出登录失败，请稍后重试")
 			return
 		}
 
-		clearRefreshTokenCookie(c)
+		clearRefreshTokenCookie(c, cfg.CookieSecure)
 		c.JSON(http.StatusOK, gin.H{"message": "已退出登录"})
 	}
 }

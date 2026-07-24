@@ -203,7 +203,9 @@ chromium --version
 
 | 变量名 | 说明 | 默认值 / 示例 |
 |--------|------|---------------|
+| `APP_ENV` | 运行环境；生产部署设为 `production` | `development` |
 | `SERVER_PORT` | 后端服务端口 | `8080` |
+| `COOKIE_SECURE` | 刷新令牌 Cookie 仅通过 HTTPS 发送 | 开发环境 `false`，生产环境 `true` |
 | `DB_HOST` | PostgreSQL 主机 | `localhost` |
 | `DB_PORT` | PostgreSQL 端口 | `5432` |
 | `DB_USER` | 数据库用户名 | `postgres` |
@@ -212,7 +214,8 @@ chromium --version
 | `DB_SSLMODE` | SSL 模式 | `disable` |
 | `DB_TIMEZONE` | 数据库时区 | `Asia/Shanghai` |
 | `JWT_SECRET` | JWT 签名密钥 | **生产环境务必修改为强随机串** |
-| `JWT_EXPIRATION` | Token 过期时间 | `72h` |
+| `JWT_EXPIRATION` | Access Token 过期时间 | `1h` |
+| `JWT_REFRESH_EXPIRATION` | Refresh Token 过期时间 | `168h` |
 | `UPLOAD_DIR` | 头像上传目录 | `./uploads` |
 | `CHROMIUM_PATH` | Chrome/Chromium 可执行文件路径 | 留空则从系统 PATH 查找 |
 | `FONTS_DIR` | 字体文件目录 | `./fonts` |
