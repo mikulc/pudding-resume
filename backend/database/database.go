@@ -73,6 +73,7 @@ func seedAll() {
 	seedStyleLibraries()
 	seedDocSettings()
 	seedDemoContent()
+	migrateBundledAvatarURLs()
 }
 
 // migrateTableComments adds Chinese comments to PostgreSQL tables.

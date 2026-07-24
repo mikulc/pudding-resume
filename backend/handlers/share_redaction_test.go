@@ -11,7 +11,7 @@ func TestRedactResumeContentMasksPersonalInfo(t *testing.T) {
 			"fullName": "布丁",
 			"phone": "13888888888",
 			"email": "pudding@example.com",
-			"photoUrl": "/api/avatars/demo-avatar.jpg",
+			"photoUrl": "/images/avatar.jpg",
 			"location": "Shenzhen",
 			"jobTarget": "Golang Developer",
 			"customFields": {

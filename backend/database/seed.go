@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/google/uuid"
@@ -219,6 +220,90 @@ func seedDemoContent() {
 	log.Println("Demo content seeded successfully")
 }
 
+const (
+	legacyBackendDemoAvatarURL  = "/api/avatars/demo-avatar.jpg"
+	legacyFrontendDemoAvatarURL = "/images/demo-avatar.jpg"
+	demoAvatarURL               = "/images/avatar.jpg"
+)
+
+// migrateBundledAvatarURLs updates references to the relocated bundled avatar
+// without replacing any other content in demo data or user-created resumes.
+func migrateBundledAvatarURLs() {
+	var demos []models.DemoContent
+	if err := DB.Find(&demos).Error; err != nil {
+		log.Printf("Warning: failed to load demo content for asset migration: %v", err)
+	} else {
+		for _, demo := range demos {
+			content, changed, err := replaceDemoAvatarURL(demo.Content)
+			if err != nil {
+				log.Printf("Warning: failed to migrate demo content %s: %v", demo.ID, err)
+				continue
+			}
+			if !changed {
+				continue
+			}
+			if err := DB.Model(&models.DemoContent{}).
+				Where("id = ?", demo.ID).
+				UpdateColumn("content", content).Error; err != nil {
+				log.Printf("Warning: failed to update demo content %s: %v", demo.ID, err)
+				continue
+			}
+			log.Printf("Demo content asset path migrated for row %s", demo.ID)
+		}
+	}
+
+	var resumes []models.Resume
+	if err := DB.Find(&resumes).Error; err != nil {
+		log.Printf("Warning: failed to load resumes for asset migration: %v", err)
+		return
+	}
+	updatedResumes := 0
+	for _, resume := range resumes {
+		content, changed, err := replaceDemoAvatarURL(resume.Content)
+		if err != nil {
+			log.Printf("Warning: failed to migrate resume %s: %v", resume.ID, err)
+			continue
+		}
+		if !changed {
+			continue
+		}
+		if err := DB.Model(&models.Resume{}).
+			Where("id = ?", resume.ID).
+			UpdateColumn("content", content).Error; err != nil {
+			log.Printf("Warning: failed to update resume %s: %v", resume.ID, err)
+			continue
+		}
+		updatedResumes++
+	}
+	if updatedResumes > 0 {
+		log.Printf("Resume asset paths migrated: %d row(s) updated", updatedResumes)
+	}
+}
+
+func replaceDemoAvatarURL(content datatypes.JSON) (datatypes.JSON, bool, error) {
+	var document map[string]any
+	if err := json.Unmarshal(content, &document); err != nil {
+		return nil, false, err
+	}
+
+	personalInfo, ok := document["personalInfo"].(map[string]any)
+	if !ok {
+		return content, false, nil
+	}
+
+	photoURL, _ := personalInfo["photoUrl"].(string)
+	if photoURL != legacyBackendDemoAvatarURL && photoURL != legacyFrontendDemoAvatarURL {
+		return content, false, nil
+	}
+
+	personalInfo["photoUrl"] = demoAvatarURL
+	updated, err := json.Marshal(document)
+	if err != nil {
+		return nil, false, err
+	}
+	return datatypes.JSON(updated), true, nil
+}
+
 // DefaultDemoContentJSON returns the hardcoded resume used by theme preview cards.
 // Keep it concise enough to fit one A4 page in card previews.
 func DefaultDemoContentJSON() datatypes.JSON {
@@ -243,7 +328,7 @@ func DefaultDemoContentJSON() datatypes.JSON {
 			"fullName":     "布丁",
 			"phone":        "13888888888",
 			"email":        "pudding@example.com",
-			"photoUrl":     "/api/avatars/demo-avatar.jpg",
+			"photoUrl":     demoAvatarURL,
 			"jobStatus":    "随时到岗",
 			"jobTarget":    "Golang开发工程师",
 			"location":     "深圳",
