@@ -11,6 +11,11 @@ const DB_NAME = 'resume-local-storage';
 const DB_VERSION = 1;
 const STORE_NAME = 'directory-handles';
 
+type IterableDirectoryHandle = FileSystemDirectoryHandle & {
+  entries: () => AsyncIterableIterator<[string, FileSystemHandle]>;
+  values: () => AsyncIterableIterator<FileSystemHandle>;
+};
+
 // ==================== File System Access API 检测 ====================
 
 /** 检测浏览器是否支持 File System Access API */
@@ -198,7 +203,7 @@ async function removeOldResumeFiles(handle: FileSystemDirectoryHandle, resumeId:
   const shortId = resumeId.replace(/-/g, '').slice(0, 8);
   try {
     // 遍历目录，查找包含该 ID 的文件
-    for await (const [name] of (handle as any).entries?.() ?? []) {
+    for await (const [name] of (handle as unknown as IterableDirectoryHandle).entries()) {
       if (name.endsWith('.json') && name.includes(shortId)) {
         try {
           await handle.removeEntry(name);
@@ -224,7 +229,7 @@ export async function loadLocalResumes(): Promise<ResumeListItem[]> {
   try {
     // 方案：使用 values() 迭代器遍历
     const entries: [string, FileSystemFileHandle][] = [];
-    for await (const entry of (handle as any).values?.() ?? []) {
+    for await (const entry of (handle as unknown as IterableDirectoryHandle).values()) {
       if (entry.kind === 'file' && entry.name.endsWith('.json')) {
         entries.push([entry.name, entry as FileSystemFileHandle]);
       }

@@ -20,7 +20,7 @@ export const LIVE2D_POSITION_OPTIONS = [
   { value: 'right' },
 ];
 
-export function formatLive2dNearbyBehavior(value: string, t: (key: string, opts?: any) => string): string {
+export function formatLive2dNearbyBehavior(value: string, t: (key: string, opts?: Record<string, unknown>) => string): string {
   return value === 'expand' ? t('live2d.nearbyBehavior.expand') : t('live2d.nearbyBehavior.retract');
 }
 

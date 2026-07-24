@@ -17,6 +17,7 @@ import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { DesktopUserTable } from './DesktopUserTable';
 import { MobileUserCardList } from './MobileUserCardList';
 import { UserDetailDrawer } from './UserDetailDrawer';
+import { getErrorMessage } from '../../utils/errors';
 
 export default function UsersPage() {
   const { isLoggedIn, role } = useAuth();
@@ -70,8 +71,8 @@ export default function UsersPage() {
       showToast(t('users.toast.deleted'), 'success');
       load();
       setDetailUser(null);
-    } catch (e: any) {
-      showToast(e.message || t('users.toast.deleteFailed'), 'error');
+    } catch (e: unknown) {
+      showToast(getErrorMessage(e, t('users.toast.deleteFailed')), 'error');
     }
   };
 
@@ -88,8 +89,8 @@ export default function UsersPage() {
       await updateUserRole(id, newRole);
       showToast(t('users.toast.roleUpdated'), 'success');
       load();
-    } catch (e: any) {
-      showToast(e.message || t('users.toast.roleFailed'), 'error');
+    } catch (e: unknown) {
+      showToast(getErrorMessage(e, t('users.toast.roleFailed')), 'error');
     }
   };
 
@@ -104,8 +105,8 @@ export default function UsersPage() {
     try {
       await forceLogoutUser(id);
       showToast(t('users.toast.forceLogout'), 'success');
-    } catch (e: any) {
-      showToast(e.message || t('users.toast.forceLogoutFailed'), 'error');
+    } catch (e: unknown) {
+      showToast(getErrorMessage(e, t('users.toast.forceLogoutFailed')), 'error');
     }
   };
 
@@ -113,8 +114,8 @@ export default function UsersPage() {
     try {
       const d = await fetchUserDetail(id);
       setDetailUser(d);
-    } catch (e: any) {
-      showToast(e.message || t('users.toast.detailFailed'), 'error');
+    } catch (e: unknown) {
+      showToast(getErrorMessage(e, t('users.toast.detailFailed')), 'error');
     }
   };
 
@@ -175,8 +176,8 @@ export default function UsersPage() {
       showToast(t('users.toast.quotaUpdated'), 'success');
       setQuotaModal(null);
       load();
-    } catch (e: any) {
-      showToast(e.message || t('users.toast.quotaFailed'), 'error');
+    } catch (e: unknown) {
+      showToast(getErrorMessage(e, t('users.toast.quotaFailed')), 'error');
     }
   };
 
@@ -190,8 +191,8 @@ export default function UsersPage() {
       showToast(t('users.toast.passwordReset'), 'success');
       setPasswordModal(null);
       setNewPassword('');
-    } catch (e: any) {
-      showToast(e.message || t('users.toast.passwordFailed'), 'error');
+    } catch (e: unknown) {
+      showToast(getErrorMessage(e, t('users.toast.passwordFailed')), 'error');
     }
   };
 

@@ -755,7 +755,7 @@ export function EditorPanel({ isMobile = false }: EditorPanelProps) {
         const builtin = EDITOR_MAP[key];
         if (builtin) return { key, title: sectionTitles[key] ?? defaultModuleTitles[key] ?? key, Editor: builtin.Editor, isCustom: false as const };
         const cs = customSections.find((c) => c.id === key);
-        return { key, title: cs?.name ?? t('customModule.defaultName'), Editor: CustomModuleEditor as React.ComponentType<any>, isCustom: true as const };
+        return { key, title: cs?.name ?? t('customModule.defaultName'), Editor: CustomModuleEditor as React.ComponentType<{ sectionKey?: string }>, isCustom: true as const };
       });
   }, [sectionOrder, customSections, sectionTitles, defaultModuleTitles, t]);
 

@@ -97,7 +97,7 @@ function AIUsageContent() {
         <AdminChartCard title={t('usage.charts.provider')}>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
-              <Pie data={data.providers.filter(p => p.total_tokens > 0)} dataKey="total_tokens" nameKey="label" cx="50%" cy="50%" outerRadius={90} label={({ label, total_tokens }: any) => `${label}: ${formatTokens(total_tokens)}`}>
+              <Pie data={data.providers.filter(p => p.total_tokens > 0)} dataKey="total_tokens" nameKey="label" cx="50%" cy="50%" outerRadius={90} label={(props) => `${String(props.label ?? '')}: ${formatTokens(Number(props.total_tokens ?? 0))}`}>
                 {data.providers.map((_, idx) => <Cell key={idx} fill={COLORS[idx % COLORS.length]} />)}
               </Pie>
               <Tooltip formatter={(v: number) => [formatTokens(v), t('usage.metrics.unit')]} />

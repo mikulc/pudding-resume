@@ -10,7 +10,7 @@ interface UserDetailDrawerProps {
   open: boolean;
   user: AdminUserDetail | null;
   onClose: () => void;
-  t: (key: string, options?: Record<string, any>) => string;
+  t: (key: string, options?: Record<string, unknown>) => string;
 }
 
 export function UserDetailDrawer({ open, user, onClose, t }: UserDetailDrawerProps) {

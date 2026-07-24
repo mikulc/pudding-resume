@@ -98,8 +98,15 @@ export function createResume(data: ResumeData, name?: string, settings?: ThemeSe
 }
 
 /** Save a specific resume by ID (for multi-resume support) */
-export function saveResumeById(id: string, data: ResumeData, settings?: ThemeSettings) {
-  return api.put(`/api/resumes/${id}`, { content: data, settings });
+export function saveResumeById(
+  id: string,
+  data: ResumeData,
+  settings?: ThemeSettings,
+): Promise<{ message: string; updated_at: string }> {
+  return api.put<{ message: string; updated_at: string }>(
+    `/api/resumes/${id}`,
+    { content: data, settings },
+  );
 }
 
 /** Upload avatar: POST /api/user/avatar with FormData */

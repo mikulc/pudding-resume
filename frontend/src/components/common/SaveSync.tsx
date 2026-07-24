@@ -104,13 +104,10 @@ export function SaveSync({ children }: { children?: React.ReactNode }) {
 
       // --- Cloud save (authenticated users, cloud-originated resumes only) ---
       if (hasAuth && !isLocalResume) {
-        let response: any;
         if (effectiveId) {
-          response = await saveResumeById(effectiveId, resumeData, ui.theme);
+          await saveResumeById(effectiveId, resumeData, ui.theme);
         } else {
-          response = await createResume(resumeData, ui.resumeMeta.name, ui.theme);
-        }
-        if (!effectiveId && response?.id) {
+          const response = await createResume(resumeData, ui.resumeMeta.name, ui.theme);
           const createdId = response.id;
           effectiveId = createdId;
           setResumeCache(createdId, {
@@ -218,15 +215,12 @@ export function SaveSync({ children }: { children?: React.ReactNode }) {
 
         let effectiveId = ui.resumeMeta.id;
 
-        // --- Cloud save (authenticated users, cloud-originated resumes only) ---
-        if (hasAuth && !isLocalResume) {
-          let response: any;
+      // --- Cloud save (authenticated users, cloud-originated resumes only) ---
+      if (hasAuth && !isLocalResume) {
           if (effectiveId) {
-            response = await saveResumeById(effectiveId, resumeData, ui.theme);
+            await saveResumeById(effectiveId, resumeData, ui.theme);
           } else {
-            response = await createResume(resumeData, ui.resumeMeta.name, ui.theme);
-          }
-          if (!effectiveId && response?.id) {
+            const response = await createResume(resumeData, ui.resumeMeta.name, ui.theme);
             const createdId = response.id;
             effectiveId = createdId;
             setResumeCache(createdId, {

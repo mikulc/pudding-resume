@@ -59,44 +59,55 @@ function normalizeResumeData(content: ResumeData): ResumeData {
   const source = content ?? ({} as ResumeData);
   const personalInfo = source.personalInfo ?? {};
   const stringify = (value: unknown): string => (typeof value === 'string' ? value : '');
-  const normalizeHighlights = (entry: any, prefix: string, index: number) => ({
-    ...entry,
-    id: stringify(entry.id) || `${prefix}-${index + 1}`,
-    highlights: Array.isArray(entry.highlights)
-      ? entry.highlights.map((item: string, index: number) => `${index + 1}. ${item}`).join('\n')
-      : (entry.highlights ?? ''),
-  });
-  const normalizeWorkEntry = (entry: any, index: number) => {
+  const asRecord = (value: unknown): Record<string, unknown> => (
+    typeof value === 'object' && value !== null ? value as Record<string, unknown> : {}
+  );
+  const normalizeHighlights = (
+    entry: unknown,
+    prefix: string,
+    index: number,
+  ): Record<string, unknown> & { id: string; highlights: string } => {
+    const record = asRecord(entry);
+    return {
+      ...record,
+      id: stringify(record.id) || `${prefix}-${index + 1}`,
+      highlights: Array.isArray(record.highlights)
+        ? record.highlights.map((item, itemIndex) => `${itemIndex + 1}. ${stringify(item)}`).join('\n')
+        : stringify(record.highlights),
+    };
+  };
+  const normalizeWorkEntry = (entry: unknown, index: number) => {
     const normalized = normalizeHighlights(entry, 'work', index);
     return {
       ...normalized,
-      company: stringify(normalized.company),
-      position: stringify(normalized.position) || stringify(normalized.title),
-      location: stringify(normalized.location),
-      startDate: stringify(normalized.startDate),
-      endDate: stringify(normalized.endDate),
+      company: stringify(normalized['company']),
+      position: stringify(normalized['position']) || stringify(normalized['title']),
+      location: stringify(normalized['location']),
+      startDate: stringify(normalized['startDate']),
+      endDate: stringify(normalized['endDate']),
     };
   };
-  const normalizeProjectEntry = (entry: any, index: number) => {
+  const normalizeProjectEntry = (entry: unknown, index: number) => {
     const normalized = normalizeHighlights(entry, 'project', index);
     return {
       ...normalized,
-      name: stringify(normalized.name),
-      role: stringify(normalized.role),
-      startDate: stringify(normalized.startDate),
-      endDate: stringify(normalized.endDate),
-      link: stringify(normalized.link) || stringify(normalized.url),
+      name: stringify(normalized['name']),
+      role: stringify(normalized['role']),
+      startDate: stringify(normalized['startDate']),
+      endDate: stringify(normalized['endDate']),
+      link: stringify(normalized['link']) || stringify(normalized['url']),
     };
   };
-  const normalizeNamedDateEntry = (entry: any, prefix: string, index: number) => {
+  const normalizeNamedDateEntry = (entry: unknown, prefix: string, index: number) => {
     if (typeof entry === 'string') {
       return { id: `${prefix}-${index + 1}`, name: entry, date: '' };
     }
+    const record = asRecord(entry);
     return {
-      ...entry,
-      id: stringify(entry?.id) || `${prefix}-${index + 1}`,
-      name: stringify(entry?.name),
-      date: stringify(entry?.date),
+      ...record,
+      id: stringify(record.id) || `${prefix}-${index + 1}`,
+      name: stringify(record.name),
+      date: stringify(record.date),
     };
   };
 

@@ -38,10 +38,9 @@ export default tseslint.config(
       // ── 实用宽松规则 ──
       // tsconfig 已启用 noUnusedLocals/noUnusedParameters，ESLint 侧关闭避免重复报错
       '@typescript-eslint/no-unused-vars': 'off',
-      // 允许 any（渐进式迁移，不强制一次性消除）
-      '@typescript-eslint/no-explicit-any': 'off',
-      // 允许 ts-comment（部分第三方类型缺失时需要）
-      '@typescript-eslint/ban-ts-comment': 'off',
+      // 外部数据使用 unknown + 类型收窄，避免类型检查在接口处失效。
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/ban-ts-comment': 'warn',
       // 关闭 require-yield（generator 在 sagas 中可能不需要 yield）
       'no-empty': ['error', { allowEmptyCatch: true }],
     },

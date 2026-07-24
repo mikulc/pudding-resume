@@ -6,9 +6,10 @@ import { useConfirm } from '../../components/common/ConfirmModal';
 import {
   fetchModelPools, createModelPool, updateModelPool, deleteModelPool,
 } from '../../api/admin';
-import type { AdminModelPoolItem } from '../../types/admin';
+import type { AdminModelPoolItem, UpdateModelPoolRequest } from '../../types/admin';
 import { Plus, Edit3, Trash2, Power, PowerOff, X } from 'lucide-react';
 import { AdminBadge, AdminButton, AdminCard, AdminInput, AdminModal, AdminPage, AdminPageHeader } from './adminStyles';
+import { getErrorMessage } from '../../utils/errors';
 
 export default function ModelsPage() {
   const { isLoggedIn, role } = useAuth();
@@ -53,7 +54,7 @@ export default function ModelsPage() {
     }
     try {
       if (editing) {
-        const data: any = { name: form.name, api_url: form.api_url, model: form.model, sort_order: form.sort_order, is_active: form.is_active };
+        const data: UpdateModelPoolRequest = { name: form.name, api_url: form.api_url, model: form.model, sort_order: form.sort_order, is_active: form.is_active };
         if (form.api_key) data.api_key = form.api_key;
         await updateModelPool(editing.id, data);
         showToast(t('models.toast.updated'), 'success');
@@ -63,8 +64,8 @@ export default function ModelsPage() {
       }
       setModalOpen(false);
       load();
-    } catch (e: any) {
-      showToast(e.message || t('models.toast.failed'), 'error');
+    } catch (e: unknown) {
+      showToast(getErrorMessage(e, t('models.toast.failed')), 'error');
     }
   };
 
@@ -84,8 +85,8 @@ export default function ModelsPage() {
       await deleteModelPool(m.id);
       showToast(t('models.toast.deleted'), 'success');
       load();
-    } catch (e: any) {
-      showToast(e.message || t('models.toast.deleteFailed'), 'error');
+    } catch (e: unknown) {
+      showToast(getErrorMessage(e, t('models.toast.deleteFailed')), 'error');
     }
   };
 
@@ -94,8 +95,8 @@ export default function ModelsPage() {
       await updateModelPool(m.id, { is_active: !m.is_active });
       showToast(m.is_active ? t('models.toast.disabled') : t('models.toast.enabled'), 'success');
       load();
-    } catch (e: any) {
-      showToast(e.message || t('models.toast.toggleFailed'), 'error');
+    } catch (e: unknown) {
+      showToast(getErrorMessage(e, t('models.toast.toggleFailed')), 'error');
     }
   };
 

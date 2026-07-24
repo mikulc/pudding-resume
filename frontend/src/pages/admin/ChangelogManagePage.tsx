@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { HTMLAttributes } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +17,7 @@ import {
   AdminFormModal, AdminFormModalHeader, AdminFormModalBody, AdminFormModalFooter,
   AdminBottomSheet,
 } from './adminStyles';
+import { getErrorMessage } from '../../utils/errors';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { DesktopChangelogTable } from './DesktopChangelogTable';
 import { MobileChangelogCardList } from './MobileChangelogCardList';
@@ -115,8 +117,8 @@ export default function ChangelogManagePage() {
       }
       setModalOpen(false);
       load();
-    } catch (e: any) {
-      showToast(e.message || t('changelog.toast.failed'), 'error');
+    } catch (e: unknown) {
+      showToast(getErrorMessage(e, t('changelog.toast.failed')), 'error');
     } finally {
       setSaving(false);
     }
@@ -134,8 +136,8 @@ export default function ChangelogManagePage() {
       await deleteChangelog(e.id);
       showToast(t('changelog.toast.deleted'), 'success');
       load();
-    } catch (err: any) {
-      showToast(err.message || t('changelog.toast.deleteFailed'), 'error');
+    } catch (err: unknown) {
+      showToast(getErrorMessage(err, t('changelog.toast.deleteFailed')), 'error');
     }
   };
 
@@ -144,8 +146,8 @@ export default function ChangelogManagePage() {
       await updateChangelog(e.id, { is_published: !e.is_published });
       showToast(e.is_published ? t('changelog.toast.unpublished') : t('changelog.toast.published'), 'success');
       load();
-    } catch (err: any) {
-      showToast(err.message || t('changelog.toast.publishFailed'), 'error');
+    } catch (err: unknown) {
+      showToast(getErrorMessage(err, t('changelog.toast.publishFailed')), 'error');
     }
   };
 
@@ -482,8 +484,7 @@ function FieldWrapper({
   children: ReactNode;
   error?: boolean;
   errorMessage?: string;
-  [key: string]: any;
-}) {
+} & HTMLAttributes<HTMLDivElement>) {
   return (
     <div {...rest}>
       <label className="mb-[7px] block text-xs font-medium text-slate-500 dark:text-slate-400">

@@ -109,6 +109,6 @@ export async function getParsedDocSettings(): Promise<DocSettingsData> {
     pageRanges: (byId.get('page_ranges') as SliderRange[]) || [...PAGE_RANGES],
     watermarkRanges: (byId.get('watermark_ranges') as SliderRange[]) || [...WATERMARK_RANGES],
     watermarkDensity: (byId.get('watermark_density') as DensityOption[]) || [...DENSITY_OPTIONS],
-    watermarkDefaults: (byId.get('watermark_defaults') as any) || { ...WATERMARK_DEFAULTS },
+    watermarkDefaults: (byId.get('watermark_defaults') as typeof WATERMARK_DEFAULTS) || { ...WATERMARK_DEFAULTS },
   };
 }

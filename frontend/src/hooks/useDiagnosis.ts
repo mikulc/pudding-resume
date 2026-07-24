@@ -4,6 +4,7 @@ import { aiDiagnoseStream } from '../api/ai';
 import i18nInstance from '../utils/i18n';
 import type { DiagnosisItem, DiagnosisState, ResumeData, ResumeAction } from '../types/resume';
 import { useResume, useAppUI } from '../context/ResumeContext';
+import { getErrorMessage, isAbortError } from '../utils/errors';
 
 
 /**
@@ -471,19 +472,22 @@ export function useDiagnosis() {
             if (abortController.signal.aborted || settled) return;
             fail(new Error(i18nInstance.t('diagnosisError.failed', { ns: 'editor', lng: diagnosisLanguage })));
           })
-          .catch((err: any) => {
+          .catch((err: unknown) => {
             if (abortController.signal.aborted) return;
             fail(err instanceof Error ? err : new Error(String(err)));
           });
       });
       return true;
-    } catch (err: any) {
-      if (err.name === 'AbortError') return false;
+    } catch (err: unknown) {
+      if (isAbortError(err)) return false;
       setState((prev) => ({
         ...prev,
         loading: false,
         streamingText: '',
-        error: err.message || i18nInstance.t('diagnosisError.failed', { ns: 'editor', lng: diagnosisLanguage }),
+        error: getErrorMessage(
+          err,
+          i18nInstance.t('diagnosisError.failed', { ns: 'editor', lng: diagnosisLanguage }),
+        ),
       }));
       return false;
     }

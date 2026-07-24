@@ -5,6 +5,7 @@
 import { api, apiAssetUrl, getAuthToken } from '../utils/api';
 import { assertAIConfig, getAIConfig, type AIConfigValidationOptions } from '../utils/aiConfig';
 import i18n from '../utils/i18n';
+import { isAbortError } from '../utils/errors';
 import type { ResumeData, DiagnosisItem, AtsAnalysisResult } from '../types/resume';
 import type { PublicModelListResponse } from '../types/auth';
 
@@ -103,8 +104,8 @@ export async function translateResumeToEnglish(
       body: JSON.stringify(body),
       signal,
     });
-  } catch (err: any) {
-    if (err.name === 'AbortError') throw err;
+  } catch (err: unknown) {
+    if (isAbortError(err)) throw err;
     throw new Error(i18n.t('error.network', { ns: 'common' }));
   }
 
@@ -209,8 +210,8 @@ export async function aiDiagnoseStream(
       body: JSON.stringify(body),
       signal,
     });
-  } catch (err: any) {
-    if (err.name === 'AbortError') return;
+  } catch (err: unknown) {
+    if (isAbortError(err)) return;
     callbacks.onError(i18n.t('diagnosisError.networkFailed', { ns: 'editor' }));
     return;
   }
@@ -273,8 +274,8 @@ export async function aiDiagnoseStream(
         }
       }
     }
-  } catch (err: any) {
-    if (err.name === 'AbortError') return;
+  } catch (err: unknown) {
+    if (isAbortError(err)) return;
     callbacks.onError(i18n.t('diagnosisError.streamReadFailed', { ns: 'editor' }));
   } finally {
     reader.releaseLock();
@@ -365,8 +366,8 @@ async function fetchAtsAnalysisStream(
       body: JSON.stringify(body),
       signal,
     });
-  } catch (err: any) {
-    if (err.name === 'AbortError') throw err;
+  } catch (err: unknown) {
+    if (isAbortError(err)) throw err;
     throw new Error(i18n.t('atsPanel.error.network', { ns: 'editor' }));
   }
 

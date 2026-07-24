@@ -9,6 +9,7 @@ import type { SharedResumeResponse } from '../api/share';
 import { accessSharedResumeByResumeId } from '../api/share';
 import { setResumeCache, getResumeById } from '../api/resumes';
 import { useAuth } from '../context/AuthContext';
+import { getErrorMessage } from '../utils/errors';
 
 type ViewMode = 'loading' | 'owner' | 'shared' | 'error';
 const LOGIN_REQUIRED_MESSAGE = String.fromCharCode(0x9700, 0x8981, 0x767b, 0x5f55);
@@ -86,8 +87,8 @@ export default function ResumePage() {
       } else {
         setViewMode('shared');
       }
-    } catch (err: any) {
-      const msg = err?.message || t('cantLoadResume');
+    } catch (err: unknown) {
+      const msg = getErrorMessage(err, t('cantLoadResume'));
       if (msg.includes(LOGIN_REQUIRED_MESSAGE) || msg.includes('require_login')) {
         setRequireLogin(true);
       }
