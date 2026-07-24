@@ -36,6 +36,7 @@ import { DEFAULT_LOCALE, getDefaultLocalePath, isSupportedLocale } from './utils
 
 function Live2DWrapper() {
   const { profile, isLoggedIn } = useAuth();
+  const location = useLocation();
   const [localSettings, setLocalSettings] = useState<LocalSettingsPayload>(() => (
     loadSettings() ?? DEFAULT_SETTINGS
   ));

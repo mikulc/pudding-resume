@@ -63,6 +63,51 @@ export function apiAssetUrl(endpoint: string): string {
   return `${API_BASE}${endpoint}`;
 }
 
+function errorMessageFrom(data: unknown): string | null {
+  if (
+    typeof data === 'object' &&
+    data !== null &&
+    'message' in data &&
+    typeof data.message === 'string'
+  ) {
+    return data.message;
+  }
+  return null;
+}
+
+async function parseResponse<T>(
+  response: Response,
+  fallbackKey: 'error.requestFailedWithStatus' | 'error.uploadFailedWithStatus' =
+    'error.requestFailedWithStatus',
+): Promise<T> {
+  const rawBody = await response.text();
+  let data: unknown;
+
+  try {
+    data = rawBody ? JSON.parse(rawBody) : null;
+  } catch {
+    const preview = rawBody.slice(0, 100);
+    throw new Error(
+      response.ok
+        ? i18n.t('error.invalidResponse', { ns: 'common', preview })
+        : i18n.t('error.requestFailedWithPreview', {
+            ns: 'common',
+            status: response.status,
+            preview: preview || i18n.t('error.emptyResponse', { ns: 'common' }),
+          }),
+    );
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      errorMessageFrom(data) ||
+        i18n.t(fallbackKey, { ns: 'common', status: response.status }),
+    );
+  }
+
+  return data as T;
+}
+
 // --- Refresh token management ---
 
 let isRefreshing = false;
@@ -207,30 +252,7 @@ async function request<T>(
     }
   }
 
-  // Try to parse JSON; fall back gracefully for non-JSON responses
-  let data: T;
-  try {
-    data = await response.json();
-  } catch {
-    // Response body is not valid JSON (e.g. HTML error page)
-    const text = await response.text().catch(() => '');
-    const preview = text.slice(0, 100);
-    throw new Error(
-      response.ok
-        ? i18n.t('error.invalidResponse', { ns: 'common', preview })
-        : i18n.t('error.requestFailedWithPreview', {
-            ns: 'common',
-            status: response.status,
-            preview: preview || i18n.t('error.emptyResponse', { ns: 'common' }),
-          })
-    );
-  }
-
-  if (!response.ok) {
-    throw new Error((data as any)?.message || i18n.t('error.requestFailedWithStatus', { ns: 'common', status: response.status }));
-  }
-
-  return data as T;
+  return parseResponse<T>(response);
 }
 
 /**
@@ -281,13 +303,7 @@ export async function upload<T>(endpoint: string, formData: FormData): Promise<T
     }
   }
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error((data as any)?.message || i18n.t('error.uploadFailedWithStatus', { ns: 'common', status: response.status }));
-  }
-
-  return data as T;
+  return parseResponse<T>(response, 'error.uploadFailedWithStatus');
 }
 
 /**
@@ -317,31 +333,7 @@ export async function publicRequest<T>(endpoint: string): Promise<T> {
     throw new Error(i18n.t('error.network', { ns: 'common' }));
   }
 
-  let data: T;
-  try {
-    data = await response.json();
-  } catch {
-    const text = await response.text().catch(() => '');
-    const preview = text.slice(0, 100);
-    throw new Error(
-      response.ok
-        ? i18n.t('error.invalidResponse', { ns: 'common', preview })
-        : i18n.t('error.requestFailedWithPreview', {
-            ns: 'common',
-            status: response.status,
-            preview: preview || i18n.t('error.emptyResponse', { ns: 'common' }),
-          }),
-    );
-  }
-
-  if (!response.ok) {
-    throw new Error(
-      (data as any)?.message ||
-        i18n.t('error.requestFailedWithStatus', { ns: 'common', status: response.status }),
-    );
-  }
-
-  return data as T;
+  return parseResponse<T>(response);
 }
 
 /** Generic HTTP helpers shared by all business API modules in `src/api/*`. */
