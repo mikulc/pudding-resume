@@ -63,6 +63,7 @@ export default function TemplatesPage() {
     if (!previewEntry) return;
 
     const originalOverflow = document.body.style.overflow;
+    document.documentElement.classList.add('modal-scroll-lock');
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setPreviewEntry(null);
       if (event.key === 'ArrowLeft') navigatePreview(-1);
@@ -73,6 +74,7 @@ export default function TemplatesPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       document.body.style.overflow = originalOverflow;
+      document.documentElement.classList.remove('modal-scroll-lock');
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [navigatePreview, previewEntry]);
@@ -276,7 +278,7 @@ export default function TemplatesPage() {
       {previewEntry &&
         createPortal(
           <div
-            className="fixed inset-0 z-[10000] flex items-center justify-center bg-slate-950/45 p-3 backdrop-blur-sm sm:p-6"
+            className="fixed inset-y-0 left-0 z-[10000] flex w-screen items-center justify-center bg-slate-950/45 p-3 backdrop-blur-sm sm:p-6"
             onMouseDown={() => setPreviewEntry(null)}
           >
             <section
@@ -329,7 +331,7 @@ export default function TemplatesPage() {
                     aria-label="预览上一个模板"
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    <span className="hidden sm:inline">上一个</span>
+                    <span>上一个</span>
                   </button>
                   <button
                     type="button"
@@ -338,7 +340,7 @@ export default function TemplatesPage() {
                     className="inline-flex h-9 items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-2 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 sm:px-3 dark:bg-transparent"
                     aria-label="预览下一个模板"
                   >
-                    <span className="hidden sm:inline">下一个</span>
+                    <span>下一个</span>
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
@@ -351,7 +353,7 @@ export default function TemplatesPage() {
                   }}
                   className="inline-flex h-9 flex-shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#2248ff] px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#193be0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/35 dark:bg-[#fbbf24] dark:text-[#17191d] dark:hover:bg-[#f6b914]"
                 >
-                  使用<span className="hidden sm:inline">此模板</span>
+                  使用此模板
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </footer>

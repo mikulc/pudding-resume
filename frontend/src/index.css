@@ -567,6 +567,11 @@
     overflow: hidden;
   }
 
+  html.modal-scroll-lock {
+    scrollbar-gutter: auto;
+    overflow: hidden;
+  }
+
   body.admin-route-fullscreen {
     overflow: hidden;
   }

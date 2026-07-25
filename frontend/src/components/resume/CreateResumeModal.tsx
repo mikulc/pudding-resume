@@ -44,11 +44,13 @@ export function CreateResumeModal({ open, onClose }: CreateResumeModalProps) {
     const previousBodyOverscroll = document.body.style.overscrollBehavior;
     const previousHtmlOverscroll = document.documentElement.style.overscrollBehavior;
 
+    document.documentElement.classList.add('modal-scroll-lock');
     document.body.style.overflow = 'hidden';
     document.body.style.overscrollBehavior = 'none';
     document.documentElement.style.overscrollBehavior = 'none';
 
     return () => {
+      document.documentElement.classList.remove('modal-scroll-lock');
       document.body.style.overflow = previousBodyOverflow;
       document.body.style.overscrollBehavior = previousBodyOverscroll;
       document.documentElement.style.overscrollBehavior = previousHtmlOverscroll;
@@ -139,7 +141,7 @@ export function CreateResumeModal({ open, onClose }: CreateResumeModalProps) {
 
   if (isCreating) {
     return createPortal(
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-50 dark:bg-[color:var(--bg-page)]">
+      <div className="fixed inset-y-0 left-0 z-[100] flex w-screen items-center justify-center bg-slate-50 dark:bg-[color:var(--bg-page)]">
         <div className="flex flex-col items-center gap-3 text-gray-400">
           <Loader2 className="h-8 w-8 animate-spin text-[#3B82F6]" />
           <span className="text-sm">{t('create.enteringEditor')}</span>
@@ -150,7 +152,7 @@ export function CreateResumeModal({ open, onClose }: CreateResumeModalProps) {
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-y-0 left-0 z-[100] flex w-screen items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-slate-950/35 backdrop-blur-sm"
         onClick={handleClose}
