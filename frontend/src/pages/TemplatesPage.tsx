@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { flushSync } from 'react-dom';
+import { createPortal, flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Loader2 } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, Eye, FileText, Loader2 } from 'lucide-react';
 import { NavbarAuth } from '../components/auth/NavbarAuth';
 import LogoIcon from '../components/common/LogoIcon';
 import { TopNavLinks } from '../components/common/TopNavLinks';
@@ -33,6 +33,7 @@ export default function TemplatesPage() {
   const { showToast } = useToast();
   const [creatingLayoutId, setCreatingLayoutId] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState(ALL_THEME_CATEGORY);
+  const [previewEntry, setPreviewEntry] = useState<StyleLibraryEntry | null>(null);
   const { entries, demoContent, loading } = useResumeThemeLibrary(!creatingLayoutId);
 
   const categories = useMemo(() => deriveCategories(entries), [entries]);
@@ -40,10 +41,41 @@ export default function TemplatesPage() {
     () => filterResumeThemeEntries(entries, activeCategory),
     [entries, activeCategory],
   );
+  const previewIndex = useMemo(
+    () => previewEntry ? filteredEntries.findIndex((entry) => entry.id === previewEntry.id) : -1,
+    [filteredEntries, previewEntry],
+  );
+
+  const navigatePreview = useCallback((offset: -1 | 1) => {
+    setPreviewEntry((current) => {
+      if (!current) return null;
+      const currentIndex = filteredEntries.findIndex((entry) => entry.id === current.id);
+      const nextEntry = filteredEntries[currentIndex + offset];
+      return nextEntry ?? current;
+    });
+  }, [filteredEntries]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
   }, []);
+
+  useEffect(() => {
+    if (!previewEntry) return;
+
+    const originalOverflow = document.body.style.overflow;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setPreviewEntry(null);
+      if (event.key === 'ArrowLeft') navigatePreview(-1);
+      if (event.key === 'ArrowRight') navigatePreview(1);
+    };
+
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [navigatePreview, previewEntry]);
 
   const handleCreateFromTemplate = useCallback(async (entry: StyleLibraryEntry) => {
     if (creatingLayoutId) return;
@@ -182,12 +214,7 @@ export default function TemplatesPage() {
                               <div className="resume-grid-card-footer-spacer" />
                             </div>
 
-                            <button
-                              type="button"
-                              onClick={() => handleCreateFromTemplate(entry)}
-                              className="resume-grid-card-preview absolute inset-0 z-0 h-full w-full cursor-pointer block border-0 bg-white p-0 overflow-hidden"
-                              aria-label={`使用 ${entry.name} 模板`}
-                            >
+                            <div className="resume-grid-card-preview absolute inset-0 z-0 h-full w-full block bg-white overflow-hidden">
                               <div className="resume-grid-card-preview-surface absolute inset-0 bg-gray-100">
                                 {demoContent ? (
                                   <ResumeCardPreview content={demoContent} theme={previewTheme} />
@@ -200,19 +227,39 @@ export default function TemplatesPage() {
                                   </div>
                                 )}
                               </div>
-                            </button>
+                            </div>
 
                             <div
-                              className="resume-grid-card-footer absolute inset-x-0 bottom-0 z-10 p-4 border-t border-slate-100/80"
+                              className="resume-grid-card-footer absolute inset-x-0 bottom-0 z-10 overflow-hidden border-t border-slate-100/80"
                               onMouseDown={(event) => event.stopPropagation()}
                             >
-                              <div className="flex items-center justify-between gap-2 min-w-0">
+                              <div className="pointer-events-none absolute inset-0 flex min-w-0 -translate-y-1 items-center justify-between gap-2 px-4 opacity-0 transition-all duration-200 sm:pointer-events-auto sm:translate-y-0 sm:opacity-100 sm:group-hover:pointer-events-none sm:group-hover:-translate-y-1 sm:group-hover:opacity-0 sm:group-focus-within:pointer-events-none sm:group-focus-within:-translate-y-1 sm:group-focus-within:opacity-0">
                                 <h3 className="resume-card-title min-w-0 font-semibold text-slate-900 truncate text-sm">
                                   {entry.name}
                                 </h3>
                                 <span className="flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100/70 text-slate-500 text-[10px] font-medium border border-slate-200/70">
                                   {getLayoutName(entry.layoutId)}
                                 </span>
+                              </div>
+                              <div className="pointer-events-auto absolute inset-0 flex translate-y-0 items-center gap-2 p-2 opacity-100 transition-all duration-200 sm:pointer-events-none sm:translate-y-1 sm:opacity-0 sm:group-hover:pointer-events-auto sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:group-focus-within:pointer-events-auto sm:group-focus-within:translate-y-0 sm:group-focus-within:opacity-100">
+                                <button
+                                  type="button"
+                                  onClick={() => setPreviewEntry(entry)}
+                                  className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition-colors hover:border-[#2248ff]/40 hover:bg-[#2248ff]/5 hover:text-[#2248ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/30"
+                                  aria-label={`预览 ${entry.name} 模板`}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                  预览
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => void handleCreateFromTemplate(entry)}
+                                  className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#2248ff] px-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#193be0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/35 dark:bg-[#fbbf24] dark:text-[#17191d] dark:hover:bg-[#f6b914]"
+                                  aria-label={`使用 ${entry.name} 模板`}
+                                >
+                                  使用
+                                  <ArrowRight className="h-4 w-4" />
+                                </button>
                               </div>
                             </div>
                           </div>
@@ -226,6 +273,92 @@ export default function TemplatesPage() {
           </div>
         )}
       </main>
+      {previewEntry &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[10000] flex items-center justify-center bg-slate-950/45 p-3 backdrop-blur-sm sm:p-6"
+            onMouseDown={() => setPreviewEntry(null)}
+          >
+            <section
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="template-preview-title"
+              className="modal-dialog-enter flex h-[min(92vh,900px)] w-full max-w-[780px] flex-col overflow-hidden rounded-[20px] border border-white/20 bg-[var(--bg-card)] shadow-[0_28px_90px_rgba(15,23,42,0.35)]"
+              onMouseDown={(event) => event.stopPropagation()}
+            >
+              <header className="flex h-14 flex-shrink-0 items-center justify-between gap-4 border-b border-slate-200/70 px-3 sm:px-4">
+                <div className="flex min-w-0 items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewEntry(null)}
+                    className="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
+                    aria-label="返回模板列表"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <div className="min-w-0">
+                    <h2 id="template-preview-title" className="truncate text-[15px] font-bold text-slate-900">
+                      {previewEntry.name}
+                    </h2>
+                  </div>
+                </div>
+              </header>
+
+              <div className="flex min-h-0 flex-1 items-start justify-center overflow-auto bg-slate-100/80 p-4 sm:p-5 dark:bg-black/15">
+                <div className="aspect-[210/297] h-full max-h-full max-w-full overflow-hidden rounded-md bg-white shadow-[0_14px_45px_rgba(15,23,42,0.16)]">
+                  {demoContent ? (
+                    <ResumeCardPreview
+                      content={demoContent}
+                      theme={buildResumePreviewTheme(previewEntry)}
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-slate-300">
+                      <FileText className="h-14 w-14" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <footer className="flex h-[60px] flex-shrink-0 items-center justify-between gap-3 border-t border-slate-200/70 bg-[var(--bg-card)] px-3 sm:px-4">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => navigatePreview(-1)}
+                    disabled={previewIndex <= 0}
+                    className="inline-flex h-9 items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-2 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 sm:px-3 dark:bg-transparent"
+                    aria-label="预览上一个模板"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="hidden sm:inline">上一个</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigatePreview(1)}
+                    disabled={previewIndex < 0 || previewIndex >= filteredEntries.length - 1}
+                    className="inline-flex h-9 items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-2 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 sm:px-3 dark:bg-transparent"
+                    aria-label="预览下一个模板"
+                  >
+                    <span className="hidden sm:inline">下一个</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const entry = previewEntry;
+                    setPreviewEntry(null);
+                    void handleCreateFromTemplate(entry);
+                  }}
+                  className="inline-flex h-9 flex-shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#2248ff] px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#193be0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/35 dark:bg-[#fbbf24] dark:text-[#17191d] dark:hover:bg-[#f6b914]"
+                >
+                  使用<span className="hidden sm:inline">此模板</span>
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </footer>
+            </section>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

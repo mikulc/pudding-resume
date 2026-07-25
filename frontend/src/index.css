@@ -1103,6 +1103,11 @@ html.theme-transition .md-source-editable * {
     background-color var(--theme-transition-duration) var(--theme-transition-ease);
 }
 
+.new-resume-card,
+.resume-grid-card {
+  --resume-grid-card-footer-height: 54px;
+}
+
 .new-resume-card {
   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
   transform: translate3d(0, 0, 0);
@@ -1241,7 +1246,6 @@ html.theme-transition .md-source-editable * {
 }
 
 .resume-grid-card {
-  --resume-grid-card-footer-height: 54px;
   border-radius: 22px;
   background-color: #ffffff;
   overflow: hidden;

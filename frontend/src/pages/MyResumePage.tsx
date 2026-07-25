@@ -677,14 +677,9 @@ export default function MyResumePage() {
                     onClick={handleNewResume}
                     className="theme-color-transition new-resume-card resume-blank-card relative w-full text-left rounded-[22px] border border-dashed border-slate-200/80 cursor-pointer flex flex-col overflow-hidden group"
                   >
-                    <div className="w-full aspect-[4/5] flex-none" aria-hidden="true" />
-                    <div className="invisible flex-none p-4 border-t" aria-hidden="true">
-                      <div className="flex items-center gap-1.5 mb-1.5 min-w-0">
-                        <span className="h-5 w-32" />
-                      </div>
-                      <div className="flex items-center gap-1.5 text-xs">
-                        <span className="h-4 w-40" />
-                      </div>
+                    <div className="pointer-events-none invisible w-full" aria-hidden="true">
+                      <div className="aspect-[4/5] w-full" />
+                      <div className="resume-grid-card-footer-spacer" />
                     </div>
                     <div className="theme-color-transition new-resume-card-surface absolute inset-0">
                       <div className="absolute inset-x-4 top-4 bottom-4">
