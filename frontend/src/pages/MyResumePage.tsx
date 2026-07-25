@@ -16,7 +16,7 @@ import { useAuth, isLocalStorageEnabled } from '../context/AuthContext';
 import { loadLocalResumes, deleteLocalResume, saveResumeToLocal, generateLocalId } from '../utils/localStorage';
 import { ImportButton } from '../components/import/ImportButton';
 import { CreateResumeModal } from '../components/resume/CreateResumeModal';
-import { ResumeCardPreview } from '../components/preview/ResumeCardPreview';
+import { LazyResumeCardPreview } from '../components/preview/ResumeCardPreview';
 import { ResumePreviewSkeleton } from '../components/preview/ResumePreviewSkeleton';
 import {
   clearResumeLaunchSession,
@@ -26,6 +26,7 @@ import {
 import { createResume } from '../api/resumes';
 import type { ResumeListResponse } from '../api/resumes';
 import type { ResumeListItem } from '../types/resume';
+import { calculateResumeListTotal } from './resumeListUtils';
 
 /** 灞曠ず鐢ㄧ殑绠€鍘嗛」锛堝悎骞朵簯绔?鏈湴鍚庯級 */
 type DisplayResume = ResumeListItem & {
@@ -75,6 +76,7 @@ export default function MyResumePage() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
+  const [totalResumeCount, setTotalResumeCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const loadMoreTriggerRef = useRef<HTMLDivElement | null>(null);
@@ -172,6 +174,7 @@ export default function MyResumePage() {
       localResumesRef.current = localList;
       usedLocalIdsRef.current = new Set<string>();
       nextLocalIndexRef.current = 0;
+      setTotalResumeCount(calculateResumeListTotal(cloudPage.total, localList, isLoggedIn));
 
       const nextCloudOffset = cloudPage.offset + cloudPage.resumes.length;
       nextCloudOffsetRef.current = nextCloudOffset;
@@ -649,7 +652,7 @@ export default function MyResumePage() {
                       {t('list.myResumes')}
                     </h1>
                     <span className="inline-flex h-6 flex-shrink-0 items-center rounded-full bg-slate-100 px-[9px] text-xs font-semibold text-[#3f5f8a]">
-                      {t('list.resumeCount', { count: resumes.length })}
+                      {t('list.resumeCount', { count: totalResumeCount })}
                     </span>
                   </div>
                   <p className="mt-1.5 text-sm leading-[1.5] text-[#667085]">
@@ -726,7 +729,11 @@ export default function MyResumePage() {
                             className="resume-grid-card-preview absolute inset-0 z-0 h-full w-full cursor-pointer block border-0 bg-white p-0 overflow-hidden"
                           >
                             <div className="resume-grid-card-preview-surface absolute inset-0 bg-gray-100">
-                              <ResumeCardPreview content={resume.content} theme={resume.settings} />
+                              <LazyResumeCardPreview
+                                content={resume.content}
+                                theme={resume.settings}
+                                scrollRootRef={scrollContainerRef}
+                              />
                             </div>
                           </button>
 

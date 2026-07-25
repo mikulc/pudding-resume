@@ -11,7 +11,8 @@
  * - 底部渐变遮罩让预览自然过渡到信息栏
  */
 
-import { useRef, useState, useLayoutEffect } from 'react';
+import { useEffect, useRef, useState, useLayoutEffect } from 'react';
+import type { RefObject } from 'react';
 import { ResumeCardPreviewProvider } from './ResumeCardPreviewProvider';
 import { ResumePreview } from './PreviewComponents';
 import { ResumePreviewSkeleton } from './ResumePreviewSkeleton';
@@ -20,6 +21,65 @@ import type { ResumeData, ThemeSettings } from '../../types/resume';
 interface ResumeCardPreviewProps {
   content: ResumeData;
   theme?: ThemeSettings;
+}
+
+interface LazyResumeCardPreviewProps extends ResumeCardPreviewProps {
+  /** Start rendering shortly before the card enters the visible scroll area. */
+  rootMargin?: string;
+  /** Optional nested scroll container used as the observer root. */
+  scrollRootRef?: RefObject<Element>;
+}
+
+/**
+ * Defers the expensive full resume tree until the card is close to the viewport.
+ * Once mounted, the preview stays mounted so scrolling back does not rebuild it.
+ */
+export function LazyResumeCardPreview({
+  content,
+  theme,
+  rootMargin = '320px 0px',
+  scrollRootRef,
+}: LazyResumeCardPreviewProps) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [shouldRender, setShouldRender] = useState(
+    () => typeof IntersectionObserver === 'undefined',
+  );
+
+  useEffect(() => {
+    if (shouldRender) return;
+
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      setShouldRender(true);
+      observer.disconnect();
+    }, {
+      root: scrollRootRef?.current ?? null,
+      rootMargin,
+    });
+
+    observer.observe(wrapper);
+    return () => observer.disconnect();
+  }, [rootMargin, scrollRootRef, shouldRender]);
+
+  return (
+    <div ref={wrapperRef} className="h-full w-full" data-lazy-resume-preview>
+      {shouldRender ? (
+        <ResumeCardPreview content={content} theme={theme} />
+      ) : (
+        <div
+          className="absolute inset-0 flex items-stretch bg-white p-3 dark:bg-[#151b23]"
+          aria-hidden="true"
+        >
+          <div className="h-full w-full overflow-hidden rounded-2xl">
+            <ResumePreviewSkeleton variant="empty" className="w-full" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 /** 单张简历卡片的缩放预览 */
