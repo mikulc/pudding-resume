@@ -1,12 +1,15 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"regexp"
+	"strings"
 	"time"
 	"unicode/utf8"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 
 	"pudding-resume-backend/config"
@@ -82,6 +85,25 @@ func respondError(c *gin.Context, code int, errMsg string) {
 
 var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
 
+func normalizeEmail(email string) string {
+	return strings.ToLower(strings.TrimSpace(email))
+}
+
+func registrationConflictMessage(err error) (string, bool) {
+	var pgErr *pgconn.PgError
+	if !errors.As(err, &pgErr) || pgErr.Code != "23505" {
+		return "", false
+	}
+	switch pgErr.ConstraintName {
+	case "idx_user_info_email_active", "idx_user_info_email":
+		return "该邮箱已被注册", true
+	case "idx_user_info_username_active", "idx_user_info_username":
+		return "该用户名已被使用", true
+	default:
+		return "邮箱或用户名已被使用", true
+	}
+}
+
 // parseExpiration parses the expiration duration string, falling back to a default.
 func parseExpiration(durationStr string, defaultDuration time.Duration) time.Duration {
 	expiration, err := time.ParseDuration(durationStr)
@@ -125,6 +147,8 @@ func Register(cfg *config.Config) gin.HandlerFunc {
 			respondError(c, http.StatusBadRequest, "请填写所有必填字段")
 			return
 		}
+		req.Username = strings.TrimSpace(req.Username)
+		req.Email = normalizeEmail(req.Email)
 
 		// Validate username
 		usernameLen := utf8.RuneCountInString(req.Username)
@@ -147,11 +171,11 @@ func Register(cfg *config.Config) gin.HandlerFunc {
 
 		// Check if email already exists
 		var existingUser models.User
-		result := database.DB.Where("email = ?", req.Email).First(&existingUser)
+		result := database.DB.Where("LOWER(email) = ?", req.Email).First(&existingUser)
 		if result.Error == nil {
 			respondError(c, http.StatusConflict, "该邮箱已被注册")
 			return
-		} else if result.Error != gorm.ErrRecordNotFound {
+		} else if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			respondError(c, http.StatusInternalServerError, "服务器内部错误")
 			return
 		}
@@ -161,7 +185,7 @@ func Register(cfg *config.Config) gin.HandlerFunc {
 		if result.Error == nil {
 			respondError(c, http.StatusConflict, "该用户名已被使用")
 			return
-		} else if result.Error != gorm.ErrRecordNotFound {
+		} else if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			respondError(c, http.StatusInternalServerError, "服务器内部错误")
 			return
 		}
@@ -212,6 +236,10 @@ func Register(cfg *config.Config) gin.HandlerFunc {
 			return nil
 		})
 		if err != nil {
+			if message, conflict := registrationConflictMessage(err); conflict {
+				respondError(c, http.StatusConflict, message)
+				return
+			}
 			respondError(c, http.StatusInternalServerError, "注册失败，请稍后重试")
 			return
 		}
@@ -239,6 +267,7 @@ func Login(cfg *config.Config) gin.HandlerFunc {
 			respondError(c, http.StatusBadRequest, "请填写邮箱和密码")
 			return
 		}
+		req.Email = normalizeEmail(req.Email)
 
 		// Validate email format
 		if !emailRegex.MatchString(req.Email) {
@@ -248,7 +277,7 @@ func Login(cfg *config.Config) gin.HandlerFunc {
 
 		// Find user by email
 		var user models.User
-		result := database.DB.Where("email = ?", req.Email).First(&user)
+		result := database.DB.Where("LOWER(email) = ?", req.Email).First(&user)
 		if result.Error != nil {
 			if result.Error == gorm.ErrRecordNotFound {
 				respondError(c, http.StatusUnauthorized, "邮箱或密码错误")

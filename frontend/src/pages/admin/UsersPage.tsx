@@ -5,7 +5,7 @@ import { useToast } from '../../components/common/Toast';
 import { useConfirm } from '../../components/common/ConfirmModal';
 import {
   fetchUsers, fetchUserDetail, updateUserQuota, updateUserRole,
-  deleteUser, forceLogoutUser, resetUserPassword,
+  deleteUser, forceLogoutUser, resetUserPassword, restoreUser, permanentlyDeleteUser,
 } from '../../api/admin';
 import type { AdminUserItem, AdminUserDetail } from '../../types/admin';
 import { Search, X } from 'lucide-react';
@@ -32,6 +32,7 @@ export default function UsersPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [includeDeleted, setIncludeDeleted] = useState(false);
   const [detailUser, setDetailUser] = useState<AdminUserDetail | null>(null);
   const [quotaModal, setQuotaModal] = useState<{ id: string; username: string } | null>(null);
   const [quotaForm, setQuotaForm] = useState({ max_resumes: '', export_count: '', daily_limit: '', monthly_limit: '' });
@@ -43,11 +44,11 @@ export default function UsersPage() {
 
   const load = useCallback(async () => {
     try {
-      const res = await fetchUsers({ page, size: pageSize, search: search || undefined, role: roleFilter });
+      const res = await fetchUsers({ page, size: pageSize, search: search || undefined, role: roleFilter, deleted: includeDeleted });
       setUsers(res.users);
       setTotal(res.total);
     } catch { /* ignore */ }
-  }, [page, search, roleFilter]);
+  }, [page, search, roleFilter, includeDeleted]);
 
   useEffect(() => {
     if (isLoggedIn && role === 'admin') load();
@@ -73,6 +74,40 @@ export default function UsersPage() {
       setDetailUser(null);
     } catch (e: unknown) {
       showToast(getErrorMessage(e, t('users.toast.deleteFailed')), 'error');
+    }
+  };
+
+  const handleRestore = async (id: string, username: string) => {
+    const ok = await confirm({
+      title: t('users.confirm.restoreTitle'),
+      message: t('users.confirm.restoreMessage', { username }),
+      confirmText: t('users.confirm.restoreConfirm'),
+    });
+    if (!ok) return;
+    try {
+      await restoreUser(id);
+      showToast(t('users.toast.restored'), 'success');
+      load();
+    } catch (e: unknown) {
+      showToast(getErrorMessage(e, t('users.toast.restoreFailed')), 'error');
+    }
+  };
+
+  const handlePermanentDelete = async (id: string, username: string) => {
+    const ok = await confirm({
+      title: t('users.confirm.permanentDeleteTitle'),
+      message: t('users.confirm.permanentDeleteMessage', { username }),
+      confirmText: t('users.confirm.permanentDeleteConfirm'),
+      confirmVariant: 'danger',
+    });
+    if (!ok) return;
+    try {
+      await permanentlyDeleteUser(id);
+      showToast(t('users.toast.permanentlyDeleted'), 'success');
+      load();
+      setDetailUser(null);
+    } catch (e: unknown) {
+      showToast(getErrorMessage(e, t('users.toast.permanentDeleteFailed')), 'error');
     }
   };
 
@@ -148,6 +183,12 @@ export default function UsersPage() {
           handleDelete(user.id, user.username);
         }
         break;
+      case 'restore':
+        handleRestore(user.id, user.username);
+        break;
+      case 'permanent-delete':
+        handlePermanentDelete(user.id, user.username);
+        break;
     }
   };
 
@@ -196,7 +237,7 @@ export default function UsersPage() {
     }
   };
 
-  const hasFilter = search !== '' || roleFilter !== 'all';
+  const hasFilter = search !== '' || roleFilter !== 'all' || includeDeleted;
 
   // ---- i18n helpers ----
   const labelUser = t('users.table.user');
@@ -263,6 +304,10 @@ export default function UsersPage() {
               ]}
               className="flex-1"
             />
+            <label className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+              <input type="checkbox" checked={includeDeleted} onChange={e => { setIncludeDeleted(e.target.checked); setPage(1); }} />
+              {t('users.includeDeleted')}
+            </label>
           </div>
         </div>
       ) : (
@@ -295,6 +340,10 @@ export default function UsersPage() {
               { value: 'admin', label: t('users.roleAdmin') },
             ]}
           />
+          <label className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+            <input type="checkbox" checked={includeDeleted} onChange={e => { setIncludeDeleted(e.target.checked); setPage(1); }} />
+            {t('users.includeDeleted')}
+          </label>
         </div>
       )}
 
@@ -306,7 +355,7 @@ export default function UsersPage() {
           hasFilter={hasFilter}
           onOpenDetail={handleMobileOpenDetail}
           onAction={handleMobileAction}
-          onClearFilter={() => { setSearch(''); setRoleFilter('all'); }}
+          onClearFilter={() => { setSearch(''); setRoleFilter('all'); setIncludeDeleted(false); }}
           emptyText={labelEmpty}
           noResultText="没有匹配的用户"
           clearFilterText="清除筛选"
@@ -324,6 +373,8 @@ export default function UsersPage() {
           onForceLogout={handleForceLogout}
           onResetPassword={(id, username) => { setPasswordModal({ id, username }); setNewPassword(''); }}
           onDelete={handleDelete}
+          onRestore={handleRestore}
+          onPermanentDelete={handlePermanentDelete}
           labelUser={labelUser}
           labelEmail={labelEmail}
           labelRole={labelRole}
@@ -340,6 +391,8 @@ export default function UsersPage() {
           tooltipLogout={t('users.tooltip.forceLogout')}
           tooltipPassword={t('users.tooltip.resetPassword')}
           tooltipDelete={t('users.tooltip.delete')}
+          tooltipRestore={t('users.tooltip.restore')}
+          tooltipPermanentDelete={t('users.tooltip.permanentDelete')}
         />
       )}
 

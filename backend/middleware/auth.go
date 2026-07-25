@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"pudding-resume-backend/config"
+	"pudding-resume-backend/database"
+	"pudding-resume-backend/models"
 	"pudding-resume-backend/utils"
 )
 
@@ -36,11 +38,25 @@ func ExtractAuthClaims(c *gin.Context, secret string) (*utils.Claims, string) {
 	return extractAuthClaims(c, secret)
 }
 
-// injectUser injects user info from claims into Gin context.
-func injectUser(c *gin.Context, claims *utils.Claims) {
-	c.Set("userID", claims.UserID)
-	c.Set("username", claims.Username)
-	c.Set("role", claims.Role)
+// validateActiveSession makes token revocation immediate. It also rejects
+// tokens belonging to soft-deleted users and avoids trusting a stale role from
+// a previously issued JWT.
+func validateActiveSession(claims *utils.Claims) (*models.User, string) {
+	var user models.User
+	if err := database.DB.Select("id", "username", "role", "token_version").
+		Where("id = ?", claims.UserID).First(&user).Error; err != nil {
+		return nil, "用户不存在或账号已停用"
+	}
+	if user.TokenVersion != claims.TokenVersion {
+		return nil, "会话已失效，请重新登录"
+	}
+	return &user, ""
+}
+
+func injectCurrentUser(c *gin.Context, user *models.User) {
+	c.Set("userID", user.ID)
+	c.Set("username", user.Username)
+	c.Set("role", user.Role)
 }
 
 // AuthRequired returns a Gin middleware that validates JWT tokens.
@@ -56,7 +72,15 @@ func AuthRequired(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		injectUser(c, claims)
+		user, reason := validateActiveSession(claims)
+		if user == nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": "Unauthorized", "message": reason,
+			})
+			return
+		}
+
+		injectCurrentUser(c, user)
 		c.Next()
 	}
 }
@@ -74,7 +98,15 @@ func AdminRequired(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		if claims.Role != "admin" {
+		user, reason := validateActiveSession(claims)
+		if user == nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": "Unauthorized", "message": reason,
+			})
+			return
+		}
+
+		if user.Role != "admin" {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
 				"error":   "Forbidden",
 				"message": "需要管理员权限",
@@ -82,7 +114,7 @@ func AdminRequired(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		injectUser(c, claims)
+		injectCurrentUser(c, user)
 		c.Next()
 	}
 }
@@ -98,7 +130,10 @@ func AuthOptional(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		injectUser(c, claims)
+		user, _ := validateActiveSession(claims)
+		if user != nil {
+			injectCurrentUser(c, user)
+		}
 		c.Next()
 	}
 }

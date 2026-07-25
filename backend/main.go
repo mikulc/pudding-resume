@@ -133,6 +133,7 @@ func NewRouter(cfg *config.Config, avatarDir string) *gin.Engine {
 			user.GET("/profile", handlers.GetProfile)
 			user.PUT("/profile", handlers.UpdateProfile)
 			user.PUT("/password", handlers.ChangePassword)
+			user.DELETE("/account", handlers.DeactivateAccount(cfg))
 			user.POST("/avatar", middleware.AvatarRateLimit(), handlers.UploadAvatar(cfg))
 			user.DELETE("/avatar", handlers.DeleteAvatar(cfg))
 			user.GET("/preferences", handlers.GetPreferences)
@@ -214,6 +215,8 @@ func NewRouter(cfg *config.Config, avatarDir string) *gin.Engine {
 			admin.POST("/users/:id/force-logout", handlers.ForceLogoutUser)
 			admin.PUT("/users/:id/reset-password", handlers.ResetUserPassword(cfg))
 			admin.DELETE("/users/:id", handlers.DeleteUser)
+			admin.POST("/users/:id/restore", handlers.RestoreUser)
+			admin.DELETE("/users/:id/permanent", handlers.PermanentlyDeleteUser(cfg))
 			admin.POST("/users/batch-delete", handlers.BatchDeleteUsers)
 
 			// AI Model Pool management

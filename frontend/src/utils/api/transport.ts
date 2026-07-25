@@ -204,9 +204,11 @@ export const api = {
       body: JSON.stringify(body),
     }),
 
-  del: <T>(endpoint: string) =>
+  del: <T>(endpoint: string, body?: unknown) =>
     request<T>(endpoint, {
       method: 'DELETE',
-      headers: {} as Record<string, string>, // suppress Content-Type for body-less DELETE
+      ...(body === undefined
+        ? { headers: {} as Record<string, string> }
+        : { body: JSON.stringify(body) }),
     }),
 };

@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import {
   MoreHorizontal, Eye, Shield, SlidersHorizontal,
-  Key, LogOut, Trash2,
+  Key, LogOut, Trash2, RotateCcw,
 } from 'lucide-react';
 import type { AdminUserItem } from '../../types/admin';
 import { AdminBadge } from './adminStyles';
@@ -90,17 +90,23 @@ export function MobileUserCard({
                   onClick={(e) => e.stopPropagation()}
                 >
                   <MenuItem icon={<Eye size={15} />} label="查看详情" onClick={() => handleActionClick('detail')} />
-                  <MenuItem icon={<Shield size={15} />} label="修改角色" onClick={() => handleActionClick('role')} />
-                  <MenuItem icon={<SlidersHorizontal size={15} />} label="修改配额" onClick={() => handleActionClick('quota')} />
-                  <MenuItem icon={<Key size={15} />} label="重置密码" onClick={() => handleActionClick('password')} />
-                  <MenuItem icon={<LogOut size={15} />} label="强制下线" onClick={() => handleActionClick('logout')} />
+                  {user.status !== 'deleted' && (
+                    <>
+                      <MenuItem icon={<Shield size={15} />} label="修改角色" onClick={() => handleActionClick('role')} />
+                      <MenuItem icon={<SlidersHorizontal size={15} />} label="修改配额" onClick={() => handleActionClick('quota')} />
+                      <MenuItem icon={<Key size={15} />} label="重置密码" onClick={() => handleActionClick('password')} />
+                      <MenuItem icon={<LogOut size={15} />} label="强制下线" onClick={() => handleActionClick('logout')} />
+                    </>
+                  )}
                   <div className="my-1 border-t border-[#F1F5F9] dark:border-slate-800" />
-                  <MenuItem
-                    icon={<Trash2 size={15} />}
-                    label="删除用户"
-                    onClick={() => handleActionClick('delete')}
-                    danger
-                  />
+                  {user.status === 'deleted' ? (
+                    <>
+                      <MenuItem icon={<RotateCcw size={15} />} label="恢复用户" onClick={() => handleActionClick('restore')} />
+                      <MenuItem icon={<Trash2 size={15} />} label="永久删除" onClick={() => handleActionClick('permanent-delete')} danger />
+                    </>
+                  ) : (
+                    <MenuItem icon={<Trash2 size={15} />} label="停用用户" onClick={() => handleActionClick('delete')} danger />
+                  )}
                 </div>
               </>
             )}

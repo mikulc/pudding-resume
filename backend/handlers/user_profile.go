@@ -8,6 +8,7 @@ import (
 	"pudding-resume-backend/database"
 	"pudding-resume-backend/middleware"
 	"pudding-resume-backend/models"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -45,6 +46,7 @@ func UpdateProfile(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, "请提供用户名")
 		return
 	}
+	req.Username = strings.TrimSpace(req.Username)
 
 	// Validate username length
 	usernameLen := utf8.RuneCountInString(req.Username)
@@ -66,6 +68,10 @@ func UpdateProfile(c *gin.Context) {
 
 	// Update username
 	if err := database.DB.Model(&models.User{}).Where("id = ?", userID).Update("username", req.Username).Error; err != nil {
+		if message, conflict := registrationConflictMessage(err); conflict {
+			respondError(c, http.StatusConflict, message)
+			return
+		}
 		respondError(c, http.StatusInternalServerError, "更新失败，请稍后重试")
 		return
 	}

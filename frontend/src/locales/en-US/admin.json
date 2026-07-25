@@ -56,7 +56,7 @@
       "lastLogin": "Last Login",
       "actions": "Actions"
     },
-    "deleted": "Deleted",
+    "deleted": "Deactivated",
     "notLimited": "Unlimited",
     "empty": "No user data yet",
     "pagination": "Page {{page}} of {{totalPages}} · {{total}} entries",
@@ -66,7 +66,7 @@
       "role": "Role",
       "status": "Status",
       "statusActive": "Active",
-      "statusDeleted": "Deleted",
+      "statusDeleted": "Deactivated",
       "registeredAt": "Registered",
       "lastLogin": "Last Login",
       "lastActive": "Last Active",
@@ -95,19 +95,25 @@
       "reset": "Reset"
     },
     "confirm": {
-      "deleteTitle": "Delete User",
-      "deleteMessage": "Delete user \"{{username}}\"? They will no longer be able to sign in.",
-      "deleteConfirm": "Delete",
+      "deleteTitle": "Deactivate User",
+      "deleteMessage": "Deactivate user \"{{username}}\"? They will be signed out immediately and public share links will be disabled.",
+      "deleteConfirm": "Deactivate",
       "roleTitle": "Change Role",
       "roleMessage": "Change the role of \"{{username}}\" to {{role}}?",
       "roleConfirm": "Confirm Change",
       "logoutTitle": "Force Sign Out",
       "logoutMessage": "Force \"{{username}}\" to sign out?",
-      "logoutConfirm": "Force Sign Out"
+      "logoutConfirm": "Force Sign Out",
+      "restoreTitle": "Restore User",
+      "restoreMessage": "Restore user \"{{username}}\"? Restoration will fail if a new account has claimed the email or username.",
+      "restoreConfirm": "Restore",
+      "permanentDeleteTitle": "Permanently Delete User",
+      "permanentDeleteMessage": "Permanently delete \"{{username}}\" and all resumes, settings, and usage data? This action is irreversible.",
+      "permanentDeleteConfirm": "Delete Permanently"
     },
     "toast": {
-      "deleted": "User deleted",
-      "deleteFailed": "Failed to delete",
+      "deleted": "User deactivated",
+      "deleteFailed": "Failed to deactivate",
       "roleUpdated": "Role updated",
       "roleFailed": "Failed to update",
       "forceLogout": "User signed out",
@@ -117,7 +123,11 @@
       "quotaFailed": "Failed to update",
       "passwordTooShort": "Password must be at least 6 characters",
       "passwordReset": "Password reset",
-      "passwordFailed": "Failed to reset"
+      "passwordFailed": "Failed to reset",
+      "restored": "User restored",
+      "restoreFailed": "Failed to restore",
+      "permanentlyDeleted": "User permanently deleted",
+      "permanentDeleteFailed": "Permanent deletion failed"
     },
     "tooltip": {
       "detail": "Details",
@@ -125,16 +135,19 @@
       "role": "Change Role",
       "forceLogout": "Force Sign Out",
       "resetPassword": "Reset Password",
-      "delete": "Delete"
+      "delete": "Deactivate",
+      "restore": "Restore",
+      "permanentDelete": "Delete Permanently"
     },
     "mobile": {
-      "delete": "Delete",
+      "delete": "Deactivate",
       "noMatch": "No matching users",
       "noMatchHint": "No users match the current filter",
       "noUserHint": "No registered users yet",
       "clearFilter": "Clear Filter",
       "loadMore": "Load More"
-    }
+    },
+    "includeDeleted": "Include deactivated users"
   },
   "models": {
     "title": "AI Model Pool",

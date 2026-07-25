@@ -1,6 +1,6 @@
 import {
   Eye, SlidersHorizontal, Shield,
-  LogOut, Key, Trash2, ChevronLeft, ChevronRight,
+  LogOut, Key, Trash2, ChevronLeft, ChevronRight, RotateCcw,
 } from 'lucide-react';
 import type { AdminUserItem } from '../../types/admin';
 import {
@@ -20,6 +20,8 @@ interface DesktopUserTableProps {
   onForceLogout: (id: string, username: string) => void;
   onResetPassword: (id: string, username: string) => void;
   onDelete: (id: string, username: string) => void;
+  onRestore: (id: string, username: string) => void;
+  onPermanentDelete: (id: string, username: string) => void;
   labelUser: string;
   labelEmail: string;
   labelRole: string;
@@ -36,18 +38,20 @@ interface DesktopUserTableProps {
   tooltipLogout: string;
   tooltipPassword: string;
   tooltipDelete: string;
+  tooltipRestore: string;
+  tooltipPermanentDelete: string;
 }
 
 export function DesktopUserTable({
   users, total, page, totalPages,
   onSetPage,
   onOpenDetail, onOpenQuota, onRoleChange,
-  onForceLogout, onResetPassword, onDelete,
+  onForceLogout, onResetPassword, onDelete, onRestore, onPermanentDelete,
   labelUser, labelEmail, labelRole, labelResumes,
   labelRegistered, labelLastLogin, labelActions,
   labelDeleted, labelPagination, labelEmpty,
   tooltipDetail, tooltipQuota, tooltipRole,
-  tooltipLogout, tooltipPassword, tooltipDelete,
+  tooltipLogout, tooltipPassword, tooltipDelete, tooltipRestore, tooltipPermanentDelete,
 }: DesktopUserTableProps) {
   return (
     <AdminTableCard>
@@ -105,22 +109,33 @@ export function DesktopUserTable({
                     <AdminIconButton tone="brand" onClick={() => onOpenDetail(u.id)} title={tooltipDetail}>
                       <Eye size={15} />
                     </AdminIconButton>
-                    <AdminIconButton tone="warning" onClick={() => onOpenQuota(u)} title={tooltipQuota}>
-                      <SlidersHorizontal size={15} />
-                    </AdminIconButton>
-                    <AdminIconButton tone="brand" onClick={() => onRoleChange(u.id, u.username, u.role)} title={tooltipRole}>
-                      <Shield size={15} />
-                    </AdminIconButton>
-                    <AdminIconButton tone="warning" onClick={() => onForceLogout(u.id, u.username)} title={tooltipLogout}>
-                      <LogOut size={15} />
-                    </AdminIconButton>
-                    <AdminIconButton tone="success" onClick={() => onResetPassword(u.id, u.username)} title={tooltipPassword}>
-                      <Key size={15} />
-                    </AdminIconButton>
-                    {u.status !== 'deleted' && (
-                      <AdminIconButton tone="danger" onClick={() => onDelete(u.id, u.username)} title={tooltipDelete}>
-                        <Trash2 size={15} />
-                      </AdminIconButton>
+                    {u.status !== 'deleted' ? (
+                      <>
+                        <AdminIconButton tone="warning" onClick={() => onOpenQuota(u)} title={tooltipQuota}>
+                          <SlidersHorizontal size={15} />
+                        </AdminIconButton>
+                        <AdminIconButton tone="brand" onClick={() => onRoleChange(u.id, u.username, u.role)} title={tooltipRole}>
+                          <Shield size={15} />
+                        </AdminIconButton>
+                        <AdminIconButton tone="warning" onClick={() => onForceLogout(u.id, u.username)} title={tooltipLogout}>
+                          <LogOut size={15} />
+                        </AdminIconButton>
+                        <AdminIconButton tone="success" onClick={() => onResetPassword(u.id, u.username)} title={tooltipPassword}>
+                          <Key size={15} />
+                        </AdminIconButton>
+                        <AdminIconButton tone="danger" onClick={() => onDelete(u.id, u.username)} title={tooltipDelete}>
+                          <Trash2 size={15} />
+                        </AdminIconButton>
+                      </>
+                    ) : (
+                      <>
+                        <AdminIconButton tone="success" onClick={() => onRestore(u.id, u.username)} title={tooltipRestore}>
+                          <RotateCcw size={15} />
+                        </AdminIconButton>
+                        <AdminIconButton tone="danger" onClick={() => onPermanentDelete(u.id, u.username)} title={tooltipPermanentDelete}>
+                          <Trash2 size={15} />
+                        </AdminIconButton>
+                      </>
                     )}
                   </div>
                 </td>

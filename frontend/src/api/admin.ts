@@ -60,6 +60,14 @@ export function deleteUser(id: string): Promise<{ message: string }> {
   return api.del(`/api/admin/users/${id}`);
 }
 
+export function restoreUser(id: string): Promise<{ message: string }> {
+  return api.post(`/api/admin/users/${id}/restore`, {});
+}
+
+export function permanentlyDeleteUser(id: string): Promise<{ message: string }> {
+  return api.del(`/api/admin/users/${id}/permanent`);
+}
+
 // --- Model Pools ---
 export function fetchModelPools(): Promise<AdminModelPoolListResponse> {
   return api.get('/api/admin/model-pools');

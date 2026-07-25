@@ -12,14 +12,16 @@ import { EditProfileModal } from './profile/EditProfileModal';
 import { ChangePasswordModal } from './profile/ChangePasswordModal';
 import { QuotaPanel } from './profile/QuotaPanel';
 import { ProfileInfo } from './profile/ProfileInfo';
+import { DeactivateAccountModal } from './profile/DeactivateAccountModal';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { isLoggedIn, profile, profileLoading, sessionLoading, setProfile, refreshProfile } = useAuth();
+  const { isLoggedIn, profile, profileLoading, sessionLoading, setProfile, refreshProfile, logout } = useAuth();
   const { showToast } = useToast();
   const { t, i18n } = useTranslation('auth');
   const [editOpen, setEditOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
+  const [deactivateOpen, setDeactivateOpen] = useState(false);
 
   // Auth guard: redirect to home if not logged in
   useEffect(() => {
@@ -73,6 +75,7 @@ export default function ProfilePage() {
                 onAvatarUpdate={(updatedProfile) => setProfile(updatedProfile)}
                 onEdit={() => setEditOpen(true)}
                 onChangePassword={() => setPasswordOpen(true)}
+                onDeactivate={() => setDeactivateOpen(true)}
               />
               <QuotaPanel profile={profile} />
             </div>
@@ -110,6 +113,14 @@ export default function ProfilePage() {
       <ChangePasswordModal
         open={passwordOpen}
         onClose={() => setPasswordOpen(false)}
+      />
+      <DeactivateAccountModal
+        open={deactivateOpen}
+        onClose={() => setDeactivateOpen(false)}
+        onDeactivated={async () => {
+          await logout();
+          navigate('/', { replace: true });
+        }}
       />
     </div>
   );

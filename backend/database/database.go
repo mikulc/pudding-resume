@@ -62,11 +62,37 @@ func Init(cfg *config.Config) {
 		log.Fatalf("Failed to auto-migrate database: %v", err)
 	}
 
+	migrateActiveUserUniqueIndexes(DB)
 	dropStyleLibraryDescriptionColumn(DB)
 	seedAll()
 	migrateTableComments(DB)
 
 	fmt.Println("Database connected and migrated successfully.")
+}
+
+// migrateActiveUserUniqueIndexes keeps email and username unique only among
+// active users. Soft-deleted accounts therefore do not reserve their former
+// login identifiers, while the database remains the final concurrency guard.
+func migrateActiveUserUniqueIndexes(db *gorm.DB) {
+	err := db.Transaction(func(tx *gorm.DB) error {
+		statements := []string{
+			`DROP INDEX IF EXISTS idx_user_info_email`,
+			`DROP INDEX IF EXISTS idx_user_info_username`,
+			`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_info_email_active
+				ON user_info (LOWER(email)) WHERE deleted_at IS NULL`,
+			`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_info_username_active
+				ON user_info (username) WHERE deleted_at IS NULL`,
+		}
+		for _, statement := range statements {
+			if err := tx.Exec(statement).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		log.Fatalf("Failed to migrate active-user unique indexes: %v", err)
+	}
 }
 
 // dropStyleLibraryDescriptionColumn removes the retired template description

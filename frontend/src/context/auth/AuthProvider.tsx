@@ -48,7 +48,7 @@ interface AuthContextType {
   /** Register a new account */
   register: (req: RegisterRequest) => Promise<void>;
   /** Logout — calls server to invalidate tokens, clears local state */
-  logout: () => void;
+  logout: () => Promise<void>;
   /** Fetch user profile from server */
   refreshProfile: () => Promise<void>;
   /** Update profile from a partial UserProfile (after avatar upload or name change) */

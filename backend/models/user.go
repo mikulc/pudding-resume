@@ -9,8 +9,8 @@ import (
 // User 用户表 — 存储用户基本信息与认证数据
 type User struct {
 	ID           string         `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:用户唯一标识（UUID v4）"`
-	Username     string         `json:"username" gorm:"uniqueIndex;size:64;not null;comment:用户名（登录用）"`
-	Email        string         `json:"email" gorm:"uniqueIndex;size:128;not null;comment:邮箱地址"`
+	Username     string         `json:"username" gorm:"size:64;not null;comment:用户名（登录用）"`
+	Email        string         `json:"email" gorm:"size:128;not null;comment:邮箱地址"`
 	Password     string         `json:"-" gorm:"size:256;not null;comment:密码哈希（json:\"-\" 禁止序列化输出）"`
 	Avatar       string         `json:"avatar" gorm:"size:512;comment:头像文件路径（相对于 uploads/avatars）"`
 	Role         string         `json:"role" gorm:"size:32;default:user;not null;index;comment:用户角色（user / admin）"`

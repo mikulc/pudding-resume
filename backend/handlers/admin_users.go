@@ -81,8 +81,8 @@ func ListUsers(c *gin.Context) {
 	baseQuery := database.DB.Model(&models.User{})
 
 	// Include soft-deleted if requested
-	if !includeDeleted {
-		baseQuery = baseQuery.Where("deleted_at IS NULL")
+	if includeDeleted {
+		baseQuery = baseQuery.Unscoped()
 	}
 	if search != "" {
 		like := "%" + search + "%"
@@ -281,6 +281,7 @@ func UpdateUserQuota(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "配额更新成功"})
 }
 
+// DeleteUser deactivates a user with a reversible soft delete.
 func DeleteUser(c *gin.Context) {
 	userID := c.Param("id")
 	adminID := middleware.GetUserID(c)
@@ -298,15 +299,97 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 
-	// Soft delete
-	if err := database.DB.Where("id = ?", userID).Delete(&models.User{}).Error; err != nil {
+	if err := database.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("user_id = ?", userID).Delete(&models.ResumeShare{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Model(&models.User{}).Where("id = ?", userID).
+			Update("token_version", gorm.Expr("token_version + 1")).Error; err != nil {
+			return err
+		}
+		return tx.Where("id = ?", userID).Delete(&models.User{}).Error
+	}); err != nil {
 		respondError(c, http.StatusInternalServerError, "删除失败")
 		return
 	}
 
-	recordAuditLog(adminID, adminName, "user_delete", "user", userID, u.Username, "", c.ClientIP())
+	recordAuditLog(adminID, adminName, "user_deactivate", "user", userID, u.Username, "", c.ClientIP())
 
-	c.JSON(http.StatusOK, gin.H{"message": "用户已删除"})
+	c.JSON(http.StatusOK, gin.H{"message": "用户已停用"})
+}
+
+// RestoreUser restores a soft-deleted account if its email and username have
+// not since been claimed by another active account.
+func RestoreUser(c *gin.Context) {
+	userID := c.Param("id")
+	adminID := middleware.GetUserID(c)
+	adminName := middleware.GetUsername(c)
+
+	user, err := findUserIncludingDeleted(userID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		respondError(c, http.StatusNotFound, "用户不存在")
+		return
+	}
+	if err != nil {
+		respondError(c, http.StatusInternalServerError, "服务器内部错误")
+		return
+	}
+	if !user.DeletedAt.Valid {
+		respondError(c, http.StatusConflict, "用户当前处于正常状态")
+		return
+	}
+
+	err = database.DB.Unscoped().Model(&models.User{}).Where("id = ?", userID).
+		Updates(map[string]any{
+			"deleted_at":    nil,
+			"token_version": gorm.Expr("token_version + 1"),
+		}).Error
+	if err != nil {
+		if _, conflict := registrationConflictMessage(err); conflict {
+			respondError(c, http.StatusConflict, "邮箱或用户名已被新的账号使用，不能恢复")
+			return
+		}
+		respondError(c, http.StatusInternalServerError, "恢复失败")
+		return
+	}
+
+	recordAuditLog(adminID, adminName, "user_restore", "user", userID, user.Username, "", c.ClientIP())
+	c.JSON(http.StatusOK, gin.H{"message": "用户已恢复"})
+}
+
+// PermanentlyDeleteUser irreversibly deletes the account and all user-owned
+// rows. The audit entry is written after commit so the operation stays atomic.
+func PermanentlyDeleteUser(cfg *config.Config) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userID := c.Param("id")
+		adminID := middleware.GetUserID(c)
+		adminName := middleware.GetUsername(c)
+		if userID == adminID {
+			respondError(c, http.StatusBadRequest, "不能永久删除自己")
+			return
+		}
+
+		user, err := findUserIncludingDeleted(userID)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			respondError(c, http.StatusNotFound, "用户不存在")
+			return
+		}
+		if err != nil {
+			respondError(c, http.StatusInternalServerError, "服务器内部错误")
+			return
+		}
+
+		if err := database.DB.Transaction(func(tx *gorm.DB) error {
+			return permanentlyDeleteUser(tx, userID)
+		}); err != nil {
+			respondError(c, http.StatusInternalServerError, "永久删除失败")
+			return
+		}
+
+		removeAvatarFile(cfg.UploadDir, user.Avatar)
+		recordAuditLog(adminID, adminName, "user_permanent_delete", "user", userID, user.Username, "", c.ClientIP())
+		c.JSON(http.StatusOK, gin.H{"message": "用户及其关联数据已永久删除"})
+	}
 }
 
 func BatchDeleteUsers(c *gin.Context) {
@@ -322,6 +405,7 @@ func BatchDeleteUsers(c *gin.Context) {
 	adminName := middleware.GetUsername(c)
 	ip := c.ClientIP()
 
+	deletedCount := 0
 	for _, id := range req.IDs {
 		if id == adminID {
 			continue
@@ -330,11 +414,24 @@ func BatchDeleteUsers(c *gin.Context) {
 		if err := database.DB.Where("id = ?", id).First(&u).Error; err != nil {
 			continue
 		}
-		database.DB.Where("id = ?", id).Delete(&models.User{})
-		recordAuditLog(adminID, adminName, "user_delete", "user", id, u.Username, "", ip)
+		err := database.DB.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Where("user_id = ?", id).Delete(&models.ResumeShare{}).Error; err != nil {
+				return err
+			}
+			if err := tx.Model(&models.User{}).Where("id = ?", id).
+				Update("token_version", gorm.Expr("token_version + 1")).Error; err != nil {
+				return err
+			}
+			return tx.Where("id = ?", id).Delete(&models.User{}).Error
+		})
+		if err != nil {
+			continue
+		}
+		deletedCount++
+		recordAuditLog(adminID, adminName, "user_deactivate", "user", id, u.Username, "", ip)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("已删除 %d 个用户", len(req.IDs))})
+	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("已停用 %d 个用户", deletedCount)})
 }
 
 func UpdateUserRole(c *gin.Context) {
