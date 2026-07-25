@@ -258,8 +258,8 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
   const firstWeekday = new Date(pickYear, pickMonth - 1, 1).getDay();
 
   // ── Navigation button styles ──
-  const navBtnClass = 'flex h-8 w-8 items-center justify-center rounded-[9px] text-gray-400 hover:bg-[#F5F7FB] hover:text-gray-600 active:bg-[#EEF4FF] dark:hover:bg-white/8 dark:hover:text-slate-300 transition-colors';
-  const centerBtnClass = 'inline-flex items-center justify-center gap-1 min-w-[120px] h-9 px-2.5 rounded-[10px] bg-transparent text-[15px] font-semibold text-[#1f2937] hover:bg-[#F5F7FB] dark:text-slate-200 dark:hover:bg-white/8 whitespace-nowrap transition-colors';
+  const navBtnClass = 'flex h-8 w-8 items-center justify-center rounded-[9px] text-gray-400 hover:bg-[#F5F7FB] hover:text-gray-600 active:bg-[#EEF4FF] dark:hover:bg-white/[0.08] dark:hover:text-slate-300 transition-colors';
+  const centerBtnClass = 'inline-flex items-center justify-center gap-1 min-w-[120px] h-9 px-2.5 rounded-[10px] bg-transparent text-[15px] font-semibold text-[#1f2937] hover:bg-[#F5F7FB] dark:text-slate-200 dark:hover:bg-white/[0.08] whitespace-nowrap transition-colors';
 
   // ── Popover content ──
   const popover = (
@@ -342,7 +342,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
                         className={`aspect-square flex items-center justify-center rounded-lg text-xs font-medium transition-all ${
                           selected
                             ? 'bg-blue-500 text-white shadow-sm'
-                            : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/8'
+                            : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/[0.08]'
                         }`}
                       >
                         {t('date.monthNumber', { month: m })}
@@ -369,7 +369,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
                           className={`flex h-7 items-center justify-center rounded-lg text-[11px] font-medium transition-colors ${
                             selected ? 'bg-blue-500 text-white shadow-sm'
                             : today ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/35 dark:text-blue-400'
-                            : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/8'
+                            : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/[0.08]'
                           }`}
                         >
                           {day}
@@ -388,7 +388,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
               <button
                 type="button"
                 onClick={() => { setYearPage(getYearPageStart(pickYear)); setPickerView('years'); }}
-                className="mb-3 inline-flex items-center gap-1 rounded-[8px] px-2 py-1 text-[14px] font-semibold text-[#1f2937] hover:bg-[#F5F7FB] dark:text-slate-200 dark:hover:bg-white/8 transition-colors"
+                className="mb-3 inline-flex items-center gap-1 rounded-[8px] px-2 py-1 text-[14px] font-semibold text-[#1f2937] hover:bg-[#F5F7FB] dark:text-slate-200 dark:hover:bg-white/[0.08] transition-colors"
               >
                 {t('date.yearLabel', { year: pickYear })}
                 <ChevronDown size={13} className="text-gray-400 dark:text-slate-500" />
@@ -405,7 +405,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
                       className={`aspect-square flex items-center justify-center rounded-lg text-xs font-medium transition-all ${
                         selected
                           ? 'bg-blue-500 text-white shadow-sm'
-                          : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/8'
+                          : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/[0.08]'
                       }`}
                     >
                       {t('date.monthNumber', { month: m })}
@@ -431,7 +431,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
                     className={`aspect-square flex items-center justify-center rounded-lg text-[11px] font-medium transition-all tabular-nums ${
                       selected
                         ? 'bg-blue-500 text-white shadow-sm'
-                        : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/8'
+                        : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/[0.08]'
                     }`}
                   >
                     {y}
@@ -505,7 +505,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
           onClick={() => setOpen((prev) => !prev)}
           disabled={disabled}
           tabIndex={-1}
-          className="field-trigger absolute right-0 top-0 flex h-full w-10 shrink-0 items-center justify-center rounded-r-xl text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500 disabled:opacity-50 dark:hover:bg-white/8"
+          className="field-trigger absolute right-0 top-0 flex h-full w-10 shrink-0 items-center justify-center rounded-r-xl text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500 disabled:opacity-50 dark:hover:bg-white/[0.08]"
         >
           <Calendar className="w-3.5 h-3.5" />
         </button>
