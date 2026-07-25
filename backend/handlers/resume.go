@@ -1,22 +1,19 @@
 package handlers
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"strconv"
-	"strings"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
-
+	"net/http"
 	"pudding-resume-backend/config"
 	"pudding-resume-backend/database"
 	"pudding-resume-backend/middleware"
 	"pudding-resume-backend/models"
+	"strconv"
+	"strings"
+	"time"
 )
 
 // --- Response types ---
@@ -57,49 +54,6 @@ func GetLatestResume(c *gin.Context) {
 		Settings:  json.RawMessage(resume.Settings),
 		UpdatedAt: resume.UpdatedAt.Format("2006-01-02 15:04:05"),
 	})
-}
-
-// countResumes returns the number of resumes belonging to the given user.
-func countResumes(userID string) (int64, error) {
-	var count int64
-	err := database.DB.Model(&models.Resume{}).Where("user_id = ?", userID).Count(&count).Error
-	return count, err
-}
-
-// getUserMaxResumes fetches the user's MaxResumes limit from user_quota, falls back to 10 if not set.
-func getUserMaxResumes(userID string) int {
-	var quota models.UserQuota
-	if err := database.DB.Where("user_id = ?", userID).First(&quota).Error; err != nil {
-		return 10
-	}
-	if quota.MaxResumes <= 0 {
-		return 10
-	}
-	return quota.MaxResumes
-}
-
-// incrementResumeStats increments the user's total_resumes_created in user_stats.
-func incrementResumeStats(userID string) {
-	database.DB.Model(&models.UserStats{}).
-		Where("user_id = ?", userID).
-		UpdateColumn("total_resumes_created", gorm.Expr("total_resumes_created + 1"))
-	database.DB.Model(&models.UserStats{}).
-		Where("user_id = ?", userID).
-		UpdateColumn("last_active_at", time.Now())
-	// Also track daily stats
-	UpsertDailyStats(userID, "resumes_created", 1)
-}
-
-// incrementEditingTime increments the user's total_editing_seconds in user_stats.
-func incrementEditingTime(userID string, seconds int64) {
-	database.DB.Model(&models.UserStats{}).
-		Where("user_id = ?", userID).
-		UpdateColumn("total_editing_seconds", gorm.Expr("total_editing_seconds + ?", seconds))
-	database.DB.Model(&models.UserStats{}).
-		Where("user_id = ?", userID).
-		UpdateColumn("last_active_at", time.Now())
-	// Also track daily stats
-	UpsertDailyStats(userID, "editing_seconds", seconds)
 }
 
 // ListResumes handles GET /api/resumes (requires auth)
@@ -175,57 +129,6 @@ func ListResumes(c *gin.Context) {
 		"resumes":  items,
 		"total":    total,
 	})
-}
-
-// maxResumePhotoBytes is the maximum decoded size (in bytes) for a base64 resume photo.
-const maxResumePhotoBytes = 2 * 1024 * 1024 // 2 MB
-
-// validateResumePhotoURL checks the content JSON for an oversized base64 photoUrl.
-// Returns an error message string if invalid, or empty string if valid.
-func validateResumePhotoURL(content json.RawMessage) string {
-	if len(content) == 0 {
-		return ""
-	}
-
-	var parsed struct {
-		PersonalInfo *struct {
-			PhotoURL string `json:"photoUrl"`
-		} `json:"personalInfo"`
-	}
-	if err := json.Unmarshal(content, &parsed); err != nil || parsed.PersonalInfo == nil {
-		return ""
-	}
-	photoURL := parsed.PersonalInfo.PhotoURL
-	if photoURL == "" {
-		return ""
-	}
-
-	// Only validate base64 data URLs
-	const prefix = "data:image/"
-	if !strings.HasPrefix(photoURL, prefix) {
-		return ""
-	}
-
-	// Find the base64 payload after ";base64,"
-	commaIdx := strings.Index(photoURL, ",")
-	if commaIdx == -1 {
-		return "简历照片格式错误"
-	}
-	encoded := photoURL[commaIdx+1:]
-
-	// Decode and check size
-	decoded, err := base64.StdEncoding.DecodeString(encoded)
-	if err != nil {
-		decoded, err = base64.URLEncoding.DecodeString(encoded)
-		if err != nil {
-			return "简历照片格式错误，无法解析"
-		}
-	}
-	if len(decoded) > maxResumePhotoBytes {
-		return fmt.Sprintf("简历照片过大，最大允许 %dMB", maxResumePhotoBytes/(1024*1024))
-	}
-
-	return ""
 }
 
 // CreateResume handles POST /api/resumes (requires auth)

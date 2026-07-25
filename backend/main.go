@@ -45,6 +45,42 @@ func main() {
 		log.Fatalf("Failed to create fonts directory: %v", err)
 	}
 
+	r := NewRouter(cfg, avatarDir)
+
+	// Start server with graceful shutdown
+	addr := fmt.Sprintf(":%s", cfg.ServerPort)
+	srv := &http.Server{
+		Addr:              addr,
+		Handler:           r,
+		ReadHeaderTimeout: 10 * time.Second,
+		IdleTimeout:       60 * time.Second,
+		MaxHeaderBytes:    1 << 20,
+	}
+
+	go func() {
+		log.Printf("Server starting on %s", addr)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Failed to start server: %v", err)
+		}
+	}()
+
+	// Wait for interrupt signal
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutting down server...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatalf("Server forced to shutdown: %v", err)
+	}
+	log.Println("Server exited")
+}
+
+// NewRouter constructs the complete HTTP adapter without starting a server.
+// Keeping composition here lets tests exercise routing and middleware independently.
+func NewRouter(cfg *config.Config, avatarDir string) *gin.Engine {
 	// Create Gin router. Request IDs run before logging/recovery so every
 	// response can be correlated with upstream and application logs.
 	r := gin.New()
@@ -203,33 +239,5 @@ func main() {
 
 	}
 
-	// Start server with graceful shutdown
-	addr := fmt.Sprintf(":%s", cfg.ServerPort)
-	srv := &http.Server{
-		Addr:              addr,
-		Handler:           r,
-		ReadHeaderTimeout: 10 * time.Second,
-		IdleTimeout:       60 * time.Second,
-		MaxHeaderBytes:    1 << 20,
-	}
-
-	go func() {
-		log.Printf("Server starting on %s", addr)
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Failed to start server: %v", err)
-		}
-	}()
-
-	// Wait for interrupt signal
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	log.Println("Shutting down server...")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatalf("Server forced to shutdown: %v", err)
-	}
-	log.Println("Server exited")
+	return r
 }
