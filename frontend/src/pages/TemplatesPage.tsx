@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ChevronLeft, ChevronRight, Eye, FileText, Loader2 } from 'lucide-react';
@@ -6,7 +6,10 @@ import { NavbarAuth } from '../components/auth/NavbarAuth';
 import LogoIcon from '../components/common/LogoIcon';
 import { TopNavLinks } from '../components/common/TopNavLinks';
 import { useToast } from '../components/common/Toast';
-import { ResumeCardPreview } from '../components/preview/ResumeCardPreview';
+import {
+  LazyResumeCardPreview,
+  ResumeCardPreview,
+} from '../components/preview/ResumeCardPreview';
 import {
   ALL_THEME_CATEGORY,
   buildResumePreviewTheme,
@@ -34,6 +37,7 @@ export default function TemplatesPage() {
   const [creatingLayoutId, setCreatingLayoutId] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState(ALL_THEME_CATEGORY);
   const [previewEntry, setPreviewEntry] = useState<StyleLibraryEntry | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { entries, demoContent, loading } = useResumeThemeLibrary(!creatingLayoutId);
 
   const categories = useMemo(() => deriveCategories(entries), [entries]);
@@ -197,7 +201,7 @@ export default function TemplatesPage() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto">
+            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
               <div className="max-w-[1360px] mx-auto px-6 py-6" data-global-toolbar-content>
                 {filteredEntries.length === 0 ? (
                   <div className="flex min-h-[360px] flex-col items-center justify-center text-gray-400">
@@ -219,7 +223,11 @@ export default function TemplatesPage() {
                             <div className="resume-grid-card-preview absolute inset-0 z-0 h-full w-full block bg-white overflow-hidden">
                               <div className="resume-grid-card-preview-surface absolute inset-0 bg-gray-100">
                                 {demoContent ? (
-                                  <ResumeCardPreview content={demoContent} theme={previewTheme} />
+                                  <LazyResumeCardPreview
+                                    content={demoContent}
+                                    theme={previewTheme}
+                                    scrollRootRef={scrollContainerRef}
+                                  />
                                 ) : (
                                   <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
                                     <div className="select-none text-center text-gray-300">

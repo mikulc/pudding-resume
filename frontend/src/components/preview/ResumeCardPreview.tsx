@@ -11,7 +11,7 @@
  * - 底部渐变遮罩让预览自然过渡到信息栏
  */
 
-import { useEffect, useRef, useState, useLayoutEffect } from 'react';
+import { useRef, useState, useLayoutEffect } from 'react';
 import type { RefObject } from 'react';
 import { ResumeCardPreviewProvider } from './ResumeCardPreviewProvider';
 import { ResumePreview } from './PreviewComponents';
@@ -45,18 +45,40 @@ export function LazyResumeCardPreview({
     () => typeof IntersectionObserver === 'undefined',
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (shouldRender) return;
 
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
+
+    const root = scrollRootRef?.current;
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const rootRect = root?.getBoundingClientRect() ?? {
+      top: 0,
+      right: window.innerWidth,
+      bottom: window.innerHeight,
+      left: 0,
+    };
+    const preloadDistance = Number.parseFloat(rootMargin) || 0;
+    const isInitiallyNearViewport =
+      wrapperRect.bottom >= rootRect.top - preloadDistance &&
+      wrapperRect.top <= rootRect.bottom + preloadDistance &&
+      wrapperRect.right >= rootRect.left &&
+      wrapperRect.left <= rootRect.right;
+
+    // Layout effects run before paint, so initially visible cards skip the
+    // skeleton frame while cards further down still use IntersectionObserver.
+    if (isInitiallyNearViewport) {
+      setShouldRender(true);
+      return;
+    }
 
     const observer = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       setShouldRender(true);
       observer.disconnect();
     }, {
-      root: scrollRootRef?.current ?? null,
+      root: root ?? null,
       rootMargin,
     });
 
