@@ -1241,7 +1241,7 @@ html.theme-transition .md-source-editable * {
 }
 
 .resume-grid-card {
-  --resume-grid-card-footer-height: 76px;
+  --resume-grid-card-footer-height: 54px;
   border-radius: 22px;
   background-color: #ffffff;
   overflow: hidden;

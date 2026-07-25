@@ -247,9 +247,6 @@ export function ResumeThemeCards({
                   <h4 className={`resume-card-title theme-color-transition truncate text-sm font-bold leading-snug ${isSelected ? 'text-blue-700' : 'text-gray-900'}`}>
                     {entry.name}
                   </h4>
-                  {!compact && (
-                    <p className="theme-color-transition mt-0.5 line-clamp-1 text-[11px] text-gray-400">{entry.description}</p>
-                  )}
                 </div>
                 {isCurrent && (
                   <span className="theme-color-transition resume-theme-current-badge inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full border border-green-200 bg-green-50 px-2 py-0.5 text-[10px] font-medium text-green-600">

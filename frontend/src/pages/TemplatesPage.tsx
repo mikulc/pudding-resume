@@ -206,16 +206,13 @@ export default function TemplatesPage() {
                               className="resume-grid-card-footer absolute inset-x-0 bottom-0 z-10 p-4 border-t border-slate-100/80"
                               onMouseDown={(event) => event.stopPropagation()}
                             >
-                              <div className="flex items-center gap-2 mb-1.5 min-w-0">
-                                <h3 className="resume-card-title font-semibold text-slate-900 truncate text-sm">
+                              <div className="flex items-center justify-between gap-2 min-w-0">
+                                <h3 className="resume-card-title min-w-0 font-semibold text-slate-900 truncate text-sm">
                                   {entry.name}
                                 </h3>
                                 <span className="flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100/70 text-slate-500 text-[10px] font-medium border border-slate-200/70">
                                   {getLayoutName(entry.layoutId)}
                                 </span>
-                              </div>
-                              <div className="flex min-w-0 items-center gap-1.5 text-xs text-slate-400">
-                                <span className="truncate">{entry.description}</span>
                               </div>
                             </div>
                           </div>

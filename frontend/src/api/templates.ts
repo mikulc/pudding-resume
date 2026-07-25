@@ -9,7 +9,6 @@ import { api } from '../utils/api';
 interface ApiStyleLibrary {
   id: string;
   name: string;
-  description: string;
   layout_id: string;
   category: string;
   highlights: string[];
@@ -30,7 +29,6 @@ export async function getStyleLibraries(): Promise<StyleLibraryEntry[]> {
   return (res.templates || []).map((t) => ({
     id: t.id,
     name: t.name,
-    description: t.description,
     highlights: t.highlights || [],
     layoutId: t.layout_id,
     category: t.category || '',

@@ -235,7 +235,6 @@ export type LayoutId = string;
 export interface StyleLibraryEntry {
   id: string;
   name: string;
-  description: string;
   highlights: string[];
   layoutId: string;
   category: string;

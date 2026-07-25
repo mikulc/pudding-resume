@@ -25,7 +25,6 @@ func seedStyleLibraries() {
 		{
 			ID:            uuid.New().String(),
 			Name:          "浅蓝通栏",
-			Description:   "通栏浅蓝标题版式，结构清晰，适配应届生、产品运营和通用求职简历。",
 			LayoutID:      "skyveil",
 			Category:      "商务",
 			Highlights:    marshalJSON([]string{"清爽通栏", "层级清晰", "通用版式"}),
@@ -35,7 +34,6 @@ func seedStyleLibraries() {
 		{
 			ID:            uuid.New().String(),
 			Name:          "青蓝圆标",
-			Description:   "青蓝色标题、圆形图标和细线分割组合，适配互联网、管理和商务岗位简历。",
 			LayoutID:      "cyanblu",
 			Category:      "商务",
 			Highlights:    marshalJSON([]string{"青蓝点缀", "图标标题", "细线分割"}),
@@ -45,7 +43,6 @@ func seedStyleLibraries() {
 		{
 			ID:            uuid.New().String(),
 			Name:          "黑白简线",
-			Description:   "黑白极简版式，减少装饰元素，适配技术、科研和金融类简历。",
 			LayoutID:      "ordrin",
 			Category:      "极简",
 			Highlights:    marshalJSON([]string{"黑白极简", "ATS 友好", "信息密度高"}),
@@ -55,7 +52,6 @@ func seedStyleLibraries() {
 		{
 			ID:            uuid.New().String(),
 			Name:          "青影侧栏",
-			Description:   "浅蓝侧栏、圆角边框与绿色标题点缀，适配互联网产品、研发和 AI 工程岗位简历。",
 			LayoutID:      "left-sidebar-two-column",
 			Category:      "互联网",
 			Highlights:    marshalJSON([]string{"侧栏信息", "彩色标题", "产品岗风格"}),
@@ -65,7 +61,6 @@ func seedStyleLibraries() {
 		{
 			ID:            uuid.New().String(),
 			Name:          "居中单栏",
-			Description:   "纯白单栏、居中抬头与黑白分割线，适配 ATS 投递、国企银行和正式商务简历。",
 			LayoutID:      "centerline",
 			Category:      "极简",
 			Highlights:    marshalJSON([]string{"居中抬头", "纯白单栏", "ATS 友好"}),
@@ -75,7 +70,6 @@ func seedStyleLibraries() {
 		{
 			ID:            uuid.New().String(),
 			Name:          "经典横线",
-			Description:   "黑白单栏、居中抬头和粗体横线标题，适配嵌入式、制造业、国企和传统技术岗简历。",
 			LayoutID:      "classic-horizontal",
 			Category:      "极简",
 			Highlights:    marshalJSON([]string{"经典横线", "黑白单栏", "高密度内容"}),
@@ -85,7 +79,6 @@ func seedStyleLibraries() {
 		{
 			ID:            uuid.New().String(),
 			Name:          "蓝环职线",
-			Description:   "左上个人信息、右上证件照、蓝色圆形图标标题和浅蓝细线分隔，适配系统集成、研发和技术实施岗位简历。",
 			LayoutID:      "blueprint-icons",
 			Category:      "商务",
 			Highlights:    marshalJSON([]string{"圆形图标标题", "浅蓝细线", "证件照抬头"}),
@@ -95,7 +88,6 @@ func seedStyleLibraries() {
 		{
 			ID:            uuid.New().String(),
 			Name:          "黑杠灰条",
-			Description:   "居中抬头、右上证件照、黑色竖杠和灰色横条标题，适配电商运营、项目助理和通用校招简历。",
 			LayoutID:      "monochrome-rings",
 			Category:      "极简",
 			Highlights:    marshalJSON([]string{"黑色竖杠", "灰色横条", "居中抬头"}),
@@ -105,7 +97,6 @@ func seedStyleLibraries() {
 		{
 			ID:            uuid.New().String(),
 			Name:          "弧顶青签",
-			Description:   "蓝色弧形页眉、居中圆形头像和青绿色斜角标签标题，适配客户经理、市场运营和校园活动经历简历。",
 			LayoutID:      "teal-ribbon-wave",
 			Category:      "商务",
 			Highlights:    marshalJSON([]string{"弧形页眉", "圆形头像", "青绿标签"}),
@@ -115,7 +106,6 @@ func seedStyleLibraries() {
 		{
 			ID:            uuid.New().String(),
 			Name:          "蓝幕圆标",
-			Description:   "深蓝通栏抬头、白色个人信息和深蓝圆形图标标题，适配外贸、跨境电商和商务实习简历。",
 			LayoutID:      "blue-banner-icons",
 			Category:      "商务",
 			Highlights:    marshalJSON([]string{"深蓝通栏", "深蓝圆标", "高密度正文"}),
@@ -125,7 +115,6 @@ func seedStyleLibraries() {
 		{
 			ID:            uuid.New().String(),
 			Name:          "蔚蓝侧栏",
-			Description:   "蓝色左侧栏集中展示头像、联系方式和求职意向，右侧主栏承载完整经历，适配算法、视觉和研发岗位简历。",
 			LayoutID:      "azure-sidebar",
 			Category:      "技术",
 			Highlights:    marshalJSON([]string{"蓝色侧栏", "双栏结构", "主栏细线标题"}),
@@ -142,7 +131,6 @@ func seedStyleLibraries() {
 			Where("layout_id = ?", "kusen").
 			Updates(map[string]any{
 				"name":           e.Name,
-				"description":    e.Description,
 				"layout_id":      e.LayoutID,
 				"category":       e.Category,
 				"highlights":     e.Highlights,
@@ -162,7 +150,6 @@ func seedStyleLibraries() {
 		if err == nil {
 			if err := DB.Model(&existing).Updates(map[string]any{
 				"name":           e.Name,
-				"description":    e.Description,
 				"category":       e.Category,
 				"highlights":     e.Highlights,
 				"preview_colors": e.PreviewColors,

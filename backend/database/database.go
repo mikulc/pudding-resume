@@ -62,10 +62,22 @@ func Init(cfg *config.Config) {
 		log.Fatalf("Failed to auto-migrate database: %v", err)
 	}
 
+	dropStyleLibraryDescriptionColumn(DB)
 	seedAll()
 	migrateTableComments(DB)
 
 	fmt.Println("Database connected and migrated successfully.")
+}
+
+// dropStyleLibraryDescriptionColumn removes the retired template description
+// field from existing databases. GORM AutoMigrate keeps obsolete columns.
+func dropStyleLibraryDescriptionColumn(db *gorm.DB) {
+	if !db.Migrator().HasColumn(&models.StyleLibrary{}, "description") {
+		return
+	}
+	if err := db.Migrator().DropColumn(&models.StyleLibrary{}, "description"); err != nil {
+		log.Fatalf("Failed to drop style_library.description: %v", err)
+	}
 }
 
 // seedAll runs all table seeders. Each seeder is a no-op when the table already has data.
