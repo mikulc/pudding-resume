@@ -1,0 +1,52 @@
+/* field more menu: matched to resume-popover style from MyResumePage. */
+@keyframes field-more-menu-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.field-more-menu-enter {
+  transform-origin: top right;
+  animation: field-more-menu-enter 180ms ease-out both;
+}
+
+.field-more-menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 36px;
+  gap: 8px;
+  padding: 0 12px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  text-align: left;
+  white-space: nowrap;
+  transition-property: background-color, color;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+.field-more-menu-item:active {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  padding: 0 12px;
+}
+
+.field-more-menu-icon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+}
+
+.field-more-menu-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+

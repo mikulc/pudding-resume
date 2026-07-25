@@ -1,0 +1,304 @@
+/* ================================================================
+   无边框内嵌字段输入框 —— Notion / Linear 风格
+   默认浅色填充；focus / active 与默认完全一致，无背景变化、
+   无蓝线、无外圈、无 outline，不破坏默认简洁观感
+   ================================================================ */
+.field-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #344054;
+  background-color: #f7f9fc;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  outline: none;
+  appearance: none;
+  box-shadow: inset 0 0 0 1px rgba(31, 45, 61, 0.025);
+  transition: background-color 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+.field-input::placeholder {
+  color: #9aa4b2;
+}
+.field-input:hover {
+  background-color: #f3f6fa;
+  box-shadow: inset 0 0 0 1px rgba(31, 45, 61, 0.05);
+}
+/* focus / active 与默认完全一致：不改背景、不出现蓝线、不出现外圈、无 outline */
+.field-input:focus,
+.field-input:active {
+  background-color: #f7f9fc;
+  border-color: transparent;
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(31, 45, 61, 0.025);
+}
+.field-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 带右侧触发图标的输入（下拉 / 日期） */
+.field-input--icon {
+  padding-right: 40px;
+}
+
+/* Homepage hero: one clear product surface, with a reserved A4 preview pane. */
+.hero-shell {
+  background: radial-gradient(circle at 72% 45%, rgba(50, 114, 255, 0.07), transparent 38%);
+}
+
+.hero-heading {
+  word-break: keep-all;
+  overflow-wrap: normal;
+  text-wrap: balance;
+}
+
+.hero-heading-line {
+  display: block;
+  white-space: nowrap;
+}
+
+.hero-visual::before {
+  content: '';
+  position: absolute;
+  inset: 3% -2%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 52% 48%,
+    rgba(50, 114, 255, 0.08) 0%,
+    rgba(50, 114, 255, 0.035) 42%,
+    transparent 72%
+  );
+}
+
+.hero-visual-stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(100%, 720px);
+  height: 580px;
+  transform: translate(-50%, -50%);
+}
+
+.hero-product-card {
+  position: absolute;
+  z-index: 10;
+  top: 46px;
+  left: 0;
+  width: calc(100% - 105px);
+  aspect-ratio: 650 / 506;
+}
+
+.hero-template-card {
+  position: absolute;
+  z-index: 20;
+  top: 14px;
+  right: 0;
+  width: 190px;
+  min-height: 150px;
+}
+
+.hero-ai-card {
+  position: absolute;
+  z-index: 30;
+  right: 0;
+  bottom: 32px;
+  width: 210px;
+  min-height: 202px;
+}
+
+.hero-export-card {
+  position: absolute;
+  z-index: 20;
+  bottom: 0;
+  left: 30%;
+  width: 250px;
+  min-height: 56px;
+}
+
+.hero-template-card .grid {
+  gap: 8px;
+}
+
+.hero-template-card .grid > div {
+  padding: 8px;
+}
+
+.hero-template-card .grid > div > div {
+  height: auto;
+  min-height: 36px;
+}
+
+@media (min-width: 1000px) and (max-width: 1279px) {
+  .hero-visual-stage {
+    width: 100%;
+    height: 540px;
+  }
+
+  .hero-product-card {
+    top: 58px;
+    width: calc(100% - 88px);
+  }
+
+  .hero-template-card {
+    top: 28px;
+    width: 180px;
+    min-height: 142px;
+  }
+
+  .hero-ai-card {
+    bottom: 36px;
+    width: 200px;
+    min-height: 190px;
+  }
+
+  .hero-export-card {
+    left: 24%;
+    width: 225px;
+  }
+}
+
+@media (max-width: 999px) {
+  .hero-visual {
+    min-height: 0 !important;
+  }
+
+  .hero-visual-stage {
+    position: relative;
+    top: auto;
+    left: auto;
+    display: flex;
+    width: 100%;
+    height: auto;
+    transform: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .hero-product-card,
+  .hero-ai-card,
+  .hero-export-card {
+    position: relative;
+    inset: auto;
+    width: 100%;
+  }
+
+  .hero-product-card {
+    aspect-ratio: 650 / 506;
+    min-height: 360px;
+  }
+
+  .hero-product-card::before {
+    inset: 64px 14px 18px 48%;
+  }
+
+  .hero-product-card > div:nth-child(2),
+  .hero-product-card > div:nth-child(3) {
+    width: 47%;
+  }
+
+  .hero-product-card > div:nth-child(3) {
+    padding-right: 8px;
+  }
+
+  .hero-template-card {
+    display: none;
+  }
+
+  .hero-ai-card {
+    min-height: 180px;
+  }
+
+  .hero-export-card {
+    min-height: 56px;
+  }
+}
+
+.hero-product-card::before {
+  content: '';
+  position: absolute;
+  inset: 64px 24px 24px 330px;
+  border-radius: 14px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background:
+    linear-gradient(#2563eb, #2563eb) 24px 30px / 92px 7px no-repeat,
+    linear-gradient(#cbd5e1, #cbd5e1) 24px 49px / 150px 4px no-repeat,
+    linear-gradient(#e2e8f0, #e2e8f0) 24px 82px / calc(100% - 48px) 1px no-repeat,
+    repeating-linear-gradient(to bottom, #cbd5e1 0 3px, transparent 3px 13px) 24px 105px / calc(100% - 48px) 105px no-repeat,
+    linear-gradient(#dbeafe, #dbeafe) 24px 235px / 64px 5px no-repeat,
+    repeating-linear-gradient(to bottom, #cbd5e1 0 3px, transparent 3px 13px) 24px 258px / calc(100% - 48px) 80px no-repeat,
+    #fdfefe;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+}
+
+.dark .hero-product-card::before {
+  border-color: rgba(255, 255, 255, 0.1);
+  background-color: #f8fafc;
+}
+
+@media (min-width: 1000px) and (max-width: 1279px) {
+  .hero-product-card {
+    min-height: 360px;
+  }
+
+  .hero-product-card::before {
+    inset: 64px 16px 18px 48%;
+  }
+
+  .hero-product-card > div:nth-child(2),
+  .hero-product-card > div:nth-child(3) {
+    width: 47%;
+  }
+
+  .hero-product-card > div:nth-child(3) {
+    padding-right: 8px;
+  }
+}
+
+@media (max-width: 999px) {
+  .hero-product-card::before {
+    inset: 64px 14px 18px 48%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-shell .animate-fade-in-up,
+  .hero-shell [class*='will-change'] {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* 字段整体块：focus-within 不改变外观，标题行与输入区保持默认 */
+.field-item {
+  padding: 10px 12px 12px;
+  border-radius: 12px;
+}
+
+/* 字段卡片（FieldCard）：focus-within 不改变外观 */
+.field-card {
+  transition: background-color 180ms ease, box-shadow 180ms ease;
+}
+
+/* ── 深色模式：focus 与默认一致，无高亮 ── */
+.dark .field-input {
+  color: #e6e8ec;
+  background-color: rgba(255, 255, 255, 0.035);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+.dark .field-input::placeholder {
+  color: #6b7280;
+}
+.dark .field-input:hover {
+  background-color: rgba(255, 255, 255, 0.055);
+}
+.dark .field-input:focus,
+.dark .field-input:active {
+  background-color: rgba(255, 255, 255, 0.035);
+  border-color: transparent;
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+

@@ -1,0 +1,21 @@
+.rich-text-editable :where(p, ul, ol, li, h1, h2, h3, h4, h5, h6) {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1.5rem;
+  font-size: inherit;
+  color: inherit;
+}
+
+.rich-text-editable :where(ul, ol) {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.rich-text-editable strong {
+  font-weight: 700;
+}
+
+.rich-text-editable em {
+  font-style: italic;
+}
+

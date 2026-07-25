@@ -1,0 +1,16 @@
+/* First-pass homepage hero layout (kept after later experimental rules). */
+.hero-product-card {
+  position: absolute;
+  z-index: 10;
+  top: 58px;
+  left: 55px;
+  width: 610px;
+  height: 475px;
+  min-height: 0;
+  aspect-ratio: auto;
+}
+
+.hero-product-card::before {
+  inset: 64px 24px 24px 320px;
+}
+

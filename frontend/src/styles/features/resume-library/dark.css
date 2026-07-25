@@ -1,0 +1,135 @@
+.dark .new-resume-card {
+  border-color: rgba(145, 152, 161, 0.18) !important;
+  background-color: transparent !important;
+  box-shadow: 0 4px 20px rgba(23, 25, 29, 0.22) !important;
+}
+
+.dark .new-resume-card:hover {
+  border-color: rgba(145, 152, 161, 0.32) !important;
+  background-color: rgba(145, 152, 161, 0.04) !important;
+  box-shadow:
+    0 12px 32px rgba(23, 25, 29, 0.45),
+    0 0 0 1px rgba(68, 147, 248, 0.06) !important;
+}
+
+.dark .new-resume-card-surface {
+  background:
+    linear-gradient(145deg, rgba(27, 28, 32, 0.96), rgba(27, 28, 32, 0.98)),
+    var(--bg-card) !important;
+}
+
+.dark .new-resume-card:hover .new-resume-card-surface {
+  background:
+    linear-gradient(180deg, rgba(27, 28, 32, 0.98), rgba(27, 28, 32, 0.96)),
+    var(--bg-card) !important;
+}
+
+.dark .new-resume-card.resume-blank-card:hover .new-resume-card-surface {
+  background:
+    linear-gradient(145deg, rgba(27, 28, 32, 0.96), rgba(27, 28, 32, 0.98)),
+    var(--bg-card) !important;
+}
+
+.dark .new-resume-paper-preview {
+  background: rgba(27, 28, 32, 0.52);
+  border-color: rgba(145, 152, 161, 0.12);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+    0 14px 36px rgba(23, 25, 29, 0.12);
+}
+
+.dark .new-resume-skeleton-line,
+.dark .new-resume-skeleton-avatar {
+  background: rgba(145, 152, 161, 0.16);
+}
+
+.dark .new-resume-skeleton-line.title {
+  background: rgba(201, 209, 217, 0.17);
+}
+
+.dark .new-resume-skeleton-line.meta {
+  background: rgba(145, 152, 161, 0.13);
+}
+
+.dark .new-resume-skeleton-line.heading {
+  background: rgba(68, 147, 248, 0.18);
+}
+
+.dark .new-resume-skeleton-line.body {
+  background: rgba(145, 152, 161, 0.12);
+}
+
+.dark .new-resume-skeleton-avatar {
+  border-color: rgba(145, 152, 161, 0.1);
+}
+
+.dark .new-resume-card-cta {
+  background: radial-gradient(circle at center, rgba(22, 27, 34, 0.96) 0%, rgba(22, 27, 34, 0.86) 34%, rgba(22, 27, 34, 0) 60%);
+}
+
+.dark .new-resume-plus-box {
+  background-color: rgba(33, 38, 45, 0.96);
+  box-shadow:
+    inset 0 0 0 1px rgba(145, 152, 161, 0.12),
+    0 10px 28px rgba(23, 25, 29, 0.16);
+}
+
+.dark .new-resume-card:hover .new-resume-plus-box {
+  background-color: rgba(56, 139, 253, 0.12);
+  box-shadow:
+    inset 0 0 0 1px rgba(68, 147, 248, 0.2),
+    0 10px 26px rgba(23, 25, 29, 0.24);
+}
+
+/* Resume grid card — GitHub Dark card style */
+.dark .new-resume-card.resume-blank-card:hover .new-resume-plus-box {
+  background-color: rgba(33, 38, 45, 0.96);
+  box-shadow:
+    inset 0 0 0 1px rgba(145, 152, 161, 0.12),
+    0 10px 28px rgba(23, 25, 29, 0.16);
+}
+
+.dark .resume-grid-card,
+.dark .resume-grid-card.border-gray-200 {
+  border-width: 1px !important;
+  border-color: rgba(145, 152, 161, 0.14) !important;
+  background-color: var(--bg-card) !important;
+  box-shadow: 0 4px 20px rgba(23, 25, 29, 0.22) !important;
+  outline: none !important;
+}
+
+.dark .resume-grid-card:hover {
+  border-color: rgba(145, 152, 161, 0.32) !important;
+  box-shadow:
+    0 14px 34px rgba(23, 25, 29, 0.36),
+    0 0 0 1px rgba(68, 147, 248, 0.06) !important;
+}
+
+/* Resume grid card — info bar at bottom */
+.dark .resume-grid-card.resume-blank-card:hover,
+.dark .new-resume-card.resume-blank-card:hover {
+  transform: translate3d(0, 0, 0) !important;
+  border-color: rgba(145, 152, 161, 0.14) !important;
+  background-color: transparent !important;
+  box-shadow: 0 4px 20px rgba(23, 25, 29, 0.22) !important;
+}
+
+.dark .resume-grid-card-footer {
+  background: linear-gradient(180deg, rgba(27, 28, 32, 0.92), rgba(27, 28, 32, 0.98)) !important;
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(120%) !important;
+  backdrop-filter: blur(18px) saturate(120%) !important;
+}
+
+/* Resume grid card — preview placeholder background */
+.dark .resume-grid-card .bg-gray-100 {
+  background-color: var(--bg-card-muted) !important;
+}
+
+.dark .resume-grid-card-preview,
+.dark .resume-grid-card-preview-surface {
+  background-color: var(--bg-card-muted) !important;
+}
+

@@ -1,0 +1,74 @@
+/* Issue type colors override severity hue. */
+.diagnosis-type-overclaim {
+  --diagnosis-line-color: rgba(220, 38, 38, 0.72);
+}
+
+.diagnosis-type-overclaim:hover {
+  --diagnosis-line-color: rgba(185, 28, 28, 0.92);
+}
+
+.diagnosis-type-vague {
+  --diagnosis-line-color: rgba(37, 99, 235, 0.58);
+}
+
+.diagnosis-type-vague:hover {
+  --diagnosis-line-color: rgba(29, 78, 216, 0.86);
+}
+
+.diagnosis-type-no_metric {
+  --diagnosis-line-color: rgba(217, 119, 6, 0.7);
+}
+
+.diagnosis-type-no_metric:hover {
+  --diagnosis-line-color: rgba(180, 83, 9, 0.9);
+}
+
+.diagnosis-type-empty_word {
+  --diagnosis-line-color: rgba(5, 150, 105, 0.62);
+}
+
+.diagnosis-type-empty_word:hover {
+  --diagnosis-line-color: rgba(4, 120, 87, 0.88);
+}
+
+.diagnosis-type-weak {
+  --diagnosis-line-color: rgba(71, 85, 105, 0.55);
+}
+
+.diagnosis-type-weak:hover {
+  --diagnosis-line-color: rgba(51, 65, 85, 0.84);
+}
+
+.diagnosis-sev-high {
+  --diagnosis-line-thickness: 2px;
+}
+
+.diagnosis-sev-low {
+  --diagnosis-line-thickness: 1.25px;
+}
+
+.diagnosis-mark-active.diagnosis-type-overclaim {
+  background-color: rgba(254, 226, 226, 0.78);
+  --diagnosis-line-color: rgba(185, 28, 28, 0.94);
+}
+
+.diagnosis-mark-active.diagnosis-type-vague {
+  background-color: rgba(219, 234, 254, 0.76);
+  --diagnosis-line-color: rgba(29, 78, 216, 0.9);
+}
+
+.diagnosis-mark-active.diagnosis-type-no_metric {
+  background-color: rgba(254, 243, 199, 0.78);
+  --diagnosis-line-color: rgba(180, 83, 9, 0.92);
+}
+
+.diagnosis-mark-active.diagnosis-type-empty_word {
+  background-color: rgba(209, 250, 229, 0.72);
+  --diagnosis-line-color: rgba(4, 120, 87, 0.9);
+}
+
+.diagnosis-mark-active.diagnosis-type-weak {
+  background-color: rgba(226, 232, 240, 0.72);
+  --diagnosis-line-color: rgba(51, 65, 85, 0.86);
+}
+

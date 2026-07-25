@@ -1,0 +1,19 @@
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transition body,
+  html.theme-transition .theme-transition-target,
+  html.theme-transition .theme-color-transition,
+  html.theme-transition .settings-card,
+  html.theme-transition .resume-theme-card,
+  html.theme-transition .resume-theme-card-footer,
+  html.theme-transition [data-long-text-editor-panel],
+  html.theme-transition [data-global-toolbar-bottom-bar],
+  html.theme-transition .theme-transition-target::before,
+  html.theme-transition .theme-transition-target::after,
+  html.theme-transition button.theme-transition-target svg,
+  html.theme-transition .theme-color-transition svg,
+  html.theme-transition .theme-toggle-button svg {
+    transition: none !important;
+  }
+}
+
+

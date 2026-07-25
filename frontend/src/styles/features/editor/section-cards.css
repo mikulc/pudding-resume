@@ -1,0 +1,84 @@
+/* 编辑面板选中态：以局部蓝色点缀替代暗色模式下的整圈高亮描边 */
+html:not(.dark) .editor-section-card-active {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(50, 114, 255, 0.035) 0%,
+      rgba(50, 114, 255, 0.012) 100%
+    ),
+    rgba(255, 255, 255, 0.96) !important;
+  border-color: rgba(50, 114, 255, 0.18) !important;
+  box-shadow: none !important;
+}
+
+html:not(.dark) .editor-section-card-active .editor-section-header-active {
+  background: rgba(255, 255, 255, 0.76) !important;
+  box-shadow: inset 0 -1px 0 rgba(31, 45, 61, 0.06);
+}
+
+html:not(.dark) .editor-section-card-active .editor-section-header-active h3 {
+  color: #27364a !important;
+}
+
+html:not(.dark) .editor-section-card-active .editor-section-accent-bar-active {
+  width: 3px !important;
+  height: 20px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #4c8dff 0%, #3272ff 100%) !important;
+  box-shadow: 0 0 6px rgba(50, 114, 255, 0.14) !important;
+}
+
+html:not(.dark) .editor-section-card-active
+  .bg-white.rounded-\[22px\].shadow-sm.border.border-gray-100 {
+  background: rgba(255, 255, 255, 0.90) !important;
+  border-color: #e8edf5 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 8px rgba(31, 45, 61, 0.035) !important;
+}
+
+html:not(.dark) .editor-section-card-active input.border:not([type='file']) {
+  background-color: #ffffff !important;
+  border-color: #e3e8f0 !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+
+html:not(.dark) .editor-section-card-active input.border:not([type='file']):focus {
+  border-color: rgba(50, 114, 255, 0.48) !important;
+  box-shadow: 0 0 0 3px rgba(50, 114, 255, 0.08) !important;
+}
+
+.dark .editor-section-card-active {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(68, 147, 248, 0.075) 0%,
+      rgba(24, 28, 35, 0.96) 30%,
+      rgba(23, 25, 29, 0.98) 100%
+    ) !important;
+  border-color: rgba(92, 132, 255, 0.16) !important;
+  box-shadow: none !important;
+}
+
+.dark .editor-section-accent-bar-active {
+  background: linear-gradient(180deg, #58a6ff 0%, #4493f8 100%) !important;
+  box-shadow:
+    0 0 0 1px rgba(68, 147, 248, 0.12),
+    0 0 8px rgba(68, 147, 248, 0.16) !important;
+}
+
+.dark .editor-section-header-active {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(68, 147, 248, 0.13) 0%,
+      rgba(68, 147, 248, 0.06) 52%,
+      rgba(255, 255, 255, 0.018) 100%
+    ) !important;
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.dark .editor-section-card-active .editor-section-header-active h3 {
+  color: rgba(255, 255, 255, 0.94) !important;
+}
+

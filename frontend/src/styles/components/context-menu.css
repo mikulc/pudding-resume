@@ -1,0 +1,91 @@
+/* ===== Toast 通知动画 ===== */
+@keyframes context-menu-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.context-menu-enter {
+  transform-origin: top left;
+  animation: context-menu-enter 140ms ease-out both;
+}
+
+.global-context-menu {
+  background-color: rgba(255, 255, 255, 0.70) !important;
+  background-clip: padding-box;
+  border-color: rgba(148, 163, 184, 0.20) !important;
+  -webkit-backdrop-filter: blur(36px) saturate(165%) brightness(1.04) !important;
+  backdrop-filter: blur(36px) saturate(165%) brightness(1.04) !important;
+  color: #3d3d3d !important;
+}
+
+.global-context-menu-icon-button {
+  color: #2f343b !important;
+}
+
+.global-context-menu-item {
+  color: #3d3d3d !important;
+}
+
+.global-context-menu-item-icon {
+  color: #383d42 !important;
+}
+
+.global-context-menu-icon-button:hover,
+.global-context-menu-item:hover {
+  background-color: #2135f5 !important;
+  color: #ffffff !important;
+}
+
+.global-context-menu-icon-button:active,
+.global-context-menu-item:active {
+  background-color: #183fdd !important;
+}
+
+.global-context-menu-item:hover .global-context-menu-item-icon {
+  color: #ffffff !important;
+}
+
+.global-context-menu-divider {
+  border-top-color: #dfe3ff !important;
+}
+
+.dark .global-context-menu {
+  background-color: rgba(24, 24, 27, 0.72) !important;
+  border-color: rgba(148, 163, 184, 0.12) !important;
+  box-shadow: 0 24px 58px rgba(0, 0, 0, 0.42), inset 0 0 0 1px rgba(148, 163, 184, 0.07) !important;
+  -webkit-backdrop-filter: blur(36px) saturate(140%) brightness(0.88) !important;
+  backdrop-filter: blur(36px) saturate(140%) brightness(0.88) !important;
+  color: #ffffff !important;
+}
+
+.dark .global-context-menu-icon-button,
+.dark .global-context-menu-item,
+.dark .global-context-menu-item-icon {
+  color: #ffffff !important;
+}
+
+.dark .global-context-menu-icon-button:hover,
+.dark .global-context-menu-item:hover {
+  background-color: #fbbf24 !important;
+  color: #ffffff !important;
+}
+
+.dark .global-context-menu-icon-button:active,
+.dark .global-context-menu-item:active {
+  background-color: #f59e0b !important;
+}
+
+.dark .global-context-menu-item:hover .global-context-menu-item-icon {
+  color: #ffffff !important;
+}
+
+.dark .global-context-menu-divider {
+  border-top-color: rgba(148, 163, 184, 0.16) !important;
+}
+

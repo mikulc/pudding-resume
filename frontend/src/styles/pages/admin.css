@@ -1,0 +1,183 @@
+/* Admin design system: shared motion and the editor month picker adapter. */
+@keyframes adminDropdownIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes adminFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes adminModalIn {
+  from { opacity: 0; transform: scale(0.975) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes adminSheetUp {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.admin-date-picker,
+.admin-date-picker > div,
+.admin-date-picker .field-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-date-picker .field-input {
+  height: 40px;
+  padding-left: 12px;
+  padding-right: 40px;
+  font-size: 14px;
+  color: #334155;
+  background: #fff;
+  border: 1px solid #e6eaf0;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.02);
+}
+
+.admin-date-picker .field-input::placeholder {
+  color: #98a2b3;
+}
+
+.admin-date-picker .field-input:hover {
+  background: #fff;
+  border-color: #d8e0ee;
+}
+
+.admin-date-picker .field-input:focus {
+  background: #fff;
+  border-color: rgba(50, 114, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(50, 114, 255, 0.08);
+}
+
+.dark .admin-date-picker .field-input,
+.dark .admin-date-picker .field-input:hover,
+.dark .admin-date-picker .field-input:focus {
+  color: #e2e8f0;
+  background: #0f172a;
+  border-color: #334155;
+}
+
+/* Admin sidebar: keep a stable two-column DOM while its rail animates. */
+.admin-sidebar-item {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: center;
+  padding-inline: 2px;
+  transition: grid-template-columns 220ms cubic-bezier(0.4, 0, 0.2, 1), background-color 160ms ease, color 160ms ease;
+}
+
+.admin-sidebar[data-collapsed="true"] .admin-sidebar-item {
+  grid-template-columns: 40px 0fr;
+}
+
+.admin-sidebar-icon {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-sidebar-icon svg {
+  flex: none;
+}
+
+.admin-sidebar-label-wrapper {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.admin-sidebar-label {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 1;
+  transform: translateX(0);
+  visibility: visible;
+  transition: opacity 160ms ease 80ms, transform 180ms ease 80ms, visibility 0ms linear 0ms;
+}
+
+.admin-sidebar[data-collapsed="true"] .admin-sidebar-label {
+  opacity: 0;
+  transform: translateX(-6px);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 100ms ease, transform 120ms ease, visibility 0ms linear 120ms;
+}
+
+.admin-sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 12px 18px;
+}
+
+.admin-sidebar-footer-action {
+  display: flex;
+  height: 44px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding-inline: 16px;
+  overflow: hidden;
+  border-radius: 12px;
+  text-align: left;
+  transition: padding 220ms cubic-bezier(0.4, 0, 0.2, 1), background-color 160ms ease, color 160ms ease;
+}
+
+.admin-sidebar-footer-icon {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-sidebar-footer-icon svg {
+  flex: none;
+}
+
+.admin-sidebar-footer-label {
+  display: block;
+  max-width: 140px;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 1;
+  transform: translateX(0);
+  visibility: visible;
+  transition: opacity 160ms ease 80ms, max-width 220ms cubic-bezier(0.4, 0, 0.2, 1), transform 180ms ease 80ms, visibility 0ms linear;
+}
+
+.admin-sidebar[data-collapsed="true"] .admin-sidebar-footer-action {
+  justify-content: center;
+  gap: 0;
+  padding-inline: 0;
+}
+
+.admin-sidebar[data-collapsed="true"] .admin-sidebar-footer-label {
+  max-width: 0;
+  opacity: 0;
+  transform: translateX(-4px);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 100ms ease, max-width 220ms cubic-bezier(0.4, 0, 0.2, 1), transform 120ms ease, visibility 0ms linear 120ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar,
+  .admin-sidebar-item,
+  .admin-sidebar-label,
+  .admin-sidebar-footer-action,
+  .admin-sidebar-footer-label,
+  .admin-sidebar-toggle {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}

@@ -1,0 +1,129 @@
+/* ================================================================
+   Save Status Indicator — 呼吸灯动画系统
+   实现自然柔和的多状态呼吸灯效果：
+   - saved:  绿色呼吸，4s 周期模拟人类呼吸节奏（吸→屏→呼→停）
+   - saving: 蓝色呼吸，1.2s 快速脉冲表示进行中
+   - error:  红色呼吸，1s 急促脉冲吸引注意
+   ================================================================ */
+
+/*
+ * 已保存呼吸灯（绿色）
+ * 4 秒完整呼吸周期，模拟自然呼吸：
+ *   0%-40%  吸入（opacity ↑, scale ↑, glow ↑）
+ *   40%-50% 屏息（峰值保持）
+ *   50%-90% 呼出（opacity ↓, scale ↓, glow ↓）
+ *   90%-100% 停顿（谷底静止）
+ */
+@keyframes breathe-saved {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.85);
+    box-shadow:
+      0 0 2px rgba(34, 197, 94, 0.15),
+      0 0 4px rgba(34, 197, 94, 0.05);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.18);
+    box-shadow:
+      0 0 4px rgba(34, 197, 94, 0.45),
+      0 0 12px rgba(34, 197, 94, 0.2);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.18);
+    box-shadow:
+      0 0 4px rgba(34, 197, 94, 0.45),
+      0 0 12px rgba(34, 197, 94, 0.2);
+  }
+  90% {
+    opacity: 0.4;
+    transform: scale(0.85);
+    box-shadow:
+      0 0 2px rgba(34, 197, 94, 0.15),
+      0 0 4px rgba(34, 197, 94, 0.05);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(0.85);
+    box-shadow:
+      0 0 2px rgba(34, 197, 94, 0.15),
+      0 0 4px rgba(34, 197, 94, 0.05);
+  }
+}
+
+/*
+ * 保存中呼吸灯（蓝色）
+ * 1.2s 快速循环，营造"工作中"的节奏感
+ */
+@keyframes breathe-saving {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.8);
+    box-shadow:
+      0 0 3px rgba(59, 130, 246, 0.25),
+      0 0 6px rgba(59, 130, 246, 0.08);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+    box-shadow:
+      0 0 6px rgba(59, 130, 246, 0.55),
+      0 0 16px rgba(59, 130, 246, 0.25);
+  }
+}
+
+/*
+ * 保存失败呼吸灯（红色警告）
+ * 1s 急促脉冲，吸引用户注意
+ */
+@keyframes breathe-error {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.8);
+    box-shadow:
+      0 0 3px rgba(239, 68, 68, 0.25),
+      0 0 6px rgba(239, 68, 68, 0.08);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+    box-shadow:
+      0 0 6px rgba(239, 68, 68, 0.55),
+      0 0 16px rgba(239, 68, 68, 0.25);
+  }
+}
+
+/* ---- 呼吸灯 CSS 类名 ---- */
+.breathing-dot-saved {
+  animation: breathe-saved 4s ease-in-out infinite;
+}
+
+.breathing-dot-saving {
+  animation: breathe-saving 1.2s ease-in-out infinite;
+}
+
+.breathing-dot-error {
+  animation: breathe-error 1s ease-in-out infinite;
+}
+
+/* ---- 保存完成瞬间确认脉冲（叠加在持续呼吸之上） ---- */
+@keyframes pulse-confirm {
+  0% {
+    transform: scale(var(--breath-scale, 1));
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+  }
+  50% {
+    transform: scale(1.5);
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+  }
+  100% {
+    transform: scale(var(--breath-scale, 1));
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.breathing-dot-confirm {
+  animation: pulse-confirm 0.6s ease-out;
+}
+

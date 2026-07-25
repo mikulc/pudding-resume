@@ -1,0 +1,122 @@
+/* ================================================================
+   Homepage Modern Animations — 首页现代化动效系统
+   ================================================================ */
+
+/*
+ * 光泽扫过效果（Shimmer）
+ * 使用 background-position 从左到右扫过一道高光
+ * 需配合 bg-gradient-to-r from-transparent via-white/30 to-transparent 使用
+ * bg-[length:200%_100%] 确保动画循环流畅
+ */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+
+/*
+ * 从下方淡入（Fade In Up）
+ * 自然流畅的入场效果，适用于滚动触发的元素展示
+ */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/*
+ * 缩放淡入（Scale In）
+ * 适合卡片类元素，从轻微缩小到正常大小
+ */
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/*
+ * 慢速浮动（Float Slow）
+ * 上下缓慢浮动，营造漂浮感，适用于背景装饰元素
+ */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  33% {
+    transform: translateY(-8px);
+  }
+  66% {
+    transform: translateY(4px);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+/*
+ * 渐变色位移动画（Gradient Shift）
+ * 让渐变背景持续流动，营造动态氛围
+ * 需配合 bg-gradient-to-r 使用
+ * bg-[length:300%_100%] 确保循环平滑
+ */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-shift {
+  background-size: 300% 100%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/*
+ * 脉冲光晕（Pulse Glow）
+ * 温和的脉冲光晕效果，适用于按钮或图标周边发光
+ */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.2), 0 0 20px rgba(59, 130, 246, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(59, 130, 246, 0.4), 0 0 36px rgba(59, 130, 246, 0.15);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+

@@ -1,0 +1,51 @@
+/* ===== 头像尺寸输入框：隐藏 number input 的 spinner 按钮 ===== */
+.photo-size-input::-webkit-outer-spin-button,
+.photo-size-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.photo-size-input {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.avatar-settings-popover {
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.avatar-preview-grid::before {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background-image:
+    linear-gradient(rgba(31, 45, 61, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31, 45, 61, 0.035) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+.dark .avatar-preview-grid::before {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+}
+
+/* ===== 未上传头像时的占位样式（仅编辑模式显示） ===== */
+.resume-paper .personal-photo-placeholder {
+  background-color: #f0f7ff;
+  border: 1px dashed #c7ddf5;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.resume-paper .personal-photo-placeholder:hover {
+  background-color: #e5f0fb;
+  border-color: #a0c8ed;
+}
+
+/* 打印时隐藏未上传头像的占位 */
+@media print {
+  .resume-paper .personal-photo-placeholder {
+    display: none !important;
+  }
+}
+

@@ -1,0 +1,201 @@
+@layer components {
+
+  .editor-sub-header {
+    box-sizing: border-box;
+    display: flex;
+    height: var(--editor-sub-header-height);
+    min-height: var(--editor-sub-header-height);
+    flex: 0 0 var(--editor-sub-header-height);
+    align-items: center;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--bg-panel);
+  }
+
+  .editor-page {
+    height: 100%;
+    min-height: 0;
+    background: var(--bg-layout);
+  }
+
+  .global-editor-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    height: var(--global-editor-topbar-height);
+    min-height: var(--global-editor-topbar-height);
+    flex: 0 0 var(--global-editor-topbar-height);
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--bg-panel);
+    padding: 0 16px;
+  }
+
+  .global-editor-topbar__left,
+  .global-editor-topbar__actions {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .global-editor-topbar__left {
+    flex: 1 1 auto;
+  }
+
+  .global-editor-topbar__actions {
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .global-editor-topbar__back {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    color: var(--text-secondary);
+  }
+
+  .global-editor-topbar__back:hover {
+    background: #2248ff;
+    color: #ffffff;
+  }
+
+  .dark .global-editor-topbar__back:hover {
+    background: #fbbf24;
+    color: #17191d;
+  }
+
+  .mobile-editor-topbar {
+    padding-left: 10px;
+    padding-right: 10px;
+    gap: 8px;
+  }
+
+  .mobile-editor-topbar .global-editor-topbar__left {
+    gap: 6px;
+    overflow: hidden;
+  }
+
+  .mobile-editor-topbar .global-editor-topbar__actions {
+    gap: 6px;
+  }
+
+  .editor-main {
+    height: calc(100vh - var(--global-editor-topbar-height));
+    min-height: 0;
+    background: var(--bg-layout);
+  }
+
+  .left-editor-panel,
+  .right-settings-panel {
+    height: 100%;
+    background: var(--bg-panel);
+    border-color: var(--border-soft);
+  }
+
+  .resume-canvas-wrapper {
+    height: 100%;
+    background: var(--bg-layout);
+  }
+
+  .resume-paper {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    width: 210mm;
+    min-height: 297mm;
+    background: var(--paper-bg);
+    box-shadow: var(--paper-shadow);
+    padding: 20mm;
+    line-height: 1.6;
+    color: var(--paper-text);
+    /* 强制换行：解决纯数字/无空格长文本溢出容器 */
+    overflow-wrap: break-word;
+    /* 打印时强制分页 */
+    page-break-after: always;
+  }
+
+  /* 最后一页不需要分页符 */
+  .resume-paper:last-child {
+    page-break-after: auto;
+  }
+
+  /* 简历纸内所有文本元素强制换行 */
+  .resume-paper * {
+    overflow-wrap: break-word;
+  }
+
+  .resume-paper [data-page-atom]:not([data-page-splittable="true"]) {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #DBEAFE;
+    padding: 6px 12px;
+    margin-bottom: 10px;
+    font-size: var(--section-title-size, 1.143em);
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .resume-paper .entity-title {
+    font-size: var(--entry-title-size, 1em);
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .resume-paper .entry-title-row {
+    align-items: baseline;
+    --entry-title-row-height: calc(var(--entry-title-size, 1em) * 1.5);
+    line-height: var(--entry-title-row-height);
+    min-height: var(--entry-title-row-height);
+  }
+
+  .resume-paper .entry-title-row :where(div, span) {
+    line-height: inherit;
+  }
+
+  .resume-paper .entry-title-row > .min-w-0 {
+    display: flex;
+    align-items: baseline;
+  }
+
+  .section-header-bar {
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    background-color: #3B82F6;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* 简历纸内 Tailwind 字号跟随基准 font-size 缩放（覆盖 rem 为 em） */
+  .resume-paper .text-xs {
+    font-size: 0.75em;
+  }
+  .resume-paper .text-sm {
+    font-size: 0.875em;
+  }
+
+  .a4-scale-container {
+    transform-origin: top center;
+    width: 210mm;
+  }
+
+  .create-resume-scrollbar {
+    overscroll-behavior: contain;
+  }
+}
+

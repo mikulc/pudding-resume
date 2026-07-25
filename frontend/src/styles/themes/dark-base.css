@@ -1,0 +1,15 @@
+/* ===== App dark mode utility remaps ===== */
+.dark body {
+  background: var(--bg-page);
+  color: var(--text-primary);
+}
+
+.dark .bg-white,
+.dark .bg-white\/45,
+.dark .bg-white\/75,
+.dark .bg-white\/80,
+.dark .bg-white\/85,
+.dark .bg-white\/95 {
+  background-color: var(--bg-card) !important;
+}
+

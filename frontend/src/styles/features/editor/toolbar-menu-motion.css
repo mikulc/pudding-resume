@@ -1,0 +1,12 @@
+/* ===== 全局浮动工具栏快捷菜单弹出动画 ===== */
+@keyframes toolbar-menu-appear {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+

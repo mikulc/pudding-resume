@@ -1,0 +1,145 @@
+/* ================================================================
+   Homepage Tech-Modern Neon & Glass Animations
+   科技现代风首页专属动效
+   ================================================================ */
+
+/*
+ * 霓虹光晕呼吸（Neon Glow Breathe）
+ * 用于 Hero 区域的大光晕球体，模拟霓虹灯的呼吸节奏
+ */
+@keyframes neon-breathe {
+  0%, 100% {
+    opacity: 0.4;
+    filter: blur(80px);
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    filter: blur(80px);
+    transform: scale(1.15);
+  }
+}
+
+.animate-neon-breathe {
+  animation: neon-breathe 6s ease-in-out infinite;
+}
+
+/*
+ * 玻璃面板光泽扫过（Glass Shimmer）
+ * 在玻璃拟态面板上扫过一道高光，提升质感
+ */
+@keyframes glass-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-glass-shimmer {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.5) 45%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.5) 55%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  animation: glass-shimmer 4s ease-in-out infinite;
+}
+
+/*
+ * 边框霓虹扫描（Border Neon Scan）
+ * 边框上跑动的霓虹光点，营造科幻感
+ */
+@keyframes border-neon-scan {
+  0% {
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.1), inset 0 0 8px rgba(99, 102, 241, 0.05);
+  }
+  50% {
+    border-color: rgba(99, 102, 241, 0.7);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.25), inset 0 0 16px rgba(99, 102, 241, 0.1);
+  }
+  100% {
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.1), inset 0 0 8px rgba(99, 102, 241, 0.05);
+  }
+}
+
+.animate-border-neon {
+  animation: border-neon-scan 4s ease-in-out infinite;
+}
+
+/*
+ * 霓虹浮动（Float Neon）
+ * 比普通 float 有更明显的位移和透明度变化，用于背景装饰粒子
+ */
+@keyframes float-neon {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateY(-20px) translateX(8px);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-10px) translateX(16px);
+    opacity: 0.4;
+  }
+  75% {
+    transform: translateY(-30px) translateX(-8px);
+    opacity: 0.7;
+  }
+}
+
+.animate-float-neon {
+  animation: float-neon 8s ease-in-out infinite;
+}
+
+/*
+ * 向下弹跳箭头（Bounce Arrow）
+ * 用于 Hero 底部滚动提示
+ */
+@keyframes bounce-arrow {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0) translateX(-50%);
+  }
+  40% {
+    transform: translateY(-10px) translateX(-50%);
+  }
+  60% {
+    transform: translateY(-5px) translateX(-50%);
+  }
+}
+
+.animate-bounce-arrow {
+  animation: bounce-arrow 2.5s ease-in-out infinite;
+}
+
+/*
+ * 文字霓虹闪烁（Text Neon Flicker）
+ * 轻微的霓虹文字闪烁效果，模拟霓虹灯管
+ */
+@keyframes text-neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow:
+      0 0 4px rgba(99, 102, 241, 0.5),
+      0 0 8px rgba(99, 102, 241, 0.3),
+      0 0 16px rgba(99, 102, 241, 0.1);
+  }
+  20%, 24%, 55% {
+    text-shadow:
+      0 0 4px rgba(99, 102, 241, 0.3),
+      0 0 8px rgba(99, 102, 241, 0.15),
+      0 0 16px rgba(99, 102, 241, 0.05);
+  }
+}
+
+.animate-text-neon {
+  animation: text-neon-flicker 5s ease-in-out infinite;
+}
+

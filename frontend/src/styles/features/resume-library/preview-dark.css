@@ -1,0 +1,59 @@
+.dark .resume-paper,
+.dark .resume-card-preview-scale,
+.dark .resume-card-preview-scale .bg-white,
+.dark .resume-card-preview-scale .to-white {
+  background-color: #ffffff !important;
+}
+
+/* 卡片预览表面用暗色，避免白色在卡片圆角处溢出形成白弧 */
+.dark .resume-thumbnail-surface {
+  background-color: var(--bg-card-muted) !important;
+}
+
+.dark .resume-paper {
+  color: #111827 !important;
+  box-shadow: var(--paper-shadow) !important;
+}
+
+.dark .resume-paper .text-gray-900,
+.dark .resume-card-preview-scale .text-gray-900 {
+  color: #111827 !important;
+}
+
+.dark .resume-paper .text-gray-800,
+.dark .resume-card-preview-scale .text-gray-800 {
+  color: #1f2937 !important;
+}
+
+.dark .resume-paper .text-gray-700,
+.dark .resume-card-preview-scale .text-gray-700 {
+  color: #374151 !important;
+}
+
+.dark .resume-paper .text-gray-600,
+.dark .resume-card-preview-scale .text-gray-600 {
+  color: #4b5563 !important;
+}
+
+.dark .resume-paper .text-gray-500,
+.dark .resume-card-preview-scale .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+.dark .resume-paper .text-gray-400,
+.dark .resume-card-preview-scale .text-gray-400 {
+  color: #9ca3af !important;
+}
+
+.dark .resume-card-preview-scale .bg-gray-50,
+.dark .resume-card-preview-scale .bg-gray-100,
+.dark .resume-card-preview-scale .from-gray-100 {
+  background-color: #f3f4f6 !important;
+}
+
+.dark .resume-card-preview-scale .border-gray-100,
+.dark .resume-card-preview-scale .border-gray-200 {
+  border-color: #e5e7eb !important;
+}
+
+

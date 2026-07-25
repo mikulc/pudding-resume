@@ -1,0 +1,83 @@
+@keyframes diagnosis-progress-dock-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Unified task progress card: keep the light theme unchanged and let the
+ * editor remain visible through a cool, translucent dark glass surface. */
+.dark .task-progress-dock {
+  position: relative;
+  isolation: isolate;
+  background-color: rgba(20, 24, 32, 0.68) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.28),
+    0 2px 8px rgba(0, 0, 0, 0.18) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+}
+
+.dark .task-progress-dock::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: 0 0 auto;
+  height: 42%;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.055) 0%,
+    rgba(255, 255, 255, 0.018) 42%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.dark .task-progress-dock > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dark .task-progress-dock-title {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.dark .task-progress-dock-description {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.dark .task-progress-dock-track {
+  background-color: rgba(255, 255, 255, 0.10);
+}
+
+.diagnosis-progress-dock-enter {
+  animation: diagnosis-progress-dock-enter 220ms ease-out both;
+}
+
+@keyframes task-progress-dock-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.task-progress-dock-exit {
+  animation: task-progress-dock-exit 190ms ease-in both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .diagnosis-progress-dock-enter,
+  .task-progress-dock-exit {
+    animation: none;
+  }
+}
+

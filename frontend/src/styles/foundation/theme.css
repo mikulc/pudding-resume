@@ -1,0 +1,326 @@
+@layer base {
+  :root {
+    /* Background */
+    --bg-page: #f7f9fe;
+    --bg-layout: #f7f9fe;
+    --bg-shell: #f7f9fe;
+    --bg-header: #f7f9fe;
+    --bg-sidebar: #f7f9fe;
+    --bg-panel: #f7f9fe;
+    --bg-card: #f7f9fe;
+    --bg-card-muted: #f9fafb;
+    --bg-elevated: #f7f9fe;
+    --bg-control: #f9fafb;
+    --bg-hover: #f3f4f6;
+    --bg-input: #f7f9fe;
+    --bg-selected: rgba(59, 130, 246, 0.1);
+
+    /* Border */
+    --border-soft: #e5e7eb;
+    --border-strong: #d1d5db;
+    --border-default: #d1d5db;
+
+    /* Text */
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --text-muted: #9ca3af;
+
+    /* Accent */
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --primary-active: #1d4ed8;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --accent-green: #22c55e;
+    --accent-green-hover: #16a34a;
+
+    /* Paper */
+    --paper-bg: #f7f9fe;
+    --paper-text: #111827;
+    --canvas-bg: #f3f4f6;
+    --canvas-grid: rgba(15, 23, 42, 0.02);
+    --paper-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.06);
+
+    /* Misc */
+    --editor-sub-header-height: 48px;
+    --global-editor-topbar-height: 60px;
+    --theme-transition-duration: 180ms;
+    --theme-transition-ease: ease-out;
+    --homepage-showcase-frame-bg: #f7f9fe;
+    --homepage-showcase-frame-border: #f3f4f6;
+    --homepage-showcase-grid: rgba(148, 163, 184, 0.12);
+    --scrollbar-thumb: rgba(148, 163, 184, 0.46);
+    --scrollbar-thumb-hover: rgba(100, 116, 139, 0.58);
+    --scrollbar-track: transparent;
+  }
+
+  :root.dark {
+    /* Background — GitHub Dark 层级 */
+    --bg-page: #17191d;
+    --bg-layout: #17191d;
+    --bg-shell: #17191d;
+    --bg-header: #17191d;
+    --bg-sidebar: #17191d;
+    --bg-panel: #17191d;
+    --bg-card: #1b1c20;
+    --bg-card-muted: #1b1c20;
+    --bg-elevated: #1b1c20;
+    --bg-control: #212830;
+    --bg-hover: #262c36;
+    --bg-input: #17191d;
+    --bg-selected: rgba(68, 147, 248, 0.12);
+
+    /* Border */
+    --border-soft: #21262d;
+    --border-strong: #30363d;
+    --border-default: #30363d;
+
+    /* Text */
+    --text-primary: #f0f6fc;
+    --text-secondary: #9198a1;
+    --text-muted: #656c76;
+
+    /* Accent */
+    --primary: #4493f8;
+    --primary-hover: #58a6ff;
+    --primary-active: #3182f6;
+    --success: #238636;
+    --warning: #d29922;
+    --danger: #f85149;
+    --accent-green: #238636;
+    --accent-green-hover: #2ea043;
+
+    /* Paper (resume preview stays white) */
+    --paper-bg: #ffffff;
+    --paper-text: #111827;
+    --canvas-bg: #17191d;
+    --canvas-grid: rgba(255, 255, 255, 0.03);
+    --paper-shadow: 0 16px 40px rgba(23, 25, 29, 0.45);
+    --homepage-showcase-frame-bg: #17191d;
+    --homepage-showcase-frame-border: rgba(255, 255, 255, 0.12);
+    --homepage-showcase-grid: rgba(148, 163, 184, 0.16);
+    --scrollbar-thumb: rgba(148, 163, 184, 0.34);
+    --scrollbar-thumb-hover: rgba(203, 213, 225, 0.46);
+    --scrollbar-track: transparent;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Firefox 专属：Firefox 不支持 ::-webkit-scrollbar，使用原生 scrollbar-width 控制滚动条 */
+  @-moz-document url-prefix() {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    }
+  }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  :root::-webkit-scrollbar,
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+    background: transparent !important;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  :root::-webkit-scrollbar-track,
+  html::-webkit-scrollbar-track,
+  body::-webkit-scrollbar-track,
+  *::-webkit-scrollbar-track-piece,
+  *::-webkit-scrollbar-track-piece:start,
+  *::-webkit-scrollbar-track-piece:end {
+    border: 0 !important;
+    background: var(--scrollbar-track) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    min-height: 40px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background-color: var(--scrollbar-thumb);
+    background-clip: content-box;
+  }
+
+  :root::-webkit-scrollbar-thumb,
+  html::-webkit-scrollbar-thumb,
+  body::-webkit-scrollbar-thumb {
+    min-height: 40px !important;
+    border: 2px solid transparent !important;
+    border-radius: 999px !important;
+    background-color: var(--scrollbar-thumb) !important;
+    background-clip: content-box !important;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+
+  *::-webkit-scrollbar-button,
+  *::-webkit-scrollbar-button:single-button,
+  *::-webkit-scrollbar-button:double-button,
+  *::-webkit-scrollbar-button:start,
+  *::-webkit-scrollbar-button:end,
+  *::-webkit-scrollbar-button:increment,
+  *::-webkit-scrollbar-button:decrement,
+  *::-webkit-scrollbar-button:vertical,
+  *::-webkit-scrollbar-button:vertical:increment,
+  *::-webkit-scrollbar-button:vertical:decrement,
+  *::-webkit-scrollbar-button:vertical:start:decrement,
+  *::-webkit-scrollbar-button:vertical:start:increment,
+  *::-webkit-scrollbar-button:vertical:end:decrement,
+  *::-webkit-scrollbar-button:vertical:end:increment,
+  *::-webkit-scrollbar-button:horizontal,
+  *::-webkit-scrollbar-button:horizontal:increment,
+  *::-webkit-scrollbar-button:horizontal:decrement,
+  *::-webkit-scrollbar-button:horizontal:start:decrement,
+  *::-webkit-scrollbar-button:horizontal:start:increment,
+  *::-webkit-scrollbar-button:horizontal:end:decrement,
+  *::-webkit-scrollbar-button:horizontal:end:increment {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: transparent !important;
+    visibility: hidden !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
+
+  :root::-webkit-scrollbar-button,
+  html::-webkit-scrollbar-button,
+  body::-webkit-scrollbar-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: transparent !important;
+    visibility: hidden !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  @supports not (scrollbar-gutter: stable) {
+    html {
+      overflow-y: scroll;
+    }
+  }
+
+  html.resume-route-fullscreen {
+    scrollbar-gutter: auto;
+    overflow: hidden;
+  }
+
+  body.resume-route-fullscreen {
+    overflow: hidden;
+  }
+
+  html.admin-route-fullscreen {
+    scrollbar-gutter: auto;
+    overflow: hidden;
+  }
+
+  html.modal-scroll-lock {
+    scrollbar-gutter: auto;
+    overflow: hidden;
+  }
+
+  body.admin-route-fullscreen {
+    overflow: hidden;
+  }
+
+  body {
+    font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 禁用浏览器默认的 focus 黑框，改用 Tailwind ring 作为聚焦指示 */
+  input:focus,
+  textarea:focus,
+  select:focus,
+  button:focus {
+    outline: none;
+  }
+
+  /* 隐藏滚动条工具类 */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 细滚动条工具类（用于 ATS JD 输入等文本域） */
+  .thin-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(148, 163, 184, 0.45);
+    border-radius: 9999px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(148, 163, 184, 0.7);
+  }
+  .thin-scrollbar::-webkit-scrollbar-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  .dark .thin-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(148, 163, 184, 0.3);
+  }
+
+  /* Firefox 专属：Firefox 不支持 ::-webkit-scrollbar */
+  @-moz-document url-prefix() {
+    .thin-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.5) transparent;
+    }
+    .dark .thin-scrollbar {
+      scrollbar-color: rgba(148, 163, 184, 0.32) transparent;
+    }
+  }
+}
+

@@ -1,0 +1,168 @@
+/* ================================================================
+   AI 简历诊断 — 预览区标记样式（分层设计）
+   默认轻量 → hover 可见 → 选中高亮，按严重程度分色
+   ================================================================ */
+
+/* 基础标记（所有诊断项共用，极轻量） */
+.diagnosis-mark {
+  --diagnosis-line-color: rgba(37, 99, 235, 0.78);
+  --diagnosis-line-thickness: 2px;
+  --diagnosis-mark-fill: rgba(37, 99, 235, 0.07);
+  position: relative;
+  cursor: pointer;
+  padding-bottom: 2px;
+  border-radius: 4px;
+  text-decoration: none;
+  background-image:
+    linear-gradient(var(--diagnosis-mark-fill), var(--diagnosis-mark-fill)),
+    repeating-linear-gradient(
+      90deg,
+      var(--diagnosis-line-color) 0 6px,
+      transparent 6px 9px
+    );
+  background-repeat: no-repeat;
+  background-position:
+    0 0,
+    0 100%;
+  background-size:
+    100% 100%,
+    100% var(--diagnosis-line-thickness);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition:
+    background-color 0.2s ease,
+    background-size 0.2s ease,
+    color 0.2s ease;
+}
+
+/* ── 一般问题：浅蓝/紫色调 ── */
+.diagnosis-sev-normal {
+  --diagnosis-line-color: rgba(124, 58, 237, 0.78);
+  --diagnosis-mark-fill: rgba(124, 58, 237, 0.08);
+}
+
+.diagnosis-sev-normal:hover {
+  --diagnosis-line-color: rgba(37, 99, 235, 0.94);
+  --diagnosis-mark-fill: rgba(37, 99, 235, 0.13);
+}
+
+/* ── 高风险问题：浅红/橙色调 ── */
+.diagnosis-sev-high {
+  --diagnosis-line-color: rgba(234, 88, 12, 0.86);
+  --diagnosis-line-thickness: 2.5px;
+  --diagnosis-mark-fill: rgba(234, 88, 12, 0.1);
+}
+
+.diagnosis-sev-high:hover {
+  --diagnosis-line-color: rgba(220, 38, 38, 0.96);
+  --diagnosis-mark-fill: rgba(220, 38, 38, 0.15);
+}
+
+/* ── 选中高亮状态 ── */
+.diagnosis-mark-active.diagnosis-sev-normal {
+  background-color: rgba(219, 234, 254, 0.78);
+  --diagnosis-line-color: rgba(37, 99, 235, 0.92);
+}
+
+.diagnosis-mark-active.diagnosis-sev-high {
+  background-color: rgba(254, 226, 226, 0.8);
+  --diagnosis-line-color: rgba(220, 38, 38, 0.94);
+}
+
+.diagnosis-type-overclaim {
+  --diagnosis-line-color: rgba(220, 38, 38, 0.86);
+  --diagnosis-mark-fill: rgba(220, 38, 38, 0.1);
+}
+
+.diagnosis-type-overclaim:hover {
+  --diagnosis-line-color: rgba(185, 28, 28, 0.98);
+  --diagnosis-mark-fill: rgba(185, 28, 28, 0.15);
+}
+
+.diagnosis-type-vague {
+  --diagnosis-line-color: rgba(37, 99, 235, 0.82);
+  --diagnosis-mark-fill: rgba(37, 99, 235, 0.08);
+}
+
+.diagnosis-type-vague:hover {
+  --diagnosis-line-color: rgba(29, 78, 216, 0.96);
+  --diagnosis-mark-fill: rgba(29, 78, 216, 0.14);
+}
+
+.diagnosis-type-no_metric {
+  --diagnosis-line-color: rgba(217, 119, 6, 0.86);
+  --diagnosis-mark-fill: rgba(217, 119, 6, 0.11);
+}
+
+.diagnosis-type-no_metric:hover {
+  --diagnosis-line-color: rgba(180, 83, 9, 0.98);
+  --diagnosis-mark-fill: rgba(180, 83, 9, 0.16);
+}
+
+.diagnosis-type-empty_word {
+  --diagnosis-line-color: rgba(5, 150, 105, 0.82);
+  --diagnosis-mark-fill: rgba(5, 150, 105, 0.09);
+}
+
+.diagnosis-type-empty_word:hover {
+  --diagnosis-line-color: rgba(4, 120, 87, 0.96);
+  --diagnosis-mark-fill: rgba(4, 120, 87, 0.14);
+}
+
+.diagnosis-type-weak {
+  --diagnosis-line-color: rgba(71, 85, 105, 0.76);
+  --diagnosis-mark-fill: rgba(71, 85, 105, 0.09);
+}
+
+.diagnosis-type-weak:hover {
+  --diagnosis-line-color: rgba(51, 65, 85, 0.94);
+  --diagnosis-mark-fill: rgba(51, 65, 85, 0.14);
+}
+
+.diagnosis-sev-high {
+  --diagnosis-line-thickness: 2.5px;
+}
+
+.diagnosis-sev-low {
+  --diagnosis-line-thickness: 1.75px;
+}
+
+.diagnosis-mark-active.diagnosis-type-overclaim {
+  background-color: rgba(254, 226, 226, 0.78);
+  --diagnosis-line-color: rgba(185, 28, 28, 0.94);
+}
+
+.diagnosis-mark-active.diagnosis-type-vague {
+  background-color: rgba(219, 234, 254, 0.76);
+  --diagnosis-line-color: rgba(29, 78, 216, 0.9);
+}
+
+.diagnosis-mark-active.diagnosis-type-no_metric {
+  background-color: rgba(254, 243, 199, 0.78);
+  --diagnosis-line-color: rgba(180, 83, 9, 0.92);
+}
+
+.diagnosis-mark-active.diagnosis-type-empty_word {
+  background-color: rgba(209, 250, 229, 0.72);
+  --diagnosis-line-color: rgba(4, 120, 87, 0.9);
+}
+
+.diagnosis-mark-active.diagnosis-type-weak {
+  background-color: rgba(226, 232, 240, 0.72);
+  --diagnosis-line-color: rgba(51, 65, 85, 0.86);
+}
+
+/* 打印时隐藏诊断标记 */
+@media print {
+  .diagnosis-mark {
+    background: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+  }
+
+  [data-export-exclude] {
+    display: none !important;
+  }
+}
+

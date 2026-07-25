@@ -1,0 +1,32 @@
+/* ===== ConfirmModal 动画 ===== */
+@keyframes modal-backdrop-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.modal-backdrop-enter {
+  animation: modal-backdrop-enter 0.2s ease-out;
+}
+
+.modal-dialog-enter {
+  animation: modal-dialog-enter 0.2s ease-out;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+

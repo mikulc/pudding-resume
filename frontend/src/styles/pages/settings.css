@@ -1,0 +1,67 @@
+/* Settings page: dark mode uses amber as the local accent instead of the global blue. */
+.dark .settings-page {
+  --primary: #fbbf24;
+  --primary-hover: #fbbf24;
+  --primary-active: #f59e0b;
+  --bg-selected: rgba(251, 191, 36, 0.14);
+}
+
+.dark .settings-page .text-blue-300,
+.dark .settings-page .text-blue-400,
+.dark .settings-page .text-blue-500,
+.dark .settings-page .text-blue-600,
+.dark .settings-page .text-blue-700,
+.dark .settings-page .hover\:text-blue-500:hover,
+.dark .settings-page .hover\:text-blue-600:hover,
+.dark .settings-page .hover\:text-blue-700:hover {
+  color: #fbbf24 !important;
+}
+
+.dark .settings-page .bg-blue-50,
+.dark .settings-page .bg-blue-50\/30,
+.dark .settings-page .bg-blue-50\/40,
+.dark .settings-page .bg-blue-50\/50,
+.dark .settings-page .bg-blue-50\/60,
+.dark .settings-page .bg-blue-100,
+.dark .settings-page .bg-blue-400\/\[0\.12\],
+.dark .settings-page .bg-blue-500\/10,
+.dark .settings-page .hover\:bg-blue-50:hover,
+.dark .settings-page .hover\:bg-blue-50\/30:hover,
+.dark .settings-page .hover\:bg-blue-50\/40:hover,
+.dark .settings-page .hover\:bg-blue-100:hover {
+  background-color: rgba(251, 191, 36, 0.14) !important;
+}
+
+.dark .settings-page .bg-blue-50.text-blue-600,
+.dark .settings-page .bg-blue-50\/60.text-blue-600 {
+  background-color: #fbbf24 !important;
+  color: #17191d !important;
+}
+
+.dark .settings-page .bg-blue-50.text-blue-600 .text-blue-500,
+.dark .settings-page .bg-blue-50\/60.text-blue-600 .text-blue-500 {
+  color: #17191d !important;
+}
+
+.dark .settings-page .border-blue-100,
+.dark .settings-page .border-blue-200,
+.dark .settings-page .border-blue-300,
+.dark .settings-page .hover\:border-blue-200:hover,
+.dark .settings-page .hover\:border-blue-300:hover {
+  border-color: rgba(251, 191, 36, 0.45) !important;
+}
+
+.dark .settings-page input:not([type="range"]):not([type="checkbox"]):not([type="radio"]):focus,
+.dark .settings-page textarea:focus,
+.dark .settings-page select:focus,
+.dark .settings-page [contenteditable="true"]:focus {
+  border-color: #fbbf24 !important;
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.25) !important;
+}
+
+.dark .settings-page .bg-white.text-blue-600,
+.dark .settings-page .bg-white.text-blue-700 {
+  background-color: #fbbf24 !important;
+  color: #17191d !important;
+}
+

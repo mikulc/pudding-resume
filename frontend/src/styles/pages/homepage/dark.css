@@ -1,0 +1,42 @@
+/* Homepage — Hero grid dark mode */
+.dark .homepage-hero-grid {
+  opacity: 0.045 !important;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px) !important;
+}
+
+/* Homepage — CTA section gradient dark mode */
+.dark .from-blue-50 {
+  --tw-gradient-from: var(--bg-selected) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgba(68, 147, 248, 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.dark .via-white {
+  --tw-gradient-stops: var(--tw-gradient-from), var(--bg-page) var(--tw-gradient-via-position), var(--tw-gradient-to);
+}
+
+.dark .to-purple-50 {
+  --tw-gradient-to: rgba(139, 92, 246, 0.08) var(--tw-gradient-to-position);
+}
+
+.dark .bg-purple-50 {
+  background-color: rgba(139, 92, 246, 0.1) !important;
+}
+
+/* Homepage — Steps connector dark mode */
+.dark .from-gray-200 {
+  --tw-gradient-from: var(--border-soft) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgba(33, 38, 45, 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.dark .via-gray-100 {
+  --tw-gradient-stops: var(--tw-gradient-from), var(--border-soft) var(--tw-gradient-via-position), var(--tw-gradient-to);
+}
+
+.dark .to-white,
+.dark .to-gray-50,
+.dark .to-amber-50\/60 {
+  --tw-gradient-to: var(--bg-card) var(--tw-gradient-to-position);
+}
+

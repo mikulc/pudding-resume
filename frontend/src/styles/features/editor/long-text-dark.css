@@ -1,0 +1,104 @@
+.dark [data-long-text-editor-panel] {
+  background-color: var(--bg-elevated) !important;
+  border-color: var(--border-default) !important;
+  box-shadow: 0 16px 40px rgba(23, 25, 29, 0.45) !important;
+}
+
+.dark [data-long-text-editor-panel] .border-blue-50,
+.dark [data-long-text-editor-panel].border-blue-100\/80 {
+  border-color: var(--border-soft) !important;
+}
+
+.dark [data-long-text-editor-panel] .bg-white\/95 {
+  background-color: rgba(27, 28, 32, 0.92) !important;
+  backdrop-filter: blur(10px) saturate(120%);
+}
+
+.dark [data-long-text-editor-panel] .border-gray-200,
+.dark [data-long-text-editor-panel] .hover\:border-blue-200:hover {
+  border-color: var(--border-soft) !important;
+}
+
+.dark [data-long-text-editor-panel] .bg-white,
+.dark [data-long-text-editor-panel] .bg-slate-50 {
+  background-color: var(--bg-control) !important;
+}
+
+.dark [data-long-text-editor-panel] .rich-text-editable,
+.dark [data-long-text-editor-panel] .md-source-editable {
+  background-color: var(--bg-input) !important;
+  border-color: var(--border-soft) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark [data-long-text-editor-panel] .border-blue-300.bg-blue-100 {
+  background-color: var(--bg-selected) !important;
+  border-color: rgba(68, 147, 248, 0.35) !important;
+  color: var(--primary-hover) !important;
+}
+
+.dark [data-long-text-editor-panel] .border-indigo-200.bg-indigo-50 {
+  background-color: rgba(99, 102, 241, 0.14) !important;
+  border-color: rgba(129, 140, 248, 0.35) !important;
+  color: #a5b4fc !important;
+}
+
+.dark .long-text-field-entry-active {
+  z-index: 30;
+  opacity: 1 !important;
+  background: rgba(68, 147, 248, 0.08) !important;
+  border-color: rgba(88, 166, 255, 0.55) !important;
+  box-shadow: 0 0 0 1px rgba(68, 147, 248, 0.18) !important;
+}
+
+.dark .long-text-field-entry-active,
+.dark .long-text-field-entry-active * {
+  opacity: 1 !important;
+}
+
+.dark .long-text-field-entry-active .long-text-field-entry-label {
+  color: var(--text-primary) !important;
+}
+
+.dark .long-text-field-entry-active .long-text-field-entry-status {
+  color: var(--primary-hover) !important;
+}
+
+.dark .long-text-field-entry-active .long-text-field-entry-preview {
+  color: var(--text-secondary) !important;
+}
+
+.dark .long-text-field-entry-active .long-text-field-entry-preview.text-gray-400 {
+  color: var(--text-muted) !important;
+}
+
+.dark .long-text-field-entry-active .long-text-field-entry-action {
+  background-color: rgba(68, 147, 248, 0.14) !important;
+  color: #bfdbfe !important;
+  box-shadow: 0 0 0 1px rgba(88, 166, 255, 0.35) !important;
+}
+
+.dark .long-text-field-entry-active:hover {
+  background: rgba(68, 147, 248, 0.1) !important;
+  border-color: rgba(88, 166, 255, 0.7) !important;
+}
+
+.dark .rounded-xl:has(> .long-text-field-entry-active) {
+  position: relative;
+  z-index: 25;
+  opacity: 1 !important;
+  background-color: rgba(68, 147, 248, 0.04) !important;
+  border-color: rgba(88, 166, 255, 0.22) !important;
+}
+
+.dark .flex-shrink-0.rounded-xl.border .w-1.h-5.rounded-full.bg-gray-300 {
+  background: rgba(88, 166, 255, 0.35) !important;
+}
+
+.dark .flex-shrink-0.rounded-xl.border .w-1.h-5.rounded-full.bg-blue-500,
+.dark .flex-shrink-0.rounded-xl.border .w-1.h-5.rounded-full.bg-sky-500,
+.dark .flex-shrink-0.rounded-xl.border .w-1.h-5.rounded-full.bg-indigo-500 {
+  background: linear-gradient(180deg, #58a6ff 0%, #4493f8 100%) !important;
+  box-shadow: 0 0 0 1px rgba(68, 147, 248, 0.18), 0 0 12px rgba(68, 147, 248, 0.22);
+}
+

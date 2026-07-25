@@ -1,0 +1,26 @@
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast-enter {
+  animation: toast-enter 0.25s ease-out;
+}
+
+/* 暗色模式 Toast - 覆盖全局 bg-*-50 半透明规则（14% 不透明度），确保 Toast 实体可见 */
+.dark .toast-enter.bg-emerald-50 {
+  background-color: rgba(6, 78, 59, 0.92) !important;
+}
+.dark .toast-enter.bg-red-50 {
+  background-color: rgba(127, 29, 29, 0.92) !important;
+}
+.dark .toast-enter.bg-blue-50 {
+  background-color: rgba(23, 37, 84, 0.92) !important;
+}
+

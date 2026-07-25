@@ -1,0 +1,93 @@
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  html, body {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* 打印时隐藏悬浮工具栏 */
+  .floating-toolbar {
+    display: none !important;
+  }
+
+  .resume-paper {
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 20mm !important;
+  }
+
+  /* 确保粗体和斜体在打印时正常显示 */
+  .resume-paper strong {
+    font-weight: 700 !important;
+  }
+  .resume-paper em {
+    font-style: italic !important;
+  }
+
+  /* 打印修复：释放编辑器布局各级 overflow-hidden 裁剪 */
+  #editor-root,
+  #editor-root [class*="overflow-hidden"],
+  #editor-root [class*="min-h-0"] {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* 打印时隐藏 Live2D 看板娘 */
+  #live2d-widget {
+    display: none !important;
+  }
+
+  /* 打印修复：预览容器去掉溢出裁剪和内边距 */
+  #preview-container {
+    overflow: visible !important;
+    padding: 0 !important;
+    height: auto !important;
+    flex: none !important;
+  }
+
+  /* 打印修复：外层缩放容器恢复自然尺寸 */
+  #preview-scale-wrapper {
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    transform: none !important;
+  }
+
+  /* 打印修复：解除 transform 缩放，恢复自然定位 */
+  #preview-scaled-content {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  #preview-scaled-content::after {
+    display: none !important;
+  }
+
+  /* 打印修复：多页包装器去掉 flex gap 和额外间距 */
+  .resume-pages-wrapper {
+    display: block !important;
+    width: auto !important;
+  }
+
+  /* 打印修复：确保 resume-paper 内容不被 overflow:hidden 裁剪 */
+  .resume-paper {
+    overflow: visible !important;
+  }
+}
+

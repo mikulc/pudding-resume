@@ -1,0 +1,56 @@
+/* Changelog layout uses stable CSS so its width does not depend on Tailwind JIT
+   discovering arbitrary grid and max-width utilities in a long-running dev server. */
+.changelog-shell {
+  max-width: 1360px;
+}
+
+.changelog-timeline-item {
+  display: grid;
+  grid-template-columns: 120px 28px minmax(0, 760px);
+  column-gap: 16px;
+}
+
+.changelog-date {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.changelog-rail {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.changelog-card {
+  grid-column: 3;
+  grid-row: 1;
+  width: 100%;
+  max-width: 760px;
+  min-width: 0;
+}
+
+@media (max-width: 639px) {
+  .changelog-timeline-item {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+  }
+
+  .changelog-date {
+    display: none;
+  }
+
+  .changelog-rail {
+    grid-column: 1;
+    grid-row: 1;
+    height: 16px;
+  }
+
+  .changelog-dot {
+    display: none;
+  }
+
+  .changelog-card {
+    grid-column: 1;
+    grid-row: 2;
+    max-width: none;
+  }
+}

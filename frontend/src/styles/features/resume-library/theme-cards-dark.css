@@ -1,0 +1,52 @@
+.dark .resume-theme-card {
+  border-width: 1px !important;
+  border-color: var(--border-default) !important;
+  background-color: var(--bg-card) !important;
+  box-shadow: 0 4px 20px rgba(23, 25, 29, 0.22) !important;
+}
+
+.dark .resume-theme-card:hover {
+  border-color: rgba(145, 152, 161, 0.32) !important;
+  background-color: var(--bg-card) !important;
+  box-shadow:
+    0 14px 34px rgba(23, 25, 29, 0.36),
+    0 0 0 1px rgba(68, 147, 248, 0.06) !important;
+}
+
+.dark .resume-theme-card.resume-theme-card-selected {
+  border-color: var(--primary) !important;
+  background-color: var(--bg-selected) !important;
+  box-shadow: 0 0 0 1px rgba(68, 147, 248, 0.25) !important;
+}
+
+.dark .resume-theme-card .resume-theme-preview {
+  background-color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.dark .resume-theme-card .resume-theme-card-footer {
+  background-color: transparent !important;
+  border-top-color: var(--border-soft) !important;
+}
+
+.dark .resume-theme-card .resume-theme-current-badge {
+  background-color: rgba(35, 134, 54, 0.16) !important;
+  border-color: rgba(35, 134, 54, 0.24) !important;
+  color: #7ee787 !important;
+}
+
+.dark .resume-theme-card .resume-theme-highlight-pill {
+  background-color: var(--bg-card-muted) !important;
+  color: var(--text-secondary) !important;
+}
+
+.dark .resume-theme-card.resume-theme-card-selected .resume-theme-highlight-pill {
+  background-color: rgba(68, 147, 248, 0.14) !important;
+  color: #bfdbfe !important;
+}
+
+.dark button[role="switch"] span.bg-white {
+  background-color: #ffffff !important;
+}
+

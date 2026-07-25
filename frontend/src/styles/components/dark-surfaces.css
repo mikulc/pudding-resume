@@ -1,0 +1,27 @@
+.dark .backdrop-blur-xl,
+.dark .backdrop-blur-2xl,
+.dark .backdrop-blur-lg {
+  background-color: rgba(23, 25, 29, 0.88) !important;
+}
+
+.dark #preview-container #preview-scaled-content {
+  isolation: isolate;
+}
+
+.dark #preview-container #preview-scaled-content::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.dark .border-t.border-gray-50,
+.dark .border-b.border-gray-50,
+.dark .border-t.border-gray-100,
+.dark .border-b.border-gray-100,
+.dark .divide-y > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--border-soft) !important;
+}
+

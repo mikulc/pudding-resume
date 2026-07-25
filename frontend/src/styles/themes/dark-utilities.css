@@ -1,0 +1,328 @@
+.dark .min-h-screen.bg-white,
+.dark .min-h-screen.bg-slate-50 {
+  background-color: var(--bg-page) !important;
+}
+
+.dark header.bg-white,
+.dark header.bg-white\/80 {
+  background-color: var(--bg-header) !important;
+}
+
+.dark .no-print.bg-white,
+.dark .no-print.h-12.bg-white,
+.dark .no-print.grid.bg-white {
+  background-color: var(--bg-shell) !important;
+}
+
+.dark .bg-gray-50,
+.dark .bg-gray-100,
+.dark .bg-slate-50,
+.dark .bg-slate-100,
+.dark .bg-slate-50\/60,
+.dark .bg-gray-50\/50 {
+  background-color: var(--bg-control) !important;
+}
+
+.dark .h-full.flex.flex-col.overflow-hidden.bg-slate-50,
+.dark .mobile-editor-layout.bg-slate-50,
+.dark .h-full.flex.flex-col.bg-gray-100 {
+  background-color: var(--bg-layout) !important;
+}
+
+.dark .bg-gray-200,
+.dark .bg-slate-200 {
+  background-color: var(--border-soft) !important;
+}
+
+.dark .bg-gray-900,
+.dark .bg-gray-800,
+.dark .hover\:bg-gray-800:hover,
+.dark .hover\:bg-gray-700:hover {
+  background-color: var(--bg-control) !important;
+}
+
+/* 导航栏注册按钮：暗色模式保持浅底深字，确保可读性 */
+.dark .navbar-register-btn {
+  background-color: #f8fafc !important;
+  color: #020617 !important;
+}
+.dark .navbar-register-btn:hover {
+  background-color: #ffffff !important;
+}
+
+.dark .bg-black\/20 {
+  background-color: rgba(0, 0, 0, 0.25) !important;
+}
+
+.dark .bg-black\/30,
+.dark .bg-black\/40,
+.dark .bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.58) !important;
+}
+
+.dark .bg-blue-50,
+.dark .bg-blue-50\/30,
+.dark .bg-blue-50\/40,
+.dark .bg-blue-50\/50,
+.dark .bg-blue-50\/60,
+.dark .bg-blue-100,
+.dark .bg-blue-100\/80 {
+  background-color: var(--bg-selected) !important;
+}
+
+.dark .bg-green-50,
+.dark .bg-emerald-50 {
+  background-color: rgba(35, 134, 54, 0.14) !important;
+}
+
+.dark .bg-violet-50 {
+  background-color: rgba(139, 92, 246, 0.14) !important;
+}
+
+.dark .bg-pink-50 {
+  background-color: rgba(236, 72, 153, 0.14) !important;
+}
+
+.dark .bg-indigo-50 {
+  background-color: rgba(99, 102, 241, 0.14) !important;
+}
+
+.dark .bg-orange-50,
+.dark .bg-amber-50,
+.dark .bg-amber-50\/60 {
+  background-color: rgba(210, 153, 34, 0.14) !important;
+}
+
+.dark .bg-red-50,
+.dark .bg-rose-50,
+.dark .bg-rose-100 {
+  background-color: rgba(248, 81, 73, 0.14) !important;
+}
+
+.dark .hover\:bg-white:hover,
+.dark .hover\:bg-white\/30:hover,
+.dark .hover\:bg-white\/70:hover,
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-gray-100:hover,
+.dark .hover\:bg-gray-200:hover,
+.dark .hover\:bg-slate-50:hover {
+  background-color: var(--bg-hover) !important;
+}
+
+.dark .hover\:bg-blue-50:hover,
+.dark .hover\:bg-blue-50\/40:hover,
+.dark .hover\:bg-blue-50\/30:hover,
+.dark .hover\:bg-blue-100:hover {
+  background-color: rgba(68, 147, 248, 0.14) !important;
+}
+
+.dark .hover\:bg-red-50:hover,
+.dark .hover\:bg-rose-50:hover,
+.dark .hover\:bg-rose-100:hover {
+  background-color: rgba(248, 81, 73, 0.16) !important;
+}
+
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700 {
+  color: var(--text-primary) !important;
+}
+
+.dark .text-gray-600,
+.dark .text-gray-500 {
+  color: var(--text-secondary) !important;
+}
+
+.dark .text-gray-400 {
+  color: var(--text-muted) !important;
+}
+
+.dark .text-gray-300 {
+  color: var(--text-muted) !important;
+}
+
+/* ── Slate 色系暗色映射（对标 gray，修复卡片底部信息区可读性）── */
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-slate-700 {
+  color: var(--text-primary) !important;
+}
+
+.dark .text-slate-600,
+.dark .text-slate-500 {
+  color: var(--text-secondary) !important;
+}
+
+/* 时间/状态文字：用 secondary 而非 muted，保证暗色背景下清晰可读 */
+.dark .text-slate-400,
+.dark .text-slate-300 {
+  color: var(--text-secondary) !important;
+}
+
+/* 标签 / 按钮背景 */
+.dark .bg-slate-100\/70,
+.dark .bg-slate-100 {
+  background-color: var(--bg-hover) !important;
+}
+
+/* 标签 / 底部边界线 */
+.dark .border-slate-200\/70,
+.dark .border-slate-100\/80 {
+  border-color: var(--border-soft) !important;
+}
+
+/* 菜单按钮 hover */
+.dark .hover\:bg-slate-100:hover {
+  background-color: var(--bg-hover) !important;
+}
+
+.dark .hover\:text-slate-600:hover {
+  color: var(--text-primary) !important;
+}
+
+.dark .text-blue-400,
+.dark .text-blue-500,
+.dark .text-blue-600,
+.dark .text-blue-700,
+.dark .hover\:text-blue-500:hover,
+.dark .hover\:text-blue-600:hover {
+  color: var(--primary-hover) !important;
+}
+
+.dark .text-red-500,
+.dark .text-rose-500,
+.dark .hover\:text-red-500:hover,
+.dark .hover\:text-rose-600:hover {
+  color: var(--danger) !important;
+}
+
+.dark .text-orange-400,
+.dark .text-orange-500,
+.dark .text-amber-500,
+.dark .text-orange-600,
+.dark .hover\:text-orange-600:hover {
+  color: var(--warning) !important;
+}
+
+.dark .text-violet-500 {
+  color: #a78bfa !important;
+}
+
+.dark .text-pink-500 {
+  color: #f472b6 !important;
+}
+
+.dark .text-indigo-500 {
+  color: #818cf8 !important;
+}
+
+.dark .text-emerald-500 {
+  color: #4ade80 !important;
+}
+
+.dark .border-white\/60,
+.dark .border-white\/70,
+.dark .border-gray-50,
+.dark .border-gray-100,
+.dark .border-gray-150,
+.dark .border-gray-200,
+.dark .border-slate-300\/70,
+.dark .ring-slate-900\/5 {
+  border-color: var(--border-soft) !important;
+  --tw-ring-color: var(--border-soft) !important;
+}
+
+.dark .border-gray-300,
+.dark .hover\:border-gray-300:hover,
+.dark .border-gray-400\/60,
+.dark .border-gray-500\/60,
+.dark .border-gray-600\/60 {
+  border-color: var(--border-default) !important;
+}
+
+.dark .border-blue-100,
+.dark .border-blue-100\/80,
+.dark .border-blue-200,
+.dark .border-blue-300,
+.dark .hover\:border-blue-200:hover,
+.dark .hover\:border-blue-300:hover {
+  border-color: rgba(68, 147, 248, 0.35) !important;
+}
+
+.dark .border-red-100,
+.dark .border-rose-200,
+.dark .hover\:border-rose-300:hover {
+  border-color: rgba(248, 81, 73, 0.35) !important;
+}
+
+.dark .border-orange-100,
+.dark .border-orange-200,
+.dark .border-orange-300,
+.dark .hover\:border-orange-300:hover {
+  border-color: rgba(210, 153, 34, 0.4) !important;
+}
+
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-xl,
+.dark .shadow-2xl {
+  box-shadow: 0 16px 40px rgba(23, 25, 29, 0.45) !important;
+}
+
+.dark input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),
+.dark textarea,
+.dark select,
+.dark [contenteditable="true"] {
+  background-color: var(--bg-input);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.dark input:not([type="range"]):not([type="checkbox"]):not([type="radio"]):focus,
+.dark textarea:focus,
+.dark select:focus,
+.dark [contenteditable="true"]:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(68, 147, 248, 0.25);
+}
+
+/* 重命名弹窗输入框 focus — 覆盖全局 dark 输入框样式，做柔和蓝光 */
+.dark .rename-input:focus {
+  border-color: rgba(68, 147, 248, 0.7) !important;
+  box-shadow: 0 0 0 4px rgba(68, 147, 248, 0.15) !important;
+}
+
+.dark .from-gray-50,
+.dark .from-gray-100 {
+  --tw-gradient-from: var(--bg-control) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgba(33, 40, 48, 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.dark .from-orange-50,
+.dark .from-amber-50 {
+  --tw-gradient-from: rgba(210, 153, 34, 0.14) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgba(210, 153, 34, 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.dark .from-blue-100 {
+  --tw-gradient-from: rgba(68, 147, 248, 0.14) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgba(68, 147, 248, 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.dark .to-indigo-100 {
+  --tw-gradient-to: rgba(99, 102, 241, 0.14) var(--tw-gradient-to-position);
+}
+
+.dark .to-indigo-50 {
+  --tw-gradient-to: rgba(99, 102, 241, 0.1) var(--tw-gradient-to-position);
+}
+

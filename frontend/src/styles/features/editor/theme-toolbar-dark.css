@@ -1,0 +1,123 @@
+.theme-drawer-back-button:hover {
+  background-color: #2248ff !important;
+  color: #ffffff !important;
+}
+
+.dark .theme-drawer-back-button:hover {
+  background-color: #fbbf24 !important;
+  color: #17191d !important;
+}
+
+.dark #preview-container [role="toolbar"],
+.dark #preview-container .backdrop-blur-xl,
+.dark [data-global-toolbar-bottom-bar] {
+  background-color: rgba(23, 25, 29, 0.78) !important;
+  border-color: var(--border-soft) !important;
+  box-shadow: 0 16px 40px rgba(23, 25, 29, 0.45) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+  backdrop-filter: blur(16px) saturate(140%) !important;
+}
+
+.dark .floating-toolbar {
+  background-color: rgba(23, 25, 29, 0.78);
+  border-color: var(--border-soft);
+  box-shadow:
+    0 16px 40px rgba(23, 25, 29, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+.dark #preview-container [role="toolbar"] .bg-slate-300\/70,
+.dark [data-global-toolbar-bottom-bar] .bg-slate-300\/70 {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark #preview-container [role="toolbar"] button,
+.dark [data-global-toolbar-bottom-bar] button {
+  color: var(--text-secondary) !important;
+}
+
+.dark #preview-container [role="toolbar"] button:hover:not(:disabled),
+.dark [data-global-toolbar-bottom-bar] button:hover:not(:disabled) {
+  background-color: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark #preview-container [role="toolbar"] .bg-blue-100\/80,
+.dark [data-global-toolbar-bottom-bar] .bg-blue-100\/80 {
+  background-color: var(--bg-selected) !important;
+  color: var(--primary-hover) !important;
+}
+
+.dark #preview-container [role="toolbar"] .text-blue-600,
+.dark [data-global-toolbar-bottom-bar] .text-blue-600 {
+  color: var(--primary-hover) !important;
+}
+
+/* Canvas toolbar dark glass: shares the task progress card's cool translucent
+ * surface while preserving the existing pill layout and light theme. */
+.dark .canvas-floating-toolbar {
+  position: relative;
+  isolation: isolate;
+  background-color: rgba(20, 24, 32, 0.68) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.28),
+    0 2px 8px rgba(0, 0, 0, 0.18) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+}
+
+.dark .canvas-floating-toolbar::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.065) 0%,
+    rgba(255, 255, 255, 0.022) 24%,
+    rgba(255, 255, 255, 0) 54%
+  );
+}
+
+.dark .canvas-floating-toolbar > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dark .canvas-floating-toolbar .bg-slate-300\/70 {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .canvas-floating-toolbar button {
+  color: rgba(255, 255, 255, 0.66) !important;
+}
+
+.dark .canvas-floating-toolbar button:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.90) !important;
+}
+
+.dark .canvas-floating-toolbar button.bg-blue-100\/80 {
+  background-color: rgba(59, 130, 246, 0.16) !important;
+  color: #60a5fa !important;
+}
+
+.dark .canvas-floating-toolbar button.text-blue-600 {
+  color: #60a5fa !important;
+}
+
+.dark .canvas-floating-toolbar button:disabled {
+  color: rgba(255, 255, 255, 0.66) !important;
+  opacity: 0.45 !important;
+}
+
+/* 暗色模式折叠圆形按钮 - 更高不透明度保证可见性 */
+.dark [data-global-toolbar-collapsed-btn] {
+  background-color: rgba(23, 25, 29, 0.92) !important;
+}
+

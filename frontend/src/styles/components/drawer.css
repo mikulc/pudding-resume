@@ -1,0 +1,11 @@
+/* ===== 抽屉遮罩动画 ===== */
+.drawer-overlay {
+  background: rgba(0, 0, 0, 0.15);
+  transition: opacity 300ms ease;
+}
+
+.drawer-overlay-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+

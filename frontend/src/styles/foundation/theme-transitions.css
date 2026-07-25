@@ -1,0 +1,72 @@
+.theme-color-transition {
+  transition-property: background-color, color, border-color, fill, stroke;
+  transition-duration: var(--theme-transition-duration);
+  transition-timing-function: var(--theme-transition-ease);
+}
+
+html.theme-changing *,
+html.theme-changing *::before,
+html.theme-changing *::after {
+  transition: none !important;
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+}
+
+html.theme-transition body,
+html.theme-transition .theme-transition-target,
+html.theme-transition .theme-color-transition,
+html.theme-transition .settings-card,
+html.theme-transition .resume-theme-card,
+html.theme-transition .resume-theme-card-footer,
+html.theme-transition [data-long-text-editor-panel],
+html.theme-transition [data-global-toolbar-bottom-bar],
+html.theme-transition .floating-toolbar,
+html.theme-transition .theme-transition-target::before,
+html.theme-transition .theme-transition-target::after {
+  transition-property: background-color, color, border-color, fill, stroke !important;
+  transition-duration: var(--theme-transition-duration) !important;
+  transition-timing-function: var(--theme-transition-ease) !important;
+  transition-delay: 0ms !important;
+}
+
+html.theme-transition button.theme-transition-target svg,
+html.theme-transition .theme-color-transition svg,
+html.theme-transition .theme-toggle-button svg {
+  transition-property: color, fill, stroke !important;
+  transition-duration: var(--theme-transition-duration) !important;
+  transition-timing-function: var(--theme-transition-ease) !important;
+  transition-delay: 0ms !important;
+}
+
+html.theme-transition .theme-transition-stable,
+html.theme-transition .theme-transition-stable *,
+html.theme-transition .resume-paper,
+html.theme-transition .resume-paper *,
+html.theme-transition .resume-card-preview-scale,
+html.theme-transition .resume-card-preview-scale *,
+html.theme-transition .rich-text-editable,
+html.theme-transition .rich-text-editable *,
+html.theme-transition .md-source-editable,
+html.theme-transition .md-source-editable * {
+  transition: none !important;
+}
+
+.editor-panel-expand-transition {
+  transition-property: grid-template-rows, opacity;
+  transition-duration: 280ms;
+}
+
+.theme-toggle-button {
+  transition:
+    background-color var(--theme-transition-duration) var(--theme-transition-ease),
+    color var(--theme-transition-duration) var(--theme-transition-ease),
+    border-color var(--theme-transition-duration) var(--theme-transition-ease);
+}
+
+.theme-toggle-button svg {
+  transition:
+    color var(--theme-transition-duration) var(--theme-transition-ease),
+    fill var(--theme-transition-duration) var(--theme-transition-ease),
+    stroke var(--theme-transition-duration) var(--theme-transition-ease);
+}
+

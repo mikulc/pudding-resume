@@ -1,0 +1,60 @@
+/* ===== 悬浮加粗工具栏样式 ===== */
+.floating-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  border-radius: 18px;
+  box-shadow:
+    0 12px 28px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 0 0 1px rgba(15, 23, 42, 0.04);
+  padding: 5px 8px;
+  animation: toolbar-appear 0.15s ease-out;
+  -webkit-backdrop-filter: blur(24px) saturate(1.35);
+  backdrop-filter: blur(24px) saturate(1.35);
+  user-select: none;
+}
+
+.floating-toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.floating-toolbar-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.floating-toolbar-btn:active {
+  background: var(--bg-selected);
+  transform: scale(0.95);
+}
+
+.rich-text-editable,
+.md-source-editable {
+  font-family: inherit;
+  tab-size: 2;
+  line-height: 1.5rem;
+}
+
+.rich-text-editable:empty::before,
+.md-source-editable:empty::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  pointer-events: none;
+}
+

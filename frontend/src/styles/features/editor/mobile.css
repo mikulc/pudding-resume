@@ -1,0 +1,120 @@
+/* ===== 抽屉拖拽手柄 ===== */
+.resize-handle {
+  background: transparent;
+  transition: background-color 0.15s ease;
+}
+.resize-handle:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+.resize-handle--active {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+/* ===== 移动端编辑器 Dock 布局触摸适配 ===== */
+@media (max-width: 1023px) {
+  .mobile-editor-layout .mobile-form-pane {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .mobile-editor-layout .mobile-form-shell {
+    width: 100%;
+    max-width: 560px;
+    height: 100%;
+    min-width: 0;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .mobile-editor-layout .mobile-editor-form-shell {
+    max-width: 430px;
+  }
+
+  .mobile-editor-layout .mobile-scroll-dock-space {
+    padding-bottom: calc(104px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-editor-layout .mobile-panel-scroll input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),
+  .mobile-editor-layout .mobile-panel-scroll textarea,
+  .mobile-editor-layout .mobile-panel-scroll select {
+    min-height: 40px;
+    font-size: 16px;
+  }
+
+  .mobile-editor-layout .mobile-panel-scroll textarea {
+    line-height: 1.55;
+  }
+
+  .mobile-editor-layout .mobile-panel-scroll input[type="range"] {
+    min-height: 32px;
+  }
+
+  .mobile-editor-layout .mobile-panel-scroll input[type="range"]::-webkit-slider-thumb {
+    min-width: 18px;
+    min-height: 18px;
+  }
+
+  .mobile-editor-layout .mobile-panel-scroll input[type="range"]::-moz-range-thumb {
+    min-width: 18px;
+    min-height: 18px;
+  }
+
+  .mobile-editor-layout .settings-color-grid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    justify-content: start;
+    gap: 4px;
+  }
+
+  .mobile-editor-layout .settings-color-swatch {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+  }
+
+  .mobile-editor-layout .settings-watermark-color-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mobile-editor-layout .settings-watermark-swatch {
+    width: 32px;
+    height: 32px;
+  }
+
+  .mobile-editor-layout .settings-slider-row {
+    width: 100%;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .mobile-editor-layout .settings-card {
+    padding: 18px;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 1023px) {
+  .mobile-editor-layout .mobile-form-pane {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .mobile-editor-layout .mobile-editor-form-shell {
+    max-width: 440px;
+  }
+
+  .mobile-editor-layout .settings-color-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .mobile-editor-layout .settings-color-swatch {
+    width: 100%;
+    height: auto;
+  }
+}
+
