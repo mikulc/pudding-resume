@@ -189,11 +189,10 @@ export default function TemplatesPage() {
                       key={cat}
                       type="button"
                       onClick={() => setActiveCategory(cat)}
-                      className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full px-4 text-[15px] font-bold tracking-normal transition-colors ${
-                        activeCategory === cat
+                      className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full px-4 text-[15px] font-bold tracking-normal transition-colors ${activeCategory === cat
                           ? 'bg-[#2248ff] text-white dark:bg-[#fbbf24] dark:text-[#17191d]'
                           : 'text-gray-800 hover:bg-[#2248ff] hover:text-white dark:text-[color:var(--text-secondary)] dark:hover:bg-[#fbbf24] dark:hover:text-[#17191d]'
-                      }`}
+                        }`}
                     >
                       {cat === ALL_THEME_CATEGORY ? '全部' : cat}
                     </button>
@@ -289,7 +288,7 @@ export default function TemplatesPage() {
               role="dialog"
               aria-modal="true"
               aria-labelledby="template-preview-title"
-              className="modal-dialog-enter flex h-[min(92vh,900px)] w-full max-w-[780px] flex-col overflow-hidden rounded-[20px] border border-white/20 bg-[var(--bg-card)] shadow-[0_28px_90px_rgba(15,23,42,0.35)]"
+              className="modal-dialog-enter flex h-[min(92vh,900px)] w-full max-w-[680px] flex-col overflow-hidden rounded-[20px] border border-white/20 bg-[var(--bg-card)] shadow-[0_28px_90px_rgba(15,23,42,0.35)]"
               onMouseDown={(event) => event.stopPropagation()}
             >
               <header className="flex h-14 flex-shrink-0 items-center justify-between gap-4 border-b border-slate-200/70 px-3 sm:px-4">
