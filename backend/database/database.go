@@ -64,6 +64,7 @@ func Init(cfg *config.Config) {
 
 	migrateActiveUserUniqueIndexes(DB)
 	dropStyleLibraryDescriptionColumn(DB)
+	dropStyleLibraryCategoryColumn(DB)
 	seedAll()
 	migrateTableComments(DB)
 
@@ -103,6 +104,17 @@ func dropStyleLibraryDescriptionColumn(db *gorm.DB) {
 	}
 	if err := db.Migrator().DropColumn(&models.StyleLibrary{}, "description"); err != nil {
 		log.Fatalf("Failed to drop style_library.description: %v", err)
+	}
+}
+
+// dropStyleLibraryCategoryColumn removes the old single-value category field.
+// Template categories are now stored as a JSON array in style_library.categories.
+func dropStyleLibraryCategoryColumn(db *gorm.DB) {
+	if !db.Migrator().HasColumn(&models.StyleLibrary{}, "category") {
+		return
+	}
+	if err := db.Migrator().DropColumn(&models.StyleLibrary{}, "category"); err != nil {
+		log.Fatalf("Failed to drop style_library.category: %v", err)
 	}
 }
 

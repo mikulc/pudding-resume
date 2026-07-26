@@ -10,13 +10,21 @@ import { resolveLayout } from '../../registry/layouts';
 
 export const ALL_THEME_CATEGORY = '__all__';
 
-/** Extract categories from entries while keeping the all-category sentinel first. */
-export function deriveCategories(entries: StyleLibraryEntry[]): string[] {
-  const set = new Set<string>();
-  for (const e of entries) {
-    if (e.category) set.add(e.category);
-  }
-  return [ALL_THEME_CATEGORY, ...Array.from(set)];
+export const RESUME_TEMPLATE_CATEGORIES = [
+  '互联网通用',
+  '前端开发',
+  '后端开发',
+  'Golang',
+  'Java',
+  'C++',
+  '校招',
+  '实习',
+  '社招',
+] as const;
+
+/** Return the product-defined category order instead of deriving stale database values. */
+export function deriveCategories(_entries: StyleLibraryEntry[]): string[] {
+  return [ALL_THEME_CATEGORY, ...RESUME_TEMPLATE_CATEGORIES];
 }
 
 export function buildResumePreviewTheme(entry: StyleLibraryEntry): ThemeSettings {
@@ -36,7 +44,7 @@ export function filterResumeThemeEntries(
   activeCategory: string,
 ): StyleLibraryEntry[] {
   if (activeCategory === ALL_THEME_CATEGORY) return entries;
-  return entries.filter((entry) => entry.category === activeCategory);
+  return entries.filter((entry) => entry.categories.includes(activeCategory));
 }
 
 interface ResumeThemeLibraryData {

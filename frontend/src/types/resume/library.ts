@@ -8,7 +8,7 @@ export interface StyleLibraryEntry {
   name: string;
   highlights: string[];
   layoutId: string;
-  category: string;
+  categories: string[];
   previewColors: {
     headerBg: string;
     accentBar: string;

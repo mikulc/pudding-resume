@@ -115,12 +115,12 @@ export function ThemeDrawer({ open, onClose, currentLayoutId, onApply }: Props) 
 
         {/* Category Tabs */}
         <div className="flex-shrink-0 px-5 py-3 border-b border-gray-50 dark:border-[color:var(--border-soft)]">
-          <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex flex-wrap items-center gap-2 pb-1 sm:flex-nowrap sm:overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {deriveCategories(entries).map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`inline-flex h-9 items-center justify-center rounded-full px-4 text-[15px] font-bold tracking-normal transition-colors ${
+                className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full px-4 text-[15px] font-bold tracking-normal transition-colors ${
                   activeCategory === cat
                     ? 'bg-[#2248ff] text-white dark:bg-[#fbbf24] dark:text-[#17191d]'
                     : 'text-gray-800 hover:bg-[#2248ff] hover:text-white dark:text-[color:var(--text-secondary)] dark:hover:bg-[#fbbf24] dark:hover:text-[#17191d]'

@@ -10,7 +10,7 @@ interface ApiStyleLibrary {
   id: string;
   name: string;
   layout_id: string;
-  category: string;
+  categories: string[];
   highlights: string[];
   preview_colors: {
     headerBg: string;
@@ -31,7 +31,7 @@ export async function getStyleLibraries(): Promise<StyleLibraryEntry[]> {
     name: t.name,
     highlights: t.highlights || [],
     layoutId: t.layout_id,
-    category: t.category || '',
+    categories: t.categories || [],
     previewColors: t.preview_colors || { headerBg: '#DBEAFE', accentBar: '#3B82F6', bodyBg: '#FFFFFF' },
     previewImage: t.preview_image,
     previewVersion: t.preview_version,
