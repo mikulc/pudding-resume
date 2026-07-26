@@ -66,3 +66,22 @@ export function ResumePreviewSkeleton({ variant = 'empty', className }: ResumePr
   // variant === "empty": 仅渲染骨架内容，外层由父组件控制尺寸和定位
   return <SkeletonContent className={className} />;
 }
+
+/**
+ * Shared empty preview surface for resume and template cards.
+ * Keeps every missing/empty-content state visually consistent with the
+ * blank-resume cards on the "My resumes" page.
+ */
+export function EmptyResumePreview() {
+  return (
+    <div
+      className="absolute inset-0 flex items-stretch bg-white p-3 dark:bg-[#151b23]"
+      aria-hidden="true"
+      data-empty-resume-preview
+    >
+      <div className="h-full w-full overflow-hidden rounded-2xl">
+        <ResumePreviewSkeleton variant="empty" className="w-full" />
+      </div>
+    </div>
+  );
+}

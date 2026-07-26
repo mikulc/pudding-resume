@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ChevronLeft, ChevronRight, Eye, FileText, Loader2 } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, Eye, Loader2 } from 'lucide-react';
 import { NavbarAuth } from '../components/auth/NavbarAuth';
 import LogoIcon from '../components/common/LogoIcon';
 import { TopNavLinks } from '../components/common/TopNavLinks';
@@ -10,6 +10,7 @@ import {
   LazyResumeCardPreview,
   ResumeCardPreview,
 } from '../components/preview/ResumeCardPreview';
+import { EmptyResumePreview } from '../components/preview/ResumePreviewSkeleton';
 import {
   ALL_THEME_CATEGORY,
   buildResumePreviewTheme,
@@ -229,12 +230,7 @@ export default function TemplatesPage() {
                                     scrollRootRef={scrollContainerRef}
                                   />
                                 ) : (
-                                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-                                    <div className="select-none text-center text-gray-300">
-                                      <FileText className="mx-auto mb-2 h-10 w-10" />
-                                      <span className="text-xs font-medium">{entry.name}</span>
-                                    </div>
-                                  </div>
+                                  <EmptyResumePreview />
                                 )}
                               </div>
                             </div>
@@ -315,16 +311,14 @@ export default function TemplatesPage() {
               </header>
 
               <div className="flex min-h-0 flex-1 items-start justify-center overflow-auto bg-slate-100/80 p-4 sm:p-5 dark:bg-black/15">
-                <div className="aspect-[210/297] h-full max-h-full max-w-full overflow-hidden rounded-md bg-white shadow-[0_14px_45px_rgba(15,23,42,0.16)]">
+                <div className="relative aspect-[210/297] h-full max-h-full max-w-full overflow-hidden rounded-md bg-white shadow-[0_14px_45px_rgba(15,23,42,0.16)]">
                   {demoContent ? (
                     <ResumeCardPreview
                       content={demoContent}
                       theme={buildResumePreviewTheme(previewEntry)}
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-slate-300">
-                      <FileText className="h-14 w-14" />
-                    </div>
+                    <EmptyResumePreview />
                   )}
                 </div>
               </div>

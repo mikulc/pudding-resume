@@ -15,7 +15,7 @@ import { useRef, useState, useLayoutEffect } from 'react';
 import type { RefObject } from 'react';
 import { ResumeCardPreviewProvider } from './ResumeCardPreviewProvider';
 import { ResumePreview } from './PreviewComponents';
-import { ResumePreviewSkeleton } from './ResumePreviewSkeleton';
+import { EmptyResumePreview } from './ResumePreviewSkeleton';
 import type { ResumeData, ThemeSettings } from '../../types/resume';
 
 interface ResumeCardPreviewProps {
@@ -91,14 +91,7 @@ export function LazyResumeCardPreview({
       {shouldRender ? (
         <ResumeCardPreview content={content} theme={theme} />
       ) : (
-        <div
-          className="absolute inset-0 flex items-stretch bg-white p-3 dark:bg-[#151b23]"
-          aria-hidden="true"
-        >
-          <div className="h-full w-full overflow-hidden rounded-2xl">
-            <ResumePreviewSkeleton variant="empty" className="w-full" />
-          </div>
-        </div>
+        <EmptyResumePreview />
       )}
     </div>
   );
@@ -153,12 +146,7 @@ export function ResumeCardPreview({ content, theme }: ResumeCardPreviewProps) {
         className="resume-thumbnail-surface w-full h-full overflow-hidden bg-white text-left pointer-events-none"
       >
         {isEmpty ? (
-          /* 空白简历：骨架直接填充卡片预览区，绕过 A4 缩放，铺满贴边 */
-          <div className="absolute inset-0 flex items-stretch p-3 bg-white dark:bg-[#151b23]">
-            <div className="w-full h-full rounded-2xl overflow-hidden">
-              <ResumePreviewSkeleton variant="empty" className="w-full" />
-            </div>
-          </div>
+          <EmptyResumePreview />
         ) : (
           <div
             className="resume-card-preview-scale origin-top-left"

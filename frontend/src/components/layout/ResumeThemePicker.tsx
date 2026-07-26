@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, FileText, Loader2 } from 'lucide-react';
+import { CheckCircle2, Loader2 } from 'lucide-react';
 import { getDemoContent, getStyleLibraries } from '../../api/templates';
 import { ResumeCardPreview } from '../preview/ResumeCardPreview';
+import { EmptyResumePreview } from '../preview/ResumePreviewSkeleton';
 import type { ResumeData, StyleLibraryEntry, ThemeSettings } from '../../types/resume';
 import { createInitialThemeSettings } from '../../utils/resumeDraft';
 import { resolveLayout } from '../../registry/layouts';
@@ -222,12 +223,7 @@ export function ResumeThemeCards({
               {demoContent ? (
                 <ResumeCardPreview key={`${entry.layoutId}-${previewVersion}`} content={demoContent} theme={previewTheme} />
               ) : (
-                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-                  <div className="select-none text-center text-gray-300">
-                    <FileText className="mx-auto mb-2 h-10 w-10" />
-                    <span className="text-xs font-medium">{entry.name}</span>
-                  </div>
-                </div>
+                <EmptyResumePreview />
               )}
 
               {/* Loading overlay when applying */}
