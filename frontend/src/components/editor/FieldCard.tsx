@@ -13,6 +13,7 @@ import {
   DEFAULT_FIELD_ICON_KEYS,
   ICON_CATEGORIES,
   ICON_LIBRARY,
+  ALL_ICON_LIBRARY,
   type IconCategory,
 } from './iconLibrary';
 import { PINNED_PERSONAL_FIELD } from './photoStyle';
@@ -134,20 +135,28 @@ export function FieldCard({
 
     const rect = anchor.getBoundingClientRect();
     const gap = 8;
-    const estimatedWidth = 324;
-    const estimatedHeight = 430;
     const viewportPadding = 8;
+    const panelWidth = pickerRef.current?.offsetWidth || 324;
+    const panelHeight = pickerRef.current?.offsetHeight || 360;
+    const spaceBelow = window.innerHeight - rect.bottom - gap - viewportPadding;
+    const spaceAbove = rect.top - gap - viewportPadding;
     const belowTop = rect.bottom + gap;
-    const top =
-      belowTop + estimatedHeight <= window.innerHeight - viewportPadding
-        ? belowTop
-        : Math.max(viewportPadding, rect.top - gap - estimatedHeight);
+    const aboveTop = rect.top - gap - panelHeight;
+    const preferredTop = panelHeight <= spaceBelow || spaceBelow >= spaceAbove
+      ? belowTop
+      : aboveTop;
+    const top = Math.min(
+      Math.max(viewportPadding, preferredTop),
+      Math.max(viewportPadding, window.innerHeight - panelHeight - viewportPadding),
+    );
     const left = Math.min(
       Math.max(viewportPadding, rect.left),
-      Math.max(viewportPadding, window.innerWidth - estimatedWidth - viewportPadding),
+      Math.max(viewportPadding, window.innerWidth - panelWidth - viewportPadding),
     );
 
-    setIconPos({ top, left });
+    setIconPos((current) => (
+      current.top === top && current.left === left ? current : { top, left }
+    ));
   }, []);
 
   const openIconPicker = useCallback(() => {
@@ -156,9 +165,19 @@ export function FieldCard({
   }, [updateIconPickerPosition]);
 
   useLayoutEffect(() => {
-    if (showIconPicker) {
-      updateIconPickerPosition();
-    }
+    if (!showIconPicker) return;
+
+    updateIconPickerPosition();
+    const resizeObserver = new ResizeObserver(updateIconPickerPosition);
+    if (pickerRef.current) resizeObserver.observe(pickerRef.current);
+    window.addEventListener('resize', updateIconPickerPosition);
+    window.addEventListener('scroll', updateIconPickerPosition, true);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateIconPickerPosition);
+      window.removeEventListener('scroll', updateIconPickerPosition, true);
+    };
   }, [showIconPicker, updateIconPickerPosition]);
 
   // 重命名面板定位：锚定当前字段标题区域。
@@ -203,7 +222,7 @@ export function FieldCard({
   const customKey = iconMap?.[field];
   const selectedIconKey = customKey || DEFAULT_FIELD_ICON_KEYS[field] || DEFAULT_FIELD_ICON_KEYS._custom;
   const currentIcon = customKey
-    ? (ICON_LIBRARY.find((i) => i.key === customKey)?.icon || FIELD_ICONS._custom)
+    ? (ALL_ICON_LIBRARY.find((i) => i.key === customKey)?.icon || FIELD_ICONS._custom)
     : (FIELD_ICONS[field] || FIELD_ICONS._custom);
   const normalizedIconSearch = iconSearch.trim().toLowerCase();
   const filteredIcons = useMemo(() => {
@@ -319,7 +338,7 @@ export function FieldCard({
               />
             </div>
 
-            <div className="mt-3 flex flex-wrap gap-1.5">
+            <div className="hide-scrollbar mt-3 flex flex-nowrap gap-1.5 overflow-x-auto">
               {ICON_CATEGORIES.map((category) => {
                 const isActive = activeIconCategory === category;
                 return (
@@ -327,9 +346,9 @@ export function FieldCard({
                     key={category}
                     type="button"
                     onClick={() => setActiveIconCategory(category)}
-                    className={`h-8 rounded-full px-3 text-xs font-medium transition-colors ${
+                    className={`h-8 shrink-0 rounded-full px-2 text-xs font-medium transition-colors ${
                       isActive
-                        ? 'bg-neutral-900 text-white shadow-sm dark:bg-slate-100 dark:text-slate-950'
+                        ? 'bg-[rgb(34,72,255)] text-white shadow-sm dark:bg-[rgb(251,191,36)] dark:text-slate-950'
                         : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100'
                     }`}
                   >
@@ -355,7 +374,7 @@ export function FieldCard({
                         }}
                         className={`flex h-9 w-9 items-center justify-center rounded-xl transition-colors ${
                           isActive
-                            ? 'bg-neutral-900 text-white dark:bg-slate-100 dark:text-slate-950'
+                            ? 'bg-[rgb(34,72,255)] text-white dark:bg-[rgb(251,191,36)] dark:text-slate-950'
                             : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
                         }`}
                         aria-label={t('fieldIcon.selectAria', { label: iconLabel })}
