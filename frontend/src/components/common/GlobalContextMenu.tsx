@@ -231,12 +231,12 @@ export function GlobalContextMenu() {
     <div
       ref={menuRef}
       style={{ left: position.x, top: position.y }}
-      className="global-context-menu fixed z-[9999] w-[157.6px] overflow-hidden rounded-[12px] border border-slate-300/20 bg-white/70 px-1.5 py-1 text-[#2f343b] shadow-[0_24px_58px_rgba(15,23,42,0.18),inset_0_0_0_1px_rgba(255,255,255,0.26)] backdrop-blur-[36px] backdrop-saturate-[1.65] context-menu-enter dark:border-slate-300/10 dark:bg-[#18181b]/72 dark:text-white dark:shadow-[0_24px_58px_rgba(0,0,0,0.42),inset_0_0_0_1px_rgba(148,163,184,0.07)]"
+      className="global-context-menu fixed z-[9999] w-[157.6px] overflow-hidden rounded-[12px] border border-transparent bg-white/70 px-1.5 py-1 text-[#2f343b] shadow-[0_0_10px_rgba(15,23,42,0.10),0_18px_42px_rgba(15,23,42,0.16)] backdrop-blur-[36px] backdrop-saturate-[1.65] context-menu-enter dark:border-transparent dark:bg-[#18181b]/72 dark:text-white dark:shadow-[0_0_10px_rgba(0,0,0,0.24),0_18px_42px_rgba(0,0,0,0.38)]"
       role="menu"
       aria-label="Context menu"
       onContextMenu={(event) => event.preventDefault()}
     >
-      <div className="grid h-8 grid-cols-4 items-center gap-1 px-1">
+      <div className="flex h-10 items-center justify-between">
         <IconButton label={labels.back} onClick={() => runAction(() => window.history.back())}>
           <ArrowLeft />
         </IconButton>
@@ -294,12 +294,11 @@ function IconButton({
     <button
       type="button"
       aria-label={label}
-      title={label}
       onClick={onClick}
-      className="global-context-menu-icon-button inline-flex h-7 w-7 items-center justify-center justify-self-center rounded-[8px] text-[#2f343b] transition-colors duration-150 hover:bg-[#1f4af7] hover:text-white active:bg-[#183fdd] dark:text-white dark:hover:bg-[#fbbf24] dark:hover:text-white dark:active:bg-[#f59e0b]"
+      className="global-context-menu-icon-button inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] text-[#2f343b] transition-colors duration-150 hover:bg-[#1f4af7] hover:text-white active:bg-[#183fdd] dark:text-white dark:hover:bg-[#fbbf24] dark:hover:text-white dark:active:bg-[#f59e0b]"
     >
       {children && (
-        <span className="[&>svg]:h-[18px] [&>svg]:w-[18px] [&>svg]:stroke-[2.45]">
+        <span className="flex items-center justify-center leading-none [&>svg]:h-[18px] [&>svg]:w-[18px] [&>svg]:stroke-[2.45]">
           {children}
         </span>
       )}

@@ -3,17 +3,14 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  background: rgba(255, 255, 255, 0.56);
-  border: 1px solid rgba(255, 255, 255, 0.68);
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid transparent;
   border-radius: 18px;
-  box-shadow:
-    0 12px 28px rgba(15, 23, 42, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 0 0 1px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
   padding: 5px 8px;
   animation: toolbar-appear 0.15s ease-out;
-  -webkit-backdrop-filter: blur(24px) saturate(1.35);
-  backdrop-filter: blur(24px) saturate(1.35);
+  -webkit-backdrop-filter: blur(28px) saturate(1.35);
+  backdrop-filter: blur(28px) saturate(1.35);
   user-select: none;
 }
 
@@ -57,4 +54,3 @@
   color: #9ca3af;
   pointer-events: none;
 }
-

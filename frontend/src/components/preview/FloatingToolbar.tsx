@@ -105,25 +105,6 @@ export function FloatingToolbar({
         <span className="underline text-base">U</span>
       </button>
       </Tooltip>
-      <Tooltip enabled content={t('formatting.orderedList')}>
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onToggleOrderedList();
-        }}
-        className="floating-toolbar-btn"
-      >
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="10" y1="6" x2="21" y2="6" />
-          <line x1="10" y1="12" x2="21" y2="12" />
-          <line x1="10" y1="18" x2="21" y2="18" />
-          <text x="2" y="7" fontSize="6" fill="currentColor" stroke="none">1</text>
-          <text x="2" y="13" fontSize="6" fill="currentColor" stroke="none">2</text>
-          <text x="2" y="19" fontSize="6" fill="currentColor" stroke="none">3</text>
-        </svg>
-      </button>
-      </Tooltip>
       <Tooltip enabled content={t('formatting.unorderedList')}>
       <button
         onClick={(e) => {
@@ -140,6 +121,25 @@ export function FloatingToolbar({
           <circle cx="4" cy="6" r="1.5" fill="currentColor" stroke="none" />
           <circle cx="4" cy="12" r="1.5" fill="currentColor" stroke="none" />
           <circle cx="4" cy="18" r="1.5" fill="currentColor" stroke="none" />
+        </svg>
+      </button>
+      </Tooltip>
+      <Tooltip enabled content={t('formatting.orderedList')}>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onToggleOrderedList();
+        }}
+        className="floating-toolbar-btn"
+      >
+        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="10" y1="6" x2="21" y2="6" />
+          <line x1="10" y1="12" x2="21" y2="12" />
+          <line x1="10" y1="18" x2="21" y2="18" />
+          <text x="2" y="7" fontSize="6" fill="currentColor" stroke="none">1</text>
+          <text x="2" y="13" fontSize="6" fill="currentColor" stroke="none">2</text>
+          <text x="2" y="19" fontSize="6" fill="currentColor" stroke="none">3</text>
         </svg>
       </button>
       </Tooltip>

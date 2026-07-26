@@ -17,8 +17,11 @@
 
 .global-context-menu {
   background-color: rgba(255, 255, 255, 0.70) !important;
-  background-clip: padding-box;
-  border-color: rgba(148, 163, 184, 0.20) !important;
+  background-clip: border-box;
+  border-color: transparent !important;
+  box-shadow:
+    0 0 10px rgba(15, 23, 42, 0.10),
+    0 18px 42px rgba(15, 23, 42, 0.16) !important;
   -webkit-backdrop-filter: blur(36px) saturate(165%) brightness(1.04) !important;
   backdrop-filter: blur(36px) saturate(165%) brightness(1.04) !important;
   color: #3d3d3d !important;
@@ -57,8 +60,10 @@
 
 .dark .global-context-menu {
   background-color: rgba(24, 24, 27, 0.72) !important;
-  border-color: rgba(148, 163, 184, 0.12) !important;
-  box-shadow: 0 24px 58px rgba(0, 0, 0, 0.42), inset 0 0 0 1px rgba(148, 163, 184, 0.07) !important;
+  border-color: transparent !important;
+  box-shadow:
+    0 0 10px rgba(0, 0, 0, 0.24),
+    0 18px 42px rgba(0, 0, 0, 0.38) !important;
   -webkit-backdrop-filter: blur(36px) saturate(140%) brightness(0.88) !important;
   backdrop-filter: blur(36px) saturate(140%) brightness(0.88) !important;
   color: #ffffff !important;
@@ -88,4 +93,3 @@
 .dark .global-context-menu-divider {
   border-top-color: rgba(148, 163, 184, 0.16) !important;
 }
-

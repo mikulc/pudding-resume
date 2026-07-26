@@ -31,7 +31,7 @@ export interface SelectionState {
 }
 
 /** 从 DOM 节点向上查找可编辑文本元素，返回数据属性 + 元素引用 */
-function findEditableAncestor(node: Node | null): {
+export function findEditableAncestor(node: Node | null): {
   section: string;
   entryId: string;
   field: string;
@@ -52,10 +52,12 @@ function findEditableAncestor(node: Node | null): {
       continue;
     }
 
-    let field = el.dataset.field || 'text';
-    if (el.dataset.tagIndex !== undefined) {
-      field = 'tags';
+    const hasTagIndex = el.dataset.tagIndex !== undefined;
+    if (!el.dataset.field && !hasTagIndex) {
+      current = current.parentNode;
+      continue;
     }
+    const field = hasTagIndex ? 'tags' : el.dataset.field!;
 
     const entryId = el.dataset.entryId || section;
 

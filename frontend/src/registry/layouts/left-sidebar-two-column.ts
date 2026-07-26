@@ -10,12 +10,12 @@ export const leftSidebarTwoColumnLayout: LayoutDefinition = {
     .resume-paper[data-layout="left-sidebar-two-column"] {
       padding: 0 !important;
       color: #2e3135 !important;
-      background: linear-gradient(90deg, #eef3fb 0 62mm, #ffffff 62mm 100%) !important;
+      background: linear-gradient(90deg, #eef3fb 0 52mm, #ffffff 52mm 100%) !important;
     }
 
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-shell {
       display: grid !important;
-      grid-template-columns: 62mm minmax(0, 1fr) !important;
+      grid-template-columns: 52mm minmax(0, 1fr) !important;
       min-height: var(--resume-content-height) !important;
       overflow: hidden !important;
       border: 0 !important;

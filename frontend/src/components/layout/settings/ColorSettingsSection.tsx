@@ -45,7 +45,7 @@ export function ColorSettingsSection({ model }: { model: SettingsPanelModel }) {
                   key={pc.color}
                   onClick={() => handlePrimaryColorChange(pc.color)}
                   className={`settings-color-swatch w-full aspect-square rounded-lg border-2 transition-[border-color,transform,box-shadow] duration-150 hover:scale-110 hover:shadow-md ${
-                    isActive ? 'border-gray-800 scale-110 shadow-md' : 'border-transparent hover:border-gray-300'
+                    isActive ? 'border-transparent scale-110 shadow-md' : 'border-transparent hover:border-gray-300'
                   }`}
                   style={{ backgroundColor: pc.color }}
                 >

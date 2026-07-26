@@ -49,13 +49,7 @@ html:not(.dark) .editor-section-card-active input.border:not([type='file']):focu
 }
 
 .dark .editor-section-card-active {
-  background:
-    linear-gradient(
-      145deg,
-      rgba(68, 147, 248, 0.075) 0%,
-      rgba(24, 28, 35, 0.96) 30%,
-      rgba(23, 25, 29, 0.98) 100%
-    ) !important;
+  background: var(--bg-card) !important;
   border-color: rgba(92, 132, 255, 0.16) !important;
   box-shadow: none !important;
 }
@@ -68,17 +62,10 @@ html:not(.dark) .editor-section-card-active input.border:not([type='file']):focu
 }
 
 .dark .editor-section-header-active {
-  background:
-    linear-gradient(
-      90deg,
-      rgba(68, 147, 248, 0.13) 0%,
-      rgba(68, 147, 248, 0.06) 52%,
-      rgba(255, 255, 255, 0.018) 100%
-    ) !important;
+  background: transparent !important;
   box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.035);
 }
 
 .dark .editor-section-card-active .editor-section-header-active h3 {
   color: rgba(255, 255, 255, 0.94) !important;
 }
-
