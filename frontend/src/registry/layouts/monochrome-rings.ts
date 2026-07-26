@@ -166,9 +166,9 @@ export const monochromeRingsLayout: LayoutDefinition = {
       color: var(--theme-tag-text) !important;
     }
   `,
-  defaultColor: '#111111',
+  defaultColor: '#000000',
   headerMode: 'bar',
   signature: { layout: 'single-column', headerDecoration: 'none', sectionStyle: 'filled-title' },
-  previewVersion: '1',
+  previewVersion: '2',
   personalInfoClass: 'monochrome-rings-contact-icon',
 };

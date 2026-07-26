@@ -195,9 +195,9 @@ export const tealRibbonWaveLayout: LayoutDefinition = {
       color: var(--theme-tag-text) !important;
     }
   `,
-  defaultColor: '#168b8c',
+  defaultColor: '#248f83',
   headerMode: 'bar',
   signature: { layout: 'single-column', headerDecoration: 'wave', sectionStyle: 'filled-title' },
-  previewVersion: '1',
+  previewVersion: '2',
   personalInfoClass: 'teal-ribbon-wave-contact-icon',
 };

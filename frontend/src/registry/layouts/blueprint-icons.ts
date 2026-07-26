@@ -3,7 +3,7 @@ import { ICONS } from './cyanblu-icons';
 
 /**
  * Blueprint icons: single-column resume with a left-aligned header, circular
- * blue section icons, fine dividers, and a light blueprint-like arc motif.
+ * blue section icons, and fine dividers.
  */
 export const blueprintIconsLayout: LayoutDefinition = {
   id: 'blueprint-icons',
@@ -12,32 +12,6 @@ export const blueprintIconsLayout: LayoutDefinition = {
     .resume-paper[data-layout="blueprint-icons"] {
       color: #292d33 !important;
       background: #ffffff !important;
-    }
-
-    .resume-paper[data-layout="blueprint-icons"]::before,
-    .resume-paper[data-layout="blueprint-icons"]::after {
-      content: "" !important;
-      position: absolute !important;
-      pointer-events: none !important;
-      border: 1px solid color-mix(in srgb, var(--theme-border) 18%, transparent) !important;
-      border-radius: 50% !important;
-      z-index: 0 !important;
-    }
-
-    .resume-paper[data-layout="blueprint-icons"]::before {
-      left: -28mm !important;
-      top: -24mm !important;
-      width: 92mm !important;
-      height: 58mm !important;
-      transform: rotate(-18deg) !important;
-    }
-
-    .resume-paper[data-layout="blueprint-icons"]::after {
-      left: 16mm !important;
-      top: -17mm !important;
-      width: 72mm !important;
-      height: 45mm !important;
-      transform: rotate(20deg) !important;
     }
 
     .resume-paper[data-layout="blueprint-icons"] [data-page-section="personal"] {
@@ -209,10 +183,10 @@ export const blueprintIconsLayout: LayoutDefinition = {
       color: var(--theme-tag-text) !important;
     }
   `,
-  defaultColor: '#4F8CFF',
+  defaultColor: '#3B82F6',
   headerMode: 'icons',
-  signature: { layout: 'single-column', headerDecoration: 'rings', sectionStyle: 'icon-line' },
-  previewVersion: '1',
+  signature: { layout: 'single-column', headerDecoration: 'none', sectionStyle: 'icon-line' },
+  previewVersion: '3',
   iconMap: ICONS,
   personalInfoClass: 'blueprint-icons-contact-icon',
 };

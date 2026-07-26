@@ -10,6 +10,7 @@ export const blueBannerIconsLayout: LayoutDefinition = {
   nameKey: 'templateNames.blueBannerIcons',
   css: `
     .resume-paper[data-layout="blue-banner-icons"] {
+      --blue-banner-profile-height: max(35mm, calc(var(--personal-photo-height) + 5mm));
       color: #050505 !important;
       background: #ffffff !important;
     }
@@ -20,7 +21,7 @@ export const blueBannerIconsLayout: LayoutDefinition = {
       top: 0 !important;
       left: 0 !important;
       width: 100% !important;
-      height: max(50mm, calc(var(--resume-page-margin) + 5mm + var(--personal-photo-height))) !important;
+      height: calc(var(--resume-page-margin) + var(--blue-banner-profile-height)) !important;
       pointer-events: none !important;
       background: var(--theme-border) !important;
       z-index: 0 !important;
@@ -28,8 +29,8 @@ export const blueBannerIconsLayout: LayoutDefinition = {
 
     .resume-paper[data-layout="blue-banner-icons"] [data-page-section="personal"].blue-banner-icons-personal {
       position: relative !important;
-      min-height: 35mm !important;
-      margin-bottom: 9mm !important;
+      min-height: var(--blue-banner-profile-height) !important;
+      margin-bottom: var(--resume-page-margin) !important;
       border-radius: 0 !important;
       text-align: center !important;
     }
@@ -38,7 +39,7 @@ export const blueBannerIconsLayout: LayoutDefinition = {
       position: relative !important;
       display: grid !important;
       grid-template-columns: minmax(0, 1fr) !important;
-      min-height: 35mm !important;
+      min-height: var(--blue-banner-profile-height) !important;
     }
 
     .resume-paper[data-layout="blue-banner-icons"] [data-page-section="personal"] .flex-1 {
@@ -87,7 +88,7 @@ export const blueBannerIconsLayout: LayoutDefinition = {
       grid-area: 1 / 1 !important;
       align-self: start !important;
       justify-self: end !important;
-      margin-top: 3mm !important;
+      margin-top: 0 !important;
       border: 0 !important;
       box-shadow: none !important;
       background: #f8fafc !important;
@@ -192,10 +193,9 @@ export const blueBannerIconsLayout: LayoutDefinition = {
     }
   `,
   defaultColor: '#1e3a5f',
-  defaultPageMargin: 10,
   headerMode: 'icons',
   signature: { layout: 'single-column', headerDecoration: 'solid-bar', sectionStyle: 'icon-line' },
-  previewVersion: '1',
+  previewVersion: '5',
   iconMap: ICONS,
   personalInfoClass: 'blue-banner-icons-contact-icon',
 };

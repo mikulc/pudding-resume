@@ -76,7 +76,7 @@ func seedStyleLibraries() {
 			LayoutID:      "blueprint-icons",
 			Categories:    marshalJSON([]string{"前端开发", "Java", "校招"}),
 			Highlights:    marshalJSON([]string{"圆形图标标题", "浅蓝细线", "证件照抬头"}),
-			PreviewColors: marshalJSON(previewColors{HeaderBg: "#FFFFFF", AccentBar: "#4F8CFF", BodyBg: "#FFFFFF", SectionBg: "#E8F0FF"}),
+			PreviewColors: marshalJSON(previewColors{HeaderBg: "#FFFFFF", AccentBar: "#3B82F6", BodyBg: "#FFFFFF", SectionBg: "#E8F0FF"}),
 			SortOrder:     7,
 		},
 		{
@@ -85,7 +85,7 @@ func seedStyleLibraries() {
 			LayoutID:      "monochrome-rings",
 			Categories:    marshalJSON([]string{"后端开发", "Golang", "C++", "社招"}),
 			Highlights:    marshalJSON([]string{"黑色竖杠", "灰色横条", "居中抬头"}),
-			PreviewColors: marshalJSON(previewColors{HeaderBg: "#F0F0F0", AccentBar: "#111111", BodyBg: "#FFFFFF", SectionBg: "#F0F0F0"}),
+			PreviewColors: marshalJSON(previewColors{HeaderBg: "#F0F0F0", AccentBar: "#000000", BodyBg: "#FFFFFF", SectionBg: "#F0F0F0"}),
 			SortOrder:     8,
 		},
 		{
@@ -94,7 +94,7 @@ func seedStyleLibraries() {
 			LayoutID:      "teal-ribbon-wave",
 			Categories:    marshalJSON([]string{"互联网通用", "前端开发", "实习"}),
 			Highlights:    marshalJSON([]string{"弧形页眉", "圆形头像", "青绿标签"}),
-			PreviewColors: marshalJSON(previewColors{HeaderBg: "#4388F6", AccentBar: "#168B8C", BodyBg: "#FFFFFF", SectionBg: "#E7F2F2"}),
+			PreviewColors: marshalJSON(previewColors{HeaderBg: "#4388F6", AccentBar: "#248f83", BodyBg: "#FFFFFF", SectionBg: "#E7F2F2"}),
 			SortOrder:     9,
 		},
 		{
@@ -112,7 +112,7 @@ func seedStyleLibraries() {
 			LayoutID:      "azure-sidebar",
 			Categories:    marshalJSON([]string{"前端开发", "后端开发", "Golang", "Java", "C++", "社招"}),
 			Highlights:    marshalJSON([]string{"蓝色侧栏", "双栏结构", "主栏细线标题"}),
-			PreviewColors: marshalJSON(previewColors{HeaderBg: "#4388F6", AccentBar: "#4388F6", BodyBg: "#FFFFFF", SectionBg: "#EEF5FF"}),
+			PreviewColors: marshalJSON(previewColors{HeaderBg: "#3B82F6", AccentBar: "#3B82F6", BodyBg: "#FFFFFF", SectionBg: "#EEF5FF"}),
 			SortOrder:     11,
 		},
 	}

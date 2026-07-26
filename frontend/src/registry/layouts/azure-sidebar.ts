@@ -212,10 +212,10 @@ export const azureSidebarLayout: LayoutDefinition = {
       color: var(--theme-tag-text) !important;
     }
   `,
-  defaultColor: '#4388f6',
+  defaultColor: '#3B82F6',
   headerMode: 'underline',
   signature: { layout: 'double-column', headerDecoration: 'side-block', sectionStyle: 'underline' },
-  previewVersion: '1',
+  previewVersion: '2',
   personalInfoClass: 'azure-sidebar-contact-icon',
   contentMode: 'sidebar',
   sidebarSections: ['personal'],

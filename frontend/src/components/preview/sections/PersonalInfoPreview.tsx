@@ -72,7 +72,6 @@ import { ActiveSectionWrapper,resolvePersonalPhotoStyle,useResumeModuleTitles } 
 
 export function PersonalInfoPreview() {
   const { t, i18n } = useTranslation('resume');
-  const { t: tEditor } = useTranslation('editor');
   const { data } = useResume();
   const { ui } = useAppUI();
   const { personalInfo } = data;
@@ -141,9 +140,8 @@ export function PersonalInfoPreview() {
       data-photo-placeholder="true"
       style={{ width: photoStyle.width, height: photoStyle.height, borderRadius: photoStyle.borderRadius }}
     >
-      <div className="w-full h-full flex flex-col items-center justify-center gap-1 text-gray-400 text-[10px] leading-tight">
+      <div className="w-full h-full flex items-center justify-center text-gray-400">
         <Camera className="w-5 h-5 text-gray-300" />
-        <span>{tEditor('photo.upload')}</span>
       </div>
     </div>
   );

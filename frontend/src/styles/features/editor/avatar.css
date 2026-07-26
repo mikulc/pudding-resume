@@ -30,16 +30,21 @@
     linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
 }
 
-/* ===== 未上传头像时的占位样式（仅编辑模式显示） ===== */
-.resume-paper .personal-photo-placeholder {
-  background-color: #f0f7ff;
-  border: 1px dashed #c7ddf5;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+/* ===== 未上传头像时的统一占位样式（仅编辑模式显示） ===== */
+/*
+ * 布局主题会分别装饰真实头像。占位头像使用更高优先级的固定视觉，
+ * 避免主题的纯色背景、实线边框和阴影造成模板间显示不一致。
+ */
+.resume-paper[data-layout] [data-page-section="personal"] .personal-photo-placeholder[data-photo-placeholder="true"] {
+  background: #f0f7ff !important;
+  border: 1px dashed #c7ddf5 !important;
+  box-shadow: none !important;
 }
 
-.resume-paper .personal-photo-placeholder:hover {
-  background-color: #e5f0fb;
-  border-color: #a0c8ed;
+/* 部分布局会隐藏个人信息区的全部 svg，需要恢复占位头像的相机图标。 */
+.resume-paper[data-layout] [data-page-section="personal"] .personal-photo-placeholder[data-photo-placeholder="true"] svg {
+  display: block !important;
+  color: #d1d5db !important;
 }
 
 /* 打印时隐藏未上传头像的占位 */
@@ -48,4 +53,3 @@
     display: none !important;
   }
 }
-
