@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import type { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Copy, Pencil, Trash2, Upload } from 'lucide-react';
 import type { DisplayResume } from './useResumeLibrary';
@@ -6,6 +7,7 @@ import type { DisplayResume } from './useResumeLibrary';
 interface ResumeActionsMenuProps {
   menuOpenId: string | null;
   menuPos: { top: number; left: number };
+  menuRef: RefObject<HTMLDivElement>;
   resumes: DisplayResume[];
   onClose: () => void;
   onCopy: (id: string) => void | Promise<void>;
@@ -15,7 +17,7 @@ interface ResumeActionsMenuProps {
 }
 
 export function ResumeActionsMenu({
-  menuOpenId, menuPos, resumes, onClose, onCopy, onRename, onUpload, onDelete,
+  menuOpenId, menuPos, menuRef, resumes, onClose, onCopy, onRename, onUpload, onDelete,
 }: ResumeActionsMenuProps) {
   const { t } = useTranslation(['resume', 'common']);
   if (!menuOpenId) return null;
@@ -31,6 +33,7 @@ createPortal(
             />
             {/* Dropdown */}
             <div
+              ref={menuRef}
               className="resume-popover-enter fixed z-[101] w-[148px] overflow-hidden rounded-[14px] border border-slate-200/70 bg-white/95 p-1.5 shadow-[0_10px_28px_rgba(15,23,42,0.10)] backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/95"
               style={{ top: menuPos.top, left: menuPos.left }}
             >

@@ -28,7 +28,7 @@ export default function MyResumePage() {
 
   const menu = useResumeMenu();
   const {
-    menuOpenId, menuPos, menuBtnRefs, renamePopoverRef,
+    menuOpenId, menuPos, menuBtnRefs, menuRef, renamePopoverRef,
     renamingId, renameValue, setRenameValue, handleMenuToggle, handleMenuClose,
   } = menu;
 
@@ -204,6 +204,7 @@ export default function MyResumePage() {
       <ResumeActionsMenu
         menuOpenId={menuOpenId}
         menuPos={menuPos}
+        menuRef={menuRef}
         resumes={resumes}
         onClose={handleMenuClose}
         onCopy={handleCopy}

@@ -1,15 +1,54 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 const MENU_WIDTH = 148;
 const MENU_ESTIMATED_HEIGHT = 196;
 const MENU_GAP = 8;
 const MENU_VIEWPORT_PADDING = 8;
 
+interface MenuAnchorRect {
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+interface MenuViewport {
+  width: number;
+  height: number;
+}
+
+export function calculateResumeMenuPosition(
+  rect: MenuAnchorRect,
+  viewport: MenuViewport,
+  menuHeight: number,
+) {
+  const spaceBelow = viewport.height - rect.bottom;
+  const spaceAbove = rect.top;
+  const showBelow = spaceBelow >= menuHeight + MENU_GAP || spaceBelow >= spaceAbove;
+
+  const rawTop = showBelow
+    ? rect.bottom + MENU_GAP
+    : rect.top - menuHeight - MENU_GAP;
+  const maxTop = Math.max(
+    MENU_VIEWPORT_PADDING,
+    viewport.height - menuHeight - MENU_VIEWPORT_PADDING,
+  );
+  const top = Math.min(Math.max(MENU_VIEWPORT_PADDING, rawTop), maxTop);
+
+  let left = rect.right - MENU_WIDTH;
+  if (left < MENU_VIEWPORT_PADDING) left = MENU_VIEWPORT_PADDING;
+  if (left + MENU_WIDTH > viewport.width - MENU_VIEWPORT_PADDING) {
+    left = viewport.width - MENU_WIDTH - MENU_VIEWPORT_PADDING;
+  }
+
+  return { top, left };
+}
+
 export function useResumeMenu() {
   // Dropdown menu state
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
   const menuBtnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const renamePopoverRef = useRef<HTMLDivElement | null>(null);
 
   // Rename state
@@ -21,32 +60,15 @@ export function useResumeMenu() {
     if (!btn || !document.body.contains(btn)) return null;
 
     const rect = btn.getBoundingClientRect();
-    const viewportH = window.innerHeight;
-    const viewportW = window.innerWidth;
+    const viewport = { height: window.innerHeight, width: window.innerWidth };
 
-    if (rect.bottom < 0 || rect.top > viewportH) return null;
+    if (rect.bottom < 0 || rect.top > viewport.height) return null;
 
-    const spaceBelow = viewportH - rect.bottom;
-    const spaceAbove = rect.top;
-    const showBelow =
-      spaceBelow >= MENU_ESTIMATED_HEIGHT + MENU_GAP || spaceBelow >= spaceAbove;
-
-    const rawTop = showBelow
-      ? rect.bottom + MENU_GAP
-      : rect.top - MENU_ESTIMATED_HEIGHT - MENU_GAP;
-    const maxTop = Math.max(
-      MENU_VIEWPORT_PADDING,
-      viewportH - MENU_ESTIMATED_HEIGHT - MENU_VIEWPORT_PADDING,
-    );
-    const top = Math.min(Math.max(MENU_VIEWPORT_PADDING, rawTop), maxTop);
-
-    let left = rect.right - MENU_WIDTH;
-    if (left < MENU_VIEWPORT_PADDING) left = MENU_VIEWPORT_PADDING;
-    if (left + MENU_WIDTH > viewportW - MENU_VIEWPORT_PADDING) {
-      left = viewportW - MENU_WIDTH - MENU_VIEWPORT_PADDING;
-    }
-
-    return { top, left };
+    const measuredHeight = menuRef.current?.getBoundingClientRect().height;
+    const menuHeight = measuredHeight && measuredHeight > 0
+      ? measuredHeight
+      : MENU_ESTIMATED_HEIGHT;
+    return calculateResumeMenuPosition(rect, viewport, menuHeight);
   }, []);
 
   const updateMenuPosition = useCallback((id: string) => {
@@ -71,6 +93,13 @@ export function useResumeMenu() {
     setMenuPos(nextPosition);
     setMenuOpenId(id);
   }, [getMenuPosition, menuOpenId]);
+
+  // The menu has a different height when "upload to cloud" is omitted.
+  // Measure the rendered portal before paint so an above-positioned menu
+  // keeps the same gap from its trigger regardless of its actions.
+  useLayoutEffect(() => {
+    if (menuOpenId) updateMenuPosition(menuOpenId);
+  }, [menuOpenId, updateMenuPosition]);
 
   useEffect(() => {
     if (!menuOpenId) return;
@@ -128,7 +157,7 @@ export function useResumeMenu() {
 
 
   return {
-    menuOpenId, setMenuOpenId, menuPos, menuBtnRefs, renamePopoverRef,
+    menuOpenId, setMenuOpenId, menuPos, menuBtnRefs, menuRef, renamePopoverRef,
     renamingId, setRenamingId, renameValue, setRenameValue,
     handleMenuToggle, handleMenuClose,
   };
