@@ -1,16 +1,20 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { Mail, Lock, ShieldCheck, User, X, Loader2 } from 'lucide-react';
+import { Loader2, LockKeyhole, Mail, ShieldCheck, User, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../common/Toast';
+import { lockModalScroll } from '../../utils/modalScrollLock';
+import { AuthArtwork } from './LoginModal';
+import './login-experience.css';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  /** Callback to switch to login modal */
   onSwitchToLogin: () => void;
 }
+
+type RegisterField = 'username' | 'email' | 'password' | 'confirmPassword' | 'code' | null;
 
 export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
   const {
@@ -32,6 +36,8 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
   const [countdown, setCountdown] = useState(0);
   const [registrationTicket, setRegistrationTicket] = useState('');
   const [ticketEmail, setTicketEmail] = useState('');
+  const [focusedField, setFocusedField] = useState<RegisterField>(null);
+  const [reaction, setReaction] = useState<'idle' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -45,9 +51,29 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
     setCountdown(0);
     setRegistrationTicket('');
     setTicketEmail('');
+    setFocusedField(null);
+    setReaction('idle');
     setError('');
     setLoading(false);
   }, []);
+
+  const handleClose = useCallback(() => {
+    reset();
+    onClose();
+  }, [onClose, reset]);
+
+  useEffect(() => {
+    if (!open) return;
+    const unlockScroll = lockModalScroll();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') handleClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      unlockScroll();
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleClose, open]);
 
   useEffect(() => {
     if (countdown <= 0) return;
@@ -57,19 +83,25 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
     return () => window.clearInterval(timer);
   }, [countdown]);
 
+  const showError = useCallback((message: string) => {
+    setError(message);
+    setReaction('error');
+    window.setTimeout(() => setReaction('idle'), 560);
+  }, []);
+
   const handleSendCode = useCallback(async () => {
     setError('');
     const trimmedEmail = email.trim();
     if (!trimmedEmail) {
-      setError(t('register.emailRequired'));
+      showError(t('register.emailRequired'));
       return;
     }
     if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmedEmail)) {
-      setError(t('register.invalidEmail'));
+      showError(t('register.invalidEmail'));
       return;
     }
     if (registrationConfigStatus !== 'enabled') {
-      setError(t('register.configUnavailable'));
+      showError(t('register.configUnavailable'));
       return;
     }
     setCodeSending(true);
@@ -77,302 +109,241 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
       const response = await sendRegistrationCode(trimmedEmail);
       setCountdown(Math.max(1, response.retry_after || 60));
       showToast(t('register.codeSent'), 'success');
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : t('register.codeSendFailed');
-      setError(msg);
-      showToast(msg, 'error');
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : t('register.codeSendFailed');
+      showError(message);
+      showToast(message, 'error');
     } finally {
       setCodeSending(false);
     }
+  }, [email, registrationConfigStatus, sendRegistrationCode, showError, showToast, t]);
+
+  const handleSubmit = useCallback(async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError('');
+    const trimmedUsername = username.trim();
+    const trimmedEmail = email.trim();
+
+    if (!trimmedUsername) return showError(t('register.usernameRequired'));
+    if (trimmedUsername.length < 2 || trimmedUsername.length > 10) return showError(t('register.usernameLength'));
+    if (!trimmedEmail) return showError(t('register.emailRequired'));
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmedEmail)) {
+      return showError(t('register.invalidEmail'));
+    }
+    if (!password) return showError(t('register.passwordRequired'));
+    if (password.length < 6) return showError(t('register.passwordLength'));
+    if (password !== confirmPassword) return showError(t('register.passwordMismatch'));
+    if (registrationEmailCodeEnabled && !/^\d{6}$/.test(code.trim())) {
+      return showError(t('register.codeRequired'));
+    }
+    if (registrationConfigStatus === 'loading' || registrationConfigStatus === 'error') {
+      return showError(t('register.configUnavailable'));
+    }
+
+    setLoading(true);
+    try {
+      let ticket = registrationTicket;
+      if (registrationEmailCodeEnabled && (!ticket || ticketEmail !== trimmedEmail.toLowerCase())) {
+        const verified = await verifyRegistrationCode(trimmedEmail, code.trim());
+        ticket = verified.registration_ticket;
+        setRegistrationTicket(ticket);
+        setTicketEmail(trimmedEmail.toLowerCase());
+      }
+      await register({
+        username: trimmedUsername,
+        email: trimmedEmail,
+        password,
+        ...(registrationEmailCodeEnabled ? { registration_ticket: ticket } : {}),
+      });
+      setFocusedField(null);
+      setReaction('success');
+      showToast(t('register.registerSuccess'), 'success');
+      reset();
+      onClose();
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : t('register.registerFailed');
+      showError(message);
+      showToast(message, 'error');
+      setLoading(false);
+    }
   }, [
-    email,
-    registrationConfigStatus,
-    sendRegistrationCode,
-    showToast,
-    t,
+    code, confirmPassword, email, onClose, password, register, registrationConfigStatus,
+    registrationEmailCodeEnabled, registrationTicket, reset, showError, showToast, t,
+    ticketEmail, username, verifyRegistrationCode,
   ]);
-
-  const handleClose = useCallback(() => {
-    reset();
-    onClose();
-  }, [reset, onClose]);
-
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      setError('');
-
-      // Frontend validation
-      const trimmedUsername = username.trim();
-      const trimmedEmail = email.trim();
-
-      if (!trimmedUsername) {
-        setError(t('register.usernameRequired'));
-        return;
-      }
-      if (trimmedUsername.length < 2 || trimmedUsername.length > 10) {
-        setError(t('register.usernameLength'));
-        return;
-      }
-      if (!trimmedEmail) {
-        setError(t('register.emailRequired'));
-        return;
-      }
-      if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmedEmail)) {
-        setError(t('register.invalidEmail'));
-        return;
-      }
-      if (!password) {
-        setError(t('register.passwordRequired'));
-        return;
-      }
-      if (password.length < 6) {
-        setError(t('register.passwordLength'));
-        return;
-      }
-      if (password !== confirmPassword) {
-        setError(t('register.passwordMismatch'));
-        return;
-      }
-      if (registrationEmailCodeEnabled && !/^\d{6}$/.test(code.trim())) {
-        setError(t('register.codeRequired'));
-        return;
-      }
-      if (registrationConfigStatus === 'loading' || registrationConfigStatus === 'error') {
-        setError(t('register.configUnavailable'));
-        return;
-      }
-
-      setLoading(true);
-      try {
-        let ticket = registrationTicket;
-        if (registrationEmailCodeEnabled && (!ticket || ticketEmail !== trimmedEmail.toLowerCase())) {
-          const verified = await verifyRegistrationCode(trimmedEmail, code.trim());
-          ticket = verified.registration_ticket;
-          setRegistrationTicket(ticket);
-          setTicketEmail(trimmedEmail.toLowerCase());
-        }
-        await register({
-          username: trimmedUsername,
-          email: trimmedEmail,
-          password,
-          ...(registrationEmailCodeEnabled ? { registration_ticket: ticket } : {}),
-        });
-        showToast(t('register.registerSuccess'), 'success');
-        reset();
-        onClose();
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : t('register.registerFailed');
-        setError(msg);
-        showToast(msg, 'error');
-      } finally {
-        setLoading(false);
-      }
-    },
-    [
-      username,
-      email,
-      password,
-      confirmPassword,
-      code,
-      registrationConfigStatus,
-      registrationTicket,
-      ticketEmail,
-      registrationEmailCodeEnabled,
-      register,
-      verifyRegistrationCode,
-      reset,
-      onClose,
-      t,
-      showToast,
-    ],
-  );
 
   if (!open) return null;
 
+  const artworkFocus = focusedField === 'password' || focusedField === 'confirmPassword'
+    ? 'password'
+    : focusedField
+      ? 'email'
+      : null;
+
+  const focusHandlers = (field: RegisterField) => ({
+    onFocus: () => setFocusedField(field),
+    onBlur: () => setFocusedField(null),
+  });
+
   return createPortal(
-    <div
-      className="fixed inset-0 z-[9997] flex items-center justify-center"
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+    <div className="pudding-login-shell" role="dialog" aria-modal="true" aria-labelledby="pudding-register-title">
+      <button className="pudding-login-close" type="button" onClick={handleClose} aria-label={t('common:button.close')}>
+        <X />
+      </button>
 
-      {/* Dialog */}
-      <div
-        className="relative bg-white rounded-2xl shadow-2xl w-[420px] max-w-[90vw] max-h-[90vh] overflow-y-auto p-8"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close button */}
-        <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-          aria-label={t('common:button.close')}
-        >
-          <X className="w-5 h-5" />
-        </button>
+      <AuthArtwork focusedField={artworkFocus} reaction={reaction} />
 
-        {/* Title */}
-        <h2 className="text-xl font-bold text-gray-900 mb-6">{t('register.title')}</h2>
+      <section className="pudding-login-panel pudding-register-panel">
+        <div className="pudding-login-form-wrap pudding-register-form-wrap">
+          <header className="pudding-login-header pudding-login-header--centered pudding-register-header">
+            <h1 id="pudding-register-title">{t('register.welcomeTitle')}</h1>
+            <p>{t('register.welcomeDescription')}</p>
+          </header>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Username */}
-          <div>
-            <label htmlFor="register-username" className="block text-sm font-medium text-gray-700 mb-1.5">{t('register.username')}</label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                id="register-username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder={t('register.usernamePlaceholder')}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
-                autoComplete="username"
-              />
-            </div>
-          </div>
-
-          {/* Email */}
-          <div>
-            <label htmlFor="register-email" className="block text-sm font-medium text-gray-700 mb-1.5">{t('register.email')}</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                id="register-email"
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setCode('');
-                  setCountdown(0);
-                  setRegistrationTicket('');
-                  setTicketEmail('');
-                }}
-                placeholder={t('register.emailPlaceholder')}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
-                autoComplete="email"
-              />
-            </div>
-          </div>
-
-          {registrationEmailCodeEnabled && (
-            <div>
-              <label htmlFor="register-code" className="block text-sm font-medium text-gray-700 mb-1.5">
-                {t('register.code')}
-              </label>
-              <div className="flex gap-2">
-                <div className="relative min-w-0 flex-1">
-                  <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="pudding-register-grid">
+              <div>
+                <label className="pudding-login-label" htmlFor="register-username">{t('register.username')}</label>
+                <div className="pudding-login-input pudding-register-input">
+                  <User aria-hidden="true" />
                   <input
-                    id="register-code"
+                    id="register-username"
                     type="text"
-                    inputMode="numeric"
-                    maxLength={6}
-                    value={code}
-                    onChange={(e) => {
-                      setCode(e.target.value.replace(/\D/g, '').slice(0, 6));
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}
+                    placeholder={t('register.usernamePlaceholder')}
+                    autoComplete="username"
+                    {...focusHandlers('username')}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="pudding-login-label" htmlFor="register-email">{t('register.email')}</label>
+                <div className="pudding-login-input pudding-register-input">
+                  <Mail aria-hidden="true" />
+                  <input
+                    id="register-email"
+                    type="email"
+                    value={email}
+                    onChange={(event) => {
+                      setEmail(event.target.value);
+                      setCode('');
+                      setCountdown(0);
                       setRegistrationTicket('');
                       setTicketEmail('');
                     }}
-                    placeholder={t('register.codePlaceholder')}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
-                    autoComplete="one-time-code"
+                    placeholder={t('register.emailPlaceholder')}
+                    autoComplete="email"
+                    {...focusHandlers('email')}
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={handleSendCode}
-                  disabled={codeSending || countdown > 0}
-                  className="shrink-0 min-w-24 px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {codeSending
-                    ? t('register.codeSending')
-                    : countdown > 0
-                      ? t('register.codeCountdown', { seconds: countdown })
-                      : t('register.sendCode')}
-                </button>
               </div>
             </div>
-          )}
 
-          {registrationConfigStatus === 'loading' && (
-            <div className="text-sm text-gray-500 bg-gray-50 border border-gray-100 rounded-lg px-3 py-2">
-              {t('register.configLoading')}
+            {registrationEmailCodeEnabled && (
+              <>
+                <label className="pudding-login-label" htmlFor="register-code">{t('register.code')}</label>
+                <div className="pudding-register-code-row">
+                  <div className="pudding-login-input pudding-register-input">
+                    <ShieldCheck aria-hidden="true" />
+                    <input
+                      id="register-code"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      value={code}
+                      onChange={(event) => {
+                        setCode(event.target.value.replace(/\D/g, '').slice(0, 6));
+                        setRegistrationTicket('');
+                        setTicketEmail('');
+                      }}
+                      placeholder={t('register.codePlaceholder')}
+                      autoComplete="one-time-code"
+                      {...focusHandlers('code')}
+                    />
+                  </div>
+                  <button
+                    className="pudding-register-code-button"
+                    type="button"
+                    onClick={handleSendCode}
+                    disabled={codeSending || countdown > 0}
+                  >
+                    {codeSending
+                      ? t('register.codeSending')
+                      : countdown > 0
+                        ? t('register.codeCountdown', { seconds: countdown })
+                        : t('register.sendCode')}
+                  </button>
+                </div>
+              </>
+            )}
+
+            <div className="pudding-register-grid">
+              <div>
+                <label className="pudding-login-label" htmlFor="register-password">{t('register.password')}</label>
+                <div className="pudding-login-input pudding-register-input">
+                  <LockKeyhole aria-hidden="true" />
+                  <input
+                    id="register-password"
+                    type="password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    placeholder={t('register.passwordPlaceholder')}
+                    autoComplete="new-password"
+                    {...focusHandlers('password')}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="pudding-login-label" htmlFor="register-confirm-password">{t('register.confirmPassword')}</label>
+                <div className="pudding-login-input pudding-register-input">
+                  <LockKeyhole aria-hidden="true" />
+                  <input
+                    id="register-confirm-password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    placeholder={t('register.confirmPasswordPlaceholder')}
+                    autoComplete="new-password"
+                    {...focusHandlers('confirmPassword')}
+                  />
+                </div>
+              </div>
             </div>
-          )}
-          {registrationConfigStatus === 'error' && (
-            <div className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-              {t('register.configUnavailable')}
+
+            {registrationConfigStatus === 'loading' && (
+              <div className="pudding-register-notice">{t('register.configLoading')}</div>
+            )}
+            {registrationConfigStatus === 'error' && (
+              <div className="pudding-register-notice is-error">{t('register.configUnavailable')}</div>
+            )}
+
+            <div className={`pudding-login-error ${error ? 'is-visible' : ''}`} role="alert">
+              {error || '\u00a0'}
             </div>
-          )}
 
-          {/* Password */}
-          <div>
-            <label htmlFor="register-password" className="block text-sm font-medium text-gray-700 mb-1.5">{t('register.password')}</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                id="register-password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t('register.passwordPlaceholder')}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
-                autoComplete="new-password"
-              />
-            </div>
-          </div>
+            <button
+              className="pudding-login-submit pudding-login-submit--login"
+              type="submit"
+              disabled={loading || registrationConfigStatus === 'loading' || registrationConfigStatus === 'error'}
+              onMouseEnter={() => setReaction('success')}
+              onMouseLeave={() => setReaction('idle')}
+            >
+              <span>{loading ? t('register.loading') : t('register.submit')}</span>
+              {loading && <Loader2 className="pudding-login-spinner" />}
+            </button>
+          </form>
 
-          {/* Confirm Password */}
-          <div>
-            <label htmlFor="register-confirm-password" className="block text-sm font-medium text-gray-700 mb-1.5">{t('register.confirmPassword')}</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                id="register-confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder={t('register.confirmPasswordPlaceholder')}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
-                autoComplete="new-password"
-              />
-            </div>
-          </div>
-
-          {/* Error message */}
-          {error && (
-            <div className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-              {error}
-            </div>
-          )}
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading || registrationConfigStatus === 'loading' || registrationConfigStatus === 'error'}
-            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-          >
-            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            {loading ? t('register.loading') : t('register.submit')}
-          </button>
-        </form>
-
-        {/* Switch to login */}
-        <p className="mt-5 text-center text-sm text-gray-500">
-          {t('register.hasAccount')}{' '}
-          <button
-            onClick={() => {
-              reset();
-              onSwitchToLogin();
-            }}
-            className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
-          >
-            {t('register.login')}
-          </button>
-        </p>
-      </div>
+          <p className="pudding-login-register">
+            {t('register.hasAccount')}{' '}
+            <button type="button" onClick={() => { reset(); onSwitchToLogin(); }}>
+              {t('register.login')}
+            </button>
+          </p>
+        </div>
+      </section>
     </div>,
     document.body,
   );

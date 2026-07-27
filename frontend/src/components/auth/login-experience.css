@@ -1,0 +1,950 @@
+.pudding-login-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 9997;
+  display: grid;
+  grid-template-columns: minmax(0, 58%) minmax(390px, 42%);
+  overflow: hidden;
+  color: #172033;
+  background: #fff;
+}
+
+.pudding-login-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 8;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  color: #718096;
+  background: rgb(255 255 255 / 78%);
+  border: 1px solid rgb(226 232 240 / 85%);
+  border-radius: 999px;
+  box-shadow: 0 8px 28px rgb(15 23 42 / 8%);
+  backdrop-filter: blur(12px);
+  transition: transform 180ms ease, color 180ms ease, background 180ms ease;
+}
+
+.pudding-login-close:hover {
+  color: #172033;
+  background: #fff;
+  transform: rotate(5deg) scale(1.06);
+}
+
+.pudding-login-close svg {
+  width: 19px;
+}
+
+.pudding-login-artwork {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 72%), transparent 42%),
+    linear-gradient(145deg, #f8faff 0%, #f3f7fd 50%, #edf4fb 100%);
+}
+
+.pudding-login-artwork::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background-image: radial-gradient(rgb(55 109 150 / 9%) 0.8px, transparent 0.8px);
+  background-size: 20px 20px;
+  mask-image: linear-gradient(to bottom, #000, transparent 72%);
+}
+
+.pudding-login-artwork::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  width: 48px;
+  pointer-events: none;
+  content: "";
+  background: linear-gradient(
+    90deg,
+    rgb(255 255 255 / 0%) 0%,
+    rgb(255 255 255 / 42%) 46%,
+    #fff 100%
+  );
+}
+
+.pudding-login-copy {
+  position: relative;
+  z-index: 3;
+  width: min(640px, 80%);
+  margin: clamp(72px, 12vh, 130px) auto 0;
+  text-align: center;
+}
+
+.pudding-login-kicker {
+  display: inline-flex;
+  padding: 7px 14px;
+  margin-bottom: 18px;
+  color: #376d96;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  background: rgb(255 255 255 / 55%);
+  border: 1px solid rgb(255 255 255 / 72%);
+  border-radius: 999px;
+  box-shadow: 0 8px 22px rgb(50 99 136 / 8%);
+  backdrop-filter: blur(10px);
+}
+
+.pudding-login-copy h2 {
+  margin: 0;
+  color: #20364b;
+  font-size: clamp(28px, 2.7vw, 40px);
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+
+.pudding-login-copy p {
+  max-width: 510px;
+  margin: 18px auto 0;
+  color: rgb(45 77 104 / 70%);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.pudding-login-glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(18px);
+}
+
+.pudding-login-glow--one {
+  top: -90px;
+  left: -70px;
+  width: 330px;
+  height: 330px;
+  background: rgb(255 255 255 / 52%);
+}
+
+.pudding-login-glow--two {
+  right: -80px;
+  bottom: 12%;
+  width: 300px;
+  height: 300px;
+  background: rgb(132 178 215 / 9%);
+}
+
+.pudding-login-bubble {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  border: 1px solid rgb(255 255 255 / 60%);
+  border-radius: 999px;
+  box-shadow: inset 0 1px rgb(255 255 255 / 70%), 0 8px 20px rgb(57 111 149 / 8%);
+  animation: pudding-bubble 8s ease-in-out infinite;
+}
+
+.pudding-login-bubble--one { top: 28%; left: 12%; width: 18px; height: 18px; }
+.pudding-login-bubble--two { top: 17%; right: 13%; width: 11px; height: 11px; animation-delay: -2s; }
+.pudding-login-bubble--three { right: 22%; bottom: 26%; width: 26px; height: 26px; animation-delay: -5s; }
+
+.pudding-login-crew {
+  position: absolute;
+  z-index: 4;
+  bottom: 8%;
+  left: 50%;
+  width: min(590px, 82%);
+  height: min(390px, 48vh);
+  transform: translateX(-50%);
+}
+
+.pudding-login-character {
+  position: absolute;
+  bottom: 0;
+  overflow: hidden;
+  transform-origin: center bottom;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 28%), 0 20px 34px rgb(45 87 118 / 12%);
+  animation: pudding-character-in 650ms cubic-bezier(.22, .9, .34, 1.2) backwards, pudding-character-float 5s ease-in-out 800ms infinite;
+  transition: transform 280ms ease, border-radius 280ms ease;
+}
+
+.pudding-login-character--orange {
+  left: 2%;
+  z-index: 4;
+  width: 38%;
+  height: 31%;
+  background: #ff8b2b;
+  border-radius: 999px 999px 20px 20px;
+}
+
+.pudding-login-character--blue {
+  left: 27%;
+  z-index: 2;
+  width: 28%;
+  height: 88%;
+  background: #5b3bff;
+  border-radius: 18px 18px 5px 5px;
+  animation-delay: 80ms, 980ms;
+}
+
+.pudding-login-character--black {
+  left: 53%;
+  z-index: 3;
+  width: 18%;
+  height: 63%;
+  background: #171922;
+  border-radius: 16px 16px 4px 4px;
+  animation-delay: 160ms, 1060ms;
+}
+
+.pudding-login-character--yellow {
+  left: 67%;
+  z-index: 2;
+  width: 22%;
+  height: 50%;
+  background: #ffd33d;
+  border-radius: 999px 999px 20px 20px;
+  animation-delay: 240ms, 1140ms;
+}
+
+.pudding-login-face {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  display: flex;
+  gap: clamp(9px, 1.2vw, 17px);
+  align-items: center;
+  transform: translateX(-50%);
+  transition: transform 240ms ease;
+}
+
+.pudding-login-eye {
+  position: relative;
+  width: clamp(13px, 1.5vw, 19px);
+  height: clamp(13px, 1.5vw, 19px);
+  overflow: hidden;
+  background: #fff;
+  border-radius: 999px;
+  transition: height 160ms ease, transform 180ms ease;
+}
+
+.pudding-login-eye i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: #111827;
+  border-radius: 999px;
+  transition: transform 100ms linear;
+}
+
+.pudding-login-mouth {
+  position: absolute;
+  top: calc(100% + 15px);
+  left: 50%;
+  width: 20px;
+  height: 7px;
+  border-bottom: 3px solid rgb(17 24 39 / 46%);
+  border-radius: 0 0 999px 999px;
+  transform: translateX(-50%);
+  transition: all 180ms ease;
+}
+
+.pudding-login-character--black .pudding-login-mouth {
+  border-color: rgb(255 255 255 / 58%);
+}
+
+.pudding-login-character--blue.is-curious {
+  transform: translateX(30px) rotate(7deg) skewX(-4deg) scaleX(1.03) scaleY(1.07);
+}
+
+.pudding-login-character--black.is-curious {
+  transform: translateX(22px) rotate(5deg) scaleY(1.02);
+}
+
+.pudding-login-character--yellow.is-curious {
+  transform: translateX(16px) rotate(3deg);
+}
+
+.pudding-login-character--orange.is-curious {
+  transform: translateX(9px) rotate(2deg) scaleX(1.02);
+}
+
+.pudding-login-character.is-curious .pudding-login-face {
+  transform: translate(-33%, -5px);
+}
+
+.pudding-login-character--blue.is-curious .pudding-login-face {
+  transform: translate(-23%, -10px);
+}
+
+.pudding-login-character--black.is-curious .pudding-login-face {
+  transform: translate(-26%, -6px);
+}
+
+.pudding-login-character.is-shy .pudding-login-eye {
+  height: 4px;
+  transform: translateY(5px);
+}
+
+.pudding-login-character.is-happy .pudding-login-mouth {
+  width: 24px;
+  height: 13px;
+  background: rgb(17 24 39 / 45%);
+  border: 0;
+}
+
+.pudding-login-character.is-shaking {
+  animation: pudding-shake 520ms ease-in-out;
+}
+
+.pudding-login-artwork.is-entry-settled .pudding-login-character {
+  animation-name: pudding-character-float;
+  animation-duration: 5s;
+  animation-delay: 0ms;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: none;
+}
+
+.pudding-login-artwork.is-entry-settled .pudding-login-character.is-shaking {
+  animation: pudding-shake 520ms ease-in-out;
+}
+
+/*
+ * The global theme switch briefly forces every animation to 0s. Keep the
+ * characters' original timeline and pause it instead, so their translate
+ * position does not jump to a keyframe while light/dark colors are changing.
+ */
+html.theme-changing .pudding-login-character {
+  animation-duration: 650ms, 5s !important;
+  animation-delay: 0ms, 800ms !important;
+  animation-play-state: paused !important;
+}
+
+html.theme-changing .pudding-login-character--blue {
+  animation-delay: 80ms, 980ms !important;
+}
+
+html.theme-changing .pudding-login-character--black {
+  animation-delay: 160ms, 1060ms !important;
+}
+
+html.theme-changing .pudding-login-character--yellow {
+  animation-delay: 240ms, 1140ms !important;
+}
+
+html.theme-changing .pudding-login-artwork.is-entry-settled .pudding-login-character {
+  animation-duration: 5s !important;
+  animation-delay: 0ms !important;
+  animation-play-state: paused !important;
+}
+
+.pudding-login-floor {
+  position: absolute;
+  z-index: 1;
+  bottom: -105px;
+  left: 50%;
+  width: 72%;
+  height: 230px;
+  background: radial-gradient(ellipse, rgb(94 133 164 / 10%), transparent 68%);
+  border-radius: 50%;
+  filter: blur(12px);
+  transform: translateX(-50%);
+}
+
+.pudding-login-panel {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 72px clamp(40px, 5vw, 88px);
+  background: #fff;
+  box-shadow: none;
+}
+
+.pudding-login-form-wrap {
+  width: min(100%, 390px);
+}
+
+.pudding-login-header > span {
+  color: #5b3bff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.pudding-login-header--centered {
+  text-align: center;
+}
+
+.pudding-login-header h1 {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: clamp(28px, 2.4vw, 36px);
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+
+.pudding-login-header p {
+  margin: 0 0 34px;
+  color: #8290a5;
+  font-size: 14px;
+}
+
+.pudding-login-label {
+  display: block;
+  margin: 0 0 8px;
+  color: #253047;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.pudding-login-input {
+  --pudding-login-input-bg: #fff;
+
+  display: flex;
+  height: 50px;
+  align-items: center;
+  overflow: hidden;
+  padding: 0 15px;
+  margin-bottom: 20px;
+  background: var(--pudding-login-input-bg);
+  border: 1px solid #e3e8ef;
+  border-radius: 999px;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.pudding-login-input:focus-within {
+  border-color: #6b57ff;
+  box-shadow: 0 0 0 4px rgb(91 59 255 / 10%);
+  transform: translateY(-1px);
+}
+
+.pudding-login-input > svg {
+  flex: 0 0 auto;
+  width: 17px;
+  color: #9aa6b7;
+}
+
+.pudding-login-input input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0 10px;
+  color: #172033;
+  font-size: 14px;
+  background: transparent !important;
+  /*
+   * Keep the real input visually neutral: the rounded parent owns the focus
+   * treatment. `!important` prevents the global dark-theme input rule from
+   * drawing a second rectangular border and focus ring inside the pill.
+   */
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  appearance: none;
+}
+
+.pudding-login-input input:focus,
+.pudding-login-input input:focus-visible {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.pudding-login-input input::placeholder {
+  color: #b2bbc8;
+}
+
+.pudding-login-input input:-webkit-autofill,
+.pudding-login-input input:-webkit-autofill:hover,
+.pudding-login-input input:-webkit-autofill:focus,
+.pudding-login-input input:-webkit-autofill:active {
+  -webkit-text-fill-color: #172033;
+  -webkit-box-shadow: 0 0 0 1000px var(--pudding-login-input-bg) inset !important;
+  box-shadow: 0 0 0 1000px var(--pudding-login-input-bg) inset !important;
+  caret-color: #172033;
+}
+
+.pudding-login-password-toggle {
+  display: grid;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  color: #9aa6b7;
+  border-radius: 50%;
+}
+
+.pudding-login-password-toggle:hover {
+  color: #5b3bff;
+  background: #f3f1ff;
+}
+
+.pudding-login-password-toggle svg {
+  width: 17px;
+}
+
+.pudding-login-error {
+  min-height: 32px;
+  padding: 0 4px;
+  margin-top: -9px;
+  color: transparent;
+  font-size: 12px;
+  line-height: 24px;
+  transition: color 160ms ease;
+}
+
+.pudding-login-error.is-visible {
+  color: #e34b55;
+}
+
+.pudding-login-submit {
+  display: flex;
+  width: 100%;
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  background: #5b3bff;
+  border-radius: 999px;
+  box-shadow: 0 13px 28px rgb(91 59 255 / 24%);
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.pudding-login-submit:hover:not(:disabled) {
+  background: #4e34de;
+  box-shadow: 0 16px 32px rgb(91 59 255 / 30%);
+  transform: translateY(-2px);
+}
+
+.pudding-login-submit:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.pudding-login-submit svg {
+  width: 17px;
+  transition: transform 180ms ease;
+}
+
+.pudding-login-submit:hover:not(:disabled) svg {
+  transform: translateX(3px);
+}
+
+.pudding-login-submit--login {
+  color: #172033;
+  background: #fff;
+  border: 1px solid #e3e8ef;
+  box-shadow: none;
+}
+
+.pudding-login-submit--login:hover:not(:disabled) {
+  color: #fff;
+  background: rgb(34 72 255);
+  border-color: rgb(34 72 255);
+  box-shadow: 0 14px 30px rgb(34 72 255 / 24%);
+}
+
+.pudding-login-spinner {
+  animation: pudding-spin 800ms linear infinite;
+}
+
+.pudding-login-register {
+  margin: 25px 0 0;
+  color: #8a96a8;
+  font-size: 13px;
+  text-align: center;
+}
+
+.pudding-login-register button {
+  color: rgb(34 72 255);
+  font-weight: 700;
+}
+
+.pudding-login-register button:hover {
+  color: rgb(27 58 210);
+  text-decoration: none;
+}
+
+.pudding-register-panel {
+  overflow-y: auto;
+  padding-top: 34px;
+  padding-bottom: 34px;
+  scrollbar-width: none;
+}
+
+.pudding-register-panel::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.pudding-register-form-wrap {
+  width: min(100%, 390px);
+}
+
+.pudding-register-header p {
+  margin-bottom: 24px;
+}
+
+.pudding-register-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.pudding-register-input {
+  height: 46px;
+  margin-bottom: 14px;
+  padding-inline: 13px;
+}
+
+.pudding-register-code-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 9px;
+}
+
+.pudding-register-code-button {
+  height: 46px;
+  padding: 0 16px;
+  color: rgb(34 72 255);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: rgb(34 72 255 / 6%);
+  border: 1px solid rgb(34 72 255 / 16%);
+  border-radius: 999px;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.pudding-register-code-button:hover:not(:disabled) {
+  color: #fff;
+  background: rgb(34 72 255);
+  border-color: rgb(34 72 255);
+  transform: translateY(-1px);
+}
+
+.pudding-register-code-button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+.pudding-register-notice {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  color: #64748b;
+  font-size: 12px;
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.pudding-register-notice.is-error {
+  color: #e34b55;
+  background: #fff5f5;
+}
+
+/* Match the application's existing GitHub-inspired dark palette. */
+.dark .pudding-login-shell {
+  color: var(--text-primary);
+  background: var(--bg-page);
+}
+
+.dark .pudding-login-artwork {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 2%), transparent 42%),
+    linear-gradient(145deg, #1b1c20 0%, #191b20 52%, #17191d 100%);
+}
+
+.dark .pudding-login-artwork::after {
+  background-image: radial-gradient(rgb(255 255 255 / 7%) 0.8px, transparent 0.8px);
+}
+
+.dark .pudding-login-glow--one {
+  background: rgb(68 147 248 / 7%);
+}
+
+.dark .pudding-login-glow--two {
+  background: rgb(68 147 248 / 6%);
+}
+
+.dark .pudding-login-bubble {
+  border-color: rgb(255 255 255 / 13%);
+  box-shadow: inset 0 1px rgb(255 255 255 / 10%), 0 8px 20px rgb(0 0 0 / 12%);
+}
+
+.dark .pudding-login-copy h2,
+.dark .pudding-login-header h1,
+.dark .pudding-login-label {
+  color: var(--text-primary);
+}
+
+.dark .pudding-login-copy p,
+.dark .pudding-login-header p,
+.dark .pudding-login-register {
+  color: var(--text-secondary);
+}
+
+.dark .pudding-login-kicker {
+  color: #8cbdfb;
+  background: rgb(33 40 48 / 72%);
+  border-color: rgb(255 255 255 / 8%);
+  box-shadow: 0 8px 22px rgb(0 0 0 / 16%);
+}
+
+.dark .pudding-login-floor {
+  background: radial-gradient(ellipse, rgb(68 147 248 / 9%), transparent 68%);
+}
+
+.dark .pudding-login-character--black {
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 8%),
+    0 20px 34px rgb(0 0 0 / 22%);
+}
+
+.dark .pudding-login-panel {
+  background: var(--bg-page);
+}
+
+.dark .pudding-login-artwork::before {
+  background: linear-gradient(
+    90deg,
+    rgb(23 25 29 / 0%) 0%,
+    rgb(23 25 29 / 48%) 46%,
+    var(--bg-page) 100%
+  );
+}
+
+.dark .pudding-login-close {
+  color: var(--text-secondary);
+  background: rgb(27 28 32 / 78%);
+  border-color: var(--border-soft);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 24%);
+}
+
+.dark .pudding-login-close:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.dark .pudding-login-input {
+  --pudding-login-input-bg: var(--bg-input);
+
+  background: var(--pudding-login-input-bg);
+  border-color: var(--border-strong);
+}
+
+.dark .pudding-login-input:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgb(68 147 248 / 12%);
+}
+
+.dark .pudding-login-input > svg,
+.dark .pudding-login-password-toggle {
+  color: var(--text-muted);
+}
+
+.dark .pudding-login-input input {
+  color: var(--text-primary);
+}
+
+.dark .pudding-login-input input::placeholder {
+  color: var(--text-muted);
+}
+
+.dark .pudding-login-input input:-webkit-autofill,
+.dark .pudding-login-input input:-webkit-autofill:hover,
+.dark .pudding-login-input input:-webkit-autofill:focus,
+.dark .pudding-login-input input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--text-primary);
+  -webkit-box-shadow: 0 0 0 1000px var(--pudding-login-input-bg) inset !important;
+  box-shadow: 0 0 0 1000px var(--pudding-login-input-bg) inset !important;
+  caret-color: var(--text-primary);
+}
+
+.dark .pudding-login-password-toggle:hover {
+  color: var(--primary);
+  background: rgb(68 147 248 / 10%);
+}
+
+.dark .pudding-login-submit--login {
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border-color: var(--border-strong);
+}
+
+.dark .pudding-login-submit--login:hover:not(:disabled) {
+  color: #17191d;
+  background: rgb(251 191 36);
+  border-color: rgb(251 191 36);
+  box-shadow: 0 14px 30px rgb(251 191 36 / 22%);
+}
+
+.dark .pudding-login-register button {
+  color: rgb(251 191 36);
+}
+
+.dark .pudding-login-register button:hover {
+  color: rgb(224 164 18);
+  text-decoration: none;
+}
+
+.dark .pudding-register-code-button {
+  color: rgb(251 191 36);
+  background: rgb(251 191 36 / 9%);
+  border-color: rgb(251 191 36 / 22%);
+}
+
+.dark .pudding-register-code-button:hover:not(:disabled) {
+  color: #17191d;
+  background: rgb(251 191 36);
+  border-color: rgb(251 191 36);
+}
+
+.dark .pudding-register-notice {
+  color: var(--text-secondary);
+  background: var(--bg-control);
+}
+
+.dark .pudding-register-notice.is-error {
+  color: #ff7b72;
+  background: rgb(248 81 73 / 9%);
+}
+
+@keyframes pudding-character-in {
+  from { opacity: 0; transform: translateY(120px) scale(.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pudding-character-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -7px; }
+}
+
+@keyframes pudding-shake {
+  0%, 100% { rotate: 0deg; }
+  20% { rotate: -5deg; }
+  40% { rotate: 5deg; }
+  60% { rotate: -4deg; }
+  80% { rotate: 3deg; }
+}
+
+@keyframes pudding-bubble {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(6px, -18px); }
+}
+
+@keyframes pudding-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 900px) {
+  .pudding-login-shell {
+    display: block;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .dark .pudding-login-shell {
+    background: var(--bg-page);
+  }
+
+  .pudding-login-artwork {
+    display: none;
+  }
+
+  .pudding-login-panel {
+    position: relative;
+    height: 100%;
+    min-height: 100%;
+    overflow-y: auto;
+    align-items: flex-start;
+    padding: 76px 24px 36px;
+    background: #fff;
+    box-shadow: none;
+    scrollbar-width: none;
+  }
+
+  .pudding-login-panel::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  .pudding-login-form-wrap {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .pudding-login-panel--centered-mobile .pudding-login-form-wrap {
+    margin-block: auto;
+  }
+
+  .dark .pudding-login-form-wrap {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  .pudding-login-close {
+    top: 16px;
+    right: 16px;
+  }
+
+  .pudding-register-panel {
+    padding-top: 76px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pudding-login-panel {
+    padding-inline: 14px;
+  }
+
+  .pudding-login-form-wrap {
+    padding: 0 4px;
+  }
+
+  .pudding-login-header h1 {
+    font-size: 27px;
+  }
+
+  .pudding-register-grid {
+    display: block;
+  }
+
+  .pudding-register-code-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pudding-register-code-button {
+    width: 100%;
+    margin-top: -5px;
+    margin-bottom: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pudding-login-shell *,
+  .pudding-login-shell *::before,
+  .pudding-login-shell *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

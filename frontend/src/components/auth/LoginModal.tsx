@@ -1,30 +1,138 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { Mail, Lock, X, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, LockKeyhole, Mail, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../common/Toast';
+import { lockModalScroll } from '../../utils/modalScrollLock';
+import './login-experience.css';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  /** Callback to switch to register modal */
   onSwitchToRegister: () => void;
+}
+
+type FocusedField = 'email' | 'password' | null;
+type Reaction = 'idle' | 'success' | 'error';
+
+interface LookPoint {
+  x: number;
+  y: number;
+}
+
+let hasAuthArtworkEntered = false;
+
+function Character({
+  kind,
+  look,
+  focusedField,
+  reaction,
+}: {
+  kind: 'orange' | 'blue' | 'black' | 'yellow';
+  look: LookPoint;
+  focusedField: FocusedField;
+  reaction: Reaction;
+}) {
+  const isPassword = focusedField === 'password';
+  const isEmail = focusedField === 'email';
+  const eyeTransform = useMemo(() => {
+    const x = Math.max(-4, Math.min(4, (look.x - 0.5) * 8));
+    const y = Math.max(-3, Math.min(3, (look.y - 0.48) * 6));
+    return `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+  }, [look]);
+
+  return (
+    <div
+      className={[
+        'pudding-login-character',
+        `pudding-login-character--${kind}`,
+        isEmail ? 'is-curious' : '',
+        isPassword ? 'is-shy' : '',
+        reaction === 'success' ? 'is-happy' : '',
+        reaction === 'error' ? 'is-shaking' : '',
+      ].join(' ')}
+      aria-hidden="true"
+    >
+      <div className="pudding-login-face">
+        <span className="pudding-login-eye">
+          <i style={{ transform: eyeTransform }} />
+        </span>
+        <span className="pudding-login-eye">
+          <i style={{ transform: eyeTransform }} />
+        </span>
+        <span className="pudding-login-mouth" />
+      </div>
+    </div>
+  );
+}
+
+export function AuthArtwork({
+  focusedField,
+  reaction,
+}: {
+  focusedField: FocusedField;
+  reaction: Reaction;
+}) {
+  const { t } = useTranslation('auth');
+  const skipEntryAnimation = hasAuthArtworkEntered;
+  const [look, setLook] = useState<LookPoint>({ x: 0.5, y: 0.45 });
+
+  useEffect(() => {
+    hasAuthArtworkEntered = true;
+    const handlePointerMove = (event: PointerEvent) => {
+      setLook({
+        x: event.clientX / Math.max(window.innerWidth, 1),
+        y: event.clientY / Math.max(window.innerHeight, 1),
+      });
+    };
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    return () => window.removeEventListener('pointermove', handlePointerMove);
+  }, []);
+
+  return (
+    <section className={`pudding-login-artwork ${skipEntryAnimation ? 'is-entry-settled' : ''}`}>
+      <div className="pudding-login-glow pudding-login-glow--one" />
+      <div className="pudding-login-glow pudding-login-glow--two" />
+      <span className="pudding-login-bubble pudding-login-bubble--one" />
+      <span className="pudding-login-bubble pudding-login-bubble--two" />
+      <span className="pudding-login-bubble pudding-login-bubble--three" />
+
+      <div className="pudding-login-copy">
+        <span className="pudding-login-kicker">{t('experience.kicker')}</span>
+        <h2>{t('experience.title')}</h2>
+        <p>{t('experience.description')}</p>
+      </div>
+
+      <div className="pudding-login-crew">
+        <Character kind="orange" look={look} focusedField={focusedField} reaction={reaction} />
+        <Character kind="blue" look={look} focusedField={focusedField} reaction={reaction} />
+        <Character kind="black" look={look} focusedField={focusedField} reaction={reaction} />
+        <Character kind="yellow" look={look} focusedField={focusedField} reaction={reaction} />
+      </div>
+      <div className="pudding-login-floor" />
+    </section>
+  );
 }
 
 export function LoginModal({ open, onClose, onSwitchToRegister }: Props) {
   const { login } = useAuth();
   const { showToast } = useToast();
   const { t } = useTranslation('auth');
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [focusedField, setFocusedField] = useState<FocusedField>(null);
+  const [reaction, setReaction] = useState<Reaction>('idle');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const reset = useCallback(() => {
     setEmail('');
     setPassword('');
+    setShowPassword(false);
+    setFocusedField(null);
+    setReaction('idle');
     setError('');
     setLoading(false);
   }, []);
@@ -32,139 +140,143 @@ export function LoginModal({ open, onClose, onSwitchToRegister }: Props) {
   const handleClose = useCallback(() => {
     reset();
     onClose();
-  }, [reset, onClose]);
+  }, [onClose, reset]);
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      setError('');
+  useEffect(() => {
+    if (!open) return;
+    const unlockScroll = lockModalScroll();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') handleClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      unlockScroll();
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleClose, open]);
 
-      // Frontend validation
-      const trimmedEmail = email.trim();
-      if (!trimmedEmail) {
-        setError(t('login.emailRequired'));
-        return;
-      }
-      if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmedEmail)) {
-        setError(t('login.invalidEmail'));
-        return;
-      }
-      if (!password) {
-        setError(t('login.passwordRequired'));
-        return;
-      }
+  const showValidationError = useCallback((message: string) => {
+    setError(message);
+    setReaction('error');
+    window.setTimeout(() => setReaction('idle'), 560);
+  }, []);
 
-      setLoading(true);
-      try {
-        await login({ email: trimmedEmail, password });
-        showToast(t('login.loginSuccess'), 'success');
+  const handleSubmit = useCallback(async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError('');
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) {
+      showValidationError(t('login.emailRequired'));
+      return;
+    }
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmedEmail)) {
+      showValidationError(t('login.invalidEmail'));
+      return;
+    }
+    if (!password) {
+      showValidationError(t('login.passwordRequired'));
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await login({ email: trimmedEmail, password });
+      setFocusedField(null);
+      setReaction('success');
+      showToast(t('login.loginSuccess'), 'success');
+      window.setTimeout(() => {
         reset();
         onClose();
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : t('login.loginFailed');
-        setError(msg);
-        showToast(msg, 'error');
-      } finally {
-        setLoading(false);
-      }
-    },
-    [email, password, login, reset, onClose, t, showToast],
-  );
+      }, 420);
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : t('login.loginFailed');
+      showValidationError(message);
+      showToast(message, 'error');
+      setLoading(false);
+    }
+  }, [email, login, onClose, password, reset, showToast, showValidationError, t]);
 
   if (!open) return null;
 
   return createPortal(
-    <div
-      className="fixed inset-0 z-[9997] flex items-center justify-center"
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+    <div className="pudding-login-shell" role="dialog" aria-modal="true" aria-labelledby="pudding-login-title">
+      <button className="pudding-login-close" type="button" onClick={handleClose} aria-label={t('common:button.close')}>
+        <X />
+      </button>
 
-      {/* Dialog */}
-      <div
-        className="relative bg-white rounded-2xl shadow-2xl w-[400px] max-w-[90vw] p-8"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close button */}
-        <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-          aria-label={t('common:button.close')}
-        >
-          <X className="w-5 h-5" />
-        </button>
+      <AuthArtwork focusedField={focusedField} reaction={reaction} />
 
-        {/* Title */}
-        <h2 className="text-xl font-bold text-gray-900 mb-6">{t('login.title')}</h2>
+      <section className="pudding-login-panel pudding-login-panel--centered-mobile">
+        <div className="pudding-login-form-wrap">
+          <header className="pudding-login-header pudding-login-header--centered">
+            <h1 id="pudding-login-title">{t('login.welcomeTitle')}</h1>
+            <p>{t('login.welcomeDescription')}</p>
+          </header>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email */}
-          <div>
-            <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1.5">{t('login.email')}</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <form onSubmit={handleSubmit} noValidate>
+            <label className="pudding-login-label" htmlFor="login-email">{t('login.email')}</label>
+            <div className="pudding-login-input">
+              <Mail aria-hidden="true" />
               <input
                 id="login-email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(event) => setEmail(event.target.value)}
+                onFocus={() => setFocusedField('email')}
+                onBlur={() => setFocusedField(null)}
                 placeholder={t('login.emailPlaceholder')}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                 autoComplete="email"
               />
             </div>
-          </div>
 
-          {/* Password */}
-          <div>
-            <label htmlFor="login-password" className="block text-sm font-medium text-gray-700 mb-1.5">{t('login.password')}</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <label className="pudding-login-label" htmlFor="login-password">{t('login.password')}</label>
+            <div className="pudding-login-input">
+              <LockKeyhole aria-hidden="true" />
               <input
                 id="login-password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(event) => setPassword(event.target.value)}
+                onFocus={() => setFocusedField('password')}
+                onBlur={() => setFocusedField(null)}
                 placeholder={t('login.passwordPlaceholder')}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                 autoComplete="current-password"
               />
+              <button
+                className="pudding-login-password-toggle"
+                type="button"
+                onClick={() => setShowPassword((value) => !value)}
+                aria-label={showPassword ? t('login.hidePassword') : t('login.showPassword')}
+              >
+                {showPassword ? <EyeOff /> : <Eye />}
+              </button>
             </div>
-          </div>
 
-          {/* Error message */}
-          {error && (
-            <div className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-              {error}
+            <div className={`pudding-login-error ${error ? 'is-visible' : ''}`} role="alert">
+              {error || '\u00a0'}
             </div>
-          )}
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-          >
-            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            {loading ? t('login.loading') : t('login.submit')}
-          </button>
-        </form>
+            <button
+              className="pudding-login-submit pudding-login-submit--login"
+              type="submit"
+              disabled={loading}
+              onMouseEnter={() => setReaction('success')}
+              onMouseLeave={() => setReaction('idle')}
+            >
+              <span>{loading ? t('login.loading') : t('login.submit')}</span>
+              {loading && <Loader2 className="pudding-login-spinner" />}
+            </button>
+          </form>
 
-        {/* Switch to register */}
-        <p className="mt-5 text-center text-sm text-gray-500">
-          {t('login.noAccount')}{' '}
-          <button
-            onClick={() => {
-              reset();
-              onSwitchToRegister();
-            }}
-            className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
-          >
-            {t('login.register')}
-          </button>
-        </p>
-      </div>
+          <p className="pudding-login-register">
+            {t('login.noAccount')}{' '}
+            <button type="button" onClick={() => { reset(); onSwitchToRegister(); }}>
+              {t('login.register')}
+            </button>
+          </p>
+        </div>
+      </section>
     </div>,
     document.body,
   );
