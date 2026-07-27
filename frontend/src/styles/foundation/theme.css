@@ -259,6 +259,10 @@
     overflow: hidden;
   }
 
+  html.modal-scroll-lock header.fixed {
+    padding-right: var(--modal-scrollbar-width, 0px);
+  }
+
   body.admin-route-fullscreen {
     overflow: hidden;
   }
@@ -323,4 +327,3 @@
     }
   }
 }
-

@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Settings,
@@ -19,6 +19,10 @@ import { SettingsContent } from '../components/settings/SettingsContent';
 import { useToast } from '../components/common/Toast';
 import { api } from '../utils/api';
 import { loadSettings } from '../utils/localSettings';
+import {
+  getSettingsSectionFromHash,
+  SETTINGS_SECTION_IDS,
+} from '../components/settings/settingsNavigation';
 
 // ---- Section definition for scroll-spy and navigation ----
 interface NavSection {
@@ -27,20 +31,22 @@ interface NavSection {
   label: string;
 }
 
-const SECTION_IDS = ['preferences', 'storage', 'ai-service', 'live2d', 'shortcuts', 'about'];
 const SCROLL_STORAGE_KEY = 'settings-scroll-y';
 const ACTIVE_SECTION_STORAGE_KEY = 'settings-active-section';
 
 const getStoredActiveSection = () => {
   if (typeof window === 'undefined') return null;
   const stored = sessionStorage.getItem(ACTIVE_SECTION_STORAGE_KEY);
-  return stored && SECTION_IDS.includes(stored) ? stored : null;
+  return stored && SETTINGS_SECTION_IDS.includes(stored as typeof SETTINGS_SECTION_IDS[number])
+    ? stored
+    : null;
 };
 
 export default function SettingsPage() {
   const { isLoggedIn, profile, setProfile } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation('settings');
 
   const NAV_SECTIONS: NavSection[] = useMemo(() => [
@@ -68,7 +74,7 @@ export default function SettingsPage() {
   const updateActiveSection = useCallback(() => {
     if (manualScrollTimer.current) return;
 
-    const sections = SECTION_IDS
+    const sections = SETTINGS_SECTION_IDS
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => Boolean(el));
 
@@ -119,19 +125,37 @@ export default function SettingsPage() {
       window.history.scrollRestoration = 'manual';
     }
 
-    // 在 paint 之前同步恢复滚动位置
-    const savedY = sessionStorage.getItem(SCROLL_STORAGE_KEY);
-    if (savedY) {
-      window.scrollTo(0, parseInt(savedY, 10));
+    const requestedSection = getSettingsSectionFromHash(location.hash);
+    let scrollFrame: number | null = null;
+
+    if (requestedSection) {
+      setCurrentSection(requestedSection);
+      if (manualScrollTimer.current) clearTimeout(manualScrollTimer.current);
+      manualScrollTimer.current = setTimeout(() => {
+        manualScrollTimer.current = null;
+      }, 800);
+      scrollFrame = requestAnimationFrame(() => {
+        document.getElementById(requestedSection)?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      });
+    } else {
+      // 在 paint 之前同步恢复滚动位置
+      const savedY = sessionStorage.getItem(SCROLL_STORAGE_KEY);
+      if (savedY) {
+        window.scrollTo(0, parseInt(savedY, 10));
+      }
+      updateActiveSection();
     }
-    updateActiveSection();
 
     return () => {
+      if (scrollFrame !== null) cancelAnimationFrame(scrollFrame);
       if ('scrollRestoration' in window.history) {
         window.history.scrollRestoration = 'auto';
       }
     };
-  }, [updateActiveSection]);
+  }, [location.hash, setCurrentSection, updateActiveSection]);
 
   // 滚动时持续保存位置，卸载时保存最终位置
   useEffect(() => {

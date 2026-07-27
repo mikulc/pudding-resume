@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ArrowRight, ChevronLeft, ChevronRight, Eye, Loader2 } from 'lucide-react';
 import { NavbarAuth } from '../components/auth/NavbarAuth';
 import LogoIcon from '../components/common/LogoIcon';
@@ -31,9 +32,11 @@ import {
 import { createEmptyResumeData, createInitialThemeSettings } from '../utils/resumeDraft';
 import { getLayoutDefaultColor, getLayoutName } from '../registry/layouts';
 import type { StyleLibraryEntry } from '../types/resume';
+import { lockModalScroll } from '../utils/modalScrollLock';
 
 export default function TemplatesPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation('resume');
   const { showToast } = useToast();
   const [creatingLayoutId, setCreatingLayoutId] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState(ALL_THEME_CATEGORY);
@@ -67,19 +70,16 @@ export default function TemplatesPage() {
   useEffect(() => {
     if (!previewEntry) return;
 
-    const originalOverflow = document.body.style.overflow;
-    document.documentElement.classList.add('modal-scroll-lock');
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setPreviewEntry(null);
       if (event.key === 'ArrowLeft') navigatePreview(-1);
       if (event.key === 'ArrowRight') navigatePreview(1);
     };
 
-    document.body.style.overflow = 'hidden';
+    const unlockModalScroll = lockModalScroll();
     window.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.body.style.overflow = originalOverflow;
-      document.documentElement.classList.remove('modal-scroll-lock');
+      unlockModalScroll();
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [navigatePreview, previewEntry]);
@@ -93,7 +93,7 @@ export default function TemplatesPage() {
     const themeColor = entry.previewColors?.accentBar || getLayoutDefaultColor(layoutId);
     const resumeData = demoContent ?? createEmptyResumeData();
     const settings = createInitialThemeSettings(layoutId, themeColor);
-    const resumeName = '未命名简历';
+    const resumeName = t('templatesPage.untitledResume');
 
     flushSync(() => setCreatingLayoutId(layoutId));
 
@@ -121,7 +121,7 @@ export default function TemplatesPage() {
         });
 
         if (!saved) {
-          throw new Error('保存失败，请稍后重试');
+          throw new Error(t('templatesPage.saveFailed'));
         }
 
         stageLocalResumeLaunch({ id: localId, name: resumeName, data: resumeData, settings });
@@ -133,11 +133,11 @@ export default function TemplatesPage() {
       stageDraftResumeLaunch({ layoutId, themeColor, templateData: demoContent ?? undefined });
       navigate('/resume');
     } catch (error) {
-      const message = error instanceof Error ? error.message : '保存失败，请稍后重试';
+      const message = error instanceof Error ? error.message : t('templatesPage.saveFailed');
       showToast(message, 'error');
       setCreatingLayoutId(null);
     }
-  }, [creatingLayoutId, demoContent, navigate, showToast]);
+  }, [creatingLayoutId, demoContent, navigate, showToast, t]);
 
   return (
     <div className="min-h-screen bg-[var(--bg-page)] text-gray-900 flex flex-col theme-color-transition">
@@ -156,14 +156,14 @@ export default function TemplatesPage() {
           <div className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center gap-3 text-gray-400">
               <Loader2 className="h-8 w-8 animate-spin text-[#3B82F6]" />
-              <span className="text-sm">正在进入编辑器...</span>
+              <span className="text-sm">{t('templatesPage.enteringEditor')}</span>
             </div>
           </div>
         ) : loading ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center gap-3 text-gray-400">
               <div className="w-8 h-8 border-2 border-gray-200 border-t-[#1e2836] rounded-full animate-spin" />
-              <p className="text-sm">正在加载模板主题...</p>
+              <p className="text-sm">{t('templatesPage.loading')}</p>
             </div>
           </div>
         ) : (
@@ -173,14 +173,14 @@ export default function TemplatesPage() {
                 <div className="min-w-0">
                   <div className="flex items-center gap-2.5">
                     <h1 className="text-[28px] font-bold leading-[1.2] tracking-[-0.02em] text-gray-900">
-                      简历模板
+                      {t('templatesPage.title')}
                     </h1>
                     <span className="inline-flex h-6 flex-shrink-0 items-center rounded-full bg-slate-100 px-[9px] text-xs font-semibold text-[#3f5f8a]">
-                      {entries.length} 份
+                      {t('templatesPage.count', { count: entries.length })}
                     </span>
                   </div>
                   <p className="mt-1.5 text-sm leading-[1.5] text-[#667085]">
-                    选择合适的模板，快速创建你的个人简历
+                    {t('templatesPage.description')}
                   </p>
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-2 pb-1 sm:flex-nowrap sm:overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
@@ -194,7 +194,9 @@ export default function TemplatesPage() {
                           : 'text-gray-800 hover:bg-[#2248ff] hover:text-white dark:text-[color:var(--text-secondary)] dark:hover:bg-[#fbbf24] dark:hover:text-[#17191d]'
                         }`}
                     >
-                      {cat === ALL_THEME_CATEGORY ? '全部' : cat}
+                      {cat === ALL_THEME_CATEGORY
+                        ? t('templatesPage.categories.all')
+                        : t(`templatesPage.categories.${cat}`, { defaultValue: cat })}
                     </button>
                   ))}
                 </div>
@@ -205,7 +207,7 @@ export default function TemplatesPage() {
               <div className="max-w-[1360px] mx-auto px-6 py-6" data-global-toolbar-content>
                 {filteredEntries.length === 0 ? (
                   <div className="flex min-h-[360px] flex-col items-center justify-center text-gray-400">
-                    <p className="text-sm">暂无可用模板主题</p>
+                    <p className="text-sm">{t('templatesPage.empty')}</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6">
@@ -251,18 +253,18 @@ export default function TemplatesPage() {
                                   type="button"
                                   onClick={() => setPreviewEntry(entry)}
                                   className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition-colors hover:border-[#2248ff]/40 hover:bg-[#2248ff]/5 hover:text-[#2248ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/30"
-                                  aria-label={`预览 ${entry.name} 模板`}
+                                  aria-label={t('templatesPage.previewAria', { name: entry.name })}
                                 >
                                   <Eye className="h-4 w-4" />
-                                  预览
+                                  {t('templatesPage.preview')}
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => void handleCreateFromTemplate(entry)}
                                   className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#2248ff] px-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#193be0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/35 dark:bg-[#fbbf24] dark:text-[#17191d] dark:hover:bg-[#f6b914]"
-                                  aria-label={`使用 ${entry.name} 模板`}
+                                  aria-label={t('templatesPage.useAria', { name: entry.name })}
                                 >
-                                  使用
+                                  {t('templatesPage.use')}
                                   <ArrowRight className="h-4 w-4" />
                                 </button>
                               </div>
@@ -281,7 +283,7 @@ export default function TemplatesPage() {
       {previewEntry &&
         createPortal(
           <div
-            className="fixed inset-y-0 left-0 z-[10000] flex w-screen items-center justify-center bg-slate-950/45 p-3 backdrop-blur-sm sm:p-6"
+            className="fixed inset-0 z-[10000] flex items-center justify-center bg-slate-950/45 p-3 backdrop-blur-sm sm:p-6"
             onMouseDown={() => setPreviewEntry(null)}
           >
             <section
@@ -297,7 +299,7 @@ export default function TemplatesPage() {
                     type="button"
                     onClick={() => setPreviewEntry(null)}
                     className="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
-                    aria-label="返回模板列表"
+                    aria-label={t('templatesPage.backToList')}
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
@@ -329,19 +331,19 @@ export default function TemplatesPage() {
                     onClick={() => navigatePreview(-1)}
                     disabled={previewIndex <= 0}
                     className="inline-flex h-9 items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-2 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 sm:px-3 dark:bg-transparent"
-                    aria-label="预览上一个模板"
+                    aria-label={t('templatesPage.previousAria')}
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    <span>上一个</span>
+                    <span>{t('templatesPage.previous')}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => navigatePreview(1)}
                     disabled={previewIndex < 0 || previewIndex >= filteredEntries.length - 1}
                     className="inline-flex h-9 items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-2 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 sm:px-3 dark:bg-transparent"
-                    aria-label="预览下一个模板"
+                    aria-label={t('templatesPage.nextAria')}
                   >
-                    <span>下一个</span>
+                    <span>{t('templatesPage.next')}</span>
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
@@ -354,7 +356,7 @@ export default function TemplatesPage() {
                   }}
                   className="inline-flex h-9 flex-shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#2248ff] px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#193be0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/35 dark:bg-[#fbbf24] dark:text-[#17191d] dark:hover:bg-[#f6b914]"
                 >
-                  使用此模板
+                  {t('templatesPage.useThis')}
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </footer>

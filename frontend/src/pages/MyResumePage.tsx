@@ -91,7 +91,7 @@ export default function MyResumePage() {
                     <HardDrive className="w-4 h-4 text-orange-400 flex-shrink-0" />
                     <span className="flex-1 text-xs text-gray-600 truncate">{t('list.localStorageHint')}</span>
                     <button
-                      onClick={openSettings}
+                      onClick={() => navigate('/settings#storage')}
                       className="flex-shrink-0 px-3 py-1 rounded-lg border border-orange-300 text-orange-500 text-xs font-medium hover:bg-orange-50 transition-colors active:scale-[0.97] whitespace-nowrap"
                     >
                       {t('list.goConfig')}

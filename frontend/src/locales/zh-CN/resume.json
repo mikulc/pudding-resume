@@ -261,12 +261,12 @@
     "renamed": "重命名成功",
     "renameFailed": "重命名失败，请重试",
     "renameLocalFailed": "重命名失败，请检查本地目录权限",
-    "uploadedToCloud": "{name} 已上传到云端",
+    "uploadedToCloud": "{{name}} 已上传到云端",
     "uploadFailed": "上传失败，请重试",
     "confirmDeleteTitle": "确认删除",
-    "confirmDeleteMerged": "确定要删除「{name}」吗？将同时删除云端和本地存档。",
-    "confirmDeleteLocal": "确定要删除本地文件「{name}」吗？文件将被永久删除。",
-    "confirmDeleteCloud": "确定要删除「{name}」吗？删除后无法恢复。",
+    "confirmDeleteMerged": "确定要删除「{{name}}」吗？将同时删除云端和本地存档。",
+    "confirmDeleteLocal": "确定要删除本地文件「{{name}}」吗？文件将被永久删除。",
+    "confirmDeleteCloud": "确定要删除「{{name}}」吗？删除后无法恢复。",
     "confirmDeleteText": "删除",
     "updatedAt": "更新于",
     "rename": "重命名",
@@ -383,5 +383,37 @@
     "types": {
       "ats": "ATS 检测"
     }
+  },
+  "templatesPage": {
+    "title": "简历模板",
+    "count": "{{count}} 份",
+    "description": "选择合适的模板，快速创建你的个人简历",
+    "categories": {
+      "all": "全部",
+      "互联网通用": "互联网通用",
+      "前端开发": "前端开发",
+      "后端开发": "后端开发",
+      "Golang": "Golang",
+      "Java": "Java",
+      "C++": "C++",
+      "校招": "校招",
+      "实习": "实习",
+      "社招": "社招"
+    },
+    "enteringEditor": "正在进入编辑器...",
+    "loading": "正在加载模板主题...",
+    "empty": "暂无可用模板主题",
+    "untitledResume": "未命名简历",
+    "saveFailed": "保存失败，请稍后重试",
+    "preview": "预览",
+    "use": "使用",
+    "previewAria": "预览 {{name}} 模板",
+    "useAria": "使用 {{name}} 模板",
+    "backToList": "返回模板列表",
+    "previous": "上一个",
+    "next": "下一个",
+    "previousAria": "预览上一个模板",
+    "nextAria": "预览下一个模板",
+    "useThis": "使用此模板"
   }
 }
