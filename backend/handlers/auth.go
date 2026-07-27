@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"context"
 	"errors"
+	"log"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -16,6 +19,7 @@ import (
 	"pudding-resume-backend/database"
 	"pudding-resume-backend/middleware"
 	"pudding-resume-backend/models"
+	"pudding-resume-backend/services"
 	"pudding-resume-backend/utils"
 )
 
@@ -47,14 +51,36 @@ func clearRefreshTokenCookie(c *gin.Context, secure bool) {
 // --- Request / Response types ---
 
 type RegisterRequest struct {
-	Username string `json:"username" binding:"required"`
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Username           string `json:"username" binding:"required"`
+	Email              string `json:"email" binding:"required"`
+	Password           string `json:"password" binding:"required"`
+	RegistrationTicket string `json:"registration_ticket"`
 }
 
 type LoginRequest struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
+}
+
+type SendRegistrationCodeRequest struct {
+	Email string `json:"email" binding:"required"`
+}
+
+type VerifyRegistrationCodeRequest struct {
+	Email string `json:"email" binding:"required"`
+	Code  string `json:"code" binding:"required"`
+}
+
+type VerifyRegistrationCodeResponse struct {
+	RegistrationTicket string `json:"registration_ticket"`
+	ExpiresIn          int    `json:"expires_in"`
+}
+
+type EmailCodeService interface {
+	SendRegistrationCode(ctx context.Context, email, ip string) error
+	ExchangeRegistrationCode(ctx context.Context, email, code string) (string, error)
+	ValidateRegistrationTicket(ctx context.Context, email, ticket string) error
+	ConsumeRegistrationTicket(ctx context.Context, email, ticket string) error
 }
 
 type AuthResponse struct {
@@ -84,6 +110,7 @@ func respondError(c *gin.Context, code int, errMsg string) {
 }
 
 var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
+var verificationCodeRegex = regexp.MustCompile(`^\d{6}$`)
 
 func normalizeEmail(email string) string {
 	return strings.ToLower(strings.TrimSpace(email))
@@ -140,7 +167,11 @@ func generateAndSetTokens(c *gin.Context, user *models.User, cfg *config.Config)
 // --- Handlers ---
 
 // Register handles POST /api/auth/register
-func Register(cfg *config.Config) gin.HandlerFunc {
+func Register(cfg *config.Config, emailCodes ...EmailCodeService) gin.HandlerFunc {
+	var codeService EmailCodeService
+	if len(emailCodes) > 0 {
+		codeService = emailCodes[0]
+	}
 	return func(c *gin.Context) {
 		var req RegisterRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -167,6 +198,28 @@ func Register(cfg *config.Config) gin.HandlerFunc {
 		if len(req.Password) < 6 {
 			respondError(c, http.StatusBadRequest, "密码长度不能少于 6 位")
 			return
+		}
+
+		if cfg.RegistrationEmailCodeEnabled {
+			if codeService == nil {
+				respondError(c, http.StatusServiceUnavailable, "验证码服务暂时不可用，请稍后重试")
+				return
+			}
+			if strings.TrimSpace(req.RegistrationTicket) == "" {
+				respondError(c, http.StatusBadRequest, "请先完成邮箱验证")
+				return
+			}
+			if err := codeService.ValidateRegistrationTicket(
+				c.Request.Context(), req.Email, req.RegistrationTicket,
+			); err != nil {
+				if errors.Is(err, services.ErrRegistrationTicketInvalid) {
+					respondError(c, http.StatusUnauthorized, "邮箱验证已失效，请重新验证")
+				} else {
+					log.Printf("validate registration ticket: %v", err)
+					respondError(c, http.StatusServiceUnavailable, "验证码服务暂时不可用，请稍后重试")
+				}
+				return
+			}
 		}
 
 		// Check if email already exists
@@ -199,11 +252,17 @@ func Register(cfg *config.Config) gin.HandlerFunc {
 
 		// Create user, preference, quota, and stats in a transaction
 		var user models.User
+		var emailVerifiedAt *time.Time
+		if cfg.RegistrationEmailCodeEnabled {
+			verifiedAt := time.Now()
+			emailVerifiedAt = &verifiedAt
+		}
 		err = database.DB.Transaction(func(tx *gorm.DB) error {
 			user = models.User{
-				Username: req.Username,
-				Email:    req.Email,
-				Password: hashedPassword,
+				Username:        req.Username,
+				Email:           req.Email,
+				Password:        hashedPassword,
+				EmailVerifiedAt: emailVerifiedAt,
 			}
 			if err := tx.Create(&user).Error; err != nil {
 				return err
@@ -242,6 +301,14 @@ func Register(cfg *config.Config) gin.HandlerFunc {
 			}
 			respondError(c, http.StatusInternalServerError, "注册失败，请稍后重试")
 			return
+		}
+
+		if cfg.RegistrationEmailCodeEnabled {
+			if err := codeService.ConsumeRegistrationTicket(
+				c.Request.Context(), req.Email, req.RegistrationTicket,
+			); err != nil {
+				log.Printf("consume registration ticket after user creation: %v", err)
+			}
 		}
 
 		// Generate access + refresh token pair, set cookie
@@ -308,6 +375,122 @@ func Login(cfg *config.Config) gin.HandlerFunc {
 			Token:    accessToken,
 			Username: user.Username,
 			Role:     user.Role,
+		})
+	}
+}
+
+// VerifyRegistrationCode exchanges a valid one-time code for a short-lived
+// registration ticket. Account lookups happen only after this proof exists.
+func VerifyRegistrationCode(cfg *config.Config, codeService EmailCodeService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if !cfg.RegistrationEmailCodeEnabled {
+			respondError(c, http.StatusNotFound, "注册邮箱验证未启用")
+			return
+		}
+		if codeService == nil {
+			respondError(c, http.StatusServiceUnavailable, "验证码服务暂时不可用，请稍后重试")
+			return
+		}
+		var req VerifyRegistrationCodeRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			respondError(c, http.StatusBadRequest, "请输入邮箱和验证码")
+			return
+		}
+		req.Email = normalizeEmail(req.Email)
+		req.Code = strings.TrimSpace(req.Code)
+		if !emailRegex.MatchString(req.Email) || !verificationCodeRegex.MatchString(req.Code) {
+			respondError(c, http.StatusBadRequest, "邮箱或验证码格式不正确")
+			return
+		}
+		ticket, err := codeService.ExchangeRegistrationCode(c.Request.Context(), req.Email, req.Code)
+		if err != nil {
+			switch {
+			case errors.Is(err, services.ErrCodeAttemptsExceeded):
+				respondError(c, http.StatusUnauthorized, "验证码错误次数过多，请重新获取")
+			case errors.Is(err, services.ErrCodeInvalid):
+				respondError(c, http.StatusUnauthorized, "验证码错误或已过期")
+			default:
+				log.Printf("exchange registration email code: %v", err)
+				respondError(c, http.StatusServiceUnavailable, "验证码服务暂时不可用，请稍后重试")
+			}
+			return
+		}
+		expiresIn := int(parseExpiration(cfg.RegistrationTicketTTL, 10*time.Minute) / time.Second)
+		c.JSON(http.StatusOK, VerifyRegistrationCodeResponse{
+			RegistrationTicket: ticket,
+			ExpiresIn:          expiresIn,
+		})
+	}
+}
+
+// SendRegistrationCode handles POST /api/auth/register/code.
+func SendRegistrationCode(
+	cfg *config.Config,
+	codeService EmailCodeService,
+) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if !cfg.RegistrationEmailCodeEnabled {
+			respondError(c, http.StatusNotFound, "注册邮箱验证未启用")
+			return
+		}
+		if codeService == nil {
+			respondError(c, http.StatusServiceUnavailable, "验证码服务暂时不可用，请稍后重试")
+			return
+		}
+
+		var req SendRegistrationCodeRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			respondError(c, http.StatusBadRequest, "请输入邮箱")
+			return
+		}
+		req.Email = normalizeEmail(req.Email)
+		if !emailRegex.MatchString(req.Email) {
+			respondError(c, http.StatusBadRequest, "邮箱格式不正确")
+			return
+		}
+		configuredRetryAfter := int(parseExpiration(cfg.EmailCodeCooldown, time.Minute) / time.Second)
+		if configuredRetryAfter < 1 {
+			configuredRetryAfter = 1
+		}
+
+		// Always use the same public response for available and registered addresses.
+		var user models.User
+		result := database.DB.Select("id").Where("LOWER(email) = ?", req.Email).First(&user)
+		if result.Error == nil {
+			c.JSON(http.StatusOK, gin.H{
+				"message":     "如果该邮箱可以注册，验证码邮件将很快送达",
+				"retry_after": configuredRetryAfter,
+			})
+			return
+		}
+		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			respondError(c, http.StatusInternalServerError, "服务器内部错误")
+			return
+		}
+
+		if err := codeService.SendRegistrationCode(c.Request.Context(), req.Email, c.ClientIP()); err != nil {
+			var rateLimit *services.RateLimitError
+			if errors.As(err, &rateLimit) {
+				retryAfter := int(rateLimit.RetryAfter.Round(time.Second) / time.Second)
+				if retryAfter < 1 {
+					retryAfter = 1
+				}
+				c.Header("Retry-After", strconv.Itoa(retryAfter))
+				c.JSON(http.StatusTooManyRequests, gin.H{
+					"error":       http.StatusText(http.StatusTooManyRequests),
+					"message":     "验证码发送过于频繁，请稍后重试",
+					"retry_after": retryAfter,
+				})
+				return
+			}
+			log.Printf("send registration email code: %v", err)
+			respondError(c, http.StatusServiceUnavailable, "验证码邮件发送失败，请稍后重试")
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message":     "如果该邮箱可以注册，验证码邮件将很快送达",
+			"retry_after": configuredRetryAfter,
 		})
 	}
 }

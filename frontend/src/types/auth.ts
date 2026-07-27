@@ -4,11 +4,26 @@ export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
+  registration_ticket?: string;
 }
 
 export interface LoginRequest {
   email: string;
   password: string;
+}
+
+export interface SendRegistrationCodeResponse {
+  message: string;
+  retry_after: number;
+}
+
+export interface VerifyRegistrationCodeResponse {
+  registration_ticket: string;
+  expires_in: number;
+}
+
+export interface PublicConfigResponse {
+  registration_email_code_enabled: boolean;
 }
 
 export interface AuthResponse {
@@ -70,6 +85,7 @@ export interface UserProfile {
   quota_updated_at: string;    // formatted quota update datetime string
   created_at: string;          // formatted datetime string
   last_login_at: string;        // formatted datetime string, empty if never logged in
+  email_verified_at: string;    // formatted verification datetime, empty for legacy/unverified accounts
 }
 
 /** Request body for PUT /api/user/profile */

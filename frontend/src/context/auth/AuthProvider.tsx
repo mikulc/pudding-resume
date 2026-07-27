@@ -1,6 +1,14 @@
 import React,{ createContext,useCallback,useContext,useEffect,useState } from 'react';
 import { removeCloudDiagnosisCaches } from '../../hooks/useDiagnosis';
-import type { AuthResponse,LoginRequest,RegisterRequest,UserProfile } from '../../types/auth';
+import type {
+  AuthResponse,
+  LoginRequest,
+  PublicConfigResponse,
+  RegisterRequest,
+  SendRegistrationCodeResponse,
+  VerifyRegistrationCodeResponse,
+  UserProfile,
+} from '../../types/auth';
 import { api,getAuthToken,setAuthToken } from '../../utils/api';
 import { removeCloudPreviewCaches } from '../../utils/previewCache';
 
@@ -45,6 +53,13 @@ interface AuthContextType {
   sessionLoading: boolean;
   /** Login with email + password */
   login: (req: LoginRequest) => Promise<void>;
+  /** Whether registration requires a code sent to the account email address */
+  registrationEmailCodeEnabled: boolean;
+  registrationConfigStatus: 'loading' | 'enabled' | 'disabled' | 'error';
+  /** Send a registration verification code */
+  sendRegistrationCode: (email: string) => Promise<SendRegistrationCodeResponse>;
+  /** Exchange a valid code for a short-lived registration ticket */
+  verifyRegistrationCode: (email: string, code: string) => Promise<VerifyRegistrationCodeResponse>;
   /** Register a new account */
   register: (req: RegisterRequest) => Promise<void>;
   /** Logout — calls server to invalidate tokens, clears local state */
@@ -75,11 +90,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [role, setRole] = useState<string | null>(() => {
     return getAuthToken() ? localStorage.getItem(ROLE_KEY) : null;
   });
+  const [registrationConfigStatus, setRegistrationConfigStatus] =
+    useState<'loading' | 'enabled' | 'disabled' | 'error'>('loading');
   const [profile, setProfileState] = useState<UserProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
   const [sessionLoading, setSessionLoading] = useState(true);
 
   const isLoggedIn = !!token && !!username;
+  const registrationEmailCodeEnabled = registrationConfigStatus === 'enabled';
+
+  useEffect(() => {
+    let active = true;
+    api.get<PublicConfigResponse>('/api/config/public')
+      .then((config) => {
+        if (!active) return;
+        setRegistrationConfigStatus(config.registration_email_code_enabled ? 'enabled' : 'disabled');
+      })
+      .catch(() => {
+        if (active) setRegistrationConfigStatus('error');
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Listen for forced logout from api.ts (e.g. refresh failure)
   useEffect(() => {
@@ -228,6 +261,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Profile will be auto-fetched by the useEffect above
   }, [persist]);
 
+  const sendRegistrationCode = useCallback(async (email: string) => {
+    return api.post<SendRegistrationCodeResponse>('/api/auth/register/code', { email });
+  }, []);
+
+  const verifyRegistrationCode = useCallback(async (email: string, code: string) => {
+    return api.post<VerifyRegistrationCodeResponse>('/api/auth/register/verify', { email, code });
+  }, []);
+
   const register = useCallback(async (req: RegisterRequest) => {
     const res = await api.post<AuthResponse>('/api/auth/register', req);
     persist(res.token, res.username, res.role);
@@ -273,6 +314,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         profileLoading,
         sessionLoading,
         login,
+        registrationEmailCodeEnabled,
+        registrationConfigStatus,
+        sendRegistrationCode,
+        verifyRegistrationCode,
         register,
         logout,
         refreshProfile,

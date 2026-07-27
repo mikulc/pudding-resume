@@ -8,17 +8,18 @@ import (
 
 // User 用户表 — 存储用户基本信息与认证数据
 type User struct {
-	ID           string         `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:用户唯一标识（UUID v4）"`
-	Username     string         `json:"username" gorm:"size:64;not null;comment:用户名（登录用）"`
-	Email        string         `json:"email" gorm:"size:128;not null;comment:邮箱地址"`
-	Password     string         `json:"-" gorm:"size:256;not null;comment:密码哈希（json:\"-\" 禁止序列化输出）"`
-	Avatar       string         `json:"avatar" gorm:"size:512;comment:头像文件路径（相对于 uploads/avatars）"`
-	Role         string         `json:"role" gorm:"size:32;default:user;not null;index;comment:用户角色（user / admin）"`
-	TokenVersion int            `json:"-" gorm:"default:0;not null;comment:令牌版本号，递增会使所有旧 token 失效"`
-	CreatedAt    time.Time      `json:"created_at" gorm:"comment:注册时间"`
-	UpdatedAt    time.Time      `json:"updated_at" gorm:"comment:信息更新时间"`
-	LastLoginAt  *time.Time     `json:"last_login_at" gorm:"comment:上一次登录时间"`
-	DeletedAt    gorm.DeletedAt `json:"-" gorm:"index;comment:软删除时间（NULL 表示未删除）"`
+	ID              string         `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:用户唯一标识（UUID v4）"`
+	Username        string         `json:"username" gorm:"size:64;not null;comment:用户名（登录用）"`
+	Email           string         `json:"email" gorm:"size:128;not null;comment:邮箱地址"`
+	Password        string         `json:"-" gorm:"size:256;not null;comment:密码哈希（json:\"-\" 禁止序列化输出）"`
+	Avatar          string         `json:"avatar" gorm:"size:512;comment:头像文件路径（相对于 uploads/avatars）"`
+	Role            string         `json:"role" gorm:"size:32;default:user;not null;index;comment:用户角色（user / admin）"`
+	TokenVersion    int            `json:"-" gorm:"default:0;not null;comment:令牌版本号，递增会使所有旧 token 失效"`
+	CreatedAt       time.Time      `json:"created_at" gorm:"comment:注册时间"`
+	UpdatedAt       time.Time      `json:"updated_at" gorm:"comment:信息更新时间"`
+	LastLoginAt     *time.Time     `json:"last_login_at" gorm:"comment:上一次登录时间"`
+	EmailVerifiedAt *time.Time     `json:"email_verified_at" gorm:"index;comment:邮箱验证完成时间"`
+	DeletedAt       gorm.DeletedAt `json:"-" gorm:"index;comment:软删除时间（NULL 表示未删除）"`
 }
 
 func (User) TableName() string {

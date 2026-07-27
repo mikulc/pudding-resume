@@ -56,6 +56,7 @@ type UserProfileResponse struct {
 	QuotaUpdatedAt                       string  `json:"quota_updated_at"`
 	CreatedAt                            string  `json:"created_at"`
 	LastLoginAt                          string  `json:"last_login_at"`
+	EmailVerifiedAt                      string  `json:"email_verified_at"`
 }
 
 type UpdatePreferencesRequest struct {
@@ -208,6 +209,12 @@ func formatUserProfile(user *models.User) UserProfileResponse {
 		LastLoginAt: func() string {
 			if user.LastLoginAt != nil {
 				return user.LastLoginAt.Format("2006-01-02 15:04")
+			}
+			return ""
+		}(),
+		EmailVerifiedAt: func() string {
+			if user.EmailVerifiedAt != nil {
+				return user.EmailVerifiedAt.Format("2006-01-02 15:04")
 			}
 			return ""
 		}(),

@@ -61,3 +61,40 @@ func TestCORSOriginsTrimsAndDropsEmptyValues(t *testing.T) {
 		t.Fatalf("unexpected origins: %#v", origins)
 	}
 }
+
+func TestValidateEmailCodeConfiguration(t *testing.T) {
+	cfg := &Config{
+		AppEnv:                       "development",
+		RegistrationEmailCodeEnabled: true,
+		RedisAddr:                    "localhost:6379",
+		SMTPHost:                     "smtp.example.com",
+		SMTPFromAddress:              "no-reply@example.com",
+		SMTPTLSMode:                  "starttls",
+		EmailCodeSecret:              strings.Repeat("s", 32),
+		EmailCodeTTL:                 "5m",
+		RegistrationTicketTTL:        "10m",
+		EmailCodeCooldown:            "60s",
+		EmailCodeMaxAttempts:         5,
+		EmailCodeMaxPerEmailHour:     5,
+		EmailCodeMaxPerIPHour:        20,
+		RedisKeyPrefix:               "pudding:test",
+		EmailQueueWorkers:            1,
+		EmailQueueMaxAttempts:        3,
+		EmailQueueLease:              "30s",
+		EmailQueuePoll:               "1s",
+	}
+	if err := cfg.Validate(); err != nil {
+		t.Fatalf("valid email code configuration was rejected: %v", err)
+	}
+
+	cfg.EmailCodeTTL = "invalid"
+	if err := cfg.Validate(); err == nil || !strings.Contains(err.Error(), "EMAIL_CODE_TTL") {
+		t.Fatalf("invalid EMAIL_CODE_TTL error = %v", err)
+	}
+
+	cfg.EmailCodeTTL = "5m"
+	cfg.EmailCodeSecret = "CHANGE_ME_TO_A_RANDOM_SECRET_WITH_AT_LEAST_32_CHARACTERS"
+	if err := cfg.Validate(); err == nil || !strings.Contains(err.Error(), "EMAIL_CODE_SECRET") {
+		t.Fatalf("placeholder EMAIL_CODE_SECRET error = %v", err)
+	}
+}

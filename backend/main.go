@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -18,12 +20,18 @@ import (
 	"pudding-resume-backend/config"
 	"pudding-resume-backend/database"
 	"pudding-resume-backend/handlers"
+	"pudding-resume-backend/mailer"
 	"pudding-resume-backend/middleware"
+	"pudding-resume-backend/redisclient"
+	"pudding-resume-backend/services"
 )
 
 func main() {
-	// Load .env file (silently ignore if file doesn't exist — for production env vars)
-	_ = godotenv.Load()
+	// Load an optional local .env while preserving values explicitly supplied
+	// by the process environment. UTF-8 BOM is accepted for Windows editors.
+	if err := loadDotEnv(".env"); err != nil {
+		log.Fatalf("Invalid .env file: %v", err)
+	}
 
 	// Load configuration
 	cfg := config.Load()
@@ -33,6 +41,46 @@ func main() {
 
 	// Initialize database
 	database.Init(cfg)
+
+	var emailCodes handlers.EmailCodeService
+	var emailQueue *services.RedisEmailQueue
+	emailWorkerCtx, stopEmailWorkers := context.WithCancel(context.Background())
+	defer stopEmailWorkers()
+	if cfg.RegistrationEmailCodeEnabled {
+		client := redisclient.New(cfg)
+		pingCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		if err := redisclient.Ping(pingCtx, client); err != nil {
+			cancel()
+			log.Fatalf("Failed to connect to Redis: %v", err)
+		}
+		cancel()
+		defer client.Close()
+
+		emailCodeTTL, _ := time.ParseDuration(cfg.EmailCodeTTL)
+		emailCodeCooldown, _ := time.ParseDuration(cfg.EmailCodeCooldown)
+		registrationTicketTTL, _ := time.ParseDuration(cfg.RegistrationTicketTTL)
+		emailQueueLease, _ := time.ParseDuration(cfg.EmailQueueLease)
+		emailQueuePoll, _ := time.ParseDuration(cfg.EmailQueuePoll)
+		emailQueue = services.NewRedisEmailQueue(client, mailer.NewSMTP(cfg), services.EmailQueueOptions{
+			Prefix:      cfg.RedisKeyPrefix,
+			Secret:      cfg.EmailCodeSecret,
+			Workers:     cfg.EmailQueueWorkers,
+			MaxAttempts: cfg.EmailQueueMaxAttempts,
+			Lease:       emailQueueLease,
+			Poll:        emailQueuePoll,
+		})
+		emailQueue.Start(emailWorkerCtx)
+		emailCodes = services.NewEmailCodeService(client, emailQueue, services.EmailCodeOptions{
+			Secret:          cfg.EmailCodeSecret,
+			TTL:             emailCodeTTL,
+			TicketTTL:       registrationTicketTTL,
+			Cooldown:        emailCodeCooldown,
+			MaxAttempts:     cfg.EmailCodeMaxAttempts,
+			MaxEmailPerHour: cfg.EmailCodeMaxPerEmailHour,
+			MaxIPPerHour:    cfg.EmailCodeMaxPerIPHour,
+			Prefix:          cfg.RedisKeyPrefix,
+		})
+	}
 
 	// Ensure upload directories exist
 	avatarDir := filepath.Join(cfg.UploadDir, "avatars")
@@ -45,7 +93,9 @@ func main() {
 		log.Fatalf("Failed to create fonts directory: %v", err)
 	}
 
-	r := NewRouter(cfg, avatarDir)
+	r := NewRouter(cfg, avatarDir, AuthDependencies{
+		EmailCodes: emailCodes,
+	})
 
 	// Start server with graceful shutdown
 	addr := fmt.Sprintf(":%s", cfg.ServerPort)
@@ -69,18 +119,53 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Println("Shutting down server...")
+	stopEmailWorkers()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatalf("Server forced to shutdown: %v", err)
 	}
+	if emailQueue != nil {
+		emailQueue.Wait()
+	}
 	log.Println("Server exited")
+}
+
+func loadDotEnv(path string) error {
+	content, err := os.ReadFile(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	values, err := godotenv.Unmarshal(strings.TrimPrefix(string(content), "\uFEFF"))
+	if err != nil {
+		return err
+	}
+	for key, value := range values {
+		if _, exists := os.LookupEnv(key); exists {
+			continue
+		}
+		if err := os.Setenv(key, value); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // NewRouter constructs the complete HTTP adapter without starting a server.
 // Keeping composition here lets tests exercise routing and middleware independently.
-func NewRouter(cfg *config.Config, avatarDir string) *gin.Engine {
+type AuthDependencies struct {
+	EmailCodes handlers.EmailCodeService
+}
+
+func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDependencies) *gin.Engine {
+	var authDependencies AuthDependencies
+	if len(dependencies) > 0 {
+		authDependencies = dependencies[0]
+	}
 	// Create Gin router. Request IDs run before logging/recovery so every
 	// response can be correlated with upstream and application logs.
 	r := gin.New()
@@ -116,11 +201,18 @@ func NewRouter(cfg *config.Config, avatarDir string) *gin.Engine {
 		api.GET("/health", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"status": "ok"})
 		})
+		api.GET("/config/public", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{
+				"registration_email_code_enabled": cfg.RegistrationEmailCodeEnabled,
+			})
+		})
 
 		// Public routes
 		auth := api.Group("/auth")
 		{
-			auth.POST("/register", handlers.Register(cfg))
+			auth.POST("/register", handlers.Register(cfg, authDependencies.EmailCodes))
+			auth.POST("/register/code", handlers.SendRegistrationCode(cfg, authDependencies.EmailCodes))
+			auth.POST("/register/verify", handlers.VerifyRegistrationCode(cfg, authDependencies.EmailCodes))
 			auth.POST("/login", handlers.Login(cfg))
 			auth.POST("/refresh", handlers.RefreshToken(cfg))
 			auth.POST("/logout", handlers.Logout(cfg))
