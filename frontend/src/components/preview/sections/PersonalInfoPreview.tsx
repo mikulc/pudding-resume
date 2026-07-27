@@ -66,8 +66,6 @@ User,
 Wrench,
 Zap,
 } from '../../icons';
-import { useCardPreviewScope } from '../ResumeCardPreviewProvider';
-
 import { ActiveSectionWrapper,resolvePersonalPhotoStyle,useResumeModuleTitles } from '../PreviewShared';
 
 export function PersonalInfoPreview() {
@@ -78,7 +76,6 @@ export function PersonalInfoPreview() {
   const layout = resolveLayout(ui.theme.layoutId);
   const defaultFieldLabels = getPersonalFieldLabels();
   const moduleTitles = useResumeModuleTitles();
-  const scopeClass = useCardPreviewScope();
 
   // 浠庢敞鍐岃〃璇诲彇鑱旂郴鏂瑰紡鍥炬爣 class
   const contactIconClass = layout.personalInfoClass || 'text-gray-400';
@@ -108,13 +105,11 @@ export function PersonalInfoPreview() {
   const photoStyle = resolvePersonalPhotoStyle(personalInfo.photoStyle);
 
   const hasPhoto = !!personalInfo.photoUrl;
-  // Editing mode: scopeClass is null outside ResumeCardPreviewProvider.
-  const isEditing = scopeClass === null;
   // 浠呭湪鏈夌収鐗囨垨缂栬緫妯″紡涓嬫樉绀虹収鐗囧尯鍩燂紱姝ｅ紡灞曠ず鏃舵棤鐓х墖鍒欎笉鏄剧ず
-  const showPhotoArea = !isHidden('photo') && (hasPhoto || isEditing);
+  const showPhotoArea = !isHidden('photo') && hasPhoto;
 
   // 澶村儚鍖哄煙
-  const photoEl = hasPhoto ? (
+  const photoEl = (
     <div
       className="personal-photo overflow-hidden shrink-0"
       style={{ width: photoStyle.width, height: photoStyle.height, borderRadius: photoStyle.borderRadius }}
@@ -134,16 +129,6 @@ export function PersonalInfoPreview() {
         </div>
       )}
     </div>
-  ) : (
-    <div
-      className="personal-photo-placeholder overflow-hidden shrink-0"
-      data-photo-placeholder="true"
-      style={{ width: photoStyle.width, height: photoStyle.height, borderRadius: photoStyle.borderRadius }}
-    >
-      <div className="w-full h-full flex items-center justify-center text-gray-400">
-        <Camera className="w-5 h-5 text-gray-300" />
-      </div>
-    </div>
   );
 
   // 淇℃伅鍖哄煙
@@ -155,7 +140,9 @@ export function PersonalInfoPreview() {
     ...configuredFieldOrder,
     ...customFieldKeys.filter((field) => !configuredFieldOrder.includes(field)),
   ];
-  const showFullName = !isHidden('fullName') && fieldOrder.includes('fullName');
+  const showFullName = !isHidden('fullName')
+    && fieldOrder.includes('fullName')
+    && !!personalInfo.fullName.trim();
 
   const iconMap = personalInfo.iconMap || {};
   const fieldLabels = personalInfo.fieldLabels || {};
@@ -394,7 +381,7 @@ export function PersonalInfoPreview() {
         {showPhotoArea && <div className="azure-sidebar-photo">{photoEl}</div>}
         {showFullName && (
           <h1 className="azure-sidebar-name break-words">
-            {personalInfo.fullName || t('placeholder.previewName')}
+            {personalInfo.fullName}
           </h1>
         )}
         {contactFields.length > 0 && (
@@ -430,7 +417,7 @@ export function PersonalInfoPreview() {
         {showPhotoArea && <div className="left-sidebar-two-column-photo">{photoEl}</div>}
         {showFullName && (
           <h1 className="left-sidebar-two-column-name break-words">
-            {personalInfo.fullName || t('placeholder.previewName')}
+            {personalInfo.fullName}
           </h1>
         )}
         {personalInfo.jobTarget && !isHidden('jobTarget') && (
@@ -489,7 +476,7 @@ export function PersonalInfoPreview() {
     <div className={personalInfoClassName}>
       {showFullName && (
         <h1 className={nameClassName}>
-          {personalInfo.fullName || t('placeholder.previewName')}
+          {personalInfo.fullName}
         </h1>
       )}
       {topFields.length > 0 && (

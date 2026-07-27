@@ -123,10 +123,10 @@ export const azureSidebarLayout: LayoutDefinition = {
     .resume-paper[data-layout="azure-sidebar"] .azure-sidebar-contact-item > span {
       min-width: 0 !important;
       max-width: 100% !important;
-      overflow: hidden !important;
-      white-space: nowrap !important;
-      overflow-wrap: normal !important;
-      word-break: normal !important;
+      overflow: visible !important;
+      white-space: normal !important;
+      overflow-wrap: anywhere !important;
+      word-break: break-word !important;
       text-overflow: clip !important;
     }
 

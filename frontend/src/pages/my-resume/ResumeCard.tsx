@@ -22,13 +22,10 @@ interface ResumeCardProps {
   onRenameCancel: () => void;
 }
 
-function formatResumeTime(iso: string): string {
+export function formatResumeTime(iso: string): string {
   const date = new Date(iso);
-  const now = new Date();
-  const isToday = date.getFullYear() === now.getFullYear()
-    && date.getMonth() === now.getMonth()
-    && date.getDate() === now.getDate();
-  return isToday ? `${format(date, 'HH:mm')} ??` : format(date, 'M?d? HH:mm');
+  if (Number.isNaN(date.getTime())) return '--';
+  return format(date, 'yyyy-MM-dd HH:mm');
 }
 
 export function ResumeCard({

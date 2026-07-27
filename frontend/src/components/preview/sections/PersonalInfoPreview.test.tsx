@@ -23,17 +23,13 @@ vi.mock('../../../context/ResumeContext', () => ({
   }),
 }));
 
-vi.mock('../ResumeCardPreviewProvider', () => ({
-  useCardPreviewScope: () => null,
-}));
-
 describe('PersonalInfoPreview', () => {
-  it('renders an inert photo placeholder without upload copy for an empty resume', () => {
+  it('does not render placeholder name or photo for an empty resume', () => {
     const { container } = render(<PersonalInfoPreview />);
     const placeholder = container.querySelector('[data-photo-placeholder="true"]');
 
-    expect(placeholder).not.toBeNull();
-    expect(placeholder?.querySelector('svg')).not.toBeNull();
+    expect(placeholder).toBeNull();
+    expect(screen.queryByText('placeholder.previewName')).toBeNull();
     expect(screen.queryByText('photo.upload')).toBeNull();
   });
 });

@@ -26,7 +26,7 @@ export const leftSidebarTwoColumnLayout: LayoutDefinition = {
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-sidebar {
       min-width: 0 !important;
       align-self: stretch !important;
-      padding: var(--resume-page-margin) 0 var(--resume-page-margin) 9mm !important;
+      padding: var(--resume-page-margin) 0 var(--resume-page-margin) 6.5mm !important;
       overflow: hidden !important;
       background: #eef3fb !important;
       border-right: 1px solid #e8edf6 !important;
@@ -127,10 +127,10 @@ export const leftSidebarTwoColumnLayout: LayoutDefinition = {
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-contact-item > span {
       min-width: 0 !important;
       max-width: 100% !important;
-      overflow: hidden !important;
-      white-space: nowrap !important;
-      overflow-wrap: normal !important;
-      word-break: normal !important;
+      overflow: visible !important;
+      white-space: normal !important;
+      overflow-wrap: anywhere !important;
+      word-break: break-word !important;
       text-overflow: clip !important;
     }
 
