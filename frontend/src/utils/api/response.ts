@@ -1,5 +1,15 @@
 import i18n from '../i18n';
 
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
 export function errorMessageFrom(data: unknown): string | null {
   if (
     typeof data === 'object' &&
@@ -36,9 +46,10 @@ export async function parseResponse<T>(
   }
 
   if (!response.ok) {
-    throw new Error(
+    throw new ApiError(
       errorMessageFrom(data) ||
         i18n.t(fallbackKey, { ns: 'common', status: response.status }),
+      response.status,
     );
   }
 

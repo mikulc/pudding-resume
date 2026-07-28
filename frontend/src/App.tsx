@@ -33,6 +33,7 @@ import {
 import { applyThemeMode, readStoredThemeMode, rememberThemeMode, type ThemeMode } from './utils/themeMode';
 import i18n from './utils/i18n';
 import { DEFAULT_LOCALE, getDefaultLocalePath, isSupportedLocale } from './utils/localePath';
+import { buildAuthPath, getAuthReturnPath, type AuthRouteState } from './utils/authNavigation';
 
 function Live2DWrapper() {
   const { profile, isLoggedIn } = useAuth();
@@ -210,13 +211,21 @@ function LocalePublicLayout() {
 
 function LocaleAuthModal({ mode }: { mode: 'login' | 'register' }) {
   const { locale } = useParams<{ locale?: string }>();
+  const location = useLocation();
   const navigate = useNavigate();
   const lang = isSupportedLocale(locale) ? locale : DEFAULT_LOCALE;
-  const closePath = getDefaultLocalePath(lang);
+  const routeState = location.state as AuthRouteState | null;
+  const closePath = getAuthReturnPath(routeState, getDefaultLocalePath(lang));
 
   const close = () => navigate(closePath, { replace: true });
-  const switchToLogin = () => navigate(`/${lang}/login`, { replace: true });
-  const switchToRegister = () => navigate(`/${lang}/register`, { replace: true });
+  const switchToLogin = () => navigate(buildAuthPath(lang, 'login'), {
+    replace: true,
+    state: routeState,
+  });
+  const switchToRegister = () => navigate(buildAuthPath(lang, 'register'), {
+    replace: true,
+    state: routeState,
+  });
 
   return (
     <>

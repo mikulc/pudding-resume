@@ -62,7 +62,7 @@ func Init(cfg *config.Config) {
 		log.Fatalf("Failed to auto-migrate database: %v", err)
 	}
 
-	migrateActiveUserUniqueIndexes(DB)
+	migrateActiveUserEmailUniqueIndex(DB)
 	dropStyleLibraryDescriptionColumn(DB)
 	dropStyleLibraryCategoryColumn(DB)
 	seedAll()
@@ -71,20 +71,13 @@ func Init(cfg *config.Config) {
 	fmt.Println("Database connected and migrated successfully.")
 }
 
-// migrateActiveUserUniqueIndexes keeps email and username unique only among
-// active users. Soft-deleted accounts therefore do not reserve their former
-// login identifiers, while the database remains the final concurrency guard.
-func migrateActiveUserUniqueIndexes(db *gorm.DB) {
+// migrateActiveUserEmailUniqueIndex keeps email unique only among active users.
+// Username is a display name and may be shared by multiple accounts.
+// Soft-deleted accounts do not reserve their former email address, while the
+// database remains the final concurrency guard for email-based authentication.
+func migrateActiveUserEmailUniqueIndex(db *gorm.DB) {
 	err := db.Transaction(func(tx *gorm.DB) error {
-		statements := []string{
-			`DROP INDEX IF EXISTS idx_user_info_email`,
-			`DROP INDEX IF EXISTS idx_user_info_username`,
-			`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_info_email_active
-				ON user_info (LOWER(email)) WHERE deleted_at IS NULL`,
-			`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_info_username_active
-				ON user_info (username) WHERE deleted_at IS NULL`,
-		}
-		for _, statement := range statements {
+		for _, statement := range activeUserEmailIndexMigrationStatements() {
 			if err := tx.Exec(statement).Error; err != nil {
 				return err
 			}
@@ -92,7 +85,17 @@ func migrateActiveUserUniqueIndexes(db *gorm.DB) {
 		return nil
 	})
 	if err != nil {
-		log.Fatalf("Failed to migrate active-user unique indexes: %v", err)
+		log.Fatalf("Failed to migrate active-user email unique index: %v", err)
+	}
+}
+
+func activeUserEmailIndexMigrationStatements() []string {
+	return []string{
+		`DROP INDEX IF EXISTS idx_user_info_email`,
+		`DROP INDEX IF EXISTS idx_user_info_username`,
+		`DROP INDEX IF EXISTS idx_user_info_username_active`,
+		`CREATE UNIQUE INDEX IF NOT EXISTS idx_user_info_email_active
+			ON user_info (LOWER(email)) WHERE deleted_at IS NULL`,
 	}
 }
 

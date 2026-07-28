@@ -55,23 +55,8 @@ func UpdateProfile(c *gin.Context) {
 		return
 	}
 
-	// Check if username is already taken by another user
-	var existingUser models.User
-	result := database.DB.Where("username = ? AND id != ?", req.Username, userID).First(&existingUser)
-	if result.Error == nil {
-		respondError(c, http.StatusConflict, "该用户名已被使用")
-		return
-	} else if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		respondError(c, http.StatusInternalServerError, "服务器内部错误")
-		return
-	}
-
 	// Update username
 	if err := database.DB.Model(&models.User{}).Where("id = ?", userID).Update("username", req.Username).Error; err != nil {
-		if message, conflict := registrationConflictMessage(err); conflict {
-			respondError(c, http.StatusConflict, message)
-			return
-		}
 		respondError(c, http.StatusInternalServerError, "更新失败，请稍后重试")
 		return
 	}

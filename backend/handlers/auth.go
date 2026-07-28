@@ -124,10 +124,8 @@ func registrationConflictMessage(err error) (string, bool) {
 	switch pgErr.ConstraintName {
 	case "idx_user_info_email_active", "idx_user_info_email":
 		return "该邮箱已被注册", true
-	case "idx_user_info_username_active", "idx_user_info_username":
-		return "该用户名已被使用", true
 	default:
-		return "邮箱或用户名已被使用", true
+		return "", false
 	}
 }
 
@@ -227,16 +225,6 @@ func Register(cfg *config.Config, emailCodes ...EmailCodeService) gin.HandlerFun
 		result := database.DB.Where("LOWER(email) = ?", req.Email).First(&existingUser)
 		if result.Error == nil {
 			respondError(c, http.StatusConflict, "该邮箱已被注册")
-			return
-		} else if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			respondError(c, http.StatusInternalServerError, "服务器内部错误")
-			return
-		}
-
-		// Check if username already exists
-		result = database.DB.Where("username = ?", req.Username).First(&existingUser)
-		if result.Error == nil {
-			respondError(c, http.StatusConflict, "该用户名已被使用")
 			return
 		} else if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			respondError(c, http.StatusInternalServerError, "服务器内部错误")
@@ -453,14 +441,10 @@ func SendRegistrationCode(
 			configuredRetryAfter = 1
 		}
 
-		// Always use the same public response for available and registered addresses.
 		var user models.User
 		result := database.DB.Select("id").Where("LOWER(email) = ?", req.Email).First(&user)
 		if result.Error == nil {
-			c.JSON(http.StatusOK, gin.H{
-				"message":     "如果该邮箱可以注册，验证码邮件将很快送达",
-				"retry_after": configuredRetryAfter,
-			})
+			respondError(c, http.StatusConflict, "该邮箱已被注册")
 			return
 		}
 		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -489,7 +473,7 @@ func SendRegistrationCode(
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"message":     "如果该邮箱可以注册，验证码邮件将很快送达",
+			"message":     "验证码邮件已发送",
 			"retry_after": configuredRetryAfter,
 		})
 	}

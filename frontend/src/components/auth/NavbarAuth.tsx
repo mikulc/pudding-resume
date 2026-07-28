@@ -4,11 +4,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BarChart3, FileText, LayoutTemplate, LogOut, Settings, User, ArrowRight, Shield } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { LoginModal } from './LoginModal';
-import { RegisterModal } from './RegisterModal';
 import { useToast } from '../common/Toast';
 import { useConfirm } from '../common/ConfirmModal';
 import { getLocaleFromPath } from '../../utils/localePath';
+import { normalizeLanguage } from '../../utils/localSettings';
+import { buildAuthPath } from '../../utils/authNavigation';
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 
 interface NavbarSettingsShortcut {
@@ -180,52 +180,24 @@ function LoggedInNavbar({
 export function NavbarAuth({ compact = false, hideUsernameOnMobile = true, settingsShortcut }: NavbarAuthProps) {
   const { isLoggedIn, username, profile, role, logout, sessionLoading } = useAuth();
   const { showToast } = useToast();
-  const { t } = useTranslation('auth');
+  const { t, i18n } = useTranslation('auth');
   const { confirm } = useConfirm();
   const navigate = useNavigate();
   const location = useLocation();
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   void settingsShortcut;
 
-  // Switch between modals
-  const switchToRegister = () => {
-    const locale = getLocaleFromPath(location.pathname);
-    if (locale) {
-      navigate(`/${locale}/register`, { replace: true });
-      return;
-    }
-    setShowLogin(false);
-    setShowRegister(true);
-  };
-  const switchToLogin = () => {
-    const locale = getLocaleFromPath(location.pathname);
-    if (locale) {
-      navigate(`/${locale}/login`, { replace: true });
-      return;
-    }
-    setShowRegister(false);
-    setShowLogin(true);
-  };
+  const currentPath = `${location.pathname}${location.search}${location.hash}`;
+  const authLocale = getLocaleFromPath(location.pathname)
+    ?? normalizeLanguage(i18n.resolvedLanguage || i18n.language);
 
   const openLogin = () => {
-    const locale = getLocaleFromPath(location.pathname);
-    if (locale) {
-      navigate(`/${locale}/login`);
-      return;
-    }
-    setShowLogin(true);
+    navigate(buildAuthPath(authLocale, 'login'), { state: { returnTo: currentPath } });
   };
 
   const openRegister = () => {
-    const locale = getLocaleFromPath(location.pathname);
-    if (locale) {
-      navigate(`/${locale}/register`);
-      return;
-    }
-    setShowRegister(true);
+    navigate(buildAuthPath(authLocale, 'register'), { state: { returnTo: currentPath } });
   };
 
   // Logout with confirmation
@@ -360,7 +332,6 @@ export function NavbarAuth({ compact = false, hideUsernameOnMobile = true, setti
 
   // Logged-out state
   return (
-    <>
       <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
         <button
           onClick={openLogin}
@@ -376,18 +347,5 @@ export function NavbarAuth({ compact = false, hideUsernameOnMobile = true, setti
           <ArrowRight className="hidden h-3.5 w-3.5 sm:block" />
         </button>
       </div>
-
-      {/* Modals */}
-      <LoginModal
-        open={showLogin}
-        onClose={() => setShowLogin(false)}
-        onSwitchToRegister={switchToRegister}
-      />
-      <RegisterModal
-        open={showRegister}
-        onClose={() => setShowRegister(false)}
-        onSwitchToLogin={switchToLogin}
-      />
-    </>
   );
 }

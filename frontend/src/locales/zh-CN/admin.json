@@ -105,7 +105,7 @@
       "logoutMessage": "确定强制「{{username}}」下线吗？",
       "logoutConfirm": "确认下线",
       "restoreTitle": "恢复用户",
-      "restoreMessage": "确定恢复用户「{{username}}」吗？如果邮箱或用户名已被新账号使用，恢复将失败。",
+      "restoreMessage": "确定恢复用户「{{username}}」吗？如果邮箱已被新账号使用，恢复将失败。",
       "restoreConfirm": "恢复",
       "permanentDeleteTitle": "永久删除用户",
       "permanentDeleteMessage": "确定永久删除用户「{{username}}」及其所有简历、配置和用量数据吗？此操作不可撤销。",

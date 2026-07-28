@@ -318,8 +318,8 @@ func DeleteUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "用户已停用"})
 }
 
-// RestoreUser restores a soft-deleted account if its email and username have
-// not since been claimed by another active account.
+// RestoreUser restores a soft-deleted account if its email has not since been
+// claimed by another active account.
 func RestoreUser(c *gin.Context) {
 	userID := c.Param("id")
 	adminID := middleware.GetUserID(c)
@@ -346,7 +346,7 @@ func RestoreUser(c *gin.Context) {
 		}).Error
 	if err != nil {
 		if _, conflict := registrationConflictMessage(err); conflict {
-			respondError(c, http.StatusConflict, "邮箱或用户名已被新的账号使用，不能恢复")
+			respondError(c, http.StatusConflict, "邮箱已被新的账号使用，不能恢复")
 			return
 		}
 		respondError(c, http.StatusInternalServerError, "恢复失败")

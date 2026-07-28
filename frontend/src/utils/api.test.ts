@@ -7,7 +7,7 @@ vi.mock('./i18n', () => ({
   },
 }));
 
-import { api, publicRequest, setAuthToken } from './api';
+import { ApiError, api, publicRequest, setAuthToken } from './api';
 
 describe('API transport', () => {
   beforeEach(() => {
@@ -27,6 +27,23 @@ describe('API transport', () => {
     );
 
     await expect(publicRequest('/api/example')).rejects.toThrow('业务校验失败');
+  });
+
+  it('preserves the HTTP status on API errors', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ message: '该邮箱已被注册' }), {
+          status: 409,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      ),
+    );
+
+    await expect(publicRequest('/api/example')).rejects.toMatchObject({
+      message: '该邮箱已被注册',
+      status: 409,
+    } satisfies Partial<ApiError>);
   });
 
   it('includes a preview when the server returns invalid JSON', async () => {

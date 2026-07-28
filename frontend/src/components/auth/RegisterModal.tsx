@@ -5,6 +5,7 @@ import { Loader2, LockKeyhole, Mail, ShieldCheck, User, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../common/Toast';
 import { lockModalScroll } from '../../utils/modalScrollLock';
+import { ApiError } from '../../utils/api';
 import { AuthArtwork } from './LoginModal';
 import './login-experience.css';
 
@@ -15,6 +16,7 @@ interface Props {
 }
 
 type RegisterField = 'username' | 'email' | 'password' | 'confirmPassword' | 'code' | null;
+type RegisterInputField = Exclude<RegisterField, null>;
 
 export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
   const {
@@ -38,7 +40,8 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
   const [ticketEmail, setTicketEmail] = useState('');
   const [focusedField, setFocusedField] = useState<RegisterField>(null);
   const [reaction, setReaction] = useState<'idle' | 'success' | 'error'>('idle');
-  const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<RegisterInputField, string>>>({});
+  const [globalError, setGlobalError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const reset = useCallback(() => {
@@ -53,7 +56,8 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
     setTicketEmail('');
     setFocusedField(null);
     setReaction('idle');
-    setError('');
+    setFieldErrors({});
+    setGlobalError('');
     setLoading(false);
   }, []);
 
@@ -83,21 +87,27 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
     return () => window.clearInterval(timer);
   }, [countdown]);
 
-  const showError = useCallback((message: string) => {
-    setError(message);
+  const showError = useCallback((message: string, field?: RegisterInputField) => {
+    if (field) {
+      setFieldErrors({ [field]: message });
+      setGlobalError('');
+    } else {
+      setGlobalError(message);
+    }
     setReaction('error');
     window.setTimeout(() => setReaction('idle'), 560);
   }, []);
 
   const handleSendCode = useCallback(async () => {
-    setError('');
+    setFieldErrors({});
+    setGlobalError('');
     const trimmedEmail = email.trim();
     if (!trimmedEmail) {
-      showError(t('register.emailRequired'));
+      showError(t('register.emailRequired'), 'email');
       return;
     }
     if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmedEmail)) {
-      showError(t('register.invalidEmail'));
+      showError(t('register.invalidEmail'), 'email');
       return;
     }
     if (registrationConfigStatus !== 'enabled') {
@@ -110,8 +120,13 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
       setCountdown(Math.max(1, response.retry_after || 60));
       showToast(t('register.codeSent'), 'success');
     } catch (caught) {
-      const message = caught instanceof Error ? caught.message : t('register.codeSendFailed');
-      showError(message);
+      const emailAlreadyRegistered = caught instanceof ApiError && caught.status === 409;
+      const message = emailAlreadyRegistered
+        ? t('register.emailTaken')
+        : caught instanceof Error
+          ? caught.message
+          : t('register.codeSendFailed');
+      showError(message, emailAlreadyRegistered ? 'email' : undefined);
       showToast(message, 'error');
     } finally {
       setCodeSending(false);
@@ -120,21 +135,24 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
 
   const handleSubmit = useCallback(async (event: React.FormEvent) => {
     event.preventDefault();
-    setError('');
+    setFieldErrors({});
+    setGlobalError('');
     const trimmedUsername = username.trim();
     const trimmedEmail = email.trim();
 
-    if (!trimmedUsername) return showError(t('register.usernameRequired'));
-    if (trimmedUsername.length < 2 || trimmedUsername.length > 10) return showError(t('register.usernameLength'));
-    if (!trimmedEmail) return showError(t('register.emailRequired'));
-    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmedEmail)) {
-      return showError(t('register.invalidEmail'));
+    if (!trimmedUsername) return showError(t('register.usernameRequired'), 'username');
+    if (trimmedUsername.length < 2 || trimmedUsername.length > 10) {
+      return showError(t('register.usernameLength'), 'username');
     }
-    if (!password) return showError(t('register.passwordRequired'));
-    if (password.length < 6) return showError(t('register.passwordLength'));
-    if (password !== confirmPassword) return showError(t('register.passwordMismatch'));
+    if (!trimmedEmail) return showError(t('register.emailRequired'), 'email');
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmedEmail)) {
+      return showError(t('register.invalidEmail'), 'email');
+    }
+    if (!password) return showError(t('register.passwordRequired'), 'password');
+    if (password.length < 6) return showError(t('register.passwordLength'), 'password');
+    if (password !== confirmPassword) return showError(t('register.passwordMismatch'), 'confirmPassword');
     if (registrationEmailCodeEnabled && !/^\d{6}$/.test(code.trim())) {
-      return showError(t('register.codeRequired'));
+      return showError(t('register.codeRequired'), 'code');
     }
     if (registrationConfigStatus === 'loading' || registrationConfigStatus === 'error') {
       return showError(t('register.configUnavailable'));
@@ -202,25 +220,34 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
 
           <form onSubmit={handleSubmit} noValidate>
             <div className="pudding-register-grid">
-              <div>
+              <div className="pudding-register-field">
                 <label className="pudding-login-label" htmlFor="register-username">{t('register.username')}</label>
-                <div className="pudding-login-input pudding-register-input">
+                <div className={`pudding-login-input pudding-register-input ${fieldErrors.username ? 'is-error' : ''}`}>
                   <User aria-hidden="true" />
                   <input
                     id="register-username"
+                    name="nickname"
                     type="text"
                     value={username}
-                    onChange={(event) => setUsername(event.target.value)}
+                    onChange={(event) => {
+                      setUsername(event.target.value);
+                      setFieldErrors((current) => ({ ...current, username: undefined }));
+                    }}
                     placeholder={t('register.usernamePlaceholder')}
-                    autoComplete="username"
+                    autoComplete="off"
+                    aria-invalid={Boolean(fieldErrors.username)}
+                    aria-describedby="register-username-error"
                     {...focusHandlers('username')}
                   />
                 </div>
+                <div id="register-username-error" className="pudding-field-error">
+                  {fieldErrors.username || '\u00a0'}
+                </div>
               </div>
 
-              <div>
+              <div className="pudding-register-field">
                 <label className="pudding-login-label" htmlFor="register-email">{t('register.email')}</label>
-                <div className="pudding-login-input pudding-register-input">
+                <div className={`pudding-login-input pudding-register-input ${fieldErrors.email ? 'is-error' : ''}`}>
                   <Mail aria-hidden="true" />
                   <input
                     id="register-email"
@@ -232,20 +259,26 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
                       setCountdown(0);
                       setRegistrationTicket('');
                       setTicketEmail('');
+                      setFieldErrors((current) => ({ ...current, email: undefined }));
                     }}
                     placeholder={t('register.emailPlaceholder')}
                     autoComplete="email"
+                    aria-invalid={Boolean(fieldErrors.email)}
+                    aria-describedby="register-email-error"
                     {...focusHandlers('email')}
                   />
+                </div>
+                <div id="register-email-error" className="pudding-field-error">
+                  {fieldErrors.email || '\u00a0'}
                 </div>
               </div>
             </div>
 
             {registrationEmailCodeEnabled && (
-              <>
+              <div className="pudding-register-field pudding-register-code-field">
                 <label className="pudding-login-label" htmlFor="register-code">{t('register.code')}</label>
                 <div className="pudding-register-code-row">
-                  <div className="pudding-login-input pudding-register-input">
+                  <div className={`pudding-login-input pudding-register-input ${fieldErrors.code ? 'is-error' : ''}`}>
                     <ShieldCheck aria-hidden="true" />
                     <input
                       id="register-code"
@@ -257,9 +290,12 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
                         setCode(event.target.value.replace(/\D/g, '').slice(0, 6));
                         setRegistrationTicket('');
                         setTicketEmail('');
+                        setFieldErrors((current) => ({ ...current, code: undefined }));
                       }}
                       placeholder={t('register.codePlaceholder')}
                       autoComplete="one-time-code"
+                      aria-invalid={Boolean(fieldErrors.code)}
+                      aria-describedby="register-code-error"
                       {...focusHandlers('code')}
                     />
                   </div>
@@ -274,41 +310,60 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
                       : countdown > 0
                         ? t('register.codeCountdown', { seconds: countdown })
                         : t('register.sendCode')}
-                  </button>
+                    </button>
                 </div>
-              </>
+                <div id="register-code-error" className="pudding-field-error">
+                  {fieldErrors.code || '\u00a0'}
+                </div>
+              </div>
             )}
 
             <div className="pudding-register-grid">
-              <div>
+              <div className="pudding-register-field">
                 <label className="pudding-login-label" htmlFor="register-password">{t('register.password')}</label>
-                <div className="pudding-login-input pudding-register-input">
+                <div className={`pudding-login-input pudding-register-input ${fieldErrors.password ? 'is-error' : ''}`}>
                   <LockKeyhole aria-hidden="true" />
                   <input
                     id="register-password"
                     type="password"
                     value={password}
-                    onChange={(event) => setPassword(event.target.value)}
+                    onChange={(event) => {
+                      setPassword(event.target.value);
+                      setFieldErrors((current) => ({ ...current, password: undefined }));
+                    }}
                     placeholder={t('register.passwordPlaceholder')}
                     autoComplete="new-password"
+                    aria-invalid={Boolean(fieldErrors.password)}
+                    aria-describedby="register-password-error"
                     {...focusHandlers('password')}
                   />
                 </div>
+                <div id="register-password-error" className="pudding-field-error">
+                  {fieldErrors.password || '\u00a0'}
+                </div>
               </div>
 
-              <div>
+              <div className="pudding-register-field">
                 <label className="pudding-login-label" htmlFor="register-confirm-password">{t('register.confirmPassword')}</label>
-                <div className="pudding-login-input pudding-register-input">
+                <div className={`pudding-login-input pudding-register-input ${fieldErrors.confirmPassword ? 'is-error' : ''}`}>
                   <LockKeyhole aria-hidden="true" />
                   <input
                     id="register-confirm-password"
                     type="password"
                     value={confirmPassword}
-                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    onChange={(event) => {
+                      setConfirmPassword(event.target.value);
+                      setFieldErrors((current) => ({ ...current, confirmPassword: undefined }));
+                    }}
                     placeholder={t('register.confirmPasswordPlaceholder')}
                     autoComplete="new-password"
+                    aria-invalid={Boolean(fieldErrors.confirmPassword)}
+                    aria-describedby="register-confirm-password-error"
                     {...focusHandlers('confirmPassword')}
                   />
+                </div>
+                <div id="register-confirm-password-error" className="pudding-field-error">
+                  {fieldErrors.confirmPassword || '\u00a0'}
                 </div>
               </div>
             </div>
@@ -320,8 +375,8 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
               <div className="pudding-register-notice is-error">{t('register.configUnavailable')}</div>
             )}
 
-            <div className={`pudding-login-error ${error ? 'is-visible' : ''}`} role="alert">
-              {error || '\u00a0'}
+            <div className={`pudding-login-error ${globalError ? 'is-visible' : ''}`} role="alert">
+              {globalError || '\u00a0'}
             </div>
 
             <button

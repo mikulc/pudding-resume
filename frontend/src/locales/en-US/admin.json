@@ -105,7 +105,7 @@
       "logoutMessage": "Force \"{{username}}\" to sign out?",
       "logoutConfirm": "Force Sign Out",
       "restoreTitle": "Restore User",
-      "restoreMessage": "Restore user \"{{username}}\"? Restoration will fail if a new account has claimed the email or username.",
+      "restoreMessage": "Restore user \"{{username}}\"? Restoration will fail if a new account has claimed the email.",
       "restoreConfirm": "Restore",
       "permanentDeleteTitle": "Permanently Delete User",
       "permanentDeleteMessage": "Permanently delete \"{{username}}\" and all resumes, settings, and usage data? This action is irreversible.",

@@ -23,16 +23,9 @@ func TestRegistrationConflictMessage(t *testing.T) {
 			isConflict: true,
 		},
 		{
-			name:       "active username index",
-			err:        &pgconn.PgError{Code: "23505", ConstraintName: "idx_user_info_username_active"},
-			want:       "该用户名已被使用",
-			isConflict: true,
-		},
-		{
 			name:       "another unique constraint",
 			err:        &pgconn.PgError{Code: "23505", ConstraintName: "other"},
-			want:       "邮箱或用户名已被使用",
-			isConflict: true,
+			isConflict: false,
 		},
 		{name: "not unique", err: errors.New("boom")},
 	}
