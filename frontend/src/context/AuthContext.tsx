@@ -2,6 +2,6 @@ export { AuthProvider,useAuth } from './auth/AuthProvider';
 export {
 getAiServiceApiKey,getAiServiceApiUrl,getAiServiceModel,getAutoSaveInterval,getLive2dHOffset,getLive2dHeight,getLive2dNearbyBehavior,getLive2dNearbyRetractRatio,getLive2dOpacity,getLive2dPeekVisibleRatio,getLive2dPosition,getLive2dProximityThreshold,
 getLive2dRestoreDelay,getLive2dScale,getLive2dTransitionDuration,getLive2dVOffset,
-getLive2dWidth,getLocalStoragePath,getModelSource,
-getPublicModelId,isAiPolishEnabled,isExportJsonWithSettingsEnabled,isLive2dEnabled,isLive2dPointerEventsPassThroughEnabled,isLive2dShowEditor,isLocalStorageEnabled
+getLive2dWidth,getLocalStoragePath,
+isAiPolishEnabled,isExportJsonWithSettingsEnabled,isLive2dEnabled,isLive2dPointerEventsPassThroughEnabled,isLive2dShowEditor,isLocalStorageEnabled
 } from './auth/preferences';

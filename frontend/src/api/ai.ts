@@ -1,13 +1,12 @@
 /**
  * AI service API client.
- * Covers AI generation, diagnosis, model listing and public model pools.
+ * Covers AI generation, diagnosis, model listing.
  */
 import { api, apiAssetUrl, getAuthToken } from '../utils/api';
 import { assertAIConfig, getAIConfig, type AIConfigValidationOptions } from '../utils/aiConfig';
 import i18n from '../utils/i18n';
 import { isAbortError } from '../utils/errors';
 import type { ResumeData, DiagnosisItem, AtsAnalysisResult } from '../types/resume';
-import type { PublicModelListResponse } from '../types/auth';
 
 /** Read the current effective AI config and merge it into AI requests. */
 function withAIConfig(
@@ -17,20 +16,11 @@ function withAIConfig(
   const config = getAIConfig();
   assertAIConfig(config, options);
 
-  if (config.modelSource === 'custom') {
-    return {
-      ...body,
-      api_url: config.baseUrl,
-      api_key: config.apiKey,
-      model: config.modelName,
-      model_source: 'custom',
-    };
-  }
-
   return {
     ...body,
-    model_source: 'public',
-    public_model_id: config.publicModelId,
+    api_url: config.baseUrl,
+    api_key: config.apiKey,
+    model: config.modelName,
   };
 }
 
@@ -163,11 +153,6 @@ export async function translateResumeToEnglish(
 export function fetchAiModels(): Promise<{ models: string[] }> {
   const body = withAIConfig({}, { requireModelName: false });
   return api.post('/api/ai/models', body);
-}
-
-/** Fetch available public AI models from the admin-configured pool */
-export function fetchPublicModels(): Promise<PublicModelListResponse> {
-  return api.get<PublicModelListResponse>('/api/ai/model-pools');
 }
 
 /** Callbacks for streaming AI diagnosis progress */

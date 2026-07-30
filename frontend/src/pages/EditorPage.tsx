@@ -96,7 +96,7 @@ function EditorContent({ resumeId }: { resumeId?: string }) {
     // 未登录用户必须配置自定义 AI API 才能使用诊断功能
     if (!isLoggedIn) {
       const aiConfig = getAIConfig();
-      if (aiConfig.modelSource !== 'custom' || !aiConfig.baseUrl.trim() || !aiConfig.apiKey.trim()) {
+      if (!aiConfig.baseUrl.trim() || !aiConfig.apiKey.trim()) {
         showToast(t('diagnosisError.aiNotConfigured'), 'info');
         return;
       }

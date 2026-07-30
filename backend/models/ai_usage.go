@@ -7,9 +7,7 @@ type AIUsageLog struct {
 	ID               string    `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
 	UserID           string    `json:"user_id" gorm:"type:uuid;not null;index"`
 	Feature          string    `json:"feature" gorm:"size:32;not null;index"`
-	ModelSource      string    `json:"model_source" gorm:"size:16;not null;index"`
 	Provider         string    `json:"provider" gorm:"size:32;not null;index"`
-	PublicModelID    *string   `json:"public_model_id" gorm:"type:uuid;index"`
 	Model            string    `json:"model" gorm:"size:128;not null;index"`
 	PromptTokens     int       `json:"prompt_tokens" gorm:"default:0;not null"`
 	CompletionTokens int       `json:"completion_tokens" gorm:"default:0;not null"`

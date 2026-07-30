@@ -56,7 +56,6 @@ type aiUsageModelBreakdown struct {
 type aiUsageRecord struct {
 	ID               string `json:"id"`
 	Feature          string `json:"feature"`
-	ModelSource      string `json:"model_source"`
 	Provider         string `json:"provider"`
 	Model            string `json:"model"`
 	PromptTokens     int    `json:"prompt_tokens"`

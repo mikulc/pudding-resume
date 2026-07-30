@@ -47,7 +47,6 @@ export default function Footer() {
   const supportLinks: FooterLink[] = useMemo(
     () => [
       { label: t('footer.support.about'), href: '/about' },
-      { label: t('footer.support.changelog'), href: '/update' },
     ],
     [t],
   );

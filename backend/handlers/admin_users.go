@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -41,23 +40,11 @@ type AdminUserListResponse struct {
 	Size  int             `json:"size"`
 }
 
-type AdminUserDetailResponse struct {
-	AdminUserItem
-	TotalResumesCreated int64  `json:"total_resumes_created"`
-	TotalExports        int64  `json:"total_exports"`
-	TotalEditingSeconds int64  `json:"total_editing_seconds"`
-	LastActiveAt        string `json:"last_active_at"`
-}
-
 type UpdateUserQuotaRequest struct {
 	MaxResumes         *int `json:"max_resumes"`
 	ExportCount        *int `json:"export_count"`
 	DailyLimitTokens   *int `json:"daily_limit_tokens"`
 	MonthlyLimitTokens *int `json:"monthly_limit_tokens"`
-}
-
-type UpdateUserRoleRequest struct {
-	Role string `json:"role" binding:"required"`
 }
 
 type ResetPasswordRequest struct {
@@ -68,8 +55,6 @@ func ListUsers(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	size, _ := strconv.Atoi(c.DefaultQuery("size", "20"))
 	search := strings.TrimSpace(c.Query("search"))
-	roleFilter := strings.TrimSpace(c.Query("role"))
-	includeDeleted := c.Query("deleted") == "true"
 
 	if page < 1 {
 		page = 1
@@ -78,20 +63,11 @@ func ListUsers(c *gin.Context) {
 		size = 20
 	}
 
-	baseQuery := database.DB.Model(&models.User{})
-
-	// Include soft-deleted if requested
-	if includeDeleted {
-		baseQuery = baseQuery.Unscoped()
-	}
+	baseQuery := database.DB.Unscoped().Model(&models.User{})
 	if search != "" {
 		like := "%" + search + "%"
 		baseQuery = baseQuery.Where("username ILIKE ? OR email ILIKE ?", like, like)
 	}
-	if roleFilter != "" && roleFilter != "all" {
-		baseQuery = baseQuery.Where("role = ?", roleFilter)
-	}
-
 	var total int64
 	baseQuery.Session(&gorm.Session{}).Count(&total)
 
@@ -155,57 +131,8 @@ func ListUsers(c *gin.Context) {
 	})
 }
 
-func GetUserDetail(c *gin.Context) {
-	userID := c.Param("id")
-
-	var u models.User
-	if err := database.DB.Unscoped().Where("id = ?", userID).First(&u).Error; err != nil {
-		respondError(c, http.StatusNotFound, "用户不存在")
-		return
-	}
-
-	var q models.UserQuota
-	database.DB.Where("user_id = ?", userID).First(&q)
-
-	var s models.UserStats
-	database.DB.Where("user_id = ?", userID).First(&s)
-
-	var resumeCount int64
-	database.DB.Model(&models.Resume{}).Where("user_id = ?", userID).Count(&resumeCount)
-
-	status := "active"
-	if u.DeletedAt.Valid {
-		status = "deleted"
-	}
-	lastLogin := ""
-	if u.LastLoginAt != nil {
-		lastLogin = u.LastLoginAt.Format("2006-01-02 15:04")
-	}
-	lastActive := ""
-	if !s.LastActiveAt.IsZero() {
-		lastActive = s.LastActiveAt.Format("2006-01-02 15:04")
-	}
-
-	c.JSON(http.StatusOK, AdminUserDetailResponse{
-		AdminUserItem: AdminUserItem{
-			ID: u.ID, Username: u.Username, Email: u.Email,
-			Avatar: buildAvatarURL(u.Avatar), Role: u.Role, Status: status,
-			CreatedAt:   u.CreatedAt.Format("2006-01-02 15:04"),
-			LastLoginAt: lastLogin, ResumeCount: resumeCount,
-			MaxResumes: q.MaxResumes, ExportCount: q.ExportCount,
-			DailyLimit: q.DailyLimitTokens, MonthlyLimit: q.MonthlyLimitTokens,
-		},
-		TotalResumesCreated: int64(s.TotalResumesCreated),
-		TotalExports:        int64(s.TotalExports),
-		TotalEditingSeconds: s.TotalEditingSeconds,
-		LastActiveAt:        lastActive,
-	})
-}
-
 func UpdateUserQuota(c *gin.Context) {
 	userID := c.Param("id")
-	adminID := middleware.GetUserID(c)
-	adminName := middleware.GetUsername(c)
 
 	var req UpdateUserQuotaRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -274,10 +201,6 @@ func UpdateUserQuota(c *gin.Context) {
 		}
 	}
 
-	// Audit log
-	detail, _ := json.Marshal(req)
-	recordAuditLog(adminID, adminName, "quota_update", "user", userID, c.Query("username"), string(detail), c.ClientIP())
-
 	c.JSON(http.StatusOK, gin.H{"message": "配额更新成功"})
 }
 
@@ -285,7 +208,6 @@ func UpdateUserQuota(c *gin.Context) {
 func DeleteUser(c *gin.Context) {
 	userID := c.Param("id")
 	adminID := middleware.GetUserID(c)
-	adminName := middleware.GetUsername(c)
 
 	// Prevent self-deletion
 	if userID == adminID {
@@ -313,8 +235,6 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 
-	recordAuditLog(adminID, adminName, "user_deactivate", "user", userID, u.Username, "", c.ClientIP())
-
 	c.JSON(http.StatusOK, gin.H{"message": "用户已停用"})
 }
 
@@ -322,8 +242,6 @@ func DeleteUser(c *gin.Context) {
 // claimed by another active account.
 func RestoreUser(c *gin.Context) {
 	userID := c.Param("id")
-	adminID := middleware.GetUserID(c)
-	adminName := middleware.GetUsername(c)
 
 	user, err := findUserIncludingDeleted(userID)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -353,17 +271,14 @@ func RestoreUser(c *gin.Context) {
 		return
 	}
 
-	recordAuditLog(adminID, adminName, "user_restore", "user", userID, user.Username, "", c.ClientIP())
 	c.JSON(http.StatusOK, gin.H{"message": "用户已恢复"})
 }
 
 // PermanentlyDeleteUser irreversibly deletes the account and all user-owned
-// rows. The audit entry is written after commit so the operation stays atomic.
 func PermanentlyDeleteUser(cfg *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID := c.Param("id")
 		adminID := middleware.GetUserID(c)
-		adminName := middleware.GetUsername(c)
 		if userID == adminID {
 			respondError(c, http.StatusBadRequest, "不能永久删除自己")
 			return
@@ -387,7 +302,6 @@ func PermanentlyDeleteUser(cfg *config.Config) gin.HandlerFunc {
 		}
 
 		removeAvatarFile(cfg.UploadDir, user.Avatar)
-		recordAuditLog(adminID, adminName, "user_permanent_delete", "user", userID, user.Username, "", c.ClientIP())
 		c.JSON(http.StatusOK, gin.H{"message": "用户及其关联数据已永久删除"})
 	}
 }
@@ -402,8 +316,6 @@ func BatchDeleteUsers(c *gin.Context) {
 	}
 
 	adminID := middleware.GetUserID(c)
-	adminName := middleware.GetUsername(c)
-	ip := c.ClientIP()
 
 	deletedCount := 0
 	for _, id := range req.IDs {
@@ -428,79 +340,14 @@ func BatchDeleteUsers(c *gin.Context) {
 			continue
 		}
 		deletedCount++
-		recordAuditLog(adminID, adminName, "user_deactivate", "user", id, u.Username, "", ip)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("已停用 %d 个用户", deletedCount)})
 }
 
-func UpdateUserRole(c *gin.Context) {
-	userID := c.Param("id")
-	adminID := middleware.GetUserID(c)
-	adminName := middleware.GetUsername(c)
-
-	if userID == adminID {
-		respondError(c, http.StatusBadRequest, "不能修改自己的角色")
-		return
-	}
-
-	var req UpdateUserRoleRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		respondError(c, http.StatusBadRequest, "请提供角色")
-		return
-	}
-
-	if req.Role != "user" && req.Role != "admin" {
-		respondError(c, http.StatusBadRequest, "角色仅支持 user 或 admin")
-		return
-	}
-
-	var u models.User
-	if err := database.DB.Where("id = ?", userID).First(&u).Error; err != nil {
-		respondError(c, http.StatusNotFound, "用户不存在")
-		return
-	}
-
-	oldRole := u.Role
-	if err := database.DB.Model(&u).Updates(map[string]any{
-		"role": req.Role, "token_version": gorm.Expr("token_version + 1"),
-	}).Error; err != nil {
-		respondError(c, http.StatusInternalServerError, "角色更新失败")
-		return
-	}
-
-	detail := fmt.Sprintf(`{"old_role": "%s", "new_role": "%s"}`, oldRole, req.Role)
-	recordAuditLog(adminID, adminName, "role_update", "user", userID, u.Username, detail, c.ClientIP())
-
-	c.JSON(http.StatusOK, gin.H{"message": "角色更新成功"})
-}
-
-func ForceLogoutUser(c *gin.Context) {
-	userID := c.Param("id")
-	adminID := middleware.GetUserID(c)
-	adminName := middleware.GetUsername(c)
-
-	var u models.User
-	if err := database.DB.Where("id = ?", userID).First(&u).Error; err != nil {
-		respondError(c, http.StatusNotFound, "用户不存在")
-		return
-	}
-
-	if err := database.DB.Model(&u).Update("token_version", gorm.Expr("token_version + 1")).Error; err != nil {
-		respondError(c, http.StatusInternalServerError, "强制下线失败")
-		return
-	}
-
-	recordAuditLog(adminID, adminName, "force_logout", "user", userID, u.Username, "", c.ClientIP())
-
-	c.JSON(http.StatusOK, gin.H{"message": "用户已强制下线"})
-}
-
 func ResetUserPassword(cfg *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID := c.Param("id")
-		adminID := middleware.GetUserID(c)
-		adminName := middleware.GetUsername(c)
 
 		var req ResetPasswordRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -532,12 +379,6 @@ func ResetUserPassword(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		recordAuditLog(adminID, adminName, "password_reset", "user", userID, u.Username, "", c.ClientIP())
-
 		c.JSON(http.StatusOK, gin.H{"message": "密码重置成功，用户所有登录会话已失效"})
 	}
 }
-
-// ============================================================
-//  AI Model Pool Management
-// ============================================================

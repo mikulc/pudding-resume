@@ -89,3 +89,77 @@ func TestPublicConfigReportsRegistrationEmailCodeFlag(t *testing.T) {
 		t.Fatalf("public config fields = %#v, want only registration_email_code_enabled", fields)
 	}
 }
+
+func TestRemovedAdminAuditRouteIsNotRegistered(t *testing.T) {
+	cfg := config.Load()
+	router := NewRouter(cfg, t.TempDir())
+
+	request := httptest.NewRequest(http.MethodGet, "/api/admin/audit-logs", nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	if response.Code != http.StatusNotFound {
+		t.Fatalf("GET /api/admin/audit-logs status = %d, want %d", response.Code, http.StatusNotFound)
+	}
+}
+
+func TestRemovedModelPoolRoutesAreNotRegistered(t *testing.T) {
+	cfg := config.Load()
+	router := NewRouter(cfg, t.TempDir())
+
+	for _, path := range []string{
+		"/api/ai/model-pools",
+		"/api/admin/model-pools",
+	} {
+		request := httptest.NewRequest(http.MethodGet, path, nil)
+		response := httptest.NewRecorder()
+		router.ServeHTTP(response, request)
+
+		if response.Code != http.StatusNotFound {
+			t.Fatalf("GET %s status = %d, want %d", path, response.Code, http.StatusNotFound)
+		}
+	}
+}
+
+func TestRemovedAdminReportingAndChangelogRoutesAreNotRegistered(t *testing.T) {
+	cfg := config.Load()
+	router := NewRouter(cfg, t.TempDir())
+
+	for _, path := range []string{
+		"/api/changelog",
+		"/api/admin/changelogs",
+		"/api/admin/ai-usage",
+	} {
+		request := httptest.NewRequest(http.MethodGet, path, nil)
+		response := httptest.NewRecorder()
+		router.ServeHTTP(response, request)
+
+		if response.Code != http.StatusNotFound {
+			t.Fatalf("GET %s status = %d, want %d", path, response.Code, http.StatusNotFound)
+		}
+	}
+}
+
+func TestRemovedAdminUserActionRoutesAreNotRegistered(t *testing.T) {
+	cfg := config.Load()
+	router := NewRouter(cfg, t.TempDir())
+
+	tests := []struct {
+		method string
+		path   string
+	}{
+		{method: http.MethodGet, path: "/api/admin/users/USER_ID"},
+		{method: http.MethodPut, path: "/api/admin/users/USER_ID/role"},
+		{method: http.MethodPost, path: "/api/admin/users/USER_ID/force-logout"},
+	}
+
+	for _, test := range tests {
+		request := httptest.NewRequest(test.method, test.path, nil)
+		response := httptest.NewRecorder()
+		router.ServeHTTP(response, request)
+
+		if response.Code != http.StatusNotFound {
+			t.Fatalf("%s %s status = %d, want %d", test.method, test.path, response.Code, http.StatusNotFound)
+		}
+	}
+}

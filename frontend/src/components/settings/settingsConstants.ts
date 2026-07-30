@@ -7,7 +7,6 @@
  */
 import {
   loadSettings,
-  saveSettings,
   DEFAULT_SETTINGS,
   getStorageMode,
   normalizeLanguage,
@@ -46,19 +45,11 @@ export function getInitialSettings(profile: UserProfile | null, isLoggedIn: bool
     return local ?? { ...DEFAULT_SETTINGS };
   }
 
-  // 未登录：尝试从 localStorage 加载，无则用默认值（公共模型强制禁用以避免错误状态）
+  // 未登录：尝试从 localStorage 加载，无则使用默认值。
   if (!isLoggedIn) {
     const local = loadSettings();
-    if (local) {
-      // 未登录时强制使用自定义模型，并写回 localStorage 确保一致性
-      if (local.model_source === 'public') {
-        local.model_source = 'custom';
-        local.public_model_id = '';
-        saveSettings({ model_source: 'custom', public_model_id: '' });
-      }
-      return local;
-    }
-    return { ...DEFAULT_SETTINGS, model_source: 'custom', public_model_id: '' };
+    if (local) return local;
+    return { ...DEFAULT_SETTINGS };
   }
 
   // 已登录且 profile 已加载：检查 storageMode
@@ -80,8 +71,6 @@ export function getInitialSettings(profile: UserProfile | null, isLoggedIn: bool
     ai_service_api_url: profile.ai_service_api_url ?? '',
     ai_service_api_key: profile.ai_service_api_key ?? '',
     ai_service_model: profile.ai_service_model ?? '',
-    model_source: profile.model_source ?? 'public',
-    public_model_id: profile.public_model_id ?? '',
     live2d_enabled: profile.live2d_enabled ?? true,
     live2d_position: profile.live2d_position ?? 'right',
     live2d_h_offset: profile.live2d_h_offset ?? 20,

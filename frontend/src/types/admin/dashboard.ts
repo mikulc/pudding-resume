@@ -30,5 +30,3 @@ export interface DailyTokenItem {
   date: string;
   tokens: number;
 }
-
-// --- User Management ---

@@ -29,8 +29,6 @@ type UserProfileResponse struct {
 	AiServiceApiKey    string `json:"ai_service_api_key"`
 	AiServiceModel     string `json:"ai_service_model"`
 	AiServicePrompt    string `json:"ai_service_prompt"`
-	ModelSource        string `json:"model_source"`
-	PublicModelID      string `json:"public_model_id"`
 	// Live2D preferences
 	Live2dEnabled                        bool    `json:"live2d_enabled"`
 	Live2dPosition                       string  `json:"live2d_position"`
@@ -68,8 +66,6 @@ type UpdatePreferencesRequest struct {
 	AiServiceApiKey  *string `json:"ai_service_api_key"`
 	AiServiceModel   *string `json:"ai_service_model"`
 	AiServicePrompt  *string `json:"ai_service_prompt"`
-	ModelSource      *string `json:"model_source"`
-	PublicModelID    *string `json:"public_model_id"`
 	// Live2D preferences (pointer for partial update)
 	Live2dEnabled                        *bool    `json:"live2d_enabled"`
 	Live2dPosition                       *string  `json:"live2d_position"`
@@ -153,31 +149,24 @@ func formatUserProfile(user *models.User) UserProfileResponse {
 	database.DB.Where("user_id = ?", user.ID).First(&aifc)
 
 	return UserProfileResponse{
-		ID:                 user.ID,
-		Username:           user.Username,
-		Email:              user.Email,
-		Avatar:             buildAvatarURL(user.Avatar),
-		Role:               user.Role,
-		MaxResumes:         quota.MaxResumes,
-		UsedResumes:        usedResumes,
-		ExportCount:        quota.ExportCount,
-		DailyLimitTokens:   quota.DailyLimitTokens,
-		MonthlyLimitTokens: quota.MonthlyLimitTokens,
-		AutoSaveInterval:   pref.AutoSaveInterval,
-		AiPolishEnabled:    pref.AiPolishEnabled,
-		ThemeMode:          normalizeThemeMode(pref.ThemeMode),
-		Language:           normalizeLanguage(pref.Language),
-		AiServiceApiUrl:    aifc.ApiUrl,
-		AiServiceApiKey:    aifc.ApiKey,
-		AiServiceModel:     aifc.Model,
-		AiServicePrompt:    aifc.Prompt,
-		ModelSource:        aifc.ModelSource,
-		PublicModelID: func() string {
-			if aifc.PublicModelID != nil {
-				return *aifc.PublicModelID
-			}
-			return ""
-		}(),
+		ID:                                   user.ID,
+		Username:                             user.Username,
+		Email:                                user.Email,
+		Avatar:                               buildAvatarURL(user.Avatar),
+		Role:                                 user.Role,
+		MaxResumes:                           quota.MaxResumes,
+		UsedResumes:                          usedResumes,
+		ExportCount:                          quota.ExportCount,
+		DailyLimitTokens:                     quota.DailyLimitTokens,
+		MonthlyLimitTokens:                   quota.MonthlyLimitTokens,
+		AutoSaveInterval:                     pref.AutoSaveInterval,
+		AiPolishEnabled:                      pref.AiPolishEnabled,
+		ThemeMode:                            normalizeThemeMode(pref.ThemeMode),
+		Language:                             normalizeLanguage(pref.Language),
+		AiServiceApiUrl:                      aifc.ApiUrl,
+		AiServiceApiKey:                      aifc.ApiKey,
+		AiServiceModel:                       aifc.Model,
+		AiServicePrompt:                      aifc.Prompt,
 		Live2dEnabled:                        pref.Live2dEnabled,
 		Live2dPosition:                       pref.Live2dPosition,
 		Live2dHOffset:                        pref.Live2dHOffset,

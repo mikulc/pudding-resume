@@ -57,8 +57,6 @@ export interface UserProfile {
   ai_service_api_key: string;     // user configured AI model API key
   ai_service_model: string;       // user configured AI model name
   ai_service_prompt: string;      // user customized AI prompt template
-  model_source: string;        // AI model source: "custom" | "public"
-  public_model_id: string;     // selected public model ID (when model_source is "public")
   // Live2D preferences
   live2d_enabled: boolean;     // whether Live2D mascot is enabled
   live2d_position: string;     // mascot position: "left" | "right" | "bottom" | "right-bottom"
@@ -102,19 +100,4 @@ export interface AvatarResponse {
 export interface ChangePasswordRequest {
   old_password: string;
   new_password: string;
-}
-
-/** Public AI model from the admin-configured model pool */
-export interface PublicModel {
-  id: string;
-  name: string;
-  model: string;
-  balance: number;
-  balance_updated_at: string;
-  sort_order: number;
-}
-
-/** Response from GET /api/ai/model-pools */
-export interface PublicModelListResponse {
-  models: PublicModel[];
 }

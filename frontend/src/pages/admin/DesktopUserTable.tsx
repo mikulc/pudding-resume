@@ -1,6 +1,6 @@
 import {
-  Eye, SlidersHorizontal, Shield,
-  LogOut, Key, Trash2, ChevronLeft, ChevronRight, RotateCcw,
+  SlidersHorizontal,
+  Key, Trash2, ChevronLeft, ChevronRight, RotateCcw,
 } from 'lucide-react';
 import type { AdminUserItem } from '../../types/admin';
 import {
@@ -14,10 +14,7 @@ interface DesktopUserTableProps {
   page: number;
   totalPages: number;
   onSetPage: (page: number) => void;
-  onOpenDetail: (id: string) => void;
   onOpenQuota: (user: AdminUserItem) => void;
-  onRoleChange: (id: string, username: string, role: string) => void;
-  onForceLogout: (id: string, username: string) => void;
   onResetPassword: (id: string, username: string) => void;
   onDelete: (id: string, username: string) => void;
   onRestore: (id: string, username: string) => void;
@@ -32,26 +29,23 @@ interface DesktopUserTableProps {
   labelDeleted: string;
   labelPagination: (opts: { page: number; totalPages: number; total: number }) => string;
   labelEmpty: string;
-  tooltipDetail: string;
-  tooltipQuota: string;
-  tooltipRole: string;
-  tooltipLogout: string;
-  tooltipPassword: string;
-  tooltipDelete: string;
-  tooltipRestore: string;
-  tooltipPermanentDelete: string;
+  actionLabelQuota: string;
+  actionLabelPassword: string;
+  actionLabelDelete: string;
+  actionLabelRestore: string;
+  actionLabelPermanentDelete: string;
 }
 
 export function DesktopUserTable({
   users, total, page, totalPages,
   onSetPage,
-  onOpenDetail, onOpenQuota, onRoleChange,
-  onForceLogout, onResetPassword, onDelete, onRestore, onPermanentDelete,
+  onOpenQuota,
+  onResetPassword, onDelete, onRestore, onPermanentDelete,
   labelUser, labelEmail, labelRole, labelResumes,
   labelRegistered, labelLastLogin, labelActions,
   labelDeleted, labelPagination, labelEmpty,
-  tooltipDetail, tooltipQuota, tooltipRole,
-  tooltipLogout, tooltipPassword, tooltipDelete, tooltipRestore, tooltipPermanentDelete,
+  actionLabelQuota,
+  actionLabelPassword, actionLabelDelete, actionLabelRestore, actionLabelPermanentDelete,
 }: DesktopUserTableProps) {
   return (
     <AdminTableCard>
@@ -106,33 +100,24 @@ export function DesktopUserTable({
                 </td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex items-center justify-end gap-1">
-                    <AdminIconButton tone="brand" onClick={() => onOpenDetail(u.id)} title={tooltipDetail}>
-                      <Eye size={15} />
-                    </AdminIconButton>
                     {u.status !== 'deleted' ? (
                       <>
-                        <AdminIconButton tone="warning" onClick={() => onOpenQuota(u)} title={tooltipQuota}>
+                        <AdminIconButton tone="warning" onClick={() => onOpenQuota(u)} aria-label={actionLabelQuota}>
                           <SlidersHorizontal size={15} />
                         </AdminIconButton>
-                        <AdminIconButton tone="brand" onClick={() => onRoleChange(u.id, u.username, u.role)} title={tooltipRole}>
-                          <Shield size={15} />
-                        </AdminIconButton>
-                        <AdminIconButton tone="warning" onClick={() => onForceLogout(u.id, u.username)} title={tooltipLogout}>
-                          <LogOut size={15} />
-                        </AdminIconButton>
-                        <AdminIconButton tone="success" onClick={() => onResetPassword(u.id, u.username)} title={tooltipPassword}>
+                        <AdminIconButton tone="success" onClick={() => onResetPassword(u.id, u.username)} aria-label={actionLabelPassword}>
                           <Key size={15} />
                         </AdminIconButton>
-                        <AdminIconButton tone="danger" onClick={() => onDelete(u.id, u.username)} title={tooltipDelete}>
+                        <AdminIconButton tone="danger" onClick={() => onDelete(u.id, u.username)} aria-label={actionLabelDelete}>
                           <Trash2 size={15} />
                         </AdminIconButton>
                       </>
                     ) : (
                       <>
-                        <AdminIconButton tone="success" onClick={() => onRestore(u.id, u.username)} title={tooltipRestore}>
+                        <AdminIconButton tone="success" onClick={() => onRestore(u.id, u.username)} aria-label={actionLabelRestore}>
                           <RotateCcw size={15} />
                         </AdminIconButton>
-                        <AdminIconButton tone="danger" onClick={() => onPermanentDelete(u.id, u.username)} title={tooltipPermanentDelete}>
+                        <AdminIconButton tone="danger" onClick={() => onPermanentDelete(u.id, u.username)} aria-label={actionLabelPermanentDelete}>
                           <Trash2 size={15} />
                         </AdminIconButton>
                       </>

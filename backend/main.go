@@ -257,9 +257,6 @@ func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDepende
 			aiRoutes.POST("/polish", middleware.AuthOptional(cfg), handlers.PolishText)
 			aiRoutes.POST("/models", middleware.AuthOptional(cfg), handlers.ListAiModels)
 
-			// AuthRequired: public model pool is a shared paid resource
-			aiRoutes.GET("/model-pools", middleware.AuthRequired(cfg), handlers.ListPublicModels)
-			aiRoutes.GET("/model-pools/:id/balance", middleware.AuthRequired(cfg), handlers.GetModelBalance)
 		}
 
 		// Share routes (AuthRequired for settings, AuthOptional for public access)
@@ -288,9 +285,6 @@ func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDepende
 		// Document settings routes (public, no auth required)
 		api.GET("/doc-settings", handlers.GetDocSettings)
 
-		// Public changelog (no auth required)
-		api.GET("/changelog", handlers.ListPublishedChangelogs)
-
 		// Admin routes (require JWT + admin role)
 		admin := api.Group("/admin")
 		admin.Use(middleware.AdminRequired(cfg))
@@ -300,35 +294,13 @@ func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDepende
 
 			// User management
 			admin.GET("/users", handlers.ListUsers)
-			admin.GET("/users/:id", handlers.GetUserDetail)
 			admin.PUT("/users/:id/quota", handlers.UpdateUserQuota)
-			admin.PUT("/users/:id/role", handlers.UpdateUserRole)
-			admin.POST("/users/:id/force-logout", handlers.ForceLogoutUser)
 			admin.PUT("/users/:id/reset-password", handlers.ResetUserPassword(cfg))
 			admin.DELETE("/users/:id", handlers.DeleteUser)
 			admin.POST("/users/:id/restore", handlers.RestoreUser)
 			admin.DELETE("/users/:id/permanent", handlers.PermanentlyDeleteUser(cfg))
 			admin.POST("/users/batch-delete", handlers.BatchDeleteUsers)
 
-			// AI Model Pool management
-			admin.GET("/model-pools", handlers.ListModelPoolsAdmin)
-			admin.POST("/model-pools", handlers.CreateModelPool)
-			admin.PUT("/model-pools/:id", handlers.UpdateModelPool)
-			admin.DELETE("/model-pools/:id", handlers.DeleteModelPool)
-			admin.POST("/model-pools/:id/refresh-balance", handlers.GetModelBalance)
-
-			// Changelog management
-			admin.GET("/changelogs", handlers.ListChangelogsAdmin)
-			admin.POST("/changelogs", handlers.CreateChangelog)
-			admin.PUT("/changelogs/:id", handlers.UpdateChangelog)
-			admin.DELETE("/changelogs/:id", handlers.DeleteChangelog)
-
-			// Global AI usage stats
-			admin.GET("/ai-usage", handlers.GetGlobalAIUsage)
-			admin.GET("/ai-usage/users/:id", handlers.GetUserAIUsageDetail)
-
-			// Audit logs
-			admin.GET("/audit-logs", handlers.ListAuditLogs)
 		}
 
 	}

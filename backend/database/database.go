@@ -51,13 +51,12 @@ func Init(cfg *config.Config) {
 	// Note: the database itself must be created manually beforehand.
 	if err := DB.AutoMigrate(
 		&models.User{}, &models.UserPreference{},
-		&models.AIServiceConfig{}, &models.AIModelPool{},
+		&models.AIServiceConfig{},
 		&models.AIUsageLog{},
 		&models.Resume{}, &models.ResumeShare{},
 		&models.StyleLibrary{},
 		&models.UserQuota{}, &models.UserStats{}, &models.UserDailyStats{},
 		&models.DocumentSetting{}, &models.DemoContent{},
-		&models.ChangelogEntry{}, &models.AdminAuditLog{},
 	); err != nil {
 		log.Fatalf("Failed to auto-migrate database: %v", err)
 	}
@@ -65,6 +64,9 @@ func Init(cfg *config.Config) {
 	migrateActiveUserEmailUniqueIndex(DB)
 	dropStyleLibraryDescriptionColumn(DB)
 	dropStyleLibraryCategoryColumn(DB)
+	dropRetiredAdminAuditLogsTable(DB)
+	dropRetiredAIModelPoolSchema(DB)
+	dropRetiredChangelogTable(DB)
 	seedAll()
 	migrateTableComments(DB)
 
@@ -121,6 +123,44 @@ func dropStyleLibraryCategoryColumn(db *gorm.DB) {
 	}
 }
 
+// dropRetiredAdminAuditLogsTable removes storage for the retired audit-log feature.
+func dropRetiredAdminAuditLogsTable(db *gorm.DB) {
+	const table = "admin_audit_logs"
+	if !db.Migrator().HasTable(table) {
+		return
+	}
+	if err := db.Migrator().DropTable(table); err != nil {
+		log.Fatalf("Failed to drop %s: %v", table, err)
+	}
+}
+
+// dropRetiredAIModelPoolSchema removes the shared model pool and source-selection columns.
+func dropRetiredAIModelPoolSchema(db *gorm.DB) {
+	statements := []string{
+		`ALTER TABLE ai_service_config DROP COLUMN IF EXISTS public_model_id`,
+		`ALTER TABLE ai_service_config DROP COLUMN IF EXISTS model_source`,
+		`ALTER TABLE ai_usage_logs DROP COLUMN IF EXISTS public_model_id`,
+		`ALTER TABLE ai_usage_logs DROP COLUMN IF EXISTS model_source`,
+		`DROP TABLE IF EXISTS ai_model_pool`,
+	}
+	for _, statement := range statements {
+		if err := db.Exec(statement).Error; err != nil {
+			log.Fatalf("Failed to remove retired AI model pool schema: %v", err)
+		}
+	}
+}
+
+// dropRetiredChangelogTable removes storage for the retired changelog feature.
+func dropRetiredChangelogTable(db *gorm.DB) {
+	const table = "changelog_entries"
+	if !db.Migrator().HasTable(table) {
+		return
+	}
+	if err := db.Migrator().DropTable(table); err != nil {
+		log.Fatalf("Failed to drop %s: %v", table, err)
+	}
+}
+
 // seedAll runs all table seeders. Each seeder is a no-op when the table already has data.
 func seedAll() {
 	seedStyleLibraries()
@@ -136,7 +176,6 @@ func migrateTableComments(db *gorm.DB) {
 		"user_info":         "用户表",
 		"user_preference":   "用户偏好设置表",
 		"ai_service_config": "AI 服务商配置表",
-		"ai_model_pool":     "公共AI模型池表",
 		"ai_usage_logs":     "AI 用量调用日志表",
 		"user_resumes":      "用户简历表",
 		"style_library":     "样式库表",
@@ -146,8 +185,6 @@ func migrateTableComments(db *gorm.DB) {
 		"doc_settings":      "文档设置表",
 		"resume_shares":     "简历分享配置表",
 		"demo_content":      "示例简历内容表",
-		"changelog_entries": "更新日志条目表",
-		"admin_audit_logs":  "管理员操作审计日志表",
 	}
 
 	for table, comment := range comments {

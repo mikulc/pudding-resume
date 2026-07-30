@@ -4,8 +4,8 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import {
-  LayoutDashboard, Users, Cpu, FileText, BarChart3,
-  Shield, ArrowLeft, LogOut, RefreshCw,
+  LayoutDashboard, Users,
+  ArrowLeft, LogOut, RefreshCw,
   ChevronLeft, ChevronRight, Menu,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -17,7 +17,7 @@ import { useMediaQuery } from '../../hooks/useMediaQuery';
 // Constants
 // ---------------------------------------------------------------------------
 
-const SIDEBAR_FULL_WIDTH = 248;
+const SIDEBAR_FULL_WIDTH = 208;
 const SIDEBAR_ICON_WIDTH = 72;
 const DRAWER_WIDTH = 280;
 const DRAWER_MAX_WIDTH = 'calc(100vw - 48px)';
@@ -36,10 +36,6 @@ interface NavItemDef {
 const navItems: NavItemDef[] = [
   { to: '/admin', icon: LayoutDashboard, key: 'dashboard', end: true },
   { to: '/admin/users', icon: Users, key: 'users' },
-  { to: '/admin/models', icon: Cpu, key: 'models' },
-  { to: '/admin/changelogs', icon: FileText, key: 'changelogs' },
-  { to: '/admin/usage', icon: BarChart3, key: 'usage' },
-  { to: '/admin/audit', icon: Shield, key: 'audit' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -477,10 +473,6 @@ function MobilePageTitle() {
   const routeTitleMap: Record<string, string> = {
     '/admin': t('nav.dashboard'),
     '/admin/users': t('nav.users'),
-    '/admin/models': t('nav.models'),
-    '/admin/changelogs': t('nav.changelogs'),
-    '/admin/usage': t('nav.usage'),
-    '/admin/audit': t('nav.audit'),
   };
 
   return <>{routeTitleMap[location.pathname] ?? ''}</>;

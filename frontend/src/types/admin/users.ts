@@ -15,13 +15,6 @@ export interface AdminUserItem {
   deleted_at: string;
 }
 
-export interface AdminUserDetail extends AdminUserItem {
-  total_resumes_created: number;
-  total_exports: number;
-  total_editing_seconds: number;
-  last_active_at: string;
-}
-
 export interface AdminUserListResponse {
   users: AdminUserItem[];
   total: number;
@@ -35,5 +28,3 @@ export interface UpdateUserQuotaRequest {
   daily_limit_tokens?: number;
   monthly_limit_tokens?: number;
 }
-
-// --- Model Pool ---

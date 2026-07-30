@@ -6,7 +6,6 @@ interface MobileUserCardListProps {
   users: AdminUserItem[];
   loading: boolean;
   hasFilter: boolean;
-  onOpenDetail: (user: AdminUserItem) => void;
   onAction: (action: string, user: AdminUserItem) => void;
   onClearFilter: () => void;
   onLoadMore?: () => void;
@@ -20,7 +19,6 @@ export function MobileUserCardList({
   users,
   loading,
   hasFilter,
-  onOpenDetail,
   onAction,
   onClearFilter,
   onLoadMore,
@@ -92,7 +90,6 @@ export function MobileUserCardList({
           <MobileUserCard
             key={u.id}
             user={u}
-            onOpenDetail={onOpenDetail}
             onAction={onAction}
           />
         ))}

@@ -8,13 +8,9 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const AIUsagePage = lazy(() => import('./pages/AIUsagePage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
-const ChangelogPage = lazy(() => import('./pages/ChangelogPage'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
 const UsersPage = lazy(() => import('./pages/admin/UsersPage'));
-const ModelsPage = lazy(() => import('./pages/admin/ModelsPage'));
-const ChangelogManagePage = lazy(() => import('./pages/admin/ChangelogManagePage'));
-const UsagePage = lazy(() => import('./pages/admin/UsagePage'));
 import { LoginModal } from './components/auth/LoginModal';
 import { RegisterModal } from './components/auth/RegisterModal';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -264,14 +260,9 @@ function App() {
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/ai-usage" element={<AIUsagePage />} />
                 <Route path="/about" element={<AboutPage />} />
-                <Route path="/update" element={<ChangelogPage />} />
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route index element={<DashboardPage />} />
                   <Route path="users" element={<UsersPage />} />
-                  <Route path="models" element={<ModelsPage />} />
-                  <Route path="changelogs" element={<ChangelogManagePage />} />
-                  <Route path="usage" element={<UsagePage />} />
-                  <Route path="audit" element={<UsagePage />} />
                 </Route>
               </Routes>
             </Suspense>

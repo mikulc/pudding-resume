@@ -6,7 +6,6 @@ import (
 	"pudding-resume-backend/database"
 	"pudding-resume-backend/middleware"
 	"pudding-resume-backend/models"
-	"strings"
 	"time"
 )
 
@@ -24,12 +23,6 @@ func recordAIUsage(c *gin.Context, feature string, cfg resolvedAIConfig, usage A
 		log.Printf("[ai_usage] usage unavailable user=%s feature=%s provider=%s model=%s", userID, feature, cfg.Provider, cfg.Model)
 	}
 
-	var publicModelID *string
-	if strings.TrimSpace(cfg.PublicModelID) != "" {
-		id := strings.TrimSpace(cfg.PublicModelID)
-		publicModelID = &id
-	}
-
 	errorMessage := ""
 	if callErr != nil {
 		errorMessage = callErr.Error()
@@ -41,9 +34,7 @@ func recordAIUsage(c *gin.Context, feature string, cfg resolvedAIConfig, usage A
 	logEntry := models.AIUsageLog{
 		UserID:           userID,
 		Feature:          feature,
-		ModelSource:      cfg.ModelSource,
 		Provider:         cfg.Provider,
-		PublicModelID:    publicModelID,
 		Model:            cfg.Model,
 		PromptTokens:     usage.PromptTokens,
 		CompletionTokens: usage.CompletionTokens,

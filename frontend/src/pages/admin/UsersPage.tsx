@@ -4,19 +4,18 @@ import { useTranslation } from 'react-i18next';
 import { useToast } from '../../components/common/Toast';
 import { useConfirm } from '../../components/common/ConfirmModal';
 import {
-  fetchUsers, fetchUserDetail, updateUserQuota, updateUserRole,
-  deleteUser, forceLogoutUser, resetUserPassword, restoreUser, permanentlyDeleteUser,
+  fetchUsers, updateUserQuota,
+  deleteUser, resetUserPassword, restoreUser, permanentlyDeleteUser,
 } from '../../api/admin';
-import type { AdminUserItem, AdminUserDetail } from '../../types/admin';
+import type { AdminUserItem } from '../../types/admin';
 import { Search, X } from 'lucide-react';
 import {
   AdminBadge, AdminButton, AdminInput, AdminModal,
-  AdminPage, AdminPageHeader, AdminSelect,
+  AdminPage, AdminPageHeader,
 } from './adminStyles';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { DesktopUserTable } from './DesktopUserTable';
 import { MobileUserCardList } from './MobileUserCardList';
-import { UserDetailDrawer } from './UserDetailDrawer';
 import { getErrorMessage } from '../../utils/errors';
 
 export default function UsersPage() {
@@ -31,9 +30,6 @@ export default function UsersPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState('all');
-  const [includeDeleted, setIncludeDeleted] = useState(false);
-  const [detailUser, setDetailUser] = useState<AdminUserDetail | null>(null);
   const [quotaModal, setQuotaModal] = useState<{ id: string; username: string } | null>(null);
   const [quotaForm, setQuotaForm] = useState({ max_resumes: '', export_count: '', daily_limit: '', monthly_limit: '' });
   const [passwordModal, setPasswordModal] = useState<{ id: string; username: string } | null>(null);
@@ -44,11 +40,11 @@ export default function UsersPage() {
 
   const load = useCallback(async () => {
     try {
-      const res = await fetchUsers({ page, size: pageSize, search: search || undefined, role: roleFilter, deleted: includeDeleted });
+      const res = await fetchUsers({ page, size: pageSize, search: search || undefined });
       setUsers(res.users);
       setTotal(res.total);
     } catch { /* ignore */ }
-  }, [page, search, roleFilter, includeDeleted]);
+  }, [page, search]);
 
   useEffect(() => {
     if (isLoggedIn && role === 'admin') load();
@@ -71,7 +67,6 @@ export default function UsersPage() {
       await deleteUser(id);
       showToast(t('users.toast.deleted'), 'success');
       load();
-      setDetailUser(null);
     } catch (e: unknown) {
       showToast(getErrorMessage(e, t('users.toast.deleteFailed')), 'error');
     }
@@ -105,78 +100,20 @@ export default function UsersPage() {
       await permanentlyDeleteUser(id);
       showToast(t('users.toast.permanentlyDeleted'), 'success');
       load();
-      setDetailUser(null);
     } catch (e: unknown) {
       showToast(getErrorMessage(e, t('users.toast.permanentDeleteFailed')), 'error');
     }
   };
 
-  const handleRoleChange = async (id: string, username: string, currentRole: string) => {
-    const newRole = currentRole === 'admin' ? 'user' : 'admin';
-    const roleLabel = newRole === 'admin' ? t('users.roleAdmin') : t('users.roleUser');
-    const ok = await confirm({
-      title: t('users.confirm.roleTitle'),
-      message: t('users.confirm.roleMessage', { username, role: roleLabel }),
-      confirmText: t('users.confirm.roleConfirm'),
-    });
-    if (!ok) return;
-    try {
-      await updateUserRole(id, newRole);
-      showToast(t('users.toast.roleUpdated'), 'success');
-      load();
-    } catch (e: unknown) {
-      showToast(getErrorMessage(e, t('users.toast.roleFailed')), 'error');
-    }
-  };
-
-  const handleForceLogout = async (id: string, username: string) => {
-    const ok = await confirm({
-      title: t('users.confirm.logoutTitle'),
-      message: t('users.confirm.logoutMessage', { username }),
-      confirmText: t('users.confirm.logoutConfirm'),
-      confirmVariant: 'danger',
-    });
-    if (!ok) return;
-    try {
-      await forceLogoutUser(id);
-      showToast(t('users.toast.forceLogout'), 'success');
-    } catch (e: unknown) {
-      showToast(getErrorMessage(e, t('users.toast.forceLogoutFailed')), 'error');
-    }
-  };
-
-  const openDetail = async (id: string) => {
-    try {
-      const d = await fetchUserDetail(id);
-      setDetailUser(d);
-    } catch (e: unknown) {
-      showToast(getErrorMessage(e, t('users.toast.detailFailed')), 'error');
-    }
-  };
-
-  // Mobile: open detail from card tap
-  const handleMobileOpenDetail = async (user: AdminUserItem) => {
-    await openDetail(user.id);
-  };
-
   // Mobile: action handler from card menu
   const handleMobileAction = (action: string, user: AdminUserItem) => {
     switch (action) {
-      case 'detail':
-        openDetail(user.id);
-        break;
-      case 'role':
-        handleRoleChange(user.id, user.username, user.role);
-        break;
       case 'quota':
         openQuotaModal(user);
         break;
       case 'password':
         setNewPassword('');
         setPasswordModal({ id: user.id, username: user.username });
-        break;
-      case 'logout':
-        handleForceLogout(user.id, user.username);
         break;
       case 'delete':
         if (user.status !== 'deleted') {
@@ -192,17 +129,14 @@ export default function UsersPage() {
     }
   };
 
-  const openQuotaModal = async (user: AdminUserItem) => {
-    try {
-      const d = await fetchUserDetail(user.id);
-      setQuotaForm({
-        max_resumes: String(d.max_resumes),
-        export_count: String(d.export_count),
-        daily_limit: String(d.daily_limit_tokens),
-        monthly_limit: String(d.monthly_limit_tokens),
-      });
-      setQuotaModal({ id: user.id, username: user.username });
-    } catch { /* fallback */ }
+  const openQuotaModal = (user: AdminUserItem) => {
+    setQuotaForm({
+      max_resumes: String(user.max_resumes),
+      export_count: String(user.export_count),
+      daily_limit: String(user.daily_limit_tokens),
+      monthly_limit: String(user.monthly_limit_tokens),
+    });
+    setQuotaModal({ id: user.id, username: user.username });
   };
 
   const handleQuotaSave = async () => {
@@ -237,7 +171,7 @@ export default function UsersPage() {
     }
   };
 
-  const hasFilter = search !== '' || roleFilter !== 'all' || includeDeleted;
+  const hasFilter = search !== '';
 
   // ---- i18n helpers ----
   const labelUser = t('users.table.user');
@@ -292,23 +226,6 @@ export default function UsersPage() {
             )}
           </div>
 
-          {/* Row 2: Role filter */}
-          <div className="flex items-center gap-3">
-            <AdminSelect
-              value={roleFilter}
-              onChange={value => { setRoleFilter(value); setPage(1); }}
-              options={[
-                { value: 'all', label: t('users.roleAll') },
-                { value: 'user', label: t('users.roleUser') },
-                { value: 'admin', label: t('users.roleAdmin') },
-              ]}
-              className="flex-1"
-            />
-            <label className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-              <input type="checkbox" checked={includeDeleted} onChange={e => { setIncludeDeleted(e.target.checked); setPage(1); }} />
-              {t('users.includeDeleted')}
-            </label>
-          </div>
         </div>
       ) : (
         /* ---- Desktop Toolbar ---- */
@@ -331,19 +248,6 @@ export default function UsersPage() {
               </button>
             )}
           </div>
-          <AdminSelect
-            value={roleFilter}
-            onChange={value => { setRoleFilter(value); setPage(1); }}
-            options={[
-              { value: 'all', label: t('users.roleAll') },
-              { value: 'user', label: t('users.roleUser') },
-              { value: 'admin', label: t('users.roleAdmin') },
-            ]}
-          />
-          <label className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-            <input type="checkbox" checked={includeDeleted} onChange={e => { setIncludeDeleted(e.target.checked); setPage(1); }} />
-            {t('users.includeDeleted')}
-          </label>
         </div>
       )}
 
@@ -353,9 +257,8 @@ export default function UsersPage() {
           users={users}
           loading={false}
           hasFilter={hasFilter}
-          onOpenDetail={handleMobileOpenDetail}
           onAction={handleMobileAction}
-          onClearFilter={() => { setSearch(''); setRoleFilter('all'); setIncludeDeleted(false); }}
+          onClearFilter={() => setSearch('')}
           emptyText={labelEmpty}
           noResultText="没有匹配的用户"
           clearFilterText="清除筛选"
@@ -367,10 +270,7 @@ export default function UsersPage() {
           page={page}
           totalPages={totalPages}
           onSetPage={handlePageChange}
-          onOpenDetail={openDetail}
           onOpenQuota={openQuotaModal}
-          onRoleChange={handleRoleChange}
-          onForceLogout={handleForceLogout}
           onResetPassword={(id, username) => { setPasswordModal({ id, username }); setNewPassword(''); }}
           onDelete={handleDelete}
           onRestore={handleRestore}
@@ -385,127 +285,12 @@ export default function UsersPage() {
           labelDeleted={labelDeleted}
           labelPagination={labelPagination}
           labelEmpty={labelEmpty}
-          tooltipDetail={t('users.tooltip.detail')}
-          tooltipQuota={t('users.tooltip.quota')}
-          tooltipRole={t('users.tooltip.role')}
-          tooltipLogout={t('users.tooltip.forceLogout')}
-          tooltipPassword={t('users.tooltip.resetPassword')}
-          tooltipDelete={t('users.tooltip.delete')}
-          tooltipRestore={t('users.tooltip.restore')}
-          tooltipPermanentDelete={t('users.tooltip.permanentDelete')}
+          actionLabelQuota={t('users.actionLabels.quota')}
+          actionLabelPassword={t('users.actionLabels.resetPassword')}
+          actionLabelDelete={t('users.actionLabels.delete')}
+          actionLabelRestore={t('users.actionLabels.restore')}
+          actionLabelPermanentDelete={t('users.actionLabels.permanentDelete')}
         />
-      )}
-
-      {/* ---- User Detail: Modal (desktop) / Drawer (mobile) ---- */}
-      {isMobile ? (
-        <UserDetailDrawer
-          open={detailUser !== null}
-          user={detailUser}
-          onClose={() => setDetailUser(null)}
-          t={t}
-        />
-      ) : (
-        <AdminModal
-          open={detailUser !== null}
-          onClose={() => setDetailUser(null)}
-          className="max-w-[480px] max-h-[85vh]"
-        >
-          {detailUser && (
-            <>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-slate-800 dark:text-white">
-                  {t('users.detail.title')}
-                </h3>
-                <button
-                  onClick={() => setDetailUser(null)}
-                  className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-3">
-                  {detailUser.avatar ? (
-                    <img
-                      src={detailUser.avatar}
-                      className="w-12 h-12 rounded-full object-cover"
-                      alt=""
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500">
-                      {detailUser.username.charAt(0)}
-                    </div>
-                  )}
-                  <div>
-                    <p className="font-semibold text-slate-800 dark:text-white">
-                      {detailUser.username}
-                    </p>
-                    <p className="text-slate-500">{detailUser.email}</p>
-                  </div>
-                </div>
-                <hr className="dark:border-slate-800" />
-                <InfoRow label={t('users.detail.id')} value={detailUser.id} />
-                <InfoRow label={t('users.detail.role')} value={detailUser.role} />
-                <InfoRow
-                  label={t('users.detail.status')}
-                  value={
-                    detailUser.status === 'active'
-                      ? t('users.detail.statusActive')
-                      : t('users.detail.statusDeleted')
-                  }
-                />
-                <InfoRow
-                  label={t('users.detail.registeredAt')}
-                  value={detailUser.created_at}
-                />
-                <InfoRow
-                  label={t('users.detail.lastLogin')}
-                  value={detailUser.last_login_at || '-'}
-                />
-                <InfoRow
-                  label={t('users.detail.lastActive')}
-                  value={detailUser.last_active_at || '-'}
-                />
-                <InfoRow
-                  label={t('users.detail.resumeCount')}
-                  value={`${detailUser.resume_count} / ${detailUser.max_resumes}`}
-                />
-                <InfoRow
-                  label={t('users.detail.totalResumes')}
-                  value={String(detailUser.total_resumes_created)}
-                />
-                <InfoRow
-                  label={t('users.detail.exportQuota')}
-                  value={`${detailUser.export_count}`}
-                />
-                <InfoRow
-                  label={t('users.detail.totalExports')}
-                  value={String(detailUser.total_exports)}
-                />
-                <InfoRow
-                  label={t('users.detail.editingTime')}
-                  value={`${Math.floor(detailUser.total_editing_seconds / 3600)}h ${Math.floor((detailUser.total_editing_seconds % 3600) / 60)}m`}
-                />
-                <InfoRow
-                  label={t('users.detail.dailyTokenLimit')}
-                  value={
-                    detailUser.daily_limit_tokens
-                      ? detailUser.daily_limit_tokens.toLocaleString()
-                      : t('users.notLimited')
-                  }
-                />
-                <InfoRow
-                  label={t('users.detail.monthlyTokenLimit')}
-                  value={
-                    detailUser.monthly_limit_tokens
-                      ? detailUser.monthly_limit_tokens.toLocaleString()
-                      : t('users.notLimited')
-                  }
-                />
-              </div>
-            </>
-          )}
-        </AdminModal>
       )}
 
       {/* ---- Quota Modal ---- */}
@@ -584,17 +369,6 @@ export default function UsersPage() {
         )}
       </AdminModal>
     </AdminPage>
-  );
-}
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between">
-      <span className="text-slate-500 dark:text-slate-400">{label}</span>
-      <span className="text-slate-800 dark:text-slate-200 font-mono text-xs max-w-[250px] truncate">
-        {value}
-      </span>
-    </div>
   );
 }
 

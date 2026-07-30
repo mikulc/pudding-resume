@@ -64,9 +64,7 @@ func DeactivateAccount(cfg *config.Config) gin.HandlerFunc {
 	}
 }
 
-// permanentlyDeleteUser removes all user-owned data in one transaction. Audit
-// records are intentionally retained because they describe administrator
-// actions and do not participate in account ownership.
+// permanentlyDeleteUser removes all user-owned data in one transaction.
 func permanentlyDeleteUser(tx *gorm.DB, userID string) error {
 	deleteByUserID := []any{
 		&models.ResumeShare{},

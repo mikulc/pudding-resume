@@ -23,7 +23,6 @@ export interface AIUsageModelBreakdown extends AIUsageTotals {
 export interface AIUsageRecord {
   id: string;
   feature: string;
-  model_source: string;
   provider: string;
   model: string;
   prompt_tokens: number;

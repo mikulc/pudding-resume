@@ -7,8 +7,6 @@ let _aiPolishEnabled = true;
 let _aiServiceApiUrl = '';
 let _aiServiceApiKey = '';
 let _aiServiceModel = '';
-let _modelSource = 'public'; // "custom" | "public"
-let _publicModelId = '';
 // Live2D defaults
 let _live2dEnabled = false;
 let _live2dPosition = 'right';
@@ -44,16 +42,6 @@ export function isAiPolishEnabled(): boolean {
 /** Get the user-configured AI service API URL. */
 export function getAiServiceApiUrl(): string {
   return _aiServiceApiUrl;
-}
-
-/** Get the current AI model source ("custom" | "public"). */
-export function getModelSource(): string {
-  return _modelSource;
-}
-
-/** Get the selected public model ID. */
-export function getPublicModelId(): string {
-  return _publicModelId;
 }
 
 /** Get whether Live2D mascot is enabled. */
@@ -191,13 +179,9 @@ export function syncPreferences(profile: UserProfile) {
   _aiServiceApiUrl = profile.ai_service_api_url ?? '';
   _aiServiceApiKey = profile.ai_service_api_key ?? '';
   _aiServiceModel = profile.ai_service_model ?? '';
-  _modelSource = profile.model_source ?? 'public';
-  _publicModelId = profile.public_model_id ?? '';
 
   // 同步 AI 配置到 localStorage，确保 getAIConfig() 能读到最新值
   saveSettings({
-    model_source: _modelSource,
-    public_model_id: _publicModelId,
     ai_service_api_url: _aiServiceApiUrl,
     ai_service_api_key: _aiServiceApiKey,
     ai_service_model: _aiServiceModel,

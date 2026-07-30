@@ -38,7 +38,6 @@ export function AdminStatCard({
   );
 }
 
-
 export function AdminMetricCard({ label, value }: { label: string; value: ReactNode }) {
   return (
     <AdminCard className="p-5">
@@ -47,7 +46,6 @@ export function AdminMetricCard({ label, value }: { label: string; value: ReactN
     </AdminCard>
   );
 }
-
 
 export function AdminChartCard({
   title,

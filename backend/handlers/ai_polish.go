@@ -12,11 +12,9 @@ type PolishRequest struct {
 	Text          string `json:"text" binding:"required"`
 	SectionModule string `json:"section_module,omitempty"`
 	// Optional AI config for unauthenticated users (guest mode)
-	ApiUrl        string `json:"api_url,omitempty"`
-	ApiKey        string `json:"api_key,omitempty"`
-	Model         string `json:"model,omitempty"`
-	ModelSource   string `json:"model_source,omitempty"` // "custom" or "public"
-	PublicModelID string `json:"public_model_id,omitempty"`
+	ApiUrl string `json:"api_url,omitempty"`
+	ApiKey string `json:"api_key,omitempty"`
+	Model  string `json:"model,omitempty"`
 }
 
 type PolishResponse struct {
@@ -61,7 +59,7 @@ func PolishText(c *gin.Context) {
 	}
 
 	// 润色场景使用专用 system prompt，忽略 extractAIConfig 返回的用户自定义 prompt
-	cfg, err := extractAIConfig(c, req.ApiUrl, req.ApiKey, req.Model, req.ModelSource, req.PublicModelID)
+	cfg, err := extractAIConfig(c, req.ApiUrl, req.ApiKey, req.Model)
 	if err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return

@@ -68,39 +68,18 @@ func (UserPreference) TableName() string {
 
 // AIServiceConfig AI 服务商配置表 — 存储用户配置的 AI 模型连接参数
 type AIServiceConfig struct {
-	ID            string    `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:配置记录唯一标识（UUID v4）"`
-	UserID        string    `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
-	ApiUrl        string    `json:"api_url" gorm:"size:512;default:'';comment:AI 模型 API 地址"`
-	ApiKey        string    `json:"api_key" gorm:"size:256;default:'';comment:AI 模型的 API Key"`
-	Model         string    `json:"model" gorm:"size:128;default:'';comment:AI 模型名称"`
-	Prompt        string    `json:"prompt" gorm:"type:text;comment:自定义提示词模板（已弃用）"`
-	ModelSource   string    `json:"model_source" gorm:"size:16;default:public;not null;comment:模型来源(custom/public)"`
-	PublicModelID *string   `json:"public_model_id" gorm:"type:uuid;index;comment:选用的公共模型ID"`
-	CreatedAt     time.Time `json:"created_at" gorm:"comment:创建时间"`
-	UpdatedAt     time.Time `json:"updated_at" gorm:"comment:更新时间"`
+	ID        string    `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:配置记录唯一标识（UUID v4）"`
+	UserID    string    `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
+	ApiUrl    string    `json:"api_url" gorm:"size:512;default:'';comment:AI 模型 API 地址"`
+	ApiKey    string    `json:"api_key" gorm:"size:256;default:'';comment:AI 模型的 API Key"`
+	Model     string    `json:"model" gorm:"size:128;default:'';comment:AI 模型名称"`
+	Prompt    string    `json:"prompt" gorm:"type:text;comment:自定义提示词模板（已弃用）"`
+	CreatedAt time.Time `json:"created_at" gorm:"comment:创建时间"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"comment:更新时间"`
 }
 
 func (AIServiceConfig) TableName() string {
 	return "ai_service_config"
-}
-
-// AIModelPool 公共AI模型池表 — 管理员配置的共享AI模型
-type AIModelPool struct {
-	ID               string     `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:模型记录唯一标识（UUID v4）"`
-	Name             string     `json:"name" gorm:"size:128;not null;comment:模型显示名称"`
-	ApiUrl           string     `json:"api_url" gorm:"size:512;not null;comment:API 地址"`
-	ApiKey           string     `json:"-" gorm:"size:256;not null;comment:API 密钥（不对外暴露）"`
-	Model            string     `json:"model" gorm:"size:128;not null;comment:模型名称"`
-	Balance          float64    `json:"balance" gorm:"type:decimal(12,4);default:0;comment:余额"`
-	BalanceUpdatedAt *time.Time `json:"balance_updated_at" gorm:"comment:余额最后刷新时间"`
-	IsActive         bool       `json:"is_active" gorm:"default:true;not null;index;comment:是否启用"`
-	SortOrder        int        `json:"sort_order" gorm:"default:0;comment:排序权重"`
-	CreatedAt        time.Time  `json:"created_at" gorm:"comment:创建时间"`
-	UpdatedAt        time.Time  `json:"updated_at" gorm:"comment:更新时间"`
-}
-
-func (AIModelPool) TableName() string {
-	return "ai_model_pool"
 }
 
 // UserQuota 用户配额表 — 记录用户的最大简历数、导出次数等配额

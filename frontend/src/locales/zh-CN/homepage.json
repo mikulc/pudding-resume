@@ -131,8 +131,7 @@
     },
     "supportTitle": "了解",
     "support": {
-      "about": "关于本站",
-      "changelog": "更新日志"
+      "about": "关于本站"
     },
     "socialTitle": "关注我们",
     "copyright": "© 2026 布丁简历. All rights reserved.",
@@ -140,4 +139,3 @@
     "securityRecord": "公安备案号：{{record}}"
   }
 }
-

@@ -41,6 +41,5 @@
 @import "./styles/pages/settings.css";
 @import "./styles/features/editor/fields.css";
 @import "./styles/pages/admin.css";
-@import "./styles/pages/changelog.css";
 
 /* Ordered stylesheet entry point. See ./styles/README.md before adding global rules. */

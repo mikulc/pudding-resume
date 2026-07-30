@@ -21,7 +21,7 @@ func AiService(c *gin.Context) {
 		return
 	}
 
-	cfg, err := extractAIConfig(c, req.ApiUrl, req.ApiKey, req.Model, req.ModelSource, req.PublicModelID)
+	cfg, err := extractAIConfig(c, req.ApiUrl, req.ApiKey, req.Model)
 	if err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return

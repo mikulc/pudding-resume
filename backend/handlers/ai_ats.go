@@ -18,11 +18,9 @@ type AtsAnalysisRequest struct {
 	JobDescription string          `json:"job_description" binding:"required"`
 	Language       string          `json:"language,omitempty"`
 	// Optional AI config for unauthenticated users (guest mode)
-	ApiUrl        string `json:"api_url,omitempty"`
-	ApiKey        string `json:"api_key,omitempty"`
-	Model         string `json:"model,omitempty"`
-	ModelSource   string `json:"model_source,omitempty"` // "custom" or "public"
-	PublicModelID string `json:"public_model_id,omitempty"`
+	ApiUrl string `json:"api_url,omitempty"`
+	ApiKey string `json:"api_key,omitempty"`
+	Model  string `json:"model,omitempty"`
 }
 
 type AtsIssue struct {
@@ -218,7 +216,7 @@ func AnalyzeATS(c *gin.Context) {
 		return
 	}
 
-	cfg, err := extractAIConfig(c, req.ApiUrl, req.ApiKey, req.Model, req.ModelSource, req.PublicModelID)
+	cfg, err := extractAIConfig(c, req.ApiUrl, req.ApiKey, req.Model)
 	if err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return

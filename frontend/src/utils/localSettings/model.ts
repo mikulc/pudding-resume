@@ -10,8 +10,6 @@ export interface LocalSettingsPayload {
   ai_service_api_url: string;
   ai_service_api_key: string;
   ai_service_model: string;
-  model_source: string;
-  public_model_id: string;
   live2d_enabled: boolean;
   live2d_position: string;
   live2d_h_offset: number;
@@ -43,8 +41,6 @@ export const DEFAULT_SETTINGS: LocalSettingsPayload = {
   ai_service_api_url: '',
   ai_service_api_key: '',
   ai_service_model: '',
-  model_source: 'public',
-  public_model_id: '',
   live2d_enabled: false,
   live2d_position: 'right',
   live2d_h_offset: 20,

@@ -63,8 +63,6 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
       ai_service_api_url: profile.ai_service_api_url ?? '',
       ai_service_api_key: profile.ai_service_api_key ?? '',
       ai_service_model: profile.ai_service_model ?? '',
-      model_source: profile.model_source ?? 'public',
-      public_model_id: profile.public_model_id ?? '',
       live2d_enabled: profile.live2d_enabled ?? true,
       live2d_position: profile.live2d_position ?? 'right',
       live2d_h_offset: profile.live2d_h_offset ?? 20,
@@ -227,14 +225,14 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
     }
   };
 
-  const aiSettings = useAISettings({ initialSettings, autoSaveInterval, aiPolishEnabled, savePreferences, storageMode, isLoggedIn, profile, setProfile, showToast, t });
+  const aiSettings = useAISettings({ initialSettings, autoSaveInterval, aiPolishEnabled, savePreferences, storageMode, profile, showToast, t });
   const live2dSettings = useLive2dSettings({ initialSettings, profile, storageMode, saveToCloud, showToast, t });
   const localStorageSettings = useLocalStorageSettings({ initialSettings, profile, storageMode, saveToCloud, showToast, t });
   saveFailureHandlerRef.current = () => {
     aiSettings.resetAISettings();
     live2dSettings.resetLive2dSettings();
   };
-  const { publicModelDropdownRef, modelDropdownRef, apiUrlRef, handleApiUrlChange, handleApiKeyChange, handleModelChange, handleFetchModels, handleSelectModel, fetchPublicModels, handleModelSourceChange, handleSelectPublicModel, selectedPublicModel, aiServiceApiUrl, aiServiceApiKey, aiServiceModel, modelSource, publicModelId, publicModels, publicModelsLoading, publicModelDropdownOpen, setPublicModelDropdownOpen, fetchingModels, availableModels, modelDropdownOpen, apiUrlDropdownOpen, setApiUrlDropdownOpen } = aiSettings;
+  const { modelDropdownRef, apiUrlRef, handleApiUrlChange, handleApiKeyChange, handleModelChange, handleFetchModels, handleSelectModel, aiServiceApiUrl, aiServiceApiKey, aiServiceModel, fetchingModels, availableModels, modelDropdownOpen, apiUrlDropdownOpen, setApiUrlDropdownOpen } = aiSettings;
   const { saveLive2dPreferences, handleLive2dToggle, handleLive2dPositionChange, handleLive2dReset, live2dPosition, live2dShowEditor, setLive2dShowEditor, live2dEnabled, live2dMobileShow, setLive2dMobileShow, live2dPointerPassThrough, setLive2dPointerPassThrough, live2dNearbyBehavior, setLive2dNearbyBehavior, live2dPinned, setLive2dPinned, live2dMoreSettingsOpen, setLive2dMoreSettingsOpen } = live2dSettings;
   const { localStoragePath, setLocalStoragePath, selectingDir, fsApiAvailable, saveLocalStoragePreferences, handleSelectDirectory } = localStorageSettings;
 
@@ -286,7 +284,6 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
     isLoggedIn,
     handleSyncConfirm,
     handleSyncCancel,
-    publicModelDropdownRef,
     modelDropdownRef,
     dropdownRef,
     dropdownBtnRef,
@@ -306,10 +303,6 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
     handleLive2dReset,
     handleFetchModels,
     handleSelectModel,
-    fetchPublicModels,
-    handleModelSourceChange,
-    handleSelectPublicModel,
-    selectedPublicModel,
     intervalOptions,
     themeModeOptions,
     syncModalOpen,
@@ -320,12 +313,6 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
     aiServiceApiUrl,
     aiServiceApiKey,
     aiServiceModel,
-    modelSource,
-    publicModelId,
-    publicModels,
-    publicModelsLoading,
-    publicModelDropdownOpen,
-    setPublicModelDropdownOpen,
     live2dPosition,
     live2dShowEditor,
     setLive2dShowEditor,

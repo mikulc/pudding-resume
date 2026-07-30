@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import {
-  MoreHorizontal, Eye, Shield, SlidersHorizontal,
-  Key, LogOut, Trash2, RotateCcw,
+  MoreHorizontal, SlidersHorizontal,
+  Key, Trash2, RotateCcw,
 } from 'lucide-react';
 import type { AdminUserItem } from '../../types/admin';
 import { AdminBadge } from './adminStyles';
@@ -10,13 +10,11 @@ import { cn } from './adminStyles';
 
 interface MobileUserCardProps {
   user: AdminUserItem;
-  onOpenDetail: (user: AdminUserItem) => void;
   onAction: (action: string, user: AdminUserItem) => void;
 }
 
 export function MobileUserCard({
   user,
-  onOpenDetail,
   onAction,
 }: MobileUserCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -42,7 +40,6 @@ export function MobileUserCard({
         'transition-[background-color] [transition-duration:140ms]',
         'dark:border-slate-800 dark:bg-slate-900',
       )}
-      onClick={() => onOpenDetail(user)}
     >
       {/* Row 1: Avatar + Username + Role + More */}
       <div className="flex items-center gap-3 min-w-0">
@@ -89,13 +86,10 @@ export function MobileUserCard({
                   className="absolute right-0 top-full mt-1 z-40 w-44 rounded-[14px] border border-[#E9EDF3] bg-white p-1.5 shadow-[0_10px_30px_rgba(15,23,42,0.10),0_2px_8px_rgba(15,23,42,0.06)] dark:border-slate-700 dark:bg-slate-900"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <MenuItem icon={<Eye size={15} />} label="查看详情" onClick={() => handleActionClick('detail')} />
                   {user.status !== 'deleted' && (
                     <>
-                      <MenuItem icon={<Shield size={15} />} label="修改角色" onClick={() => handleActionClick('role')} />
                       <MenuItem icon={<SlidersHorizontal size={15} />} label="修改配额" onClick={() => handleActionClick('quota')} />
                       <MenuItem icon={<Key size={15} />} label="重置密码" onClick={() => handleActionClick('password')} />
-                      <MenuItem icon={<LogOut size={15} />} label="强制下线" onClick={() => handleActionClick('logout')} />
                     </>
                   )}
                   <div className="my-1 border-t border-[#F1F5F9] dark:border-slate-800" />

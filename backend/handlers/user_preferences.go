@@ -37,13 +37,6 @@ func GetPreferences(c *gin.Context) {
 		"ai_service_api_key": aifc.ApiKey,
 		"ai_service_model":   aifc.Model,
 		"ai_service_prompt":  aifc.Prompt,
-		"model_source":       aifc.ModelSource,
-		"public_model_id": func() string {
-			if aifc.PublicModelID != nil {
-				return *aifc.PublicModelID
-			}
-			return ""
-		}(),
 		"live2d_enabled":     pref.Live2dEnabled,
 		"live2d_position":    pref.Live2dPosition,
 		"live2d_h_offset":    pref.Live2dHOffset,
@@ -139,33 +132,6 @@ func UpdatePreferences(c *gin.Context) {
 
 	if req.AiServicePrompt != nil {
 		aiUpdates["prompt"] = *req.AiServicePrompt
-	}
-
-	if req.ModelSource != nil {
-		// Validate: only "custom" or "public"
-		if *req.ModelSource != "custom" && *req.ModelSource != "public" {
-			respondError(c, http.StatusBadRequest, "模型来源仅支持 custom 或 public")
-			return
-		}
-		aiUpdates["model_source"] = *req.ModelSource
-	}
-
-	if req.PublicModelID != nil {
-		if *req.PublicModelID == "" {
-			aiUpdates["public_model_id"] = nil
-		} else {
-			// Validate the public model exists and is active
-			var pool models.AIModelPool
-			if err := database.DB.Where("id = ? AND is_active = true", *req.PublicModelID).First(&pool).Error; err != nil {
-				if errors.Is(err, gorm.ErrRecordNotFound) {
-					respondError(c, http.StatusBadRequest, "所选公共模型不存在或已禁用")
-				} else {
-					respondError(c, http.StatusInternalServerError, "服务器内部错误")
-				}
-				return
-			}
-			aiUpdates["public_model_id"] = *req.PublicModelID
-		}
 	}
 
 	if req.Live2dEnabled != nil {
@@ -318,18 +284,6 @@ func UpdatePreferences(c *gin.Context) {
 						aifc.Model = v.(string)
 					case "prompt":
 						aifc.Prompt = v.(string)
-					case "model_source":
-						aifc.ModelSource = v.(string)
-					case "public_model_id":
-						if v == nil {
-							aifc.PublicModelID = nil
-						} else if sid, ok := v.(string); ok {
-							if sid == "" {
-								aifc.PublicModelID = nil
-							} else {
-								aifc.PublicModelID = &sid
-							}
-						}
 					}
 				}
 				if err := database.DB.Create(&aifc).Error; err != nil {
@@ -363,13 +317,6 @@ func UpdatePreferences(c *gin.Context) {
 		"ai_service_api_key": aifc.ApiKey,
 		"ai_service_model":   aifc.Model,
 		"ai_service_prompt":  aifc.Prompt,
-		"model_source":       aifc.ModelSource,
-		"public_model_id": func() string {
-			if aifc.PublicModelID != nil {
-				return *aifc.PublicModelID
-			}
-			return ""
-		}(),
 		"live2d_enabled":     pref.Live2dEnabled,
 		"live2d_position":    pref.Live2dPosition,
 		"live2d_h_offset":    pref.Live2dHOffset,

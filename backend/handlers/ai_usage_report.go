@@ -244,7 +244,6 @@ func listRecentAIUsage(userID string, page int, pageSize int, filters aiUsageQue
 		records = append(records, aiUsageRecord{
 			ID:               item.ID,
 			Feature:          item.Feature,
-			ModelSource:      item.ModelSource,
 			Provider:         item.Provider,
 			Model:            item.Model,
 			PromptTokens:     item.PromptTokens,

@@ -20,103 +20,40 @@ type ListAiModelsResponse struct {
 
 // ListAiModelsRequest 获取模型列表的可选请求体（未认证用户需传入 AI 配置）。
 type ListAiModelsRequest struct {
-	ApiUrl        string `json:"api_url,omitempty"`
-	ApiKey        string `json:"api_key,omitempty"`
-	ModelSource   string `json:"model_source,omitempty"`
-	PublicModelID string `json:"public_model_id,omitempty"`
+	ApiUrl string `json:"api_url,omitempty"`
+	ApiKey string `json:"api_key,omitempty"`
 }
 
-// ListAiModels handles POST /api/ai/models (AuthOptional)
-// 代理调用用户配置的 API 的 /models 端点，返回可用模型列表。
-// 支持公共模型模式：如果用户选择了公共模型，则查询公共模型的 API。
+// ListAiModels proxies the configured OpenAI-compatible /models endpoint.
 func ListAiModels(c *gin.Context) {
 	userID := middleware.GetUserID(c)
 	var req ListAiModelsRequest
-	c.ShouldBindJSON(&req)
+	_ = c.ShouldBindJSON(&req)
 	req.ApiUrl = strings.TrimSpace(req.ApiUrl)
 	req.ApiKey = strings.TrimSpace(req.ApiKey)
-	req.ModelSource = strings.TrimSpace(req.ModelSource)
-	req.PublicModelID = strings.TrimSpace(req.PublicModelID)
 
-	if req.ModelSource == "public" {
-		if userID == "" {
-			respondError(c, http.StatusBadRequest, "公共模型需要登录后使用")
-			return
-		}
-		apiUrl, apiKey, _, err := resolvePublicAIModel(req.PublicModelID)
-		if err != nil {
-			respondError(c, http.StatusBadRequest, err.Error())
-			return
-		}
-
-		models, err := fetchModelList(apiUrl, apiKey)
-		if err != nil {
-			respondError(c, http.StatusInternalServerError, fmt.Sprintf("获取模型列表失败: %v", err))
-			return
-		}
-
-		c.JSON(http.StatusOK, ListAiModelsResponse{Models: models})
-		return
-	}
-
-	if req.ModelSource == "custom" || req.ApiUrl != "" || req.ApiKey != "" {
-		if err := validateCustomAIConfig(req.ApiUrl, req.ApiKey, "", false); err != nil {
-			respondError(c, http.StatusBadRequest, err.Error())
-			return
-		}
-
-		models, err := fetchModelList(req.ApiUrl, req.ApiKey)
-		if err != nil {
-			respondError(c, http.StatusInternalServerError, fmt.Sprintf("获取模型列表失败: %v", err))
-			return
-		}
-
-		c.JSON(http.StatusOK, ListAiModelsResponse{Models: models})
-		return
-	}
-
-	if userID != "" {
-		// ── 已认证：从数据库读取 ──
-		var aifc models.AIServiceConfig
-		if err := database.DB.Where("user_id = ?", userID).First(&aifc).Error; err != nil {
+	apiURL := req.ApiUrl
+	apiKey := req.ApiKey
+	if apiURL == "" && apiKey == "" && userID != "" {
+		var config models.AIServiceConfig
+		if err := database.DB.Where("user_id = ?", userID).First(&config).Error; err != nil {
 			respondError(c, http.StatusInternalServerError, "服务器内部错误")
 			return
 		}
-
-		var apiUrl, apiKey string
-
-		if aifc.ModelSource == "public" {
-			publicModelID := ""
-			if aifc.PublicModelID != nil {
-				publicModelID = *aifc.PublicModelID
-			}
-			var err error
-			apiUrl, apiKey, _, err = resolvePublicAIModel(publicModelID)
-			if err != nil {
-				respondError(c, http.StatusBadRequest, err.Error())
-				return
-			}
-		} else {
-			if err := validateCustomAIConfig(aifc.ApiUrl, aifc.ApiKey, "", false); err != nil {
-				respondError(c, http.StatusBadRequest, err.Error())
-				return
-			}
-			apiUrl = aifc.ApiUrl
-			apiKey = aifc.ApiKey
-		}
-
-		models, err := fetchModelList(apiUrl, apiKey)
-		if err != nil {
-			respondError(c, http.StatusInternalServerError, fmt.Sprintf("获取模型列表失败: %v", err))
-			return
-		}
-
-		c.JSON(http.StatusOK, ListAiModelsResponse{Models: models})
-		return
+		apiURL = config.ApiUrl
+		apiKey = config.ApiKey
 	}
 
-	// ── 未认证：从请求体读取 AI 配置 ──
-	respondError(c, http.StatusBadRequest, "请先配置 API 地址")
+	if err := validateCustomAIConfig(apiURL, apiKey, "", false); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	models, err := fetchModelList(apiURL, apiKey)
+	if err != nil {
+		respondError(c, http.StatusInternalServerError, fmt.Sprintf("获取模型列表失败: %v", err))
+		return
+	}
+	c.JSON(http.StatusOK, ListAiModelsResponse{Models: models})
 }
 
 // fetchModelList 调用 OpenAI-compatible GET /models 接口获取可用模型 ID 列表。
@@ -180,5 +117,3 @@ func fetchModelList(apiBaseURL, apiKey string) ([]string, error) {
 
 	return modelIDs, nil
 }
-
-// --- 公共模型查询 API ---

@@ -131,8 +131,7 @@
     },
     "supportTitle": "Explore",
     "support": {
-      "about": "About",
-      "changelog": "Changelog"
+      "about": "About"
     },
     "socialTitle": "Follow us",
     "copyright": "© 2026 Pudding Resume. All rights reserved.",
@@ -140,4 +139,3 @@
     "securityRecord": "Public Security Record: {{record}}"
   }
 }
-
