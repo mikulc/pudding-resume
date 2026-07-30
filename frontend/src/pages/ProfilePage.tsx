@@ -40,7 +40,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-[var(--bg-page)] text-[#111827] transition-colors duration-200 dark:text-slate-50">
       {/* ========== Header ========== */}
       <header className="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-[var(--bg-header)] backdrop-blur-xl dark:border-white/5">
-        <div className="relative mx-auto flex h-14 w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:h-[60px] sm:px-6">
+        <div className="relative mx-auto flex h-14 w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:h-[60px] sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
           <LogoIcon asBrand onClick={() => navigate('/')} />
           <div className="flex items-center gap-2">
             <NavbarAuth />
@@ -51,7 +51,7 @@ export default function ProfilePage() {
 
       {/* ========== Main Content ========== */}
       <main className="pb-16 pt-20 sm:pt-24">
-        <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6" data-global-toolbar-content>
+        <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]" data-global-toolbar-content>
           {/* Page title with back button */}
           <div className="mb-7 sm:mb-8">
             {/* Back button — mobile */}

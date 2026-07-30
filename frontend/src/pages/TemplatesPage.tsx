@@ -142,7 +142,7 @@ export default function TemplatesPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-page)] text-gray-900 flex flex-col theme-color-transition">
       <header className="fixed top-0 inset-x-0 z-50 bg-[var(--bg-header)] backdrop-blur-xl border-b border-gray-100 theme-color-transition">
-        <div className="relative mx-auto flex h-14 w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:h-[60px] sm:px-6">
+        <div className="relative mx-auto flex h-14 w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:h-[60px] sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
           <LogoIcon asBrand onClick={() => navigate('/')} />
           <div className="flex items-center gap-2">
             <NavbarAuth />
@@ -169,7 +169,7 @@ export default function TemplatesPage() {
         ) : (
           <div className="flex-1 flex flex-col min-h-0">
             <div className="flex-shrink-0">
-              <div className="max-w-[1360px] mx-auto px-6 pb-4 pt-8">
+              <div className="mx-auto w-full max-w-[1360px] px-6 pb-4 pt-8 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2.5">
                     <h1 className="text-[28px] font-bold leading-[1.2] tracking-[-0.02em] text-gray-900">
@@ -204,7 +204,7 @@ export default function TemplatesPage() {
             </div>
 
             <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
-              <div className="max-w-[1360px] mx-auto px-6 py-6" data-global-toolbar-content>
+              <div className="mx-auto w-full max-w-[1360px] px-6 py-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]" data-global-toolbar-content>
                 {filteredEntries.length === 0 ? (
                   <div className="flex min-h-[360px] flex-col items-center justify-center text-gray-400">
                     <p className="text-sm">{t('templatesPage.empty')}</p>

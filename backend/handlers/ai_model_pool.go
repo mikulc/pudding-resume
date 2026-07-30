@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"pudding-resume-backend/database"
 	"pudding-resume-backend/models"
-	"time"
 )
 
 // PublicModelItem 用户端可见的公共模型信息（不含 API Key）
@@ -41,44 +40,6 @@ func ListPublicModels(c *gin.Context) {
 			Model:            pools[i].Model,
 			Balance:          pools[i].Balance,
 			BalanceUpdatedAt: formatBalanceTime(pools[i].BalanceUpdatedAt),
-			SortOrder:        pools[i].SortOrder,
-		})
-	}
-
-	c.JSON(http.StatusOK, ListPublicModelsResponse{Models: result})
-}
-
-// RefreshPublicModelBalances handles POST /api/ai/model-pools/balances/refresh (requires auth)
-// Refreshes balances for all DeepSeek models in the pool and returns updated list.
-func RefreshPublicModelBalances(c *gin.Context) {
-	var pools []models.AIModelPool
-	if err := database.DB.Where("is_active = true").Order("sort_order ASC, created_at DESC").Find(&pools).Error; err != nil {
-		respondError(c, http.StatusInternalServerError, "查询公共模型列表失败")
-		return
-	}
-
-	now := time.Now()
-	result := make([]PublicModelItem, 0, len(pools))
-	for i := range pools {
-		balance := pools[i].Balance
-		balanceUpdatedAt := formatBalanceTime(pools[i].BalanceUpdatedAt)
-		// Auto-refresh DeepSeek balances
-		if isDeepSeekModel(pools[i].ApiUrl) {
-			if fresh, err := fetchDeepSeekBalance(pools[i].ApiKey); err == nil {
-				balance = fresh
-				balanceUpdatedAt = now.Format("2006-01-02 15:04:05")
-				database.DB.Model(&pools[i]).Updates(map[string]any{
-					"balance":            fresh,
-					"balance_updated_at": now,
-				})
-			}
-		}
-		result = append(result, PublicModelItem{
-			ID:               pools[i].ID,
-			Name:             pools[i].Name,
-			Model:            pools[i].Model,
-			Balance:          balance,
-			BalanceUpdatedAt: balanceUpdatedAt,
 			SortOrder:        pools[i].SortOrder,
 		})
 	}

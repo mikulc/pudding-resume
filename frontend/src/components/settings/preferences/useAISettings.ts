@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { TFunction } from 'i18next';
 import { useOutsideClick } from '../../../hooks/useOutsideClick';
 import { api } from '../../../utils/api';
-import { fetchAiModels, fetchPublicModels as fetchPublicModelsApi, refreshPublicModelBalances } from '../../../api/ai';
+import { fetchAiModels, fetchPublicModels as fetchPublicModelsApi } from '../../../api/ai';
 import { getAIConfig, saveAIConfig, validateAIConfig } from '../../../utils/aiConfig';
 import { saveSettings } from '../../../utils/localSettings';
 import type { UserProfile } from '../../../types/auth';
@@ -130,23 +130,6 @@ export function useAISettings({
     }
   }, [showToast, t]);
 
-  const refreshBalances = useCallback(async () => {
-    if (!publicModelId) {
-      showToast(t('aiService.selectModelFirst'), 'info');
-      return;
-    }
-    setPublicModelsLoading(true);
-    try {
-      const res = await refreshPublicModelBalances();
-      setPublicModels(res.models);
-      showToast(t('aiService.balanceRefreshed'), 'success');
-    } catch (err: unknown) {
-      showToast(err instanceof Error ? err.message : t('aiService.refreshBalanceFailed'), 'error');
-    } finally {
-      setPublicModelsLoading(false);
-    }
-  }, [publicModelId, showToast, t]);
-
   useEffect(() => {
     if (modelSource === 'public') void fetchPublicModels();
   }, [fetchPublicModels, modelSource]);
@@ -213,7 +196,7 @@ export function useAISettings({
     availableModels, modelDropdownOpen, apiUrlDropdownOpen, setApiUrlDropdownOpen,
     publicModelDropdownRef, modelDropdownRef, apiUrlRef,
     handleApiUrlChange, handleApiKeyChange, handleModelChange, handleFetchModels, handleSelectModel,
-    fetchPublicModels, refreshBalances, handleModelSourceChange, handleSelectPublicModel,
+    fetchPublicModels, handleModelSourceChange, handleSelectPublicModel,
     resetAISettings,
     selectedPublicModel: publicModels.find((model) => model.id === publicModelId),
   };

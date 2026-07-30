@@ -170,11 +170,6 @@ export function fetchPublicModels(): Promise<PublicModelListResponse> {
   return api.get<PublicModelListResponse>('/api/ai/model-pools');
 }
 
-/** Refresh balances for all DeepSeek public models and return updated list */
-export function refreshPublicModelBalances(): Promise<PublicModelListResponse> {
-  return api.post('/api/ai/model-pools/balances/refresh', {});
-}
-
 /** Callbacks for streaming AI diagnosis progress */
 export interface DiagnosisStreamCallbacks {
   onProgress: (text: string) => void;

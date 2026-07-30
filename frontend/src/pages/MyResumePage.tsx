@@ -43,7 +43,7 @@ export default function MyResumePage() {
     <div className="min-h-screen bg-[var(--bg-page)] text-gray-900 flex flex-col theme-color-transition">
       {/* ========== Header ========== */}
       <header className="fixed top-0 inset-x-0 z-50 bg-[var(--bg-header)] backdrop-blur-xl border-b border-gray-100 theme-color-transition">
-        <div className="relative mx-auto flex h-14 w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:h-[60px] sm:px-6">
+        <div className="relative mx-auto flex h-14 w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:h-[60px] sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
           <LogoIcon asBrand onClick={() => navigate('/')} />
           <div className="flex items-center gap-2">
             <NavbarAuth settingsShortcut={{ label: t('list.settings'), onClick: openSettings }} />
@@ -86,7 +86,7 @@ export default function MyResumePage() {
             <div className="flex-shrink-0">
               {/* Local Storage Hint Card 鈥?only for non-logged-in users without local storage */}
               {showHintCard && (
-                <div className="max-w-[1360px] mx-auto px-6 pt-5">
+                <div className="mx-auto w-full max-w-[1360px] px-6 pt-5 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
                   <div className="rounded-xl border border-orange-100 bg-gradient-to-r from-orange-50 to-amber-50/60 px-4 py-2.5 flex items-center gap-3">
                     <HardDrive className="w-4 h-4 text-orange-400 flex-shrink-0" />
                     <span className="flex-1 text-xs text-gray-600 truncate">{t('list.localStorageHint')}</span>
@@ -100,7 +100,7 @@ export default function MyResumePage() {
                 </div>
               )}
               <div
-                className={`mx-auto flex max-w-[1360px] flex-col gap-4 px-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 ${showHintCard ? 'pt-4' : 'pt-8'}`}
+                className={`mx-auto flex w-full max-w-[1360px] flex-col gap-4 px-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)] ${showHintCard ? 'pt-4' : 'pt-8'}`}
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2.5">
@@ -128,7 +128,7 @@ export default function MyResumePage() {
               onScroll={handleResumeListScroll}
               onWheel={handleResumeListWheel}
             >
-              <div className="max-w-[1360px] mx-auto px-6 pb-6 pt-6" data-global-toolbar-content>
+              <div className="mx-auto w-full max-w-[1360px] px-6 pb-6 pt-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]" data-global-toolbar-content>
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6">
                   {/* New Resume Card 鈥?always shown */}
                   <button

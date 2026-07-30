@@ -260,7 +260,6 @@ func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDepende
 			// AuthRequired: public model pool is a shared paid resource
 			aiRoutes.GET("/model-pools", middleware.AuthRequired(cfg), handlers.ListPublicModels)
 			aiRoutes.GET("/model-pools/:id/balance", middleware.AuthRequired(cfg), handlers.GetModelBalance)
-			aiRoutes.POST("/model-pools/balances/refresh", middleware.AuthRequired(cfg), handlers.RefreshPublicModelBalances)
 		}
 
 		// Share routes (AuthRequired for settings, AuthOptional for public access)

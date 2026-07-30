@@ -234,7 +234,7 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
     aiSettings.resetAISettings();
     live2dSettings.resetLive2dSettings();
   };
-  const { publicModelDropdownRef, modelDropdownRef, apiUrlRef, handleApiUrlChange, handleApiKeyChange, handleModelChange, handleFetchModels, handleSelectModel, fetchPublicModels, refreshBalances, handleModelSourceChange, handleSelectPublicModel, selectedPublicModel, aiServiceApiUrl, aiServiceApiKey, aiServiceModel, modelSource, publicModelId, publicModels, publicModelsLoading, publicModelDropdownOpen, setPublicModelDropdownOpen, fetchingModels, availableModels, modelDropdownOpen, apiUrlDropdownOpen, setApiUrlDropdownOpen } = aiSettings;
+  const { publicModelDropdownRef, modelDropdownRef, apiUrlRef, handleApiUrlChange, handleApiKeyChange, handleModelChange, handleFetchModels, handleSelectModel, fetchPublicModels, handleModelSourceChange, handleSelectPublicModel, selectedPublicModel, aiServiceApiUrl, aiServiceApiKey, aiServiceModel, modelSource, publicModelId, publicModels, publicModelsLoading, publicModelDropdownOpen, setPublicModelDropdownOpen, fetchingModels, availableModels, modelDropdownOpen, apiUrlDropdownOpen, setApiUrlDropdownOpen } = aiSettings;
   const { saveLive2dPreferences, handleLive2dToggle, handleLive2dPositionChange, handleLive2dReset, live2dPosition, live2dShowEditor, setLive2dShowEditor, live2dEnabled, live2dMobileShow, setLive2dMobileShow, live2dPointerPassThrough, setLive2dPointerPassThrough, live2dNearbyBehavior, setLive2dNearbyBehavior, live2dPinned, setLive2dPinned, live2dMoreSettingsOpen, setLive2dMoreSettingsOpen } = live2dSettings;
   const { localStoragePath, setLocalStoragePath, selectingDir, fsApiAvailable, saveLocalStoragePreferences, handleSelectDirectory } = localStorageSettings;
 
@@ -307,7 +307,6 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
     handleFetchModels,
     handleSelectModel,
     fetchPublicModels,
-    refreshBalances,
     handleModelSourceChange,
     handleSelectPublicModel,
     selectedPublicModel,

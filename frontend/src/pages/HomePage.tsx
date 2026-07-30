@@ -38,8 +38,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen [overflow-x:clip] bg-[var(--bg-page)] text-gray-950 transition-colors duration-300 dark:text-slate-50">
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-gray-200/40 bg-[var(--bg-header)]/90 backdrop-blur-xl transition-colors duration-300 dark:border-white/5">
-        <div className="relative mx-auto flex h-[60px] w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:px-6">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-gray-200/40 bg-[#f7f9fe] transition-colors duration-300 dark:border-white/5 dark:bg-[#17191d]">
+        <div className="relative mx-auto flex h-[60px] w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
           <LogoIcon asBrand onClick={() => navigate(getDefaultLocalePath(currentLocale))} />
           <div className="flex items-center gap-2">
             <NavbarAuth />
@@ -49,7 +49,7 @@ export default function HomePage() {
       </header>
 
       <section className="hero-shell relative min-h-[calc(100dvh-60px)] [overflow-x:clip] pb-14 pt-20 sm:pt-24 lg:pb-8 lg:pt-[60px]">
-        <div className="mx-auto grid min-h-[calc(100dvh-60px)] w-full max-w-[1360px] items-center gap-12 px-5 sm:px-6 lg:grid-cols-[44fr_56fr] lg:gap-10 xl:gap-16">
+        <div className="mx-auto grid min-h-[calc(100dvh-60px)] w-full max-w-[1360px] items-center gap-12 px-5 sm:px-6 lg:w-[calc(100%-3rem)] lg:grid-cols-[44fr_56fr] lg:gap-10 xl:w-[calc(100%-5rem)] xl:gap-16">
           <div className="relative z-10 max-w-[560px] text-left">
             <div className="mb-6 inline-flex h-8 max-w-full animate-fade-in-up items-center gap-2 rounded-full border border-blue-100 bg-white/80 px-3 text-[13px] font-medium text-slate-600 shadow-[0_5px_16px_rgba(15,23,42,0.035)] transition-colors duration-300 dark:border-white/10 dark:bg-white/[0.06] dark:text-slate-300">
               <FileText className="h-4 w-4 shrink-0 text-gray-500 dark:text-slate-400" />
@@ -65,7 +65,7 @@ export default function HomePage() {
               {t('hero.subtitle')}
             </p>
 
-            <div className="mt-8 flex w-full animate-fade-in-up flex-col gap-3 min-[390px]:flex-row" style={{ animationDelay: '0.28s' }}>
+            <div className="mt-8 flex w-full animate-fade-in-up flex-col gap-3 sm:flex-row" style={{ animationDelay: '0.28s' }}>
               <button
                 type="button"
                 onClick={handleStart}
@@ -234,4 +234,3 @@ export default function HomePage() {
     </div>
   );
 }
-

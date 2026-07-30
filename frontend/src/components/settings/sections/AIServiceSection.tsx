@@ -17,7 +17,6 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
     handleFetchModels,
     handleSelectModel,
     fetchPublicModels,
-    refreshBalances,
     handleModelSourceChange,
     handleSelectPublicModel,
     selectedPublicModel,
@@ -94,15 +93,9 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                     {t('aiService.customModel')}
                   </button>
                 </div>
-                {!isLoggedIn ? (
+                {!isLoggedIn && (
                   <p className="text-xs text-amber-500 mt-1.5">
                     {t('aiService.publicModelLoginHint')}
-                  </p>
-                ) : (
-                  <p className="text-xs text-gray-400 mt-1.5">
-                    {modelSource === 'public'
-                      ? t('aiService.publicModelDesc')
-                      : t('aiService.customModelDesc')}
                   </p>
                 )}
               </div>
@@ -187,36 +180,6 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                     )}
                   </div>
 
-                  {/* Refresh public models button */}
-                  <div className="flex items-center justify-between mt-1.5">
-                    <div className="flex items-center gap-2">
-                      <p className="text-xs text-gray-400">
-                        {selectedPublicModel
-                          ? t('aiService.currentBalance', { balance: selectedPublicModel.balance > 0 ? selectedPublicModel.balance.toFixed(2) : '-.--' })
-                          : t('aiService.selectPublicModelForService')}
-                      </p>
-                      {selectedPublicModel?.balance_updated_at && (
-                        <span className="text-[10px] text-gray-300">
-                          {t('aiService.lastRefreshed', { time: selectedPublicModel.balance_updated_at })}
-                        </span>
-                      )}
-                    </div>
-                    {selectedPublicModel && (
-                      <button
-                        type="button"
-                        onClick={refreshBalances}
-                        disabled={publicModelsLoading}
-                        className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-gray-400 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-50 transition-all dark:hover:bg-[#fbbf24]/10 dark:hover:text-[#fbbf24]"
-                      >
-                        {publicModelsLoading ? (
-                          <Loader2 className="w-3 h-3 animate-spin" />
-                        ) : (
-                          <RefreshCw className="w-3 h-3" />
-                        )}
-                        {t('aiService.refresh')}
-                      </button>
-                    )}
-                  </div>
                 </div>
               )}
 
@@ -282,9 +245,6 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                     })}
                   </div>
                 </div>
-                <p className="text-xs text-gray-400 mt-1.5">
-                  {t('aiService.apiUrlDesc')}
-                </p>
               </div>
 
               <div>
@@ -299,9 +259,6 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                   placeholder="sk-..."
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors dark:focus:ring-[#fbbf24]/30 dark:focus:border-[#fbbf24]"
                 />
-                <p className="text-xs text-gray-400 mt-1.5">
-                  {t('aiService.apiKeyDesc')}<span className="text-blue-500 hover:text-blue-600 cursor-pointer transition-colors dark:text-[#fbbf24] dark:hover:text-[#f59e0b]">{t('aiService.apiKeyHelpLink')}</span>
-                </p>
               </div>
 
               <div>
@@ -352,9 +309,6 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                     {t('aiService.fetchModels')}
                   </button>
                 </div>
-                <p className="text-xs text-gray-400 mt-1.5">
-                  {t('aiService.fetchModelsHelp')}<a href="#" className="text-blue-500 hover:text-blue-600 ml-0.5 dark:text-[#fbbf24] dark:hover:text-[#f59e0b]">{t('aiService.officialDocs')}</a>
-                </p>
               </div>
 
               </>
