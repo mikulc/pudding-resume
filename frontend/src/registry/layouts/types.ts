@@ -21,7 +21,7 @@ export interface ThemeSignature {
  * CSS 片段、默认颜色、图标映射和行为声明。
  */
 export interface LayoutDefinition {
-  /** 布局唯一标识（如 'cyanblu'、'ordrin'），对应后端 style_library.layout_id */
+  /** 布局唯一标识（如 'cyanblu'、'ordrin'），对应后端 theme_library.layout_id */
   id: string;
   /** i18n key for layout display name */
   nameKey: string;

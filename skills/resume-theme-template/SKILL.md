@@ -1,6 +1,6 @@
 ---
 name: resume-theme-template
-description: Add or modify resume theme templates in this pudding-resume project. Use when the user asks to create a new resume theme/layout, match a reference image, adjust template preview/export styling, or wire a layout into the frontend registry and backend style library.
+description: Add or modify resume themes in this pudding-resume project. Use when the user asks to create a new resume theme/layout, match a reference image, adjust preview/export styling, or wire a layout into the frontend registry and backend theme library.
 ---
 
 # Resume Theme Template
@@ -12,7 +12,7 @@ description: Add or modify resume theme templates in this pudding-resume project
 3. Define the layout's `signature` and initial `previewVersion` in its `LayoutDefinition`.
 4. Register the export in `frontend/src/registry/layouts/index.ts`.
 5. Add `templateNames.<camelKey>` in both resume locale files.
-6. Add a `models.StyleLibrary` entry in `backend/database/seed.go`.
+6. Add a `models.ThemeLibrary` entry in `backend/database/seed_themes.go`.
 7. Add the layout default color in `seedDocSettings()` -> `layout_default_colors`.
 8. Run validation commands and search for the new ID/name.
 
@@ -79,7 +79,7 @@ previewVersion: '1',
 
 ## Backend Seed
 
-In `seedStyleLibraries()`, add one row with `Name`, `Description`, `LayoutID`, `Category`, `Highlights`, `PreviewColors`, and `SortOrder`.
+In `seedThemeLibraries()`, add one `models.ThemeLibrary` row with `Name`, visual `Categories`, `LayoutID`, `Highlights`, `PreviewColors`, and `SortOrder`. Theme categories describe appearance (for example 简约、商务、双栏); industry and position metadata belongs in `template_library`.
 
 In `seedDocSettings()`, add a default color:
 
@@ -109,7 +109,7 @@ go test ./...
 Confirm integration:
 
 ```powershell
-rg -n "classic-horizontal|classicHorizontal|经典横线" frontend/src backend/database/seed.go
+rg -n "classic-horizontal|classicHorizontal|缁忓吀妯嚎" frontend/src backend/database/seed.go
 ```
 
 Confirm the new layout definition contains both `signature` and `previewVersion`. Switch to it once and verify the canvas, theme name, active badge, fingerprint, and theme color update together.

@@ -18,7 +18,7 @@ import i18n from '../../utils/i18n';
  * 新增布局只需：
  * 1. 创建 `registry/layouts/creative.ts`，导出 `LayoutDefinition`
  * 2. 在此处导入并注册
- * 3. 在后端 `style_library` 表插入对应元数据记录
+ * 3. 在后端 `theme_library` 表插入对应元数据记录
  */
 export const layoutRegistry: Record<string, LayoutDefinition> = {
   [skyveilLayout.id]: skyveilLayout,

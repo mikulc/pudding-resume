@@ -626,6 +626,7 @@
   },
   "themePicker": {
     "all": "All",
+    "count": "{{count}} themes",
     "loading": "Loading themes...",
     "empty": "No themes available",
     "emptyCategory": "No themes in this category",

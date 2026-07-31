@@ -47,6 +47,8 @@ func Init(cfg *config.Config) {
 		log.Fatalf("Failed to connect to PostgreSQL: %v", err)
 	}
 
+	migrateStyleLibraryTable(DB)
+
 	// Auto-migrate: GORM will create tables if they don't exist.
 	// Note: the database itself must be created manually beforehand.
 	if err := DB.AutoMigrate(
@@ -54,7 +56,7 @@ func Init(cfg *config.Config) {
 		&models.AIServiceConfig{},
 		&models.AIUsageLog{},
 		&models.Resume{}, &models.ResumeShare{},
-		&models.StyleLibrary{},
+		&models.ThemeLibrary{}, &models.TemplateLibrary{},
 		&models.UserQuota{}, &models.UserStats{}, &models.UserDailyStats{},
 		&models.DocumentSetting{}, &models.DemoContent{},
 	); err != nil {
@@ -62,8 +64,8 @@ func Init(cfg *config.Config) {
 	}
 
 	migrateActiveUserEmailUniqueIndex(DB)
-	dropStyleLibraryDescriptionColumn(DB)
-	dropStyleLibraryCategoryColumn(DB)
+	dropThemeLibraryDescriptionColumn(DB)
+	dropThemeLibraryLegacyCategoryColumn(DB)
 	dropRetiredAdminAuditLogsTable(DB)
 	dropRetiredAIModelPoolSchema(DB)
 	dropRetiredChangelogTable(DB)
@@ -101,25 +103,36 @@ func activeUserEmailIndexMigrationStatements() []string {
 	}
 }
 
-// dropStyleLibraryDescriptionColumn removes the retired template description
-// field from existing databases. GORM AutoMigrate keeps obsolete columns.
-func dropStyleLibraryDescriptionColumn(db *gorm.DB) {
-	if !db.Migrator().HasColumn(&models.StyleLibrary{}, "description") {
+// migrateStyleLibraryTable preserves existing installations while adopting the
+// clearer theme_library domain name.
+func migrateStyleLibraryTable(db *gorm.DB) {
+	if !db.Migrator().HasTable("style_library") || db.Migrator().HasTable("theme_library") {
 		return
 	}
-	if err := db.Migrator().DropColumn(&models.StyleLibrary{}, "description"); err != nil {
-		log.Fatalf("Failed to drop style_library.description: %v", err)
+	if err := db.Migrator().RenameTable("style_library", "theme_library"); err != nil {
+		log.Fatalf("Failed to rename style_library to theme_library: %v", err)
 	}
 }
 
-// dropStyleLibraryCategoryColumn removes the old single-value category field.
-// Template categories are now stored as a JSON array in style_library.categories.
-func dropStyleLibraryCategoryColumn(db *gorm.DB) {
-	if !db.Migrator().HasColumn(&models.StyleLibrary{}, "category") {
+// dropThemeLibraryDescriptionColumn removes the retired template description
+// field from existing databases. GORM AutoMigrate keeps obsolete columns.
+func dropThemeLibraryDescriptionColumn(db *gorm.DB) {
+	if !db.Migrator().HasColumn(&models.ThemeLibrary{}, "description") {
 		return
 	}
-	if err := db.Migrator().DropColumn(&models.StyleLibrary{}, "category"); err != nil {
-		log.Fatalf("Failed to drop style_library.category: %v", err)
+	if err := db.Migrator().DropColumn(&models.ThemeLibrary{}, "description"); err != nil {
+		log.Fatalf("Failed to drop theme_library.description: %v", err)
+	}
+}
+
+// dropThemeLibraryLegacyCategoryColumn removes the retired single-value field.
+// theme_library.categories now stores visual classifications as a JSON array.
+func dropThemeLibraryLegacyCategoryColumn(db *gorm.DB) {
+	if !db.Migrator().HasColumn(&models.ThemeLibrary{}, "category") {
+		return
+	}
+	if err := db.Migrator().DropColumn(&models.ThemeLibrary{}, "category"); err != nil {
+		log.Fatalf("Failed to drop theme_library.category: %v", err)
 	}
 }
 
@@ -163,9 +176,10 @@ func dropRetiredChangelogTable(db *gorm.DB) {
 
 // seedAll runs all table seeders. Each seeder is a no-op when the table already has data.
 func seedAll() {
-	seedStyleLibraries()
+	seedThemeLibraries()
 	seedDocSettings()
 	seedDemoContent()
+	seedTemplateLibraries()
 	migrateBundledAvatarURLs()
 }
 
@@ -178,7 +192,8 @@ func migrateTableComments(db *gorm.DB) {
 		"ai_service_config": "AI 服务商配置表",
 		"ai_usage_logs":     "AI 用量调用日志表",
 		"user_resumes":      "用户简历表",
-		"style_library":     "样式库表",
+		"theme_library":     "简历主题库表",
+		"template_library":  "行业简历模板库表",
 		"user_quota":        "用户配额表",
 		"user_stats":        "用户统计表",
 		"user_daily_stats":  "每日统计表",

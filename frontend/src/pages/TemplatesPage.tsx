@@ -13,12 +13,14 @@ import {
 } from '../components/preview/ResumeCardPreview';
 import { EmptyResumePreview } from '../components/preview/ResumePreviewSkeleton';
 import {
-  ALL_THEME_CATEGORY,
   buildResumePreviewTheme,
-  deriveCategories,
-  filterResumeThemeEntries,
-  useResumeThemeLibrary,
 } from '../components/layout/ResumeThemePicker';
+import {
+  ALL_TEMPLATE_CATEGORY,
+  deriveTemplateCategories,
+  filterResumeTemplates,
+  useResumeTemplateLibrary,
+} from '../components/template/ResumeTemplateLibrary';
 import { createResume, setResumeCache } from '../api/resumes';
 import { getAuthToken } from '../utils/api';
 import { isLocalStorageEnabled } from '../context/AuthContext';
@@ -30,8 +32,8 @@ import {
   stageLocalResumeLaunch,
 } from '../utils/resumeLaunch';
 import { createEmptyResumeData, createInitialThemeSettings } from '../utils/resumeDraft';
-import { getLayoutDefaultColor, getLayoutName } from '../registry/layouts';
-import type { StyleLibraryEntry } from '../types/resume';
+import { getLayoutDefaultColor } from '../registry/layouts';
+import type { TemplateLibraryEntry } from '../types/resume';
 import { lockModalScroll } from '../utils/modalScrollLock';
 
 export default function TemplatesPage() {
@@ -39,14 +41,14 @@ export default function TemplatesPage() {
   const { t } = useTranslation('resume');
   const { showToast } = useToast();
   const [creatingLayoutId, setCreatingLayoutId] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState(ALL_THEME_CATEGORY);
-  const [previewEntry, setPreviewEntry] = useState<StyleLibraryEntry | null>(null);
+  const [activeCategory, setActiveCategory] = useState(ALL_TEMPLATE_CATEGORY);
+  const [previewEntry, setPreviewEntry] = useState<TemplateLibraryEntry | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const { entries, demoContent, loading } = useResumeThemeLibrary(!creatingLayoutId);
+  const { entries, loading } = useResumeTemplateLibrary(!creatingLayoutId);
 
-  const categories = useMemo(() => deriveCategories(entries), [entries]);
+  const categories = useMemo(() => deriveTemplateCategories(entries), [entries]);
   const filteredEntries = useMemo(
-    () => filterResumeThemeEntries(entries, activeCategory),
+    () => filterResumeTemplates(entries, activeCategory),
     [entries, activeCategory],
   );
   const previewIndex = useMemo(
@@ -84,14 +86,14 @@ export default function TemplatesPage() {
     };
   }, [navigatePreview, previewEntry]);
 
-  const handleCreateFromTemplate = useCallback(async (entry: StyleLibraryEntry) => {
+  const handleCreateFromTemplate = useCallback(async (entry: TemplateLibraryEntry) => {
     if (creatingLayoutId) return;
 
     clearResumeLaunchSession();
 
-    const layoutId = entry.layoutId;
-    const themeColor = entry.previewColors?.accentBar || getLayoutDefaultColor(layoutId);
-    const resumeData = demoContent ?? createEmptyResumeData();
+    const layoutId = entry.defaultTheme.layoutId;
+    const themeColor = entry.defaultTheme.previewColors?.accentBar || getLayoutDefaultColor(layoutId);
+    const resumeData = entry.content ?? createEmptyResumeData();
     const settings = createInitialThemeSettings(layoutId, themeColor);
     const resumeName = t('templatesPage.untitledResume');
 
@@ -130,14 +132,14 @@ export default function TemplatesPage() {
         return;
       }
 
-      stageDraftResumeLaunch({ layoutId, themeColor, templateData: demoContent ?? undefined });
+      stageDraftResumeLaunch({ layoutId, themeColor, templateData: entry.content });
       navigate('/resume');
     } catch (error) {
       const message = error instanceof Error ? error.message : t('templatesPage.saveFailed');
       showToast(message, 'error');
       setCreatingLayoutId(null);
     }
-  }, [creatingLayoutId, demoContent, navigate, showToast, t]);
+  }, [creatingLayoutId, navigate, showToast, t]);
 
   return (
     <div className="min-h-screen bg-[var(--bg-page)] text-gray-900 flex flex-col theme-color-transition">
@@ -194,7 +196,7 @@ export default function TemplatesPage() {
                           : 'text-gray-800 hover:bg-[#2248ff] hover:text-white dark:text-[color:var(--text-secondary)] dark:hover:bg-[#fbbf24] dark:hover:text-[#17191d]'
                         }`}
                     >
-                      {cat === ALL_THEME_CATEGORY
+                      {cat === ALL_TEMPLATE_CATEGORY
                         ? t('templatesPage.categories.all')
                         : t(`templatesPage.categories.${cat}`, { defaultValue: cat })}
                     </button>
@@ -212,7 +214,7 @@ export default function TemplatesPage() {
                 ) : (
                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6">
                     {filteredEntries.map((entry) => {
-                      const previewTheme = buildResumePreviewTheme(entry);
+                      const previewTheme = buildResumePreviewTheme(entry.defaultTheme);
 
                       return (
                         <div key={entry.id} className="relative group w-full">
@@ -224,9 +226,9 @@ export default function TemplatesPage() {
 
                             <div className="resume-grid-card-preview absolute inset-0 z-0 h-full w-full block bg-white overflow-hidden">
                               <div className="resume-grid-card-preview-surface absolute inset-0 bg-gray-100">
-                                {demoContent ? (
+                                {entry.content ? (
                                   <LazyResumeCardPreview
-                                    content={demoContent}
+                                    content={entry.content}
                                     theme={previewTheme}
                                     scrollRootRef={scrollContainerRef}
                                   />
@@ -245,7 +247,7 @@ export default function TemplatesPage() {
                                   {entry.name}
                                 </h3>
                                 <span className="flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100/70 text-slate-500 text-[10px] font-medium border border-slate-200/70">
-                                  {getLayoutName(entry.layoutId)}
+                                  {entry.industry}
                                 </span>
                               </div>
                               <div className="pointer-events-auto absolute inset-0 flex translate-y-0 items-center gap-2 p-2 opacity-100 transition-all duration-200 sm:pointer-events-none sm:translate-y-1 sm:opacity-0 sm:group-hover:pointer-events-auto sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:group-focus-within:pointer-events-auto sm:group-focus-within:translate-y-0 sm:group-focus-within:opacity-100">
@@ -313,10 +315,10 @@ export default function TemplatesPage() {
 
               <div className="flex min-h-0 flex-1 items-start justify-center overflow-auto bg-slate-100/80 p-4 sm:p-5 dark:bg-black/15">
                 <div className="relative aspect-[210/297] h-full max-h-full max-w-full overflow-hidden rounded-md bg-white shadow-[0_14px_45px_rgba(15,23,42,0.16)]">
-                  {demoContent ? (
+                  {previewEntry.content ? (
                     <ResumeCardPreview
-                      content={demoContent}
-                      theme={buildResumePreviewTheme(previewEntry)}
+                      content={previewEntry.content}
+                      theme={buildResumePreviewTheme(previewEntry.defaultTheme)}
                     />
                   ) : (
                     <EmptyResumePreview />

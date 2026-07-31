@@ -1,12 +1,12 @@
 /**
- * Template API client — fetches style library data from backend.
+ * Public API client for the separate template and theme libraries.
  * All endpoints are public (no auth required).
  */
-import type { StyleLibraryEntry, ResumeData } from '../types/resume';
+import type { ResumeData, TemplateLibraryEntry, ThemeLibraryEntry } from '../types/resume';
 import { api } from '../utils/api';
 
-/** Backend JSON format for style library entries */
-interface ApiStyleLibrary {
+/** Backend JSON format for theme library entries */
+interface ApiThemeLibrary {
   id: string;
   name: string;
   layout_id: string;
@@ -23,10 +23,20 @@ interface ApiStyleLibrary {
   sort_order: number;
 }
 
-/** Get all style library entries */
-export async function getStyleLibraries(): Promise<StyleLibraryEntry[]> {
-  const res = await api.get<{ templates: ApiStyleLibrary[] }>('/api/templates/styles');
-  return (res.templates || []).map((t) => ({
+interface ApiTemplateLibrary {
+  id: string;
+  name: string;
+  industry: string;
+  categories: string[];
+  highlights: string[];
+  content: ResumeData;
+  default_theme_id: string;
+  default_theme: ApiThemeLibrary;
+  version: number;
+}
+
+function mapTheme(t: ApiThemeLibrary): ThemeLibraryEntry {
+  return {
     id: t.id,
     name: t.name,
     highlights: t.highlights || [],
@@ -35,6 +45,28 @@ export async function getStyleLibraries(): Promise<StyleLibraryEntry[]> {
     previewColors: t.preview_colors || { headerBg: '#DBEAFE', accentBar: '#3B82F6', bodyBg: '#FFFFFF' },
     previewImage: t.preview_image,
     previewVersion: t.preview_version,
+  };
+}
+
+/** Get all visual themes used by the resume editor. */
+export async function getThemeLibraries(): Promise<ThemeLibraryEntry[]> {
+  const res = await api.get<{ themes: ApiThemeLibrary[] }>('/api/themes');
+  return (res.themes || []).map(mapTheme);
+}
+
+/** Get all industry/position resume templates. */
+export async function getTemplateLibraries(): Promise<TemplateLibraryEntry[]> {
+  const res = await api.get<{ templates: ApiTemplateLibrary[] }>('/api/templates');
+  return (res.templates || []).map((template) => ({
+    id: template.id,
+    name: template.name,
+    industry: template.industry,
+    categories: template.categories || [],
+    highlights: template.highlights || [],
+    content: template.content,
+    defaultThemeId: template.default_theme_id,
+    defaultTheme: mapTheme(template.default_theme),
+    version: template.version,
   }));
 }
 

@@ -626,6 +626,7 @@
   },
   "themePicker": {
     "all": "全部",
+    "count": "{{count}} \u6b3e",
     "loading": "加载主题中...",
     "empty": "暂无可用主题",
     "emptyCategory": "暂无该分类的主题",

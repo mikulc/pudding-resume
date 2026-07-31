@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight, FileText, Loader2, X } from 'lucide-react';
 import { DEFAULT_LAYOUT_ID } from '../../config/defaults';
 import { getLayoutDefaultColor } from '../../registry/layouts';
-import { ResumeThemeCards, useResumeThemeLibrary } from '../layout/ResumeThemePicker';
+import { buildResumePreviewTheme } from '../layout/ResumeThemePicker';
+import { useResumeTemplateLibrary } from '../template/ResumeTemplateLibrary';
+import { ResumeCardPreview } from '../preview/ResumeCardPreview';
 import { getAuthToken } from '../../utils/api';
 import { createResume, setResumeCache } from '../../api/resumes';
 import { createEmptyResumeData, createInitialThemeSettings } from '../../utils/resumeDraft';
@@ -32,7 +34,7 @@ export function CreateResumeModal({ open, onClose }: CreateResumeModalProps) {
   const { t } = useTranslation('resume');
   const { showToast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
-  const { entries, demoContent, loading } = useResumeThemeLibrary(open && !isCreating);
+  const { entries, loading } = useResumeTemplateLibrary(open && !isCreating);
 
   useEffect(() => {
     if (open) setIsCreating(false);
@@ -58,20 +60,20 @@ export function CreateResumeModal({ open, onClose }: CreateResumeModalProps) {
     if (!isCreating) onClose();
   }, [isCreating, onClose]);
 
-  const handleCreate = useCallback(async (targetMode: CreationMode, explicitLayoutId?: string) => {
+  const handleCreate = useCallback(async (targetMode: CreationMode, templateId?: string) => {
     if (isCreating) return;
 
-    const layoutId = targetMode === 'template'
-      ? explicitLayoutId
-      : DEFAULT_LAYOUT_ID;
+    const template = targetMode === 'template'
+      ? entries.find((entry) => entry.id === templateId)
+      : undefined;
+    const layoutId = template?.defaultTheme.layoutId ?? DEFAULT_LAYOUT_ID;
 
     if (!layoutId) return;
 
     clearResumeLaunchSession();
 
-    const themeEntry = entries.find((entry) => entry.layoutId === layoutId);
-    const themeColor = themeEntry?.previewColors?.accentBar || getLayoutDefaultColor(layoutId);
-    const resumeData = targetMode === 'template' && demoContent ? demoContent : createEmptyResumeData();
+    const themeColor = template?.defaultTheme.previewColors?.accentBar || getLayoutDefaultColor(layoutId);
+    const resumeData = template?.content ?? createEmptyResumeData();
     const settings = createInitialThemeSettings(layoutId, themeColor);
     const resumeName = t('list.unnamedResume');
 
@@ -113,7 +115,7 @@ export function CreateResumeModal({ open, onClose }: CreateResumeModalProps) {
       stageDraftResumeLaunch({
         layoutId,
         themeColor,
-        templateData: targetMode === 'template' ? demoContent ?? undefined : undefined,
+        templateData: template?.content,
       });
       navigate('/resume');
     } catch (error) {
@@ -121,7 +123,7 @@ export function CreateResumeModal({ open, onClose }: CreateResumeModalProps) {
       showToast(message, 'error');
       setIsCreating(false);
     }
-  }, [demoContent, entries, isCreating, navigate, showToast, t]);
+  }, [entries, isCreating, navigate, showToast, t]);
 
   if (!open) return null;
 
@@ -199,18 +201,39 @@ export function CreateResumeModal({ open, onClose }: CreateResumeModalProps) {
             </div>
 
             <div className="create-resume-scrollbar -mx-1 overflow-visible px-1 pb-2">
-              <ResumeThemeCards
-                entries={entries}
-                demoContent={demoContent}
-                loading={loading}
-                selectedLayoutId={null}
-                onSelect={(layoutId) => handleCreate('template', layoutId)}
-                gridClassName="grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-3 md:grid-cols-[repeat(auto-fit,320px)]"
-                loadingClassName="min-h-[240px]"
-                emptyText={t('create.fromTemplate.empty')}
-                cardClassName="rounded-[22px] border border-slate-200/60 bg-white shadow-[0_4px_20px_rgba(15,23,42,0.04)] dark:border-[rgba(145,152,161,0.14)] dark:bg-[color:var(--bg-card)] dark:shadow-[0_4px_20px_rgba(23,25,29,0.22)]"
-                compact
-              />
+              {loading ? (
+                <div className="flex min-h-[240px] items-center justify-center text-gray-400">
+                  <Loader2 className="h-7 w-7 animate-spin text-[#3B82F6]" />
+                </div>
+              ) : entries.length === 0 ? (
+                <div className="flex min-h-[240px] items-center justify-center text-sm text-gray-400">
+                  {t('create.fromTemplate.empty')}
+                </div>
+              ) : (
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-3 md:grid-cols-[repeat(auto-fit,320px)]">
+                  {entries.map((entry) => (
+                    <button
+                      key={`${entry.id}-${entry.version}`}
+                      type="button"
+                      onClick={() => handleCreate('template', entry.id)}
+                      className="resume-grid-card overflow-hidden rounded-[22px] border border-slate-200/60 bg-white text-left shadow-[0_4px_20px_rgba(15,23,42,0.04)] dark:border-[rgba(145,152,161,0.14)] dark:bg-[color:var(--bg-card)]"
+                    >
+                      <div className="relative aspect-[4/5] overflow-hidden bg-gray-100">
+                        <ResumeCardPreview
+                          content={entry.content}
+                          theme={buildResumePreviewTheme(entry.defaultTheme)}
+                        />
+                      </div>
+                      <div className="border-t border-gray-50 p-3">
+                        <h4 className="truncate text-sm font-bold text-gray-900 dark:text-gray-100">
+                          {entry.name}
+                        </h4>
+                        <p className="mt-1 truncate text-xs text-gray-500">{entry.industry}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
         </div>

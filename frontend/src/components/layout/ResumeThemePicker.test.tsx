@@ -2,12 +2,11 @@ import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import {
   ALL_THEME_CATEGORY,
-  RESUME_TEMPLATE_CATEGORIES,
   ResumeThemeCards,
-  deriveCategories,
+  deriveThemeCategories,
   filterResumeThemeEntries,
 } from './ResumeThemePicker';
-import type { StyleLibraryEntry } from '../../types/resume';
+import type { ThemeLibraryEntry } from '../../types/resume';
 
 vi.mock('react-i18next', async (importOriginal) => ({
   ...await importOriginal<typeof import('react-i18next')>(),
@@ -16,12 +15,12 @@ vi.mock('react-i18next', async (importOriginal) => ({
   }),
 }));
 
-const entry: StyleLibraryEntry = {
+const entry: ThemeLibraryEntry = {
   id: 'classic-horizontal',
-  name: '浅蓝通栏',
+  name: '现代极简',
   highlights: ['清爽通栏'],
   layoutId: 'classic-horizontal',
-  categories: ['互联网通用', '前端开发', '校招'],
+  categories: ['简约', '商务', '单栏'],
   previewColors: {
     headerBg: '#dbeafe',
     accentBar: '#3b82f6',
@@ -44,16 +43,18 @@ describe('ResumeThemeCards', () => {
     expect(container.querySelector('[data-resume-skeleton]')).not.toBeNull();
   });
 
-  it('exposes only the product-defined template categories in the expected order', () => {
-    expect(deriveCategories([entry])).toEqual([
+  it('derives available visual categories in product order', () => {
+    expect(deriveThemeCategories([entry])).toEqual([
       ALL_THEME_CATEGORY,
-      ...RESUME_TEMPLATE_CATEGORIES,
+      '简约',
+      '商务',
+      '单栏',
     ]);
   });
 
-  it('allows one template to appear in multiple categories', () => {
-    expect(filterResumeThemeEntries([entry], '前端开发')).toEqual([entry]);
-    expect(filterResumeThemeEntries([entry], '校招')).toEqual([entry]);
-    expect(filterResumeThemeEntries([entry], '后端开发')).toEqual([]);
+  it('filters themes by visual category', () => {
+    expect(filterResumeThemeEntries([entry], ALL_THEME_CATEGORY)).toEqual([entry]);
+    expect(filterResumeThemeEntries([entry], '商务')).toEqual([entry]);
+    expect(filterResumeThemeEntries([entry], '双栏')).toEqual([]);
   });
 });

@@ -3,7 +3,7 @@ import type { ThemeSettings } from './theme';
 
 export type LayoutId = string;
 
-export interface StyleLibraryEntry {
+export interface ThemeLibraryEntry {
   id: string;
   name: string;
   highlights: string[];
@@ -13,9 +13,22 @@ export interface StyleLibraryEntry {
     headerBg: string;
     accentBar: string;
     bodyBg: string;
+    sectionBg?: string;
   };
   previewImage?: string;
   previewVersion?: string;
+}
+
+export interface TemplateLibraryEntry {
+  id: string;
+  name: string;
+  industry: string;
+  categories: string[];
+  highlights: string[];
+  content: ResumeData;
+  defaultThemeId: string;
+  defaultTheme: ThemeLibraryEntry;
+  version: number;
 }
 
 export type SaveStatusType = 'saved' | 'unsaved' | 'saving' | 'error';

@@ -275,10 +275,11 @@ func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDepende
 		// Font file routes (public)
 		api.GET("/font-files/:file", handlers.GetFontFile(cfg))
 
-		// Template routes (public, no auth required)
+		// Theme and template routes (public, no auth required)
+		api.GET("/themes", handlers.GetThemeLibraries)
 		templates := api.Group("/templates")
 		{
-			templates.GET("/styles", handlers.GetStyleLibraries)
+			templates.GET("", handlers.GetTemplateLibraries)
 			templates.GET("/demo-content", handlers.GetDemoContent)
 		}
 

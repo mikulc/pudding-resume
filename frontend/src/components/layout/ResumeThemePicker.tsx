@@ -1,33 +1,32 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Loader2 } from 'lucide-react';
-import { getDemoContent, getStyleLibraries } from '../../api/templates';
+import { getDemoContent, getThemeLibraries } from '../../api/templates';
 import { ResumeCardPreview } from '../preview/ResumeCardPreview';
 import { EmptyResumePreview } from '../preview/ResumePreviewSkeleton';
-import type { ResumeData, StyleLibraryEntry, ThemeSettings } from '../../types/resume';
+import type { ResumeData, ThemeLibraryEntry, ThemeSettings } from '../../types/resume';
 import { createInitialThemeSettings } from '../../utils/resumeDraft';
 import { resolveLayout } from '../../registry/layouts';
 
 export const ALL_THEME_CATEGORY = '__all__';
 
-export const RESUME_TEMPLATE_CATEGORIES = [
-  '互联网通用',
-  '前端开发',
-  '后端开发',
-  'Golang',
-  'Java',
-  'C++',
-  '校招',
-  '实习',
-  '社招',
-] as const;
+const THEME_CATEGORY_ORDER = ['简约', '商务', '现代', '单栏', '双栏', '创意', '清新', '经典', '图标'];
 
-/** Return the product-defined category order instead of deriving stale database values. */
-export function deriveCategories(_entries: StyleLibraryEntry[]): string[] {
-  return [ALL_THEME_CATEGORY, ...RESUME_TEMPLATE_CATEGORIES];
+export function deriveThemeCategories(entries: ThemeLibraryEntry[]): string[] {
+  const available = new Set(entries.flatMap((entry) => entry.categories));
+  const ordered = THEME_CATEGORY_ORDER.filter((category) => available.delete(category));
+  return [ALL_THEME_CATEGORY, ...ordered, ...Array.from(available).sort()];
 }
 
-export function buildResumePreviewTheme(entry: StyleLibraryEntry): ThemeSettings {
+export function filterResumeThemeEntries(
+  entries: ThemeLibraryEntry[],
+  activeCategory: string,
+): ThemeLibraryEntry[] {
+  if (activeCategory === ALL_THEME_CATEGORY) return entries;
+  return entries.filter((entry) => entry.categories.includes(activeCategory));
+}
+
+export function buildResumePreviewTheme(entry: ThemeLibraryEntry): ThemeSettings {
   const theme = createInitialThemeSettings(entry.layoutId, entry.previewColors?.accentBar);
 
   return {
@@ -39,16 +38,8 @@ export function buildResumePreviewTheme(entry: StyleLibraryEntry): ThemeSettings
   };
 }
 
-export function filterResumeThemeEntries(
-  entries: StyleLibraryEntry[],
-  activeCategory: string,
-): StyleLibraryEntry[] {
-  if (activeCategory === ALL_THEME_CATEGORY) return entries;
-  return entries.filter((entry) => entry.categories.includes(activeCategory));
-}
-
 interface ResumeThemeLibraryData {
-  entries: StyleLibraryEntry[];
+  entries: ThemeLibraryEntry[];
   demoContent: ResumeData | null;
 }
 
@@ -79,14 +70,14 @@ function loadResumeThemeLibrary(): Promise<ResumeThemeLibraryData> {
   if (cached) return Promise.resolve(cached);
 
   if (!resumeThemeLibraryRequest) {
-    resumeThemeLibraryRequest = Promise.allSettled([getStyleLibraries(), getDemoContent()])
-      .then(([styleResult, demoResult]) => {
+    resumeThemeLibraryRequest = Promise.allSettled([getThemeLibraries(), getDemoContent()])
+      .then(([themeResult, demoResult]) => {
         const library = {
-          entries: styleResult.status === 'fulfilled' ? styleResult.value : [],
+          entries: themeResult.status === 'fulfilled' ? themeResult.value : [],
           demoContent: demoResult.status === 'fulfilled' ? demoResult.value : null,
         };
 
-        if (styleResult.status === 'fulfilled') {
+        if (themeResult.status === 'fulfilled') {
           resumeThemeLibraryCache = {
             ...library,
             cachedAt: Date.now(),
@@ -105,7 +96,7 @@ function loadResumeThemeLibrary(): Promise<ResumeThemeLibraryData> {
 
 export function useResumeThemeLibrary(enabled: boolean) {
   const cached = readResumeThemeLibraryCache();
-  const [entries, setEntries] = useState<StyleLibraryEntry[]>(() => cached?.entries ?? []);
+  const [entries, setEntries] = useState<ThemeLibraryEntry[]>(() => cached?.entries ?? []);
   const [demoContent, setDemoContent] = useState<ResumeData | null>(() => cached?.demoContent ?? null);
   const [loading, setLoading] = useState(() => enabled && !cached);
 
@@ -141,7 +132,7 @@ export function useResumeThemeLibrary(enabled: boolean) {
 }
 
 interface ResumeThemeCardsProps {
-  entries: StyleLibraryEntry[];
+  entries: ThemeLibraryEntry[];
   demoContent: ResumeData | null;
   loading: boolean;
   selectedLayoutId: string | null;
