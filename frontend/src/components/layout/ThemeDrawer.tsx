@@ -9,21 +9,23 @@ import {
   ResumeThemeCards,
   useResumeThemeLibrary,
 } from './ResumeThemePicker';
+import type { ResumeData } from '../../types/resume';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   currentLayoutId: string;
+  content: ResumeData;
   onApply: (layoutId: string) => Promise<void>;
 }
 
-export function ThemeDrawer({ open, onClose, currentLayoutId, onApply }: Props) {
+export function ThemeDrawer({ open, onClose, currentLayoutId, content, onApply }: Props) {
   const { t } = useTranslation(['editor', 'common']);
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [activeCategory, setActiveCategory] = useState(ALL_THEME_CATEGORY);
   const [applyingLayoutId, setApplyingLayoutId] = useState<string | null>(null);
-  const { entries, demoContent, loading } = useResumeThemeLibrary(open);
+  const { entries, loading } = useResumeThemeLibrary(open);
   const applyingRef = useRef(false);
 
   useEffect(() => {
@@ -142,7 +144,7 @@ export function ThemeDrawer({ open, onClose, currentLayoutId, onApply }: Props) 
         <div className="flex-1 overflow-y-auto overflow-x-hidden px-5 py-4 hide-scrollbar">
           <ResumeThemeCards
             entries={filteredEntries}
-            demoContent={demoContent}
+            content={content}
             loading={loading}
             selectedLayoutId={currentLayoutId}
             currentLayoutId={currentLayoutId}

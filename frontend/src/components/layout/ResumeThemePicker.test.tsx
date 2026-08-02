@@ -7,6 +7,7 @@ import {
   filterResumeThemeEntries,
 } from './ResumeThemePicker';
 import type { ThemeLibraryEntry } from '../../types/resume';
+import { createEmptyResumeData } from '../../utils/resumeDraft';
 
 vi.mock('react-i18next', async (importOriginal) => ({
   ...await importOriginal<typeof import('react-i18next')>(),
@@ -14,6 +15,12 @@ vi.mock('react-i18next', async (importOriginal) => ({
     t: (key: string, options?: { name?: string }) => options?.name ?? key,
   }),
 }));
+
+vi.stubGlobal('ResizeObserver', class {
+  observe() {}
+  disconnect() {}
+  unobserve() {}
+});
 
 const entry: ThemeLibraryEntry = {
   id: 'classic-horizontal',
@@ -29,11 +36,11 @@ const entry: ThemeLibraryEntry = {
 };
 
 describe('ResumeThemeCards', () => {
-  it('shows the blank-resume skeleton when demo content is absent', () => {
+  it('shows the blank-resume skeleton when the current resume is empty', () => {
     const { container } = render(
       <ResumeThemeCards
         entries={[entry]}
-        demoContent={null}
+        content={createEmptyResumeData()}
         loading={false}
         selectedLayoutId={null}
         onSelect={vi.fn()}
@@ -41,6 +48,23 @@ describe('ResumeThemeCards', () => {
     );
 
     expect(container.querySelector('[data-resume-skeleton]')).not.toBeNull();
+  });
+
+  it('renders the current resume content in each theme preview', () => {
+    const content = createEmptyResumeData();
+    content.personalInfo.fullName = 'Current Resume Name';
+
+    const { getByText } = render(
+      <ResumeThemeCards
+        entries={[entry]}
+        content={content}
+        loading={false}
+        selectedLayoutId={null}
+        onSelect={vi.fn()}
+      />,
+    );
+
+    expect(getByText('Current Resume Name')).toBeTruthy();
   });
 
   it('derives available visual categories in product order', () => {

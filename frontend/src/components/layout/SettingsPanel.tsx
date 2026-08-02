@@ -25,6 +25,7 @@ export function SettingsPanel() {
         open={model.themeDrawerOpen}
         onClose={() => model.setThemeDrawerOpen(false)}
         currentLayoutId={model.theme.layoutId}
+        content={model.data}
         onApply={model.handleApplyTheme}
       />
     </div>

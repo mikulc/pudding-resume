@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Loader2 } from 'lucide-react';
-import { getDemoContent, getThemeLibraries } from '../../api/templates';
+import { getThemeLibraries } from '../../api/templates';
 import { ResumeCardPreview } from '../preview/ResumeCardPreview';
-import { EmptyResumePreview } from '../preview/ResumePreviewSkeleton';
 import type { ResumeData, ThemeLibraryEntry, ThemeSettings } from '../../types/resume';
 import { createInitialThemeSettings } from '../../utils/resumeDraft';
 import { resolveLayout } from '../../registry/layouts';
@@ -40,7 +39,6 @@ export function buildResumePreviewTheme(entry: ThemeLibraryEntry): ThemeSettings
 
 interface ResumeThemeLibraryData {
   entries: ThemeLibraryEntry[];
-  demoContent: ResumeData | null;
 }
 
 interface ResumeThemeLibraryCache extends ResumeThemeLibraryData {
@@ -61,7 +59,6 @@ function readResumeThemeLibraryCache(): ResumeThemeLibraryData | null {
 
   return {
     entries: resumeThemeLibraryCache.entries,
-    demoContent: resumeThemeLibraryCache.demoContent,
   };
 }
 
@@ -70,22 +67,13 @@ function loadResumeThemeLibrary(): Promise<ResumeThemeLibraryData> {
   if (cached) return Promise.resolve(cached);
 
   if (!resumeThemeLibraryRequest) {
-    resumeThemeLibraryRequest = Promise.allSettled([getThemeLibraries(), getDemoContent()])
-      .then(([themeResult, demoResult]) => {
-        const library = {
-          entries: themeResult.status === 'fulfilled' ? themeResult.value : [],
-          demoContent: demoResult.status === 'fulfilled' ? demoResult.value : null,
-        };
-
-        if (themeResult.status === 'fulfilled') {
-          resumeThemeLibraryCache = {
-            ...library,
-            cachedAt: Date.now(),
-          };
-        }
-
+    resumeThemeLibraryRequest = getThemeLibraries()
+      .then((entries) => {
+        const library = { entries };
+        resumeThemeLibraryCache = { ...library, cachedAt: Date.now() };
         return library;
       })
+      .catch(() => ({ entries: [] }))
       .finally(() => {
         resumeThemeLibraryRequest = null;
       });
@@ -97,7 +85,6 @@ function loadResumeThemeLibrary(): Promise<ResumeThemeLibraryData> {
 export function useResumeThemeLibrary(enabled: boolean) {
   const cached = readResumeThemeLibraryCache();
   const [entries, setEntries] = useState<ThemeLibraryEntry[]>(() => cached?.entries ?? []);
-  const [demoContent, setDemoContent] = useState<ResumeData | null>(() => cached?.demoContent ?? null);
   const [loading, setLoading] = useState(() => enabled && !cached);
 
   useEffect(() => {
@@ -107,7 +94,6 @@ export function useResumeThemeLibrary(enabled: boolean) {
     const cachedLibrary = readResumeThemeLibraryCache();
     if (cachedLibrary) {
       setEntries(cachedLibrary.entries);
-      setDemoContent(cachedLibrary.demoContent);
       setLoading(false);
       return;
     }
@@ -117,7 +103,6 @@ export function useResumeThemeLibrary(enabled: boolean) {
       .then((library) => {
         if (cancelled) return;
         setEntries(library.entries);
-        setDemoContent(library.demoContent);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -128,12 +113,13 @@ export function useResumeThemeLibrary(enabled: boolean) {
     };
   }, [enabled]);
 
-  return { entries, demoContent, loading };
+  return { entries, loading };
 }
 
 interface ResumeThemeCardsProps {
   entries: ThemeLibraryEntry[];
-  demoContent: ResumeData | null;
+  /** Resume content rendered in every theme preview. */
+  content: ResumeData;
   loading: boolean;
   selectedLayoutId: string | null;
   onSelect: (layoutId: string) => void;
@@ -152,7 +138,7 @@ interface ResumeThemeCardsProps {
 
 export function ResumeThemeCards({
   entries,
-  demoContent,
+  content,
   loading,
   selectedLayoutId,
   onSelect,
@@ -219,11 +205,11 @@ export function ResumeThemeCards({
             }`}
           >
             <div className="resume-theme-preview relative aspect-[4/5] overflow-hidden bg-gray-100">
-              {demoContent ? (
-                <ResumeCardPreview key={`${entry.layoutId}-${previewVersion}`} content={demoContent} theme={previewTheme} />
-              ) : (
-                <EmptyResumePreview />
-              )}
+              <ResumeCardPreview
+                key={`${entry.layoutId}-${previewVersion}`}
+                content={content}
+                theme={previewTheme}
+              />
 
               {/* Loading overlay when applying */}
               {isApplying && (
