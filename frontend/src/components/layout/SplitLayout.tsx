@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Eye, Languages, Loader2, PencilLine, Settings2, Target } from 'lucide-react';
+import { ArrowLeft, Eye, PencilLine, Settings2, Target } from 'lucide-react';
 import { EditorPanel } from './EditorPanel';
 import { PreviewPanel } from './PreviewPanel';
 import { RightPanel } from './RightPanel';
@@ -26,10 +26,6 @@ interface SplitLayoutProps {
   onExportPNG: () => void;
   onExportMD: () => void;
   onExportJSON: () => void;
-  isTranslating: boolean;
-  translationDisabled?: boolean;
-  translationDisabledReason?: string;
-  onTranslateResume: () => void;
   onPageCountChange?: (numPages: number) => void;
   canvasToolbar: CanvasToolbarActions;
 }
@@ -62,39 +58,12 @@ function useIsMobileLayout() {
   return isMobile;
 }
 
-export function SplitLayout({ previewRef, resumeId, onBack, isExporting, isExportingPNG, isExportingMD, isExportingJSON, onExportPDF, onExportPNG, onExportMD, onExportJSON, isTranslating, translationDisabled = false, translationDisabledReason, onTranslateResume, onPageCountChange, canvasToolbar }: SplitLayoutProps) {
+export function SplitLayout({ previewRef, resumeId, onBack, isExporting, isExportingPNG, isExportingMD, isExportingJSON, onExportPDF, onExportPNG, onExportMD, onExportJSON, onPageCountChange, canvasToolbar }: SplitLayoutProps) {
   const { ui, uiDispatch } = useAppUI();
   const { t } = useTranslation('editor');
   const isMobileLayout = useIsMobileLayout();
   const fallbackGoBack = useGoBack('/resumes');
   const goBack = onBack ?? fallbackGoBack;
-  const translateLabel = isTranslating ? t('translating') : t('translate');
-  const translateTooltip = translationDisabled && !isTranslating && translationDisabledReason
-    ? translationDisabledReason
-    : translateLabel;
-
-  const translateButton = (compact = false) => (
-    <Tooltip content={translateTooltip}>
-      <button
-        type="button"
-        onClick={onTranslateResume}
-        disabled={isTranslating || translationDisabled}
-        aria-label={translateLabel}
-        className={[
-          'editor-action-button editor-action-button--tertiary',
-          compact ? 'editor-action-button--compact' : '',
-        ].join(' ')}
-      >
-        {isTranslating ? (
-          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-        ) : (
-          <Languages className="h-3.5 w-3.5" />
-        )}
-        {!compact && <span>{t('translate')}</span>}
-      </button>
-    </Tooltip>
-  );
-
   return (
     <SaveSync>
       <div className="theme-transition-target h-full flex flex-col overflow-hidden bg-slate-50">
@@ -143,14 +112,13 @@ export function SplitLayout({ previewRef, resumeId, onBack, isExporting, isExpor
                     saveStatus={ui.saveStatus}
                     saveTrigger={ui.saveTrigger}
                     lastSavedAt={ui.lastSavedAt}
-                    onManualSave={() => { void triggerSave(); }}
+                    onManualSave={() => triggerSave()}
                     compact
                   />
                 </div>
               </div>
 
               <div className="global-editor-topbar__actions">
-                {translateButton(true)}
                 <ShareDropdown resumeId={resumeId ?? null} compact />
                 <ExportDropdown
                   isExportingPDF={isExporting}
@@ -274,13 +242,12 @@ export function SplitLayout({ previewRef, resumeId, onBack, isExporting, isExpor
                   saveStatus={ui.saveStatus}
                   saveTrigger={ui.saveTrigger}
                   lastSavedAt={ui.lastSavedAt}
-                  onManualSave={() => { void triggerSave(); }}
+                  onManualSave={() => triggerSave()}
                 />
               </div>
             </div>
 
             <div className="global-editor-topbar__actions">
-              {translateButton(false)}
               <ShareDropdown resumeId={resumeId ?? null} />
               <ExportDropdown
                 isExportingPDF={isExporting}

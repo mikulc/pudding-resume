@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { getFontStack } from '../../config/fonts';
 import { useAppUI,useResume } from '../../context/ResumeContext';
-import { getLayoutCSS,resolveLayout } from '../../registry/layouts';
+import { getLayoutCSS,resolveLayout,resolvePhotoLayout } from '../../registry/layouts';
 import {
 DEFAULT_SECTION_ORDER,
 SectionKey,
@@ -69,7 +69,23 @@ function CustomSectionPreview({ sectionKey }: { sectionKey: string }) {
 }
 
 /** 濮樻潙宓冪憰鍡欐磰鐏炲偊绱伴崷銊х剨瀵姳绗傞獮鎶芥懙閸婄偓鏋╅惃鍕磹闁繑妲戦弬鍥х摟 */
-function WatermarkOverlay({ settings }: { settings: WatermarkSettings }) {
+function getContrastingWatermarkColor(backgroundColor: string) {
+  const hex = backgroundColor.replace('#', '');
+  if (!/^[0-9a-f]{6}$/i.test(hex)) return '#FFFFFF';
+  const red = Number.parseInt(hex.slice(0, 2), 16);
+  const green = Number.parseInt(hex.slice(2, 4), 16);
+  const blue = Number.parseInt(hex.slice(4, 6), 16);
+  const brightness = (red * 299 + green * 587 + blue * 114) / 1000;
+  return brightness > 170 ? '#111827' : '#FFFFFF';
+}
+
+function WatermarkOverlay({
+  settings,
+  sidebarContrast,
+}: {
+  settings: WatermarkSettings;
+  sidebarContrast?: { width: string; color: string; side: 'left' | 'right' };
+}) {
   const cells = useMemo(() => {
     const densityMap = {
       low: { cols: 3, rows: 3 },
@@ -89,13 +105,7 @@ function WatermarkOverlay({ settings }: { settings: WatermarkSettings }) {
     return result;
   }, [settings.density]);
 
-  return (
-    <div
-      data-watermark-overlay="true"
-      className="absolute inset-0 overflow-hidden"
-      style={{ pointerEvents: 'none', userSelect: 'none', zIndex: 0 }}
-    >
-      {cells.map((pos, i) => (
+  const renderCells = (color: string) => cells.map((pos, i) => (
         <div
           key={i}
           style={{
@@ -104,7 +114,7 @@ function WatermarkOverlay({ settings }: { settings: WatermarkSettings }) {
             top: `${pos.y}%`,
             transform: `translate(-50%, -50%) rotate(${settings.rotation}deg)`,
             fontSize: `${settings.fontSize}px`,
-            color: settings.color,
+            color,
             opacity: settings.opacity,
             fontWeight: 600,
             whiteSpace: 'nowrap',
@@ -112,7 +122,40 @@ function WatermarkOverlay({ settings }: { settings: WatermarkSettings }) {
         >
           {settings.content}
         </div>
-      ))}
+      ));
+
+  return (
+    <div
+      data-watermark-overlay="true"
+      className="absolute inset-0 overflow-hidden"
+      style={{ pointerEvents: 'none', userSelect: 'none', zIndex: 0 }}
+    >
+      {sidebarContrast ? (
+        <>
+          <div
+            data-watermark-region="main"
+            className="absolute inset-0"
+            style={{
+              clipPath: sidebarContrast.side === 'right'
+                ? `inset(0 ${sidebarContrast.width} 0 0)`
+                : `inset(0 0 0 ${sidebarContrast.width})`,
+            }}
+          >
+            {renderCells(settings.color)}
+          </div>
+          <div
+            data-watermark-region="sidebar"
+            className="absolute inset-0"
+            style={{
+              clipPath: sidebarContrast.side === 'right'
+                ? `inset(0 0 0 calc(100% - ${sidebarContrast.width}))`
+                : `inset(0 calc(100% - ${sidebarContrast.width}) 0 0)`,
+            }}
+          >
+            {renderCells(sidebarContrast.color)}
+          </div>
+        </>
+      ) : renderCells(settings.color)}
     </div>
   );
 }
@@ -176,6 +219,13 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
   const measureFlowRef = useRef<HTMLDivElement>(null);
   const layout = resolveLayout(theme.layoutId);
   const isSidebarLayout = layout.contentMode === 'sidebar';
+  const supportsMovableSidebar = theme.layoutId === 'azure-sidebar' || theme.layoutId === 'left-sidebar-two-column';
+  const effectivePhotoLayout = resolvePhotoLayout(
+    theme.layoutId,
+    data.personalInfo.photoLayout,
+    data.personalInfo.photoLayoutCustomized,
+  );
+  const sidebarOnRight = supportsMovableSidebar && effectivePhotoLayout === 'right';
 
   // Use a measurement copy without hiddenSections so hide/show changes do not
   // force remounting and break CSS transitions.
@@ -407,8 +457,10 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
 
   // Scope CSS to the current layout to avoid cross-preview contamination.
   const cssContent = scopeResumePaperCSS(`${colorStyle}${layoutCSS}${resumeContentCSS}${titleRowCSS}`, theme.layoutId, scopeClass);
-  const sidebarShellClassName = 'left-sidebar-two-column-shell';
-  const sidebarPagedShellClassName = 'left-sidebar-two-column-shell left-sidebar-two-column-paged-flow';
+  const sidebarPositionClassName = sidebarOnRight ? ' sidebar-position-right' : '';
+  const sidebarShellClassName = `left-sidebar-two-column-shell${sidebarPositionClassName}`;
+  const sidebarPagedShellClassName = `left-sidebar-two-column-shell left-sidebar-two-column-paged-flow${sidebarPositionClassName}`;
+  const resumePaperClassName = `resume-paper${sidebarPositionClassName}`;
 
   const isMultiPage = !disablePagination && numPages > 1;
   const pageWidth = A4_WIDTH_MM * MM_TO_PX;
@@ -417,14 +469,23 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
   const pagesWrapperWidth = canUseTwoColumns ? twoColumnWidth : pageWidth;
 
   const watermarkEl = theme.watermark.enabled ? (
-    <WatermarkOverlay settings={theme.watermark} />
+    <WatermarkOverlay
+      settings={theme.watermark}
+      sidebarContrast={theme.layoutId === 'azure-sidebar'
+        ? {
+            width: '52mm',
+            color: getContrastingWatermarkColor(colors.border),
+            side: sidebarOnRight ? 'right' : 'left',
+          }
+        : undefined}
+    />
   ) : null;
 
   // Offscreen measurement element: render all sections continuously without
   // overflow clipping, then query exact item/section positions for page breaks.
   const measurePaper = (
     <div
-      className="resume-paper"
+      className={resumePaperClassName}
       data-layout={theme.layoutId}
       style={{ ...paperStyle, position: 'relative' }}
     >
@@ -485,7 +546,7 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
             return (
               <div
                 key={pageIndex}
-                className="resume-paper"
+                className={resumePaperClassName}
                 data-layout={theme.layoutId}
                 data-page-index={pageIndex}
                 style={{
@@ -527,7 +588,7 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
   // ========== 閸楁洟銆夊Ο鈥崇础 ==========
   const paperEl = (
     <div
-      className="resume-paper"
+      className={resumePaperClassName}
       data-layout={theme.layoutId}
       data-pagination-state={needsMeasure && !disablePagination ? 'measuring' : 'ready'}
       style={{ ...paperStyle, position: 'relative', overflow: 'hidden' }}

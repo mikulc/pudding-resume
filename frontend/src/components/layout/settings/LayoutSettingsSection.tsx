@@ -1,9 +1,15 @@
 ﻿
 import type { SettingsPanelModel } from './useSettingsPanelModel';
+import { resolvePhotoLayout } from '../../../registry/layouts';
 
 export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) {
   const { data, resumeDispatch, t, theme, updateTheme } = model;
   const photoLayoutDisabled = theme.layoutId === 'teal-ribbon-wave';
+  const effectivePhotoLayout = resolvePhotoLayout(
+    theme.layoutId,
+    data.personalInfo?.photoLayout,
+    data.personalInfo?.photoLayoutCustomized,
+  );
   return (
     <>
         {/* Layout */}
@@ -54,9 +60,9 @@ export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) 
                 <button
                   type="button"
                   disabled={photoLayoutDisabled}
-                  onClick={() => resumeDispatch({ type: 'SET_PERSONAL_INFO', payload: { photoLayout: 'right' } })}
+                  onClick={() => resumeDispatch({ type: 'SET_PERSONAL_INFO', payload: { photoLayout: 'right', photoLayoutCustomized: true } })}
                   className={`theme-color-transition flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium disabled:cursor-not-allowed ${
-                    !photoLayoutDisabled && (data.personalInfo?.photoLayout ?? 'right') === 'right'
+                    !photoLayoutDisabled && effectivePhotoLayout === 'right'
                       ? 'bg-white text-gray-800 shadow-sm'
                       : photoLayoutDisabled ? 'text-gray-400' : 'text-gray-500 hover:text-gray-700'
                   }`}
@@ -69,9 +75,9 @@ export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) 
                 <button
                   type="button"
                   disabled={photoLayoutDisabled}
-                  onClick={() => resumeDispatch({ type: 'SET_PERSONAL_INFO', payload: { photoLayout: 'left' } })}
+                  onClick={() => resumeDispatch({ type: 'SET_PERSONAL_INFO', payload: { photoLayout: 'left', photoLayoutCustomized: true } })}
                   className={`theme-color-transition flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium disabled:cursor-not-allowed ${
-                    !photoLayoutDisabled && (data.personalInfo?.photoLayout ?? 'right') === 'left'
+                    !photoLayoutDisabled && effectivePhotoLayout === 'left'
                       ? 'bg-white text-gray-800 shadow-sm'
                       : photoLayoutDisabled ? 'text-gray-400' : 'text-gray-500 hover:text-gray-700'
                   }`}

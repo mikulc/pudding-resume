@@ -13,6 +13,10 @@ export const leftSidebarTwoColumnLayout: LayoutDefinition = {
       background: linear-gradient(90deg, #eef3fb 0 52mm, #ffffff 52mm 100%) !important;
     }
 
+    .resume-paper[data-layout="left-sidebar-two-column"].sidebar-position-right {
+      background: linear-gradient(90deg, #ffffff 0 calc(100% - 52mm), #eef3fb calc(100% - 52mm) 100%) !important;
+    }
+
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-shell {
       display: grid !important;
       grid-template-columns: 52mm minmax(0, 1fr) !important;
@@ -20,23 +24,43 @@ export const leftSidebarTwoColumnLayout: LayoutDefinition = {
       overflow: hidden !important;
       border: 0 !important;
       border-radius: 0 !important;
-      background: #ffffff !important;
+      background: transparent !important;
+    }
+
+    .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-shell.sidebar-position-right {
+      grid-template-columns: minmax(0, 1fr) 52mm !important;
     }
 
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-sidebar {
       min-width: 0 !important;
       align-self: stretch !important;
-      padding: var(--resume-page-margin) 0 var(--resume-page-margin) 6.5mm !important;
+      padding: 20mm 0 var(--resume-page-margin) 6.5mm !important;
       overflow: hidden !important;
-      background: #eef3fb !important;
+      background: transparent !important;
       border-right: 1px solid #e8edf6 !important;
+    }
+
+    .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-shell.sidebar-position-right > .left-sidebar-two-column-sidebar {
+      grid-column: 2 !important;
+      grid-row: 1 !important;
+      padding-right: 0 !important;
+      padding-left: 5mm !important;
+      border-right: 0 !important;
+      border-left: 1px solid #e8edf6 !important;
     }
 
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-main {
       min-width: 0 !important;
       align-self: stretch !important;
       padding: var(--resume-page-margin) 11mm var(--resume-page-margin) 9mm !important;
-      background: #ffffff !important;
+      background: transparent !important;
+    }
+
+    .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-shell.sidebar-position-right > .left-sidebar-two-column-main {
+      grid-column: 1 !important;
+      grid-row: 1 !important;
+      padding-right: 9mm !important;
+      padding-left: 11mm !important;
     }
 
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-paged-flow .left-sidebar-two-column-sidebar {
@@ -54,7 +78,7 @@ export const leftSidebarTwoColumnLayout: LayoutDefinition = {
     }
 
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-photo {
-      margin-bottom: 5mm !important;
+      margin-bottom: 7mm !important;
     }
 
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-photo .personal-photo,
@@ -64,7 +88,7 @@ export const leftSidebarTwoColumnLayout: LayoutDefinition = {
     }
 
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-name {
-      margin: 0 0 1.5mm !important;
+      margin: 0 0 11mm !important;
       color: var(--theme-border) !important;
       font-size: 1.7em !important;
       line-height: 1.15 !important;
@@ -86,7 +110,7 @@ export const leftSidebarTwoColumnLayout: LayoutDefinition = {
     }
 
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-sidebar-block {
-      margin-top: 5mm !important;
+      margin-top: 8mm !important;
     }
 
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-sidebar-title {
@@ -98,6 +122,11 @@ export const leftSidebarTwoColumnLayout: LayoutDefinition = {
       font-size: 0.95em !important;
       line-height: 1.2 !important;
       font-weight: 800 !important;
+    }
+
+    .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-shell.sidebar-position-right .left-sidebar-two-column-sidebar-title {
+      margin-right: 5mm !important;
+      margin-left: 0 !important;
     }
 
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-contact-list {
@@ -169,6 +198,11 @@ export const leftSidebarTwoColumnLayout: LayoutDefinition = {
       font-size: 0.95em !important;
     }
 
+    .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-shell.sidebar-position-right .left-sidebar-two-column-sidebar .section-header {
+      margin-right: 5mm !important;
+      margin-left: 0 !important;
+    }
+
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-sidebar .section-header-bar {
       display: none !important;
     }
@@ -230,6 +264,7 @@ export const leftSidebarTwoColumnLayout: LayoutDefinition = {
     }
   `,
   defaultColor: '#248f83',
+  defaultPhotoLayout: 'left',
   headerMode: 'bar',
   signature: { layout: 'double-column', headerDecoration: 'side-block', sectionStyle: 'filled-title' },
   previewVersion: '1',

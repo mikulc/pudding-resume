@@ -125,6 +125,51 @@ describe('PersonalInfoPreview', () => {
     expect(container.querySelector('[data-page-section="personal"] svg')).not.toBeNull();
   });
 
+  it('renders job target and status icons in the azure sidebar objective block', () => {
+    const data = createEmptyResumeData();
+    mockedResume.theme = { ...DEFAULT_THEME, layoutId: 'azure-sidebar' };
+    mockedResume.data = {
+      ...data,
+      personalInfo: {
+        ...data.personalInfo,
+        displayMode: 'icon',
+        jobTarget: '前端工程师',
+        jobStatus: '随时到岗',
+      },
+    };
+
+    const { container } = render(<PersonalInfoPreview />);
+
+    expect(container.querySelectorAll('.azure-sidebar-objective svg')).toHaveLength(2);
+  });
+
+  it('groups shallow-sidebar contact details and objective like the azure sidebar', () => {
+    const data = createEmptyResumeData();
+    mockedResume.theme = { ...DEFAULT_THEME, layoutId: 'left-sidebar-two-column' };
+    mockedResume.data = {
+      ...data,
+      personalInfo: {
+        ...data.personalInfo,
+        fullName: '布丁',
+        displayMode: 'icon',
+        phone: '13888888888',
+        email: 'pudding@example.com',
+        jobTarget: '前端工程师',
+        jobStatus: '随时到岗',
+      },
+    };
+
+    const { container } = render(<PersonalInfoPreview />);
+    const blocks = container.querySelectorAll('.left-sidebar-two-column-sidebar-block');
+
+    expect(blocks).toHaveLength(2);
+    expect(blocks[0]?.querySelector('.left-sidebar-two-column-sidebar-title')?.textContent).toBe('联系方式');
+    expect(blocks[1]?.querySelector('.left-sidebar-two-column-sidebar-title')?.textContent).toBe('求职意向');
+    expect(blocks[1]?.querySelectorAll('svg')).toHaveLength(2);
+    expect(container.querySelector('.left-sidebar-two-column-role')).toBeNull();
+    expect(container.querySelector('.left-sidebar-two-column-status')).toBeNull();
+  });
+
   it.each([
     'classic-horizontal',
     'blueprint-icons',

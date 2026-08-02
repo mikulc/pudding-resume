@@ -27,6 +27,9 @@ export interface CanvasToolbarActions {
   atsHasResults: boolean;
   atsLoading: boolean;
   activeAiTask: ActiveAiTask;
+  isTranslating: boolean;
+  translationDisabled: boolean;
+  translationDisabledReason?: string;
   onUndo: () => void;
   onRedo: () => void;
   onZoomOut: () => void;
@@ -36,6 +39,7 @@ export interface CanvasToolbarActions {
   onFitToWidth: () => void;
   onRunAiCheck: () => void | Promise<void>;
   onOpenAts: () => void;
+  onTranslateResume: () => void;
 }
 
 /** children render prop 提供的工具函数 */

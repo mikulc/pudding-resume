@@ -737,7 +737,8 @@
     "errorRetry": "Save failed, click to retry",
     "retryTooltip": "Click to retry saving",
     "manualSaveTooltip": "Click to save manually",
-    "justSaved": "Just saved"
+    "justSaved": "Just saved",
+    "savedConfirmation": "保存好了 喵(◍´꒳`◍)"
   },
   "formatting": {
     "bold": "Bold",

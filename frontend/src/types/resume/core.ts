@@ -13,6 +13,8 @@ export interface PersonalInfo {
   displayMode?: 'icon' | 'text' | 'none';
   /** 头像布局：'left' = 头像在左信息在右，'right' = 头像在右信息在左 */
   photoLayout?: 'left' | 'right';
+  /** 用户是否主动选择过头像布局；未选择时使用主题默认值。 */
+  photoLayoutCustomized?: boolean;
   /** 隐藏的字段列表 */
   hiddenFields?: string[];
   /** 可拖拽字段的排序（不含姓名） */

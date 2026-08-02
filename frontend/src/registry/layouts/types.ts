@@ -31,6 +31,8 @@ export interface LayoutDefinition {
   defaultColor: string;
   /** Optional default page margin in mm when creating or applying this layout. */
   defaultPageMargin?: number;
+  /** Theme-specific portrait position used until the user explicitly chooses one. */
+  defaultPhotoLayout?: 'left' | 'right';
   /** 标题渲染模式 */
   headerMode: HeaderMode;
   /** Compact visual fingerprint used in the settings panel. */

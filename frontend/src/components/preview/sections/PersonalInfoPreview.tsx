@@ -1,7 +1,7 @@
 import React,{ useEffect,useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppUI,useResume } from '../../../context/ResumeContext';
-import { resolveLayout } from '../../../registry/layouts';
+import { resolveLayout,resolvePhotoLayout } from '../../../registry/layouts';
 import {
 DEFAULT_PERSONAL_FIELD_ORDER,
 getPersonalFieldLabels
@@ -66,7 +66,7 @@ User,
 Wrench,
 Zap,
 } from '../../icons';
-import { ActiveSectionWrapper,resolvePersonalPhotoStyle,useResumeModuleTitles } from '../PreviewShared';
+import { ActiveSectionWrapper,resolvePersonalPhotoStyle } from '../PreviewShared';
 
 export function PersonalInfoPreview() {
   const { t, i18n } = useTranslation('resume');
@@ -75,7 +75,6 @@ export function PersonalInfoPreview() {
   const { personalInfo } = data;
   const layout = resolveLayout(ui.theme.layoutId);
   const defaultFieldLabels = getPersonalFieldLabels();
-  const moduleTitles = useResumeModuleTitles();
 
   // 浠庢敞鍐岃〃璇诲彇鑱旂郴鏂瑰紡鍥炬爣 class
   const contactIconClass = layout.personalInfoClass || 'text-gray-400';
@@ -107,7 +106,11 @@ export function PersonalInfoPreview() {
   const displayMode = personalInfo.displayMode || 'icon';
   const isTextMode = displayMode === 'text';
   const isNoneMode = displayMode === 'none';
-  const photoLayout = personalInfo.photoLayout || 'right';
+  const photoLayout = resolvePhotoLayout(
+    layout.id,
+    personalInfo.photoLayout,
+    personalInfo.photoLayoutCustomized,
+  );
   const photoStyle = resolvePersonalPhotoStyle(personalInfo.photoStyle);
 
   const hasPhoto = !!personalInfo.photoUrl;
@@ -344,7 +347,7 @@ export function PersonalInfoPreview() {
     );
   };
 
-  const renderAzureSidebarField = (field: string) => {
+  const renderAzureSidebarField = (field: string, extraClassName = '') => {
     const cfg = fieldConfig[field];
     const value = cfg ? cfg.value : customFields[field];
     if (!value) return null;
@@ -356,19 +359,19 @@ export function PersonalInfoPreview() {
 
     if (isNoneMode) {
       return (
-        <div key={field} className="azure-sidebar-contact-item break-words">
+        <div key={field} className={`azure-sidebar-contact-item break-words ${extraClassName}`}>
           <span className="min-w-0 max-w-full break-all">{value}</span>
         </div>
       );
     }
 
     return isTextMode ? (
-      <div key={field} className="azure-sidebar-contact-item break-words">
+      <div key={field} className={`azure-sidebar-contact-item break-words ${extraClassName}`}>
         <span className="azure-sidebar-contact-label">{label}: </span>
         <span className="min-w-0 max-w-full break-all">{value}</span>
       </div>
     ) : (
-      <div key={field} className="azure-sidebar-contact-item azure-sidebar-contact-item-icon min-w-0">
+      <div key={field} className={`azure-sidebar-contact-item azure-sidebar-contact-item-icon min-w-0 ${extraClassName}`}>
         {icon}
         <span className="min-w-0 max-w-full flex-1 break-all">{value}</span>
       </div>
@@ -395,7 +398,7 @@ export function PersonalInfoPreview() {
           <div className="azure-sidebar-block">
             <h2 className="azure-sidebar-block-title">{contactTitle}</h2>
             <div className="azure-sidebar-contact-list">
-              {contactFields.map(renderAzureSidebarField)}
+              {contactFields.map((field) => renderAzureSidebarField(field))}
             </div>
           </div>
         )}
@@ -403,10 +406,10 @@ export function PersonalInfoPreview() {
           <div className="azure-sidebar-block">
             <h2 className="azure-sidebar-block-title">{objectiveTitle}</h2>
             {personalInfo.jobTarget && !isHidden('jobTarget') && (
-              <div className="azure-sidebar-objective break-words">{personalInfo.jobTarget}</div>
+              renderAzureSidebarField('jobTarget', 'azure-sidebar-objective')
             )}
             {personalInfo.jobStatus && !isHidden('jobStatus') && (
-              <div className="azure-sidebar-objective break-words">{personalInfo.jobStatus}</div>
+              renderAzureSidebarField('jobStatus', 'azure-sidebar-objective')
             )}
           </div>
         )}
@@ -418,6 +421,10 @@ export function PersonalInfoPreview() {
     const contactFields = visibleFields.filter((field) => (
       field !== 'fullName' && field !== 'jobTarget' && field !== 'jobStatus'
     ));
+    const objectiveFields = ['jobTarget', 'jobStatus'].filter((field) => visibleFields.includes(field));
+    const isZh = i18n.language.toLowerCase().startsWith('zh');
+    const contactTitle = isZh ? '联系方式' : 'Contact';
+    const objectiveTitle = isZh ? '求职意向' : 'Objective';
 
     return (
       <ActiveSectionWrapper sectionKey="personal" className="left-sidebar-two-column-personal">
@@ -427,17 +434,19 @@ export function PersonalInfoPreview() {
             {personalInfo.fullName}
           </h1>
         )}
-        {personalInfo.jobTarget && !isHidden('jobTarget') && (
-          <div className="left-sidebar-two-column-role break-words">{personalInfo.jobTarget}</div>
-        )}
-        {personalInfo.jobStatus && !isHidden('jobStatus') && (
-          <div className="left-sidebar-two-column-status break-words">{personalInfo.jobStatus}</div>
-        )}
         {contactFields.length > 0 && (
           <div className="left-sidebar-two-column-sidebar-block">
-            <h2 className="left-sidebar-two-column-sidebar-title">{moduleTitles.personal}</h2>
+            <h2 className="left-sidebar-two-column-sidebar-title">{contactTitle}</h2>
             <div className="left-sidebar-two-column-contact-list">
               {contactFields.map(renderLeftSidebarTwoColumnField)}
+            </div>
+          </div>
+        )}
+        {objectiveFields.length > 0 && (
+          <div className="left-sidebar-two-column-sidebar-block">
+            <h2 className="left-sidebar-two-column-sidebar-title">{objectiveTitle}</h2>
+            <div className="left-sidebar-two-column-contact-list">
+              {objectiveFields.map(renderLeftSidebarTwoColumnField)}
             </div>
           </div>
         )}

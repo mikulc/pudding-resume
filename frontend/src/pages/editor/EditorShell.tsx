@@ -193,6 +193,18 @@ export function EditorReadyLayout({
 
   latestDataRef.current = data;
 
+  useEffect(() => {
+    const previousTitle = document.title;
+    return () => {
+      document.title = previousTitle;
+    };
+  }, []);
+
+  useEffect(() => {
+    const resumeName = ui.resumeMeta.name.trim() || t('unnamedResume');
+    document.title = `${resumeName}｜布丁简历`;
+  }, [t, ui.resumeMeta.name]);
+
   const handleUndo = useCallback(() => {
     if (diagnosis.undoLastAction()) return;
     undo();
@@ -362,6 +374,9 @@ export function EditorReadyLayout({
       atsHasResults: ats.hasResults,
       atsLoading: ats.loading,
       activeAiTask,
+      isTranslating,
+      translationDisabled: activeAiTask !== null && activeAiTask !== 'translate',
+      translationDisabledReason: activeAiTask ? t('aiTask.busy', { task: aiTaskLabel(t, activeAiTask) }) : undefined,
       onUndo: handleUndo,
       onRedo: redo,
       onZoomOut: handleZoomOut,
@@ -371,6 +386,7 @@ export function EditorReadyLayout({
       onFitToWidth: handleFitToWidth,
       onRunAiCheck: handleRunAiCheck,
       onOpenAts: handleOpenAts,
+      onTranslateResume: handleTranslateResume,
     }),
     [
       autoFitActive,
@@ -383,9 +399,11 @@ export function EditorReadyLayout({
       ats.hasResults,
       ats.loading,
       activeAiTask,
+      isTranslating,
       handleUndo,
       handleFitToWidth,
       handleOpenAts,
+      handleTranslateResume,
       handleRunAiCheck,
       handleResetZoom,
       handleToggleAutoFit,
@@ -393,6 +411,7 @@ export function EditorReadyLayout({
       handleZoomOut,
       isAutoFitting,
       redo,
+      t,
       ui.zoom,
     ],
   );
@@ -411,10 +430,6 @@ export function EditorReadyLayout({
       onExportPNG={() => { void guardedExportPNG(); }}
       onExportMD={exportMarkdown}
       onExportJSON={exportJSON}
-      isTranslating={isTranslating}
-      onTranslateResume={handleTranslateResume}
-      translationDisabled={activeAiTask !== null && activeAiTask !== 'translate'}
-      translationDisabledReason={activeAiTask ? t('aiTask.busy', { task: aiTaskLabel(t, activeAiTask) }) : undefined}
       onPageCountChange={handlePageCountChange}
       canvasToolbar={canvasToolbar}
     />
@@ -443,4 +458,3 @@ export function EditorReadyLayout({
     </>
   );
 }
-

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+﻿import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { SaveStatusType } from '../../types/resume';
 import { triggerRetrySave } from './SaveSync';
@@ -8,7 +8,7 @@ interface SaveStatusIndicatorProps {
   saveStatus: SaveStatusType;
   saveTrigger: number;
   lastSavedAt: number | null;
-  onManualSave?: () => void;
+  onManualSave?: () => void | Promise<unknown>;
   compact?: boolean;
 }
 
@@ -58,18 +58,31 @@ const STATUS_MAP: Record<SaveStatusType, StatusConfig> = {
 export function SaveStatusIndicator({ saveStatus, saveTrigger, lastSavedAt, onManualSave, compact = false }: SaveStatusIndicatorProps) {
   const { t } = useTranslation('editor');
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showSavedMessage, setShowSavedMessage] = useState(false);
   const prevTriggerRef = useRef(saveTrigger);
+  const confirmTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savedMessageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 保存完成瞬间 → 触发确认脉冲（短暂叠加在持续呼吸之上）
   useEffect(() => {
     if (saveStatus === 'saved' && saveTrigger > 0 && saveTrigger !== prevTriggerRef.current) {
       prevTriggerRef.current = saveTrigger;
       setShowConfirm(true);
-      const timer = setTimeout(() => setShowConfirm(false), 600);
-      return () => clearTimeout(timer);
+      if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+      confirmTimerRef.current = setTimeout(() => setShowConfirm(false), 600);
+
+      setShowSavedMessage(true);
+      if (savedMessageTimerRef.current) clearTimeout(savedMessageTimerRef.current);
+      savedMessageTimerRef.current = setTimeout(() => setShowSavedMessage(false), 5000);
     }
+    if (saveStatus !== 'saved') setShowSavedMessage(false);
     prevTriggerRef.current = saveTrigger;
   }, [saveTrigger, saveStatus]);
+
+  useEffect(() => () => {
+    if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+    if (savedMessageTimerRef.current) clearTimeout(savedMessageTimerRef.current);
+  }, []);
 
   const baseConfig = STATUS_MAP[saveStatus] ?? STATUS_MAP.saved;
   const config = compact && saveStatus === 'error'
@@ -84,7 +97,7 @@ export function SaveStatusIndicator({ saveStatus, saveTrigger, lastSavedAt, onMa
     if (isError) {
       triggerRetrySave();
     } else {
-      onManualSave?.();
+      void onManualSave?.();
     }
   }, [isSaving, isError, onManualSave]);
 
@@ -117,6 +130,9 @@ export function SaveStatusIndicator({ saveStatus, saveTrigger, lastSavedAt, onMa
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return t('common:date.monthDayTime', { month, day, time: `${hours}:${minutes}` });
   }, [lastSavedAt, t]);
+  const displayedLastSavedText = showSavedMessage
+    ? t('saveStatus.savedConfirmation')
+    : lastSavedText;
 
   const titleText =
         isSaving ? t('saveStatus.savingWithDots')
@@ -146,9 +162,9 @@ export function SaveStatusIndicator({ saveStatus, saveTrigger, lastSavedAt, onMa
         {t(config.textKey)}
       </span>
       {/* 上次保存时间 — 绝对定位，避免撑大按钮挤占缩放控件 */}
-      {lastSavedText && (
+      {displayedLastSavedText && (
         <span className="absolute left-full top-1/2 -translate-y-1/2 ml-0.5 text-[10px] text-gray-400 whitespace-nowrap pointer-events-none hidden md:block">
-          · {lastSavedText}
+          · {displayedLastSavedText}
         </span>
       )}
     </button>

@@ -63,6 +63,21 @@ export function getLayoutDefaultPageMargin(layoutId: string): number | undefined
   return layoutRegistry[layoutId]?.defaultPageMargin;
 }
 
+export function getLayoutDefaultPhotoLayout(layoutId: string): 'left' | 'right' {
+  return layoutRegistry[layoutId]?.defaultPhotoLayout ?? 'right';
+}
+
+export function resolvePhotoLayout(
+  layoutId: string,
+  savedLayout?: 'left' | 'right',
+  customized = false,
+): 'left' | 'right' {
+  const themeDefault = layoutRegistry[layoutId]?.defaultPhotoLayout;
+  if (customized && savedLayout) return savedLayout;
+  if (themeDefault) return themeDefault;
+  return savedLayout ?? 'right';
+}
+
 /**
  * 解析布局定义，未知 layoutId 降级到 skyveil
  */

@@ -14,6 +14,10 @@ export const azureSidebarLayout: LayoutDefinition = {
       background: linear-gradient(90deg, var(--theme-border) 0 52mm, #ffffff 52mm 100%) !important;
     }
 
+    .resume-paper[data-layout="azure-sidebar"].sidebar-position-right {
+      background: linear-gradient(90deg, #ffffff 0 calc(100% - 52mm), var(--theme-border) calc(100% - 52mm) 100%) !important;
+    }
+
     .resume-paper[data-layout="azure-sidebar"] .left-sidebar-two-column-shell {
       display: grid !important;
       grid-template-columns: 52mm minmax(0, 1fr) !important;
@@ -22,6 +26,10 @@ export const azureSidebarLayout: LayoutDefinition = {
       border: 0 !important;
       border-radius: 0 !important;
       background: transparent !important;
+    }
+
+    .resume-paper[data-layout="azure-sidebar"] .left-sidebar-two-column-shell.sidebar-position-right {
+      grid-template-columns: minmax(0, 1fr) 52mm !important;
     }
 
     .resume-paper[data-layout="azure-sidebar"] .left-sidebar-two-column-shell:not(.left-sidebar-two-column-paged-flow) {
@@ -37,6 +45,13 @@ export const azureSidebarLayout: LayoutDefinition = {
       color: #ffffff !important;
     }
 
+    .resume-paper[data-layout="azure-sidebar"] .left-sidebar-two-column-shell.sidebar-position-right > .left-sidebar-two-column-sidebar {
+      grid-column: 2 !important;
+      grid-row: 1 !important;
+      padding-right: 0 !important;
+      padding-left: 5mm !important;
+    }
+
     .resume-paper[data-layout="azure-sidebar"] .left-sidebar-two-column-main {
       position: relative !important;
       min-width: 0 !important;
@@ -44,6 +59,13 @@ export const azureSidebarLayout: LayoutDefinition = {
       padding: var(--resume-page-margin) 8mm var(--resume-page-margin) 9mm !important;
       overflow: hidden !important;
       background: transparent !important;
+    }
+
+    .resume-paper[data-layout="azure-sidebar"] .left-sidebar-two-column-shell.sidebar-position-right > .left-sidebar-two-column-main {
+      grid-column: 1 !important;
+      grid-row: 1 !important;
+      padding-right: 9mm !important;
+      padding-left: 8mm !important;
     }
 
     .resume-paper[data-layout="azure-sidebar"] .left-sidebar-two-column-main > * {
@@ -213,6 +235,7 @@ export const azureSidebarLayout: LayoutDefinition = {
     }
   `,
   defaultColor: '#3B82F6',
+  defaultPhotoLayout: 'left',
   headerMode: 'underline',
   signature: { layout: 'double-column', headerDecoration: 'side-block', sectionStyle: 'underline' },
   previewVersion: '2',

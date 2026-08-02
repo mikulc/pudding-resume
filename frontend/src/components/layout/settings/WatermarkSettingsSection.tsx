@@ -112,14 +112,27 @@ export function WatermarkSettingsSection({ model }: { model: SettingsPanelModel 
               <div>
                 <span className="text-xs text-gray-500 mb-1.5 block">{t('document.watermark.color')}</span>
                 <div className="settings-watermark-color-row flex items-center gap-2">
-                  {watermarkColors.map((pc) => (
-                    <button
-                      key={pc.color}
-                      onClick={() => uiDispatch({ type: 'SET_WATERMARK', payload: { color: pc.color } })}
-                      className={`settings-watermark-swatch w-6 h-6 rounded-full border-2 transition-[border-color,transform] duration-150 ${theme.watermark.color === pc.color ? 'border-blue-500 scale-110' : 'border-gray-200 hover:scale-105'}`}
-                      style={{ backgroundColor: pc.color }}
-                    />
-                  ))}
+                  {watermarkColors.map((pc) => {
+                    const isActive = theme.watermark.color === pc.color;
+                    return (
+                      <button
+                        key={pc.color}
+                        type="button"
+                        onClick={() => uiDispatch({ type: 'SET_WATERMARK', payload: { color: pc.color } })}
+                        aria-pressed={isActive}
+                        className={`settings-watermark-swatch flex h-6 w-6 items-center justify-center rounded-full border-2 transition-[border-color,transform,box-shadow] duration-150 hover:scale-110 hover:shadow-md ${
+                          isActive ? 'scale-110 border-transparent shadow-md' : 'border-transparent hover:border-gray-300'
+                        }`}
+                        style={{ backgroundColor: pc.color }}
+                      >
+                        {isActive && (
+                          <svg className="h-3.5 w-3.5 text-white drop-shadow-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>

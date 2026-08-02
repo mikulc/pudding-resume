@@ -664,7 +664,8 @@
     "errorRetry": "保存失败，点击重试",
     "retryTooltip": "点击重试保存",
     "manualSaveTooltip": "点击手动保存",
-    "justSaved": "刚刚保存"
+    "justSaved": "刚刚保存",
+    "savedConfirmation": "保存好了 喵(◍´꒳`◍)"
   },
   "formatting": {
     "bold": "加粗",

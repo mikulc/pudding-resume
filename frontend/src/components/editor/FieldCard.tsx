@@ -338,7 +338,7 @@ export function FieldCard({
               />
             </div>
 
-            <div className="hide-scrollbar mt-3 flex flex-nowrap gap-1.5 overflow-x-auto">
+            <div className="mt-3 flex flex-wrap gap-1.5">
               {ICON_CATEGORIES.map((category) => {
                 const isActive = activeIconCategory === category;
                 return (

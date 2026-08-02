@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FileText, Hand, Loader2, Maximize2, Minus, Plus, Redo2, SearchCheck, Sparkles, Undo2 } from 'lucide-react';
+import { FileText, Hand, Languages, Loader2, Maximize2, Minus, Plus, Redo2, SearchCheck, Sparkles, Undo2 } from 'lucide-react';
 import { ResumePreview } from '../preview/PreviewComponents';
 import { FloatingToolbar } from '../preview/FloatingToolbar';
 import { CanvasFloatingToolbar, type CanvasToolbarActions } from '../preview/CanvasFloatingToolbar';
@@ -396,6 +396,27 @@ export function PreviewPanel({ previewRef, onPageCountChange, canvasToolbar, isM
                   )}
                   {!helpers.isCompactHorizontal && !helpers.isVertical && (
                     <span className="text-xs leading-none">{t('previewToolbar.atsCheck')}</span>
+                  )}
+                </button>
+
+                <div className={helpers.dividerClass} />
+
+                <button
+                  type="button"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={canvasToolbar.onTranslateResume}
+                  disabled={canvasToolbar.isTranslating || canvasToolbar.translationDisabled}
+                  className={helpers.buttonClass(false, true, true)}
+                  aria-label={canvasToolbar.isTranslating ? t('translating') : t('translate')}
+                  title={canvasToolbar.translationDisabledReason}
+                >
+                  {canvasToolbar.isTranslating ? (
+                    <Loader2 className="h-4 w-4 animate-spin flex-shrink-0" />
+                  ) : (
+                    <Languages className="h-4 w-4 flex-shrink-0" />
+                  )}
+                  {!helpers.isCompactHorizontal && !helpers.isVertical && (
+                    <span className="text-xs leading-none">{t('translate')}</span>
                   )}
                 </button>
               </>
