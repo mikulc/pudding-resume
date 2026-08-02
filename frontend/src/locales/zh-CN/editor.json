@@ -252,7 +252,8 @@
     "cornerRadius": "圆角",
     "radius": {
       "square": "直角",
-      "rounded": "圆角"
+      "rounded": "圆角",
+      "circle": "圆形"
     },
     "error": {
       "fileTooLarge": "图片大小不得超过 2MB"

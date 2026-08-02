@@ -35,7 +35,7 @@ export interface PersonalPhotoStyle {
 
 export const DEFAULT_PERSONAL_PHOTO_STYLE: PersonalPhotoStyle = {
   width: 100,
-  height: 130,
+  height: 133,
   borderRadius: 6,
 };
 

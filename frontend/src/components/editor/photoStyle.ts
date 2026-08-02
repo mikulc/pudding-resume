@@ -17,7 +17,8 @@ export const PHOTO_ASPECT_OPTIONS = [
 export type PhotoAspectKey = typeof PHOTO_ASPECT_OPTIONS[number]['key'] | 'original' | 'custom';
 export const PHOTO_RADIUS_OPTIONS = [
   { key: 'square', value: 0 },
-  { key: 'rounded', value: 12 },
+  { key: 'rounded', value: DEFAULT_PHOTO_STYLE.borderRadius },
+  { key: 'circle', value: PHOTO_STYLE_LIMITS.maxRadius },
 ] as const;
 export type PhotoRadiusKey = typeof PHOTO_RADIUS_OPTIONS[number]['key'] | 'custom';
 

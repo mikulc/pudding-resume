@@ -1,0 +1,82 @@
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createEmptyResumeData } from '../../../utils/resumeDraft';
+import { PersonalInfoEditor } from './PersonalInfoEditor';
+
+const mockedResume = vi.hoisted(() => ({
+  data: null as unknown,
+  dispatch: vi.fn(),
+}));
+
+vi.mock('react-i18next', async (importOriginal) => ({
+  ...await importOriginal<typeof import('react-i18next')>(),
+  useTranslation: () => ({
+    t: (key: string) => key,
+    i18n: { language: 'zh-CN' },
+  }),
+}));
+
+vi.mock('../../../context/ResumeContext', () => ({
+  useResume: () => mockedResume,
+}));
+
+vi.mock('../../common/Toast', () => ({
+  useToast: () => ({ showToast: vi.fn() }),
+}));
+
+describe('PersonalInfoEditor photo settings', () => {
+  afterEach(cleanup);
+
+  beforeEach(() => {
+    const data = createEmptyResumeData();
+    mockedResume.data = {
+      ...data,
+      personalInfo: {
+        ...data.personalInfo,
+        photoUrl: 'data:image/png;base64,fixture',
+      },
+    };
+    mockedResume.dispatch.mockClear();
+  });
+
+  it('keeps a dimension input empty while the user replaces its value', () => {
+    render(<PersonalInfoEditor />);
+    fireEvent.click(screen.getByRole('button', { name: 'photo.adjust' }));
+
+    const widthInput = document.getElementById('photo-width') as HTMLInputElement;
+    fireEvent.change(widthInput, { target: { value: '' } });
+
+    expect(widthInput.value).toBe('');
+    expect(mockedResume.dispatch).not.toHaveBeenCalled();
+
+    fireEvent.change(widthInput, { target: { value: '120' } });
+    expect(widthInput.value).toBe('120');
+    expect(mockedResume.dispatch).toHaveBeenLastCalledWith({
+      type: 'SET_PERSONAL_INFO',
+      payload: {
+        photoStyle: {
+          width: 120,
+          height: 160,
+          borderRadius: 6,
+        },
+      },
+    });
+  });
+
+  it('makes the photo square when the circle radius preset is selected', () => {
+    render(<PersonalInfoEditor />);
+    fireEvent.click(screen.getByRole('button', { name: 'photo.adjust' }));
+    fireEvent.click(screen.getByRole('button', { name: 'photo.radius.circle' }));
+
+    expect(mockedResume.dispatch).toHaveBeenLastCalledWith({
+      type: 'SET_PERSONAL_INFO',
+      payload: {
+        photoStyle: {
+          width: 100,
+          height: 100,
+          borderRadius: 999,
+        },
+      },
+    });
+  });
+});

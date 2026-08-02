@@ -252,7 +252,8 @@
     "cornerRadius": "Corner radius",
     "radius": {
       "square": "Square",
-      "rounded": "Rounded"
+      "rounded": "Rounded",
+      "circle": "Circle"
     },
     "error": {
       "fileTooLarge": "Image size cannot exceed 2MB"

@@ -38,15 +38,17 @@ export function PersonalInfoEditor() {
   const { data, dispatch } = useResume();
   const { showToast } = useToast();
   const { personalInfo } = data;
+  const photoStyle = useMemo(() => normalizePhotoStyle(personalInfo.photoStyle), [personalInfo.photoStyle]);
   const [photoStyleOpen, setPhotoStyleOpen] = useState(false);
   const [originalPhotoRatio, setOriginalPhotoRatio] = useState<number | null>(null);
   const [selectedPhotoAspect, setSelectedPhotoAspect] = useState<PhotoAspectKey>('custom');
   const [selectedPhotoRadius, setSelectedPhotoRadius] = useState<PhotoRadiusKey>('custom');
   const [photoRatioLocked, setPhotoRatioLocked] = useState(true);
+  const [photoWidthInput, setPhotoWidthInput] = useState(() => String(photoStyle.width));
+  const [photoHeightInput, setPhotoHeightInput] = useState(() => String(photoStyle.height));
   const photoStylePanelRef = useRef<HTMLDivElement>(null);
   const photoStyleTriggerRef = useRef<HTMLButtonElement>(null);
   const [photoStylePanelPos, setPhotoStylePanelPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
-  const photoStyle = useMemo(() => normalizePhotoStyle(personalInfo.photoStyle), [personalInfo.photoStyle]);
 
   const updatePhotoStylePanelPosition = useCallback(() => {
     if (!photoStyleTriggerRef.current) return;
@@ -80,6 +82,14 @@ export function PersonalInfoEditor() {
     const matchedRadius = PHOTO_RADIUS_OPTIONS.find((option) => option.value === photoStyle.borderRadius);
     setSelectedPhotoRadius(matchedRadius?.key ?? 'custom');
   }, [photoStyle.borderRadius]);
+
+  useEffect(() => {
+    setPhotoWidthInput(String(photoStyle.width));
+  }, [photoStyle.width]);
+
+  useEffect(() => {
+    setPhotoHeightInput(String(photoStyle.height));
+  }, [photoStyle.height]);
 
   const applyPhotoStyle = useCallback((nextStyle: Partial<PersonalPhotoStyle>) => {
     dispatch({
@@ -155,6 +165,9 @@ export function PersonalInfoEditor() {
   };
 
   const handlePhotoWidthChange = (value: string) => {
+    setPhotoWidthInput(value);
+    const parsed = Number(value);
+    if (value.trim() === '' || !Number.isFinite(parsed) || parsed < PHOTO_STYLE_LIMITS.minSize) return;
     const width = parseDimensionInput(value, photoStyle.width);
     setSelectedPhotoAspect('custom');
     applyPhotoStyle(photoRatioLocked
@@ -163,11 +176,30 @@ export function PersonalInfoEditor() {
   };
 
   const handlePhotoHeightChange = (value: string) => {
+    setPhotoHeightInput(value);
+    const parsed = Number(value);
+    if (value.trim() === '' || !Number.isFinite(parsed) || parsed < PHOTO_STYLE_LIMITS.minSize) return;
     const height = parseDimensionInput(value, photoStyle.height);
     setSelectedPhotoAspect('custom');
     applyPhotoStyle(photoRatioLocked
       ? { height, width: clampNumber(height * (photoStyle.width / photoStyle.height), PHOTO_STYLE_LIMITS.minSize, PHOTO_STYLE_LIMITS.maxSize) }
       : { height });
+  };
+
+  const commitPhotoWidth = () => {
+    if (photoWidthInput.trim() === '' || !Number.isFinite(Number(photoWidthInput))) {
+      setPhotoWidthInput(String(photoStyle.width));
+      return;
+    }
+    handlePhotoWidthChange(String(parseDimensionInput(photoWidthInput, photoStyle.width)));
+  };
+
+  const commitPhotoHeight = () => {
+    if (photoHeightInput.trim() === '' || !Number.isFinite(Number(photoHeightInput))) {
+      setPhotoHeightInput(String(photoStyle.height));
+      return;
+    }
+    handlePhotoHeightChange(String(parseDimensionInput(photoHeightInput, photoStyle.height)));
   };
 
   const applyPhotoAspectRatio = (ratio: number, key: PhotoAspectKey) => {
@@ -457,8 +489,9 @@ export function PersonalInfoEditor() {
                                 type="number"
                                 min={PHOTO_STYLE_LIMITS.minSize}
                                 max={PHOTO_STYLE_LIMITS.maxSize}
-                                value={photoStyle.width}
+                                value={photoWidthInput}
                                 onChange={(e) => handlePhotoWidthChange(e.target.value)}
+                                onBlur={commitPhotoWidth}
                                 className={compactInputClass}
                               />
                               <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#98a2b3]">px</span>
@@ -481,8 +514,9 @@ export function PersonalInfoEditor() {
                                 type="number"
                                 min={PHOTO_STYLE_LIMITS.minSize}
                                 max={PHOTO_STYLE_LIMITS.maxSize}
-                                value={photoStyle.height}
+                                value={photoHeightInput}
                                 onChange={(e) => handlePhotoHeightChange(e.target.value)}
+                                onBlur={commitPhotoHeight}
                                 className={compactInputClass}
                               />
                               <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#98a2b3]">px</span>
@@ -524,6 +558,11 @@ export function PersonalInfoEditor() {
                               type="button"
                               onClick={() => {
                                 setSelectedPhotoRadius(option.key);
+                                if (option.key === 'circle') {
+                                  setSelectedPhotoAspect('1:1');
+                                  applyPhotoStyle({ height: photoStyle.width, borderRadius: option.value });
+                                  return;
+                                }
                                 applyPhotoStyle({ borderRadius: option.value });
                               }}
                               className={optionButtonClass(activePhotoRadius === option.key)}
@@ -535,7 +574,7 @@ export function PersonalInfoEditor() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 border-t border-gray-900/[0.05] px-[18px] pb-4 pt-3 dark:border-white/[0.07]">
+                    <div className="flex items-center justify-end gap-2 border-t border-gray-900/[0.05] px-[18px] pb-2.5 pt-2 dark:border-white/[0.07]">
                       <button
                         type="button"
                         onClick={resetPhotoStyle}
