@@ -48,7 +48,7 @@ export const monochromeRingsLayout: LayoutDefinition = {
 
     .resume-paper[data-layout="monochrome-rings"] [data-page-section="personal"] .flex-1 > div {
       justify-content: center !important;
-      gap: 0 !important;
+      gap: 1mm 4mm !important;
       margin-bottom: 1.5mm !important;
       color: #171717 !important;
       font-size: 0.98em !important;
@@ -64,8 +64,15 @@ export const monochromeRingsLayout: LayoutDefinition = {
       font-weight: 800 !important;
     }
 
-    .resume-paper[data-layout="monochrome-rings"] [data-page-section="personal"] svg {
-      display: none !important;
+    .resume-paper[data-layout="monochrome-rings"] .personal-info-mode-none .personal-contact-row-none {
+      gap: 1mm 0 !important;
+    }
+
+    .resume-paper[data-layout="monochrome-rings"] .personal-info-mode-none .personal-contact-separator {
+      display: inline-block !important;
+      margin: 0 1.5mm !important;
+      color: #111111 !important;
+      font-weight: 800 !important;
     }
 
     .resume-paper[data-layout="monochrome-rings"] [data-page-section="personal"] .personal-photo,

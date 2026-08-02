@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigat
 import HomePage from './pages/HomePage';
 const MyResumePage = lazy(() => import('./pages/MyResumePage'));
 const TemplatesPage = lazy(() => import('./pages/TemplatesPage'));
+const TemplatePreviewPage = lazy(() => import('./pages/TemplatePreviewPage'));
 const ResumePage = lazy(() => import('./pages/ResumePage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
@@ -255,6 +256,7 @@ function App() {
                 </Route>
                 <Route path="/resumes" element={<MyResumePage />} />
                 <Route path="/templates" element={<TemplatesPage />} />
+                <Route path="/templates/:templateId/preview" element={<TemplatePreviewPage />} />
                 <Route path="/resume/:resumeId?" element={<ResumePage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/settings" element={<SettingsPage />} />

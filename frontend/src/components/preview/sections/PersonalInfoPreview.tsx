@@ -1,4 +1,4 @@
-import React,{ useState } from 'react';
+import React,{ useEffect,useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppUI,useResume } from '../../../context/ResumeContext';
 import { resolveLayout } from '../../../registry/layouts';
@@ -89,24 +89,30 @@ export function PersonalInfoPreview() {
   const isCyanblu = layout.id === 'cyanblu';
   const isLeftSidebarTwoColumn = layout.id === 'left-sidebar-two-column';
   const isCenterline = layout.id === 'centerline';
-  const isClassicHorizontal = layout.id === 'classic-horizontal';
   const isBlueprintIcons = layout.id === 'blueprint-icons';
   const isMonochromeRings = layout.id === 'monochrome-rings';
   const isTealRibbonWave = layout.id === 'teal-ribbon-wave';
   const isBlueBannerIcons = layout.id === 'blue-banner-icons';
   const isAzureSidebar = layout.id === 'azure-sidebar';
 
-  // Track image load errors to fall back to placeholder
+  // A missing image should remove the entire photo area instead of rendering
+  // a broken-image placeholder. This keeps template/demo previews aligned
+  // with the editor's no-photo layout when /images/avatar.jpg is absent.
   const [photoError, setPhotoError] = useState(false);
+
+  useEffect(() => {
+    setPhotoError(false);
+  }, [personalInfo.photoUrl]);
 
   const displayMode = personalInfo.displayMode || 'icon';
   const isTextMode = displayMode === 'text';
+  const isNoneMode = displayMode === 'none';
   const photoLayout = personalInfo.photoLayout || 'right';
   const photoStyle = resolvePersonalPhotoStyle(personalInfo.photoStyle);
 
   const hasPhoto = !!personalInfo.photoUrl;
   // 浠呭湪鏈夌収鐗囨垨缂栬緫妯″紡涓嬫樉绀虹収鐗囧尯鍩燂紱姝ｅ紡灞曠ず鏃舵棤鐓х墖鍒欎笉鏄剧ず
-  const showPhotoArea = !isHidden('photo') && hasPhoto;
+  const showPhotoArea = !isHidden('photo') && hasPhoto && !photoError;
 
   // 澶村儚鍖哄煙
   const photoEl = (
@@ -114,20 +120,12 @@ export function PersonalInfoPreview() {
       className="personal-photo overflow-hidden shrink-0"
       style={{ width: photoStyle.width, height: photoStyle.height, borderRadius: photoStyle.borderRadius }}
     >
-      {!photoError ? (
-        <img
-          src={personalInfo.photoUrl}
-          alt={t('photo.alt')}
-          className="w-full h-full object-cover"
-          onError={() => setPhotoError(true)}
-        />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs bg-gray-100">
-          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-        </div>
-      )}
+      <img
+        src={personalInfo.photoUrl}
+        alt={t('photo.alt')}
+        className="w-full h-full object-cover"
+        onError={() => setPhotoError(true)}
+      />
     </div>
   );
 
@@ -302,25 +300,18 @@ export function PersonalInfoPreview() {
     );
   };
 
-  const renderClassicHorizontalField = (field: string) => (
-    renderValueOnlyField(field, 'classic-horizontal-contact-item')
+  const renderNoneModeField = (field: string) => (
+    renderValueOnlyField(field, 'personal-contact-value')
   );
 
-  const renderBlueprintIconsField = (field: string) => (
-    renderValueOnlyField(field, 'blueprint-icons-contact-item')
-  );
-
-  const renderMonochromeRingsField = (field: string) => (
-    renderValueOnlyField(field, 'monochrome-rings-contact-item')
-  );
-
-  const renderTealRibbonWaveField = (field: string) => (
-    renderValueOnlyField(field, 'teal-ribbon-wave-contact-item')
-  );
-
-  const renderBlueBannerIconsField = (field: string) => (
-    renderValueOnlyField(field, 'blue-banner-icons-contact-item')
-  );
+  const renderNoneModeFields = (fields: string[]) => fields.map((field, index) => (
+    <React.Fragment key={field}>
+      {index > 0 && (
+        <span className="personal-contact-separator" aria-hidden="true">|</span>
+      )}
+      {renderNoneModeField(field)}
+    </React.Fragment>
+  ));
 
   const renderLeftSidebarTwoColumnField = (field: string) => {
     const cfg = fieldConfig[field];
@@ -331,6 +322,14 @@ export function PersonalInfoPreview() {
       ? (previewIconLib[iconMap[field]] || previewIconLib.tag)
       : previewIconLib.tag;
     const icon = cfg ? getFieldIcon(field, cfg.icon) : getFieldIcon(field, defaultCustomIcon);
+
+    if (isNoneMode) {
+      return (
+        <div key={field} className="left-sidebar-two-column-contact-item break-words">
+          <span className="min-w-0 max-w-full break-all">{value}</span>
+        </div>
+      );
+    }
 
     return isTextMode ? (
       <div key={field} className="left-sidebar-two-column-contact-item break-words">
@@ -354,6 +353,14 @@ export function PersonalInfoPreview() {
       ? (previewIconLib[iconMap[field]] || previewIconLib.tag)
       : previewIconLib.tag;
     const icon = cfg ? getFieldIcon(field, cfg.icon) : getFieldIcon(field, defaultCustomIcon);
+
+    if (isNoneMode) {
+      return (
+        <div key={field} className="azure-sidebar-contact-item break-words">
+          <span className="min-w-0 max-w-full break-all">{value}</span>
+        </div>
+      );
+    }
 
     return isTextMode ? (
       <div key={field} className="azure-sidebar-contact-item break-words">
@@ -438,17 +445,7 @@ export function PersonalInfoPreview() {
     );
   }
 
-  const renderContactField = isBlueBannerIcons
-    ? renderBlueBannerIconsField
-    : isTealRibbonWave
-      ? renderTealRibbonWaveField
-      : isMonochromeRings
-        ? renderMonochromeRingsField
-        : isBlueprintIcons
-          ? renderBlueprintIconsField
-          : isClassicHorizontal
-            ? renderClassicHorizontalField
-            : renderField;
+  const renderContactField = isNoneMode ? renderNoneModeField : renderField;
 
   const personalInfoClassName = [
     'flex-1 min-w-0',
@@ -480,20 +477,20 @@ export function PersonalInfoPreview() {
         </h1>
       )}
       {topFields.length > 0 && (
-        <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 mb-3 ${isPhotoLeft ? 'justify-end' : ''}`}>
-          {topFields.map(renderContactField)}
+        <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 mb-3 ${isNoneMode ? 'personal-contact-row-none' : ''} ${isPhotoLeft ? 'justify-end' : ''}`}>
+          {isNoneMode ? renderNoneModeFields(topFields) : topFields.map(renderContactField)}
         </div>
       )}
       {bottomFields.length > 0 && (
-        <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 mb-2 ${isPhotoLeft ? 'justify-end' : ''}`}>
-          {bottomFields.map(renderContactField)}
+        <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 mb-2 ${isNoneMode ? 'personal-contact-row-none' : ''} ${isPhotoLeft ? 'justify-end' : ''}`}>
+          {isNoneMode ? renderNoneModeFields(bottomFields) : bottomFields.map(renderContactField)}
         </div>
       )}
     </div>
   );
 
   return (
-    <ActiveSectionWrapper sectionKey="personal" className={`mb-6 ${isCenterline ? 'centerline-personal' : ''} ${isBlueprintIcons ? 'blueprint-icons-personal' : ''} ${isMonochromeRings ? 'monochrome-rings-personal' : ''} ${isTealRibbonWave ? 'teal-ribbon-wave-personal' : ''} ${isBlueBannerIcons ? 'blue-banner-icons-personal' : ''}`}>
+    <ActiveSectionWrapper sectionKey="personal" className={`mb-6 personal-info-mode-${displayMode} ${isCenterline ? 'centerline-personal' : ''} ${isBlueprintIcons ? 'blueprint-icons-personal' : ''} ${isMonochromeRings ? 'monochrome-rings-personal' : ''} ${isTealRibbonWave ? 'teal-ribbon-wave-personal' : ''} ${isBlueBannerIcons ? 'blue-banner-icons-personal' : ''}`}>
       <div
         className={`flex items-start gap-4 ${isPhotoLeft ? 'flex-row-reverse' : ''}`}
       >

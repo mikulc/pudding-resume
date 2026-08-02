@@ -14,17 +14,33 @@ describe('blueBannerIconsLayout', () => {
     expect(photoRule).toContain('margin-top: 0 !important');
   });
 
-  it('leaves breathing room below the profile banner', () => {
+  it('uses compact spacing below the profile banner', () => {
     const personalSectionRule = blueBannerIconsLayout.css.match(
       /\[data-page-section="personal"\]\.blue-banner-icons-personal\s*\{([\s\S]*?)\}/,
     )?.[1];
 
-    expect(personalSectionRule).toContain('margin-bottom: var(--resume-page-margin) !important');
+    expect(personalSectionRule).toContain('margin-bottom: 6mm !important');
     expect(blueBannerIconsLayout.css).toContain(
       '--blue-banner-profile-height: max(35mm, calc(var(--personal-photo-height) + 5mm))',
     );
     expect(blueBannerIconsLayout.css).toContain(
       'height: calc(var(--resume-page-margin) + var(--blue-banner-profile-height)) !important',
     );
+  });
+
+  it('emphasizes the name in the profile banner', () => {
+    const nameRule = blueBannerIconsLayout.css.match(
+      /\.blue-banner-icons-name\s*\{([\s\S]*?)\}/,
+    )?.[1];
+
+    expect(nameRule).toContain('font-size: 1.75em !important');
+  });
+
+  it('keeps text-mode field labels readable on the dark banner', () => {
+    const textModeLabelRule = blueBannerIconsLayout.css.match(
+      /\.personal-info-mode-text \.text-gray-500\s*\{([\s\S]*?)\}/,
+    )?.[1];
+
+    expect(textModeLabelRule).toContain('color: #ffffff !important');
   });
 });

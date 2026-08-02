@@ -412,6 +412,7 @@
     "next": "Next",
     "previousAria": "Preview previous template",
     "nextAria": "Preview next template",
-    "useThis": "Use this template"
+    "useThis": "Use this template",
+    "notFound": "This template is unavailable or has been removed."
   }
 }

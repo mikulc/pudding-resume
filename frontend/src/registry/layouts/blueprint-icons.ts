@@ -45,7 +45,7 @@ export const blueprintIconsLayout: LayoutDefinition = {
 
     .resume-paper[data-layout="blueprint-icons"] [data-page-section="personal"] .flex-1 > div {
       justify-content: flex-start !important;
-      gap: 0 !important;
+      gap: 1mm 4mm !important;
       margin-bottom: 1.4mm !important;
       color: #333333 !important;
       font-size: 0.95em !important;
@@ -61,8 +61,15 @@ export const blueprintIconsLayout: LayoutDefinition = {
       font-weight: 600 !important;
     }
 
-    .resume-paper[data-layout="blueprint-icons"] [data-page-section="personal"] svg {
-      display: none !important;
+    .resume-paper[data-layout="blueprint-icons"] .personal-info-mode-none .personal-contact-row-none {
+      gap: 1mm 0 !important;
+    }
+
+    .resume-paper[data-layout="blueprint-icons"] .personal-info-mode-none .personal-contact-separator {
+      display: inline-block !important;
+      margin: 0 1.5mm !important;
+      color: #30343a !important;
+      font-weight: 600 !important;
     }
 
     .resume-paper[data-layout="blueprint-icons"] [data-page-section="personal"] .personal-photo,

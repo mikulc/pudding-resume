@@ -3,6 +3,7 @@ import type { SettingsPanelModel } from './useSettingsPanelModel';
 
 export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) {
   const { data, resumeDispatch, t, theme, updateTheme } = model;
+  const photoLayoutDisabled = theme.layoutId === 'teal-ribbon-wave';
   return (
     <>
         {/* Layout */}
@@ -21,9 +22,6 @@ export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) 
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                  </svg>
                   {t('document.layout.iconMode')}
                 </button>
                 <button
@@ -34,24 +32,33 @@ export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) 
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
-                  </svg>
                   {t('document.layout.textMode')}
+                </button>
+                <button
+                  onClick={() => resumeDispatch({ type: 'SET_PERSONAL_INFO', payload: { displayMode: 'none' } })}
+                  className={`theme-color-transition flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium ${
+                    data.personalInfo?.displayMode === 'none'
+                      ? 'bg-white text-gray-800 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {t('document.layout.noneMode')}
                 </button>
               </div>
             </div>
 
             {/* 头像布局 */}
-            <div>
+            <div title={photoLayoutDisabled ? t('document.layout.photoLayoutFixed') : undefined}>
               <span className="text-xs text-gray-500 font-medium mb-1.5 block">{t('document.layout.photoLayout')}</span>
-              <div className="flex rounded-lg border border-gray-200 bg-gray-50 p-0.5">
+              <div className={`flex rounded-lg border border-gray-200 bg-gray-50 p-0.5 ${photoLayoutDisabled ? 'cursor-not-allowed opacity-50' : ''}`}>
                 <button
+                  type="button"
+                  disabled={photoLayoutDisabled}
                   onClick={() => resumeDispatch({ type: 'SET_PERSONAL_INFO', payload: { photoLayout: 'right' } })}
-                  className={`theme-color-transition flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium ${
-                    (data.personalInfo?.photoLayout ?? 'right') === 'right'
+                  className={`theme-color-transition flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium disabled:cursor-not-allowed ${
+                    !photoLayoutDisabled && (data.personalInfo?.photoLayout ?? 'right') === 'right'
                       ? 'bg-white text-gray-800 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
+                      : photoLayoutDisabled ? 'text-gray-400' : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -60,11 +67,13 @@ export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) 
                   {t('document.layout.photoRight')}
                 </button>
                 <button
+                  type="button"
+                  disabled={photoLayoutDisabled}
                   onClick={() => resumeDispatch({ type: 'SET_PERSONAL_INFO', payload: { photoLayout: 'left' } })}
-                  className={`theme-color-transition flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium ${
-                    (data.personalInfo?.photoLayout ?? 'right') === 'left'
+                  className={`theme-color-transition flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium disabled:cursor-not-allowed ${
+                    !photoLayoutDisabled && (data.personalInfo?.photoLayout ?? 'right') === 'left'
                       ? 'bg-white text-gray-800 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
+                      : photoLayoutDisabled ? 'text-gray-400' : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

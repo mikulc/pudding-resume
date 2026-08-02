@@ -30,7 +30,7 @@ export const blueBannerIconsLayout: LayoutDefinition = {
     .resume-paper[data-layout="blue-banner-icons"] [data-page-section="personal"].blue-banner-icons-personal {
       position: relative !important;
       min-height: var(--blue-banner-profile-height) !important;
-      margin-bottom: var(--resume-page-margin) !important;
+      margin-bottom: 6mm !important;
       border-radius: 0 !important;
       text-align: center !important;
     }
@@ -54,7 +54,7 @@ export const blueBannerIconsLayout: LayoutDefinition = {
     .resume-paper[data-layout="blue-banner-icons"] .blue-banner-icons-name {
       margin: 0 0 3mm !important;
       color: #ffffff !important;
-      font-size: 1.5em !important;
+      font-size: 1.75em !important;
       line-height: 1.15 !important;
       font-weight: 900 !important;
       letter-spacing: 0 !important;
@@ -62,12 +62,16 @@ export const blueBannerIconsLayout: LayoutDefinition = {
 
     .resume-paper[data-layout="blue-banner-icons"] [data-page-section="personal"] .flex-1 > div {
       justify-content: center !important;
-      gap: 0 !important;
+      gap: 1mm 4mm !important;
       margin-bottom: 1mm !important;
       color: #ffffff !important;
       font-size: 0.9em !important;
       font-weight: 500 !important;
       line-height: var(--resume-line-spacing) !important;
+    }
+
+    .resume-paper[data-layout="blue-banner-icons"] .personal-info-mode-text .text-gray-500 {
+      color: #ffffff !important;
     }
 
     .resume-paper[data-layout="blue-banner-icons"] .blue-banner-icons-contact-item + .blue-banner-icons-contact-item::before {
@@ -78,8 +82,15 @@ export const blueBannerIconsLayout: LayoutDefinition = {
       font-weight: 800 !important;
     }
 
-    .resume-paper[data-layout="blue-banner-icons"] [data-page-section="personal"] svg {
-      display: none !important;
+    .resume-paper[data-layout="blue-banner-icons"] .personal-info-mode-none .personal-contact-row-none {
+      gap: 1mm 0 !important;
+    }
+
+    .resume-paper[data-layout="blue-banner-icons"] .personal-info-mode-none .personal-contact-separator {
+      display: inline-block !important;
+      margin: 0 1.5mm !important;
+      color: #ffffff !important;
+      font-weight: 800 !important;
     }
 
     .resume-paper[data-layout="blue-banner-icons"] [data-page-section="personal"] .personal-photo,

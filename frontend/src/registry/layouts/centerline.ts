@@ -27,12 +27,13 @@ export const centerlineLayout: LayoutDefinition = {
       min-height: 30mm !important;
     }
 
-    .resume-paper[data-layout="centerline"] .centerline-personal-info {
-      grid-area: 1 / 1 !important;
-      width: 100% !important;
-      padding: 0 28mm !important;
-      text-align: center !important;
-    }
+.resume-paper[data-layout="centerline"] .centerline-personal-info {
+  grid-area: 1 / 1 !important;
+  align-self: center !important;
+  width: 100% !important;
+  padding: 0 28mm !important;
+  text-align: center !important;
+}
 
     .resume-paper[data-layout="centerline"] .centerline-name {
       margin-bottom: 2mm !important;

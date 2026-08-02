@@ -19,7 +19,7 @@ export const tealRibbonWaveLayout: LayoutDefinition = {
       top: -28mm !important;
       left: -18mm !important;
       width: calc(100% + 36mm) !important;
-      height: 55mm !important;
+      height: 52mm !important;
       pointer-events: none !important;
       border-radius: 0 0 50% 50% / 0 0 28% 28% !important;
       background: var(--theme-border) !important;
@@ -49,8 +49,14 @@ export const tealRibbonWaveLayout: LayoutDefinition = {
 
     .resume-paper[data-layout="teal-ribbon-wave"] [data-page-section="personal"] .flex-1 {
       width: 100% !important;
-      padding: calc(var(--personal-photo-height) + 4mm) 24mm 0 !important;
+      padding: calc(var(--personal-photo-width) + 12mm - var(--resume-page-margin)) 24mm 0 !important;
       text-align: center !important;
+    }
+
+    /* The portrait deliberately sits above the personal section's normal
+       flow. Disable the animation clip while this section is visible. */
+    .resume-paper[data-layout="teal-ribbon-wave"] [data-animated-section="personal"][data-section-hidden="false"] > .overflow-hidden {
+      overflow: visible !important;
     }
 
     .resume-paper[data-layout="teal-ribbon-wave"] [data-page-section="personal"] h1,
@@ -65,7 +71,7 @@ export const tealRibbonWaveLayout: LayoutDefinition = {
 
     .resume-paper[data-layout="teal-ribbon-wave"] [data-page-section="personal"] .flex-1 > div {
       justify-content: center !important;
-      gap: 0 !important;
+      gap: 1mm 4mm !important;
       margin-bottom: 0.8mm !important;
       color: #111111 !important;
       font-size: 0.9em !important;
@@ -81,19 +87,34 @@ export const tealRibbonWaveLayout: LayoutDefinition = {
       font-weight: 800 !important;
     }
 
-    .resume-paper[data-layout="teal-ribbon-wave"] [data-page-section="personal"] svg {
-      display: none !important;
+    .resume-paper[data-layout="teal-ribbon-wave"] .personal-info-mode-none .personal-contact-row-none {
+      gap: 1mm 0 !important;
+    }
+
+    .resume-paper[data-layout="teal-ribbon-wave"] .personal-info-mode-none .personal-contact-separator {
+      display: inline-block !important;
+      margin: 0 1.5mm !important;
+      color: #111111 !important;
+      font-weight: 800 !important;
     }
 
     .resume-paper[data-layout="teal-ribbon-wave"] [data-page-section="personal"] .personal-photo,
     .resume-paper[data-layout="teal-ribbon-wave"] [data-page-section="personal"] .personal-photo-placeholder {
       position: absolute !important;
-      top: 0mm !important;
+      /* Keep the portrait 5mm from the paper edge regardless of page margin. */
+      top: calc(5mm - var(--resume-page-margin)) !important;
       left: 50% !important;
+      width: var(--personal-photo-width) !important;
+      height: var(--personal-photo-width) !important;
       transform: translateX(-50%) !important;
+      border-radius: 50% !important;
       border: 0 !important;
       box-shadow: 0 1mm 2mm rgba(15, 23, 42, 0.08) !important;
       background: #f8fafc !important;
+    }
+
+    .resume-paper[data-layout="teal-ribbon-wave"] [data-page-section="personal"] .personal-photo img {
+      border-radius: 50% !important;
     }
 
     .resume-paper[data-layout="teal-ribbon-wave"] .section-header {

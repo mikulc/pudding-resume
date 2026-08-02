@@ -414,6 +414,7 @@
     "next": "下一个",
     "previousAria": "预览上一个模板",
     "nextAria": "预览下一个模板",
-    "useThis": "使用此模板"
+    "useThis": "使用该模板",
+    "notFound": "模板不存在或已下架"
   }
 }

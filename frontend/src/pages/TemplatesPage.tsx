@@ -1,15 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal, flushSync } from 'react-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, ChevronLeft, ChevronRight, Eye, Loader2 } from 'lucide-react';
+import { ArrowRight, Eye, Loader2 } from 'lucide-react';
 import { NavbarAuth } from '../components/auth/NavbarAuth';
 import LogoIcon from '../components/common/LogoIcon';
 import { TopNavLinks } from '../components/common/TopNavLinks';
-import { useToast } from '../components/common/Toast';
 import {
   LazyResumeCardPreview,
-  ResumeCardPreview,
 } from '../components/preview/ResumeCardPreview';
 import { EmptyResumePreview } from '../components/preview/ResumePreviewSkeleton';
 import {
@@ -21,28 +18,13 @@ import {
   filterResumeTemplates,
   useResumeTemplateLibrary,
 } from '../components/template/ResumeTemplateLibrary';
-import { createResume, setResumeCache } from '../api/resumes';
-import { getAuthToken } from '../utils/api';
-import { isLocalStorageEnabled } from '../context/AuthContext';
-import { generateLocalId, saveResumeToLocal } from '../utils/localStorage';
-import { setPreviewCache } from '../utils/previewCache';
-import {
-  clearResumeLaunchSession,
-  stageDraftResumeLaunch,
-  stageLocalResumeLaunch,
-} from '../utils/resumeLaunch';
-import { createEmptyResumeData, createInitialThemeSettings } from '../utils/resumeDraft';
-import { getLayoutDefaultColor } from '../registry/layouts';
-import type { TemplateLibraryEntry } from '../types/resume';
-import { lockModalScroll } from '../utils/modalScrollLock';
+import { useCreateResumeFromTemplate } from '../components/template/useCreateResumeFromTemplate';
 
 export default function TemplatesPage() {
   const navigate = useNavigate();
   const { t } = useTranslation('resume');
-  const { showToast } = useToast();
-  const [creatingLayoutId, setCreatingLayoutId] = useState<string | null>(null);
+  const { creatingLayoutId, createFromTemplate } = useCreateResumeFromTemplate();
   const [activeCategory, setActiveCategory] = useState(ALL_TEMPLATE_CATEGORY);
-  const [previewEntry, setPreviewEntry] = useState<TemplateLibraryEntry | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { entries, loading } = useResumeTemplateLibrary(!creatingLayoutId);
 
@@ -51,95 +33,9 @@ export default function TemplatesPage() {
     () => filterResumeTemplates(entries, activeCategory),
     [entries, activeCategory],
   );
-  const previewIndex = useMemo(
-    () => previewEntry ? filteredEntries.findIndex((entry) => entry.id === previewEntry.id) : -1,
-    [filteredEntries, previewEntry],
-  );
-
-  const navigatePreview = useCallback((offset: -1 | 1) => {
-    setPreviewEntry((current) => {
-      if (!current) return null;
-      const currentIndex = filteredEntries.findIndex((entry) => entry.id === current.id);
-      const nextEntry = filteredEntries[currentIndex + offset];
-      return nextEntry ?? current;
-    });
-  }, [filteredEntries]);
-
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
   }, []);
-
-  useEffect(() => {
-    if (!previewEntry) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setPreviewEntry(null);
-      if (event.key === 'ArrowLeft') navigatePreview(-1);
-      if (event.key === 'ArrowRight') navigatePreview(1);
-    };
-
-    const unlockModalScroll = lockModalScroll();
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      unlockModalScroll();
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [navigatePreview, previewEntry]);
-
-  const handleCreateFromTemplate = useCallback(async (entry: TemplateLibraryEntry) => {
-    if (creatingLayoutId) return;
-
-    clearResumeLaunchSession();
-
-    const layoutId = entry.defaultTheme.layoutId;
-    const themeColor = entry.defaultTheme.previewColors?.accentBar || getLayoutDefaultColor(layoutId);
-    const resumeData = entry.content ?? createEmptyResumeData();
-    const settings = createInitialThemeSettings(layoutId, themeColor);
-    const resumeName = t('templatesPage.untitledResume');
-
-    flushSync(() => setCreatingLayoutId(layoutId));
-
-    try {
-      if (getAuthToken()) {
-        const created = await createResume(resumeData, resumeName, settings);
-        setResumeCache(created.id, {
-          id: created.id,
-          name: created.name,
-          content: created.content || resumeData,
-          settings: created.settings || settings,
-        });
-        navigate(`/resume/${created.id}`);
-        return;
-      }
-
-      if (isLocalStorageEnabled()) {
-        const localId = generateLocalId();
-        const saved = await saveResumeToLocal({
-          id: localId,
-          name: resumeName,
-          content: resumeData,
-          settings,
-          updated_at: new Date().toISOString(),
-        });
-
-        if (!saved) {
-          throw new Error(t('templatesPage.saveFailed'));
-        }
-
-        stageLocalResumeLaunch({ id: localId, name: resumeName, data: resumeData, settings });
-        setPreviewCache(localId, resumeData, settings);
-        navigate(`/resume/${localId}`);
-        return;
-      }
-
-      stageDraftResumeLaunch({ layoutId, themeColor, templateData: entry.content });
-      navigate('/resume');
-    } catch (error) {
-      const message = error instanceof Error ? error.message : t('templatesPage.saveFailed');
-      showToast(message, 'error');
-      setCreatingLayoutId(null);
-    }
-  }, [creatingLayoutId, navigate, showToast, t]);
 
   return (
     <div className="min-h-screen bg-[var(--bg-page)] text-gray-900 flex flex-col theme-color-transition">
@@ -253,7 +149,7 @@ export default function TemplatesPage() {
                               <div className="pointer-events-auto absolute inset-0 flex translate-y-0 items-center gap-2 p-2 opacity-100 transition-all duration-200 sm:pointer-events-none sm:translate-y-1 sm:opacity-0 sm:group-hover:pointer-events-auto sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:group-focus-within:pointer-events-auto sm:group-focus-within:translate-y-0 sm:group-focus-within:opacity-100">
                                 <button
                                   type="button"
-                                  onClick={() => setPreviewEntry(entry)}
+                                  onClick={() => navigate(`/templates/${encodeURIComponent(entry.id)}/preview`)}
                                   className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition-colors hover:border-[#2248ff]/40 hover:bg-[#2248ff]/5 hover:text-[#2248ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/30"
                                   aria-label={t('templatesPage.previewAria', { name: entry.name })}
                                 >
@@ -262,7 +158,7 @@ export default function TemplatesPage() {
                                 </button>
                                 <button
                                   type="button"
-                                  onClick={() => void handleCreateFromTemplate(entry)}
+                                  onClick={() => void createFromTemplate(entry)}
                                   className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#2248ff] px-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#193be0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/35 dark:bg-[#fbbf24] dark:text-[#17191d] dark:hover:bg-[#f6b914]"
                                   aria-label={t('templatesPage.useAria', { name: entry.name })}
                                 >
@@ -282,90 +178,6 @@ export default function TemplatesPage() {
           </div>
         )}
       </main>
-      {previewEntry &&
-        createPortal(
-          <div
-            className="fixed inset-0 z-[10000] flex items-center justify-center bg-slate-950/45 p-3 backdrop-blur-sm sm:p-6"
-            onMouseDown={() => setPreviewEntry(null)}
-          >
-            <section
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="template-preview-title"
-              className="modal-dialog-enter flex h-[min(92vh,900px)] w-full max-w-[680px] flex-col overflow-hidden rounded-[20px] border border-white/20 bg-[var(--bg-card)] shadow-[0_28px_90px_rgba(15,23,42,0.35)]"
-              onMouseDown={(event) => event.stopPropagation()}
-            >
-              <header className="flex h-14 flex-shrink-0 items-center justify-between gap-4 border-b border-slate-200/70 px-3 sm:px-4">
-                <div className="flex min-w-0 items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setPreviewEntry(null)}
-                    className="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
-                    aria-label={t('templatesPage.backToList')}
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <div className="min-w-0">
-                    <h2 id="template-preview-title" className="truncate text-[15px] font-bold text-slate-900">
-                      {previewEntry.name}
-                    </h2>
-                  </div>
-                </div>
-              </header>
-
-              <div className="flex min-h-0 flex-1 items-start justify-center overflow-auto bg-slate-100/80 p-4 sm:p-5 dark:bg-black/15">
-                <div className="relative aspect-[210/297] h-full max-h-full max-w-full overflow-hidden rounded-md bg-white shadow-[0_14px_45px_rgba(15,23,42,0.16)]">
-                  {previewEntry.content ? (
-                    <ResumeCardPreview
-                      content={previewEntry.content}
-                      theme={buildResumePreviewTheme(previewEntry.defaultTheme)}
-                    />
-                  ) : (
-                    <EmptyResumePreview />
-                  )}
-                </div>
-              </div>
-
-              <footer className="flex h-[60px] flex-shrink-0 items-center justify-between gap-3 border-t border-slate-200/70 bg-[var(--bg-card)] px-3 sm:px-4">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => navigatePreview(-1)}
-                    disabled={previewIndex <= 0}
-                    className="inline-flex h-9 items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-2 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 sm:px-3 dark:bg-transparent"
-                    aria-label={t('templatesPage.previousAria')}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span>{t('templatesPage.previous')}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => navigatePreview(1)}
-                    disabled={previewIndex < 0 || previewIndex >= filteredEntries.length - 1}
-                    className="inline-flex h-9 items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-2 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 sm:px-3 dark:bg-transparent"
-                    aria-label={t('templatesPage.nextAria')}
-                  >
-                    <span>{t('templatesPage.next')}</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const entry = previewEntry;
-                    setPreviewEntry(null);
-                    void handleCreateFromTemplate(entry);
-                  }}
-                  className="inline-flex h-9 flex-shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#2248ff] px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#193be0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/35 dark:bg-[#fbbf24] dark:text-[#17191d] dark:hover:bg-[#f6b914]"
-                >
-                  {t('templatesPage.useThis')}
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-              </footer>
-            </section>
-          </div>,
-          document.body,
-        )}
     </div>
   );
 }

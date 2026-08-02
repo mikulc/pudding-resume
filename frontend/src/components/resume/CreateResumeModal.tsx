@@ -21,6 +21,7 @@ import {
 } from '../../utils/resumeLaunch';
 import { useToast } from '../common/Toast';
 import { lockModalScroll } from '../../utils/modalScrollLock';
+import { removeUnavailableDefaultAvatar } from '../../utils/resumePhoto';
 
 interface CreateResumeModalProps {
   open: boolean;
@@ -73,13 +74,14 @@ export function CreateResumeModal({ open, onClose }: CreateResumeModalProps) {
     clearResumeLaunchSession();
 
     const themeColor = template?.defaultTheme.previewColors?.accentBar || getLayoutDefaultColor(layoutId);
-    const resumeData = template?.content ?? createEmptyResumeData();
     const settings = createInitialThemeSettings(layoutId, themeColor);
     const resumeName = t('list.unnamedResume');
 
     flushSync(() => setIsCreating(true));
 
     try {
+      const resumeData = await removeUnavailableDefaultAvatar(template?.content ?? createEmptyResumeData());
+
       if (getAuthToken()) {
         const created = await createResume(resumeData, resumeName, settings);
         setResumeCache(created.id, {
@@ -115,7 +117,7 @@ export function CreateResumeModal({ open, onClose }: CreateResumeModalProps) {
       stageDraftResumeLaunch({
         layoutId,
         themeColor,
-        templateData: template?.content,
+        templateData: targetMode === 'template' ? resumeData : undefined,
       });
       navigate('/resume');
     } catch (error) {

@@ -137,10 +137,20 @@ function scopeResumePaperCSS(css: string, layoutId: string, scopeClass?: string 
 }
 
 /** Animated section wrapper using grid 0fr/1fr for smooth collapse and expand. */
-function AnimatedSection({ hidden, children }: { hidden: boolean; children: React.ReactNode }) {
+function AnimatedSection({
+  sectionKey,
+  hidden,
+  children,
+}: {
+  sectionKey: SectionKey;
+  hidden: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <div
       className={`transition-all ${SECTION_ANIM_DURATION} ease-in-out`}
+      data-animated-section={sectionKey}
+      data-section-hidden={hidden ? 'true' : 'false'}
       style={{
         display: 'grid',
         gridTemplateRows: hidden ? '0fr' : '1fr',
@@ -259,7 +269,7 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
     animated: boolean,
   ) => sections.map((s) => (
     animated ? (
-      <AnimatedSection key={s.key} hidden={hiddenSections.includes(s.key)}>
+      <AnimatedSection key={s.key} sectionKey={s.key} hidden={hiddenSections.includes(s.key)}>
         {s.component}
       </AnimatedSection>
     ) : (
@@ -299,6 +309,7 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
     '--resume-content-height': string;
     '--resume-page-margin': string;
     '--resume-line-spacing': number;
+    '--personal-photo-width': string;
     '--personal-photo-height': string;
   } = {
     padding: isSidebarLayout ? 0 : `${theme.pageMargin}mm`,
@@ -309,6 +320,7 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
     '--resume-content-height': `${pageContentHeight}px`,
     '--resume-page-margin': `${theme.pageMargin}mm`,
     '--resume-line-spacing': theme.lineSpacing,
+    '--personal-photo-width': `${resolvePersonalPhotoStyle(data.personalInfo.photoStyle).width}px`,
     '--personal-photo-height': `${resolvePersonalPhotoStyle(data.personalInfo.photoStyle).height}px`,
   };
 

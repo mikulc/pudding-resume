@@ -51,7 +51,7 @@ export const classicHorizontalLayout: LayoutDefinition = {
       color: #333333 !important;
       font-size: 0.88em !important;
       font-weight: 700 !important;
-      gap: 1mm 0 !important;
+      gap: 1mm 4mm !important;
     }
 
     .resume-paper[data-layout="classic-horizontal"] .classic-horizontal-contact-item + .classic-horizontal-contact-item::before {
@@ -62,8 +62,15 @@ export const classicHorizontalLayout: LayoutDefinition = {
       font-weight: 800 !important;
     }
 
-    .resume-paper[data-layout="classic-horizontal"] [data-page-section="personal"] svg {
-      display: none !important;
+    .resume-paper[data-layout="classic-horizontal"] .personal-info-mode-none .personal-contact-row-none {
+      gap: 1mm 0 !important;
+    }
+
+    .resume-paper[data-layout="classic-horizontal"] .personal-info-mode-none .personal-contact-separator {
+      display: inline-block !important;
+      margin: 0 1.5mm !important;
+      color: #333333 !important;
+      font-weight: 800 !important;
     }
 
     .resume-paper[data-layout="classic-horizontal"] [data-page-section="personal"] .personal-photo,

@@ -10,7 +10,7 @@ export interface PersonalInfo {
   jobTarget?: string;
   location?: string;
   /** 字段标签：'icon' = 图标模式，'text' = 文字模式 */
-  displayMode?: 'icon' | 'text';
+  displayMode?: 'icon' | 'text' | 'none';
   /** 头像布局：'left' = 头像在左信息在右，'right' = 头像在右信息在左 */
   photoLayout?: 'left' | 'right';
   /** 隐藏的字段列表 */
