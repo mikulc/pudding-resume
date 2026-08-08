@@ -1,7 +1,6 @@
 package database
 
 import (
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"log"
 	"pudding-resume-backend/models"
@@ -17,7 +16,7 @@ func seedThemeLibraries() {
 
 	entries := []models.ThemeLibrary{
 		{
-			ID:            uuid.New().String(),
+			ID:            models.NewUUID(),
 			Name:          "现代极简",
 			LayoutID:      "skyveil",
 			Categories:    marshalJSON([]string{"清新", "单栏"}),
@@ -26,7 +25,7 @@ func seedThemeLibraries() {
 			SortOrder:     1,
 		},
 		{
-			ID:            uuid.New().String(),
+			ID:            models.NewUUID(),
 			Name:          "蓝标细线",
 			LayoutID:      "cyanblu",
 			Categories:    marshalJSON([]string{"简约", "商务", "单栏"}),
@@ -35,7 +34,7 @@ func seedThemeLibraries() {
 			SortOrder:     2,
 		},
 		{
-			ID:            uuid.New().String(),
+			ID:            models.NewUUID(),
 			Name:          "黑白简约",
 			LayoutID:      "ordrin",
 			Categories:    marshalJSON([]string{"简约", "单栏"}),
@@ -44,7 +43,7 @@ func seedThemeLibraries() {
 			SortOrder:     3,
 		},
 		{
-			ID:            uuid.New().String(),
+			ID:            models.NewUUID(),
 			Name:          "浅蓝侧栏",
 			LayoutID:      "left-sidebar-two-column",
 			Categories:    marshalJSON([]string{"现代", "双栏"}),
@@ -53,7 +52,7 @@ func seedThemeLibraries() {
 			SortOrder:     4,
 		},
 		{
-			ID:            uuid.New().String(),
+			ID:            models.NewUUID(),
 			Name:          "居中简约",
 			LayoutID:      "centerline",
 			Categories:    marshalJSON([]string{"简约", "单栏"}),
@@ -62,7 +61,7 @@ func seedThemeLibraries() {
 			SortOrder:     5,
 		},
 		{
-			ID:            uuid.New().String(),
+			ID:            models.NewUUID(),
 			Name:          "横线单栏",
 			LayoutID:      "classic-horizontal",
 			Categories:    marshalJSON([]string{"经典", "商务", "单栏"}),
@@ -71,7 +70,7 @@ func seedThemeLibraries() {
 			SortOrder:     6,
 		},
 		{
-			ID:            uuid.New().String(),
+			ID:            models.NewUUID(),
 			Name:          "蓝标横线",
 			LayoutID:      "blueprint-icons",
 			Categories:    marshalJSON([]string{"现代", "图标"}),
@@ -80,7 +79,7 @@ func seedThemeLibraries() {
 			SortOrder:     7,
 		},
 		{
-			ID:            uuid.New().String(),
+			ID:            models.NewUUID(),
 			Name:          "灰条分区",
 			LayoutID:      "monochrome-rings",
 			Categories:    marshalJSON([]string{"创意", "单栏"}),
@@ -89,7 +88,7 @@ func seedThemeLibraries() {
 			SortOrder:     8,
 		},
 		{
-			ID:            uuid.New().String(),
+			ID:            models.NewUUID(),
 			Name:          "弧顶标签",
 			LayoutID:      "teal-ribbon-wave",
 			Categories:    marshalJSON([]string{"创意", "现代"}),
@@ -98,7 +97,7 @@ func seedThemeLibraries() {
 			SortOrder:     9,
 		},
 		{
-			ID:            uuid.New().String(),
+			ID:            models.NewUUID(),
 			Name:          "深蓝页眉",
 			LayoutID:      "blue-banner-icons",
 			Categories:    marshalJSON([]string{"商务", "单栏"}),
@@ -107,7 +106,7 @@ func seedThemeLibraries() {
 			SortOrder:     10,
 		},
 		{
-			ID:            uuid.New().String(),
+			ID:            models.NewUUID(),
 			Name:          "蓝色侧栏",
 			LayoutID:      "azure-sidebar",
 			Categories:    marshalJSON([]string{"现代", "商务", "双栏"}),

@@ -32,7 +32,7 @@ func recordAIUsage(c *gin.Context, feature string, cfg resolvedAIConfig, usage A
 	}
 
 	logEntry := models.AIUsageLog{
-		UserID:           userID,
+		UserID:           models.UUID(userID),
 		Feature:          feature,
 		Provider:         cfg.Provider,
 		Model:            cfg.Model,

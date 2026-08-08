@@ -8,9 +8,9 @@ import (
 
 // ResumeShare 简历分享配置表 — 存储分享权限和访问级别
 type ResumeShare struct {
-	ID           string         `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:分享配置唯一标识"`
-	ResumeID     string         `json:"resume_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联简历ID"`
-	UserID       string         `json:"user_id" gorm:"type:uuid;index;not null;comment:简历所属用户ID"`
+	ID           UUID           `json:"id" gorm:"type:uuid;primaryKey;comment:分享配置唯一标识"`
+	ResumeID     UUID           `json:"resume_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联简历ID"`
+	UserID       UUID           `json:"user_id" gorm:"type:uuid;index;not null;comment:简历所属用户ID"`
 	ShareToken   string         `json:"share_token" gorm:"type:varchar(64);uniqueIndex;not null;comment:分享链接token"`
 	Permission   string         `json:"permission" gorm:"type:varchar(32);default:'self_only';not null;comment:self_only 仅自己可见 / link_anyone 互联网获得链接的人"`
 	AccessLevel  string         `json:"access_level" gorm:"type:varchar(16);default:'view';not null;comment:view 可查看 / edit 可复制"`

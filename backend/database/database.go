@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"reflect"
 	"strings"
 	"time"
 
 	"gorm.io/datatypes"
+	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -25,7 +27,7 @@ func marshalJSON(v any) datatypes.JSON {
 	return datatypes.JSON(b)
 }
 
-// Init connects to PostgreSQL and runs auto-migration.
+// Init connects to the configured database and runs auto-migration.
 func Init(cfg *config.Config) {
 	dsn := cfg.DSN()
 
@@ -39,13 +41,17 @@ func Init(cfg *config.Config) {
 		},
 	)
 
-	var err error
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+	dialector, err := databaseDialector(cfg.DatabaseDriver(), dsn)
+	if err != nil {
+		log.Fatalf("Invalid database configuration: %v", err)
+	}
+	DB, err = gorm.Open(dialector, &gorm.Config{
 		Logger: newLogger,
 	})
 	if err != nil {
-		log.Fatalf("Failed to connect to PostgreSQL: %v", err)
+		log.Fatalf("Failed to connect to %s: %v", cfg.DatabaseDriver(), err)
 	}
+	registerUUIDCreateCallback(DB)
 
 	migrateStyleLibraryTable(DB)
 
@@ -72,7 +78,66 @@ func Init(cfg *config.Config) {
 	seedAll()
 	migrateTableComments(DB)
 
-	fmt.Println("Database connected and migrated successfully.")
+	fmt.Printf("%s database connected and migrated successfully.\n", cfg.DatabaseDriver())
+}
+
+func databaseDialector(driver, dsn string) (gorm.Dialector, error) {
+	switch driver {
+	case "postgres":
+		return postgres.Open(dsn), nil
+	case "mysql":
+		return mysql.Open(dsn), nil
+	default:
+		return nil, fmt.Errorf("unsupported DB_DRIVER %q", driver)
+	}
+}
+
+func registerUUIDCreateCallback(db *gorm.DB) {
+	err := db.Callback().Create().Before("gorm:before_create").Register("pudding:assign_uuid", func(tx *gorm.DB) {
+		if tx.Statement.Schema == nil || tx.Statement.Schema.PrioritizedPrimaryField == nil {
+			return
+		}
+		field := tx.Statement.Schema.PrioritizedPrimaryField
+		if field.FieldType != reflect.TypeOf(models.UUID("")) {
+			return
+		}
+
+		setUUID := func(value reflect.Value) {
+			for value.Kind() == reflect.Pointer {
+				if value.IsNil() {
+					return
+				}
+				value = value.Elem()
+			}
+			if value.Kind() != reflect.Struct {
+				return
+			}
+			_, zero := field.ValueOf(tx.Statement.Context, value)
+			if zero {
+				if err := field.Set(tx.Statement.Context, value, models.NewUUID()); err != nil {
+					tx.AddError(err)
+				}
+			}
+		}
+
+		value := tx.Statement.ReflectValue
+		for value.Kind() == reflect.Pointer {
+			if value.IsNil() {
+				return
+			}
+			value = value.Elem()
+		}
+		if value.Kind() == reflect.Slice || value.Kind() == reflect.Array {
+			for index := 0; index < value.Len(); index++ {
+				setUUID(value.Index(index))
+			}
+			return
+		}
+		setUUID(value)
+	})
+	if err != nil {
+		log.Fatalf("Failed to register UUID callback: %v", err)
+	}
 }
 
 // migrateActiveUserEmailUniqueIndex keeps email unique only among active users.
@@ -80,6 +145,12 @@ func Init(cfg *config.Config) {
 // Soft-deleted accounts do not reserve their former email address, while the
 // database remains the final concurrency guard for email-based authentication.
 func migrateActiveUserEmailUniqueIndex(db *gorm.DB) {
+	if db.Dialector.Name() == "mysql" {
+		if err := migrateMySQLActiveUserEmailUniqueIndex(db); err != nil {
+			log.Fatalf("Failed to migrate active-user email unique index: %v", err)
+		}
+		return
+	}
 	err := db.Transaction(func(tx *gorm.DB) error {
 		for _, statement := range activeUserEmailIndexMigrationStatements() {
 			if err := tx.Exec(statement).Error; err != nil {
@@ -91,6 +162,33 @@ func migrateActiveUserEmailUniqueIndex(db *gorm.DB) {
 	if err != nil {
 		log.Fatalf("Failed to migrate active-user email unique index: %v", err)
 	}
+}
+
+func migrateMySQLActiveUserEmailUniqueIndex(db *gorm.DB) error {
+	// MySQL implicitly commits DDL, so run this idempotent migration without a
+	// surrounding transaction.
+	for _, index := range []string{
+		"idx_user_info_email",
+		"idx_user_info_username",
+		"idx_user_info_username_active",
+	} {
+		if db.Migrator().HasIndex("user_info", index) {
+			if err := db.Migrator().DropIndex("user_info", index); err != nil {
+				return err
+			}
+		}
+	}
+	if !db.Migrator().HasColumn("user_info", "active_email") {
+		if err := db.Exec(`ALTER TABLE user_info
+				ADD COLUMN active_email VARCHAR(128)
+				GENERATED ALWAYS AS (CASE WHEN deleted_at IS NULL THEN LOWER(email) ELSE NULL END) STORED`).Error; err != nil {
+			return err
+		}
+	}
+	if !db.Migrator().HasIndex("user_info", "idx_user_info_email_active") {
+		return db.Exec(`CREATE UNIQUE INDEX idx_user_info_email_active ON user_info (active_email)`).Error
+	}
+	return nil
 }
 
 func activeUserEmailIndexMigrationStatements() []string {
@@ -149,15 +247,24 @@ func dropRetiredAdminAuditLogsTable(db *gorm.DB) {
 
 // dropRetiredAIModelPoolSchema removes the shared model pool and source-selection columns.
 func dropRetiredAIModelPoolSchema(db *gorm.DB) {
-	statements := []string{
-		`ALTER TABLE ai_service_config DROP COLUMN IF EXISTS public_model_id`,
-		`ALTER TABLE ai_service_config DROP COLUMN IF EXISTS model_source`,
-		`ALTER TABLE ai_usage_logs DROP COLUMN IF EXISTS public_model_id`,
-		`ALTER TABLE ai_usage_logs DROP COLUMN IF EXISTS model_source`,
-		`DROP TABLE IF EXISTS ai_model_pool`,
+	columns := []struct {
+		model  any
+		column string
+	}{
+		{&models.AIServiceConfig{}, "public_model_id"},
+		{&models.AIServiceConfig{}, "model_source"},
+		{&models.AIUsageLog{}, "public_model_id"},
+		{&models.AIUsageLog{}, "model_source"},
 	}
-	for _, statement := range statements {
-		if err := db.Exec(statement).Error; err != nil {
+	for _, item := range columns {
+		if db.Migrator().HasColumn(item.model, item.column) {
+			if err := db.Migrator().DropColumn(item.model, item.column); err != nil {
+				log.Fatalf("Failed to remove retired AI model pool schema: %v", err)
+			}
+		}
+	}
+	if db.Migrator().HasTable("ai_model_pool") {
+		if err := db.Migrator().DropTable("ai_model_pool"); err != nil {
 			log.Fatalf("Failed to remove retired AI model pool schema: %v", err)
 		}
 	}
@@ -186,6 +293,9 @@ func seedAll() {
 // migrateTableComments adds Chinese comments to PostgreSQL tables.
 // Safe to call on every startup — uses COMMENT ON which is idempotent.
 func migrateTableComments(db *gorm.DB) {
+	if db.Dialector.Name() != "postgres" {
+		return
+	}
 	comments := map[string]string{
 		"user_info":         "用户表",
 		"user_preference":   "用户偏好设置表",

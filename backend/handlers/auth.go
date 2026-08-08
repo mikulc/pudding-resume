@@ -12,6 +12,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/gin-gonic/gin"
+	mysqldriver "github.com/go-sql-driver/mysql"
 	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 
@@ -118,15 +119,22 @@ func normalizeEmail(email string) string {
 
 func registrationConflictMessage(err error) (string, bool) {
 	var pgErr *pgconn.PgError
-	if !errors.As(err, &pgErr) || pgErr.Code != "23505" {
-		return "", false
+	if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+		switch pgErr.ConstraintName {
+		case "idx_user_info_email_active", "idx_user_info_email":
+			return "该邮箱已被注册", true
+		default:
+			return "", false
+		}
 	}
-	switch pgErr.ConstraintName {
-	case "idx_user_info_email_active", "idx_user_info_email":
+
+	var mysqlErr *mysqldriver.MySQLError
+	if errors.As(err, &mysqlErr) && mysqlErr.Number == 1062 &&
+		(strings.Contains(mysqlErr.Message, "idx_user_info_email_active") ||
+			strings.Contains(mysqlErr.Message, "idx_user_info_email")) {
 		return "该邮箱已被注册", true
-	default:
-		return "", false
 	}
+	return "", false
 }
 
 // parseExpiration parses the expiration duration string, falling back to a default.
@@ -145,7 +153,7 @@ func generateAndSetTokens(c *gin.Context, user *models.User, cfg *config.Config)
 	refreshExpiry := parseExpiration(cfg.JWTRefreshExpiration, 7*24*time.Hour)
 
 	pair, err := utils.GenerateTokenPair(
-		user.ID, user.Username, user.Role,
+		string(user.ID), user.Username, user.Role,
 		user.TokenVersion,
 		cfg.JWTSecret,
 		accessExpiry,
@@ -517,7 +525,7 @@ func RefreshToken(cfg *config.Config) gin.HandlerFunc {
 		refreshExpiry := parseExpiration(cfg.JWTRefreshExpiration, 7*24*time.Hour)
 
 		newAccessToken, err := utils.GenerateTokenWithType(
-			user.ID, user.Username, user.Role,
+			string(user.ID), user.Username, user.Role,
 			utils.TokenTypeAccess, user.TokenVersion,
 			cfg.JWTSecret, accessExpiry,
 		)
@@ -527,7 +535,7 @@ func RefreshToken(cfg *config.Config) gin.HandlerFunc {
 		}
 
 		newRefreshToken, err := utils.GenerateTokenWithType(
-			user.ID, user.Username, user.Role,
+			string(user.ID), user.Username, user.Role,
 			utils.TokenTypeRefresh, user.TokenVersion,
 			cfg.JWTSecret, refreshExpiry,
 		)

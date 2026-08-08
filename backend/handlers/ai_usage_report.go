@@ -242,7 +242,7 @@ func listRecentAIUsage(userID string, page int, pageSize int, filters aiUsageQue
 	records := make([]aiUsageRecord, 0, len(logs))
 	for _, item := range logs {
 		records = append(records, aiUsageRecord{
-			ID:               item.ID,
+			ID:               string(item.ID),
 			Feature:          item.Feature,
 			Provider:         item.Provider,
 			Model:            item.Model,

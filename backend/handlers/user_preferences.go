@@ -273,7 +273,7 @@ func UpdatePreferences(c *gin.Context) {
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				// Create new record
-				aifc = models.AIServiceConfig{UserID: userID}
+				aifc = models.AIServiceConfig{UserID: models.UUID(userID)}
 				for k, v := range aiUpdates {
 					switch k {
 					case "api_url":
@@ -341,4 +341,4 @@ func UpdatePreferences(c *gin.Context) {
 }
 
 // UpsertDailyStats increments the daily stats for the given user and field.
-// Uses ON CONFLICT DO UPDATE for idempotent upsert.
+// GORM translates the upsert clause for PostgreSQL and MySQL.

@@ -46,9 +46,9 @@ func GetLatestResume(c *gin.Context) {
 		return
 	}
 
-	// Content is already JSONB, return it as-is
+	// Content is already JSON, return it as-is
 	c.JSON(http.StatusOK, ResumeResponse{
-		ID:        resume.ID,
+		ID:        string(resume.ID),
 		Name:      resume.Name,
 		Content:   json.RawMessage(resume.Content),
 		Settings:  json.RawMessage(resume.Settings),
@@ -114,7 +114,7 @@ func ListResumes(c *gin.Context) {
 	items := make([]models.ResumeListItem, 0, len(resumes))
 	for _, r := range resumes {
 		items = append(items, models.ResumeListItem{
-			ID:        r.ID,
+			ID:        string(r.ID),
 			Name:      r.Name,
 			Content:   json.RawMessage(r.Content),
 			Settings:  json.RawMessage(r.Settings),
@@ -189,7 +189,7 @@ func CreateResume(c *gin.Context) {
 	}
 
 	resume := models.Resume{
-		UserID:   userID,
+		UserID:   models.UUID(userID),
 		Name:     name,
 		Content:  content,
 		Settings: settings,
@@ -203,7 +203,7 @@ func CreateResume(c *gin.Context) {
 	go incrementResumeStats(userID)
 
 	c.JSON(http.StatusCreated, ResumeResponse{
-		ID:        resume.ID,
+		ID:        string(resume.ID),
 		Name:      resume.Name,
 		Content:   json.RawMessage(resume.Content),
 		Settings:  json.RawMessage(resume.Settings),
@@ -233,7 +233,7 @@ func GetResumeByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, ResumeResponse{
-		ID:        resume.ID,
+		ID:        string(resume.ID),
 		Name:      resume.Name,
 		Content:   json.RawMessage(resume.Content),
 		Settings:  json.RawMessage(resume.Settings),
@@ -334,7 +334,7 @@ func CopyResume(c *gin.Context) {
 	}
 	var share models.ResumeShare
 	isSharedCopy := false
-	if original.UserID != userID {
+	if string(original.UserID) != userID {
 		if err := database.DB.Where(
 			"resume_id = ? AND permission = ? AND access_level = ?",
 			id,
@@ -372,7 +372,7 @@ func CopyResume(c *gin.Context) {
 	}
 
 	copy := models.Resume{
-		UserID:   userID,
+		UserID:   models.UUID(userID),
 		Name:     copyName,
 		Content:  copyContent,
 		Settings: original.Settings,
@@ -386,7 +386,7 @@ func CopyResume(c *gin.Context) {
 	go incrementResumeStats(userID)
 
 	c.JSON(http.StatusCreated, ResumeResponse{
-		ID:        copy.ID,
+		ID:        string(copy.ID),
 		Name:      copy.Name,
 		Content:   json.RawMessage(copy.Content),
 		Settings:  json.RawMessage(copy.Settings),

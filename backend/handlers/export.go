@@ -36,7 +36,7 @@ func validateExportPermission(userID string, resumeID string) (allowed bool, err
 	if err := database.DB.Where("id = ?", resumeID).First(&resume).Error; err != nil {
 		return false, "简历不存在"
 	}
-	if userID != "" && resume.UserID == userID {
+	if userID != "" && string(resume.UserID) == userID {
 		return true, ""
 	}
 
@@ -140,4 +140,3 @@ func handleExport(cfg *config.Config, format string,
 		c.Data(http.StatusOK, contentType, data)
 	}
 }
-

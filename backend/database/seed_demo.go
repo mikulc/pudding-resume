@@ -2,7 +2,6 @@ package database
 
 import (
 	"encoding/json"
-	"github.com/google/uuid"
 	"gorm.io/datatypes"
 	"log"
 	"pudding-resume-backend/models"
@@ -21,7 +20,7 @@ func seedDemoContent() {
 	log.Println("Seeding demo_content with sample resume data...")
 
 	demo := models.DemoContent{
-		ID:      uuid.New().String(),
+		ID:      models.NewUUID(),
 		Content: DefaultDemoContentJSON(),
 	}
 

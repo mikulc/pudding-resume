@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	mysqldriver "github.com/go-sql-driver/mysql"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
@@ -25,6 +26,17 @@ func TestRegistrationConflictMessage(t *testing.T) {
 		{
 			name:       "another unique constraint",
 			err:        &pgconn.PgError{Code: "23505", ConstraintName: "other"},
+			isConflict: false,
+		},
+		{
+			name:       "mysql active email index",
+			err:        &mysqldriver.MySQLError{Number: 1062, Message: "Duplicate entry for key 'idx_user_info_email_active'"},
+			want:       "该邮箱已被注册",
+			isConflict: true,
+		},
+		{
+			name:       "mysql another unique index",
+			err:        &mysqldriver.MySQLError{Number: 1062, Message: "Duplicate entry for key 'other'"},
 			isConflict: false,
 		},
 		{name: "not unique", err: errors.New("boom")},

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/google/uuid"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
@@ -133,7 +132,7 @@ func seedTemplateLibraries() {
 		}
 
 		entry := models.TemplateLibrary{
-			ID:             uuid.New().String(),
+			ID:             models.NewUUID(),
 			Name:           seed.Name,
 			Industry:       seed.Industry,
 			Categories:     marshalJSON(seed.Categories),

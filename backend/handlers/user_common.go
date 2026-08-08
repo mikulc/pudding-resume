@@ -149,7 +149,7 @@ func formatUserProfile(user *models.User) UserProfileResponse {
 	database.DB.Where("user_id = ?", user.ID).First(&aifc)
 
 	return UserProfileResponse{
-		ID:                                   user.ID,
+		ID:                                   string(user.ID),
 		Username:                             user.Username,
 		Email:                                user.Email,
 		Avatar:                               buildAvatarURL(user.Avatar),

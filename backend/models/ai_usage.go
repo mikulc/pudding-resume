@@ -4,8 +4,8 @@ import "time"
 
 // AIUsageLog stores per-call AI token usage for authenticated users.
 type AIUsageLog struct {
-	ID               string    `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
-	UserID           string    `json:"user_id" gorm:"type:uuid;not null;index"`
+	ID               UUID      `json:"id" gorm:"type:uuid;primaryKey"`
+	UserID           UUID      `json:"user_id" gorm:"type:uuid;not null;index"`
 	Feature          string    `json:"feature" gorm:"size:32;not null;index"`
 	Provider         string    `json:"provider" gorm:"size:32;not null;index"`
 	Model            string    `json:"model" gorm:"size:128;not null;index"`

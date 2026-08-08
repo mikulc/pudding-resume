@@ -110,8 +110,8 @@ func UpdateShareSettings(c *gin.Context) {
 		// Create new share record with generated token
 		token := uuid.New().String()
 		share = models.ResumeShare{
-			ResumeID:     resumeID,
-			UserID:       userID,
+			ResumeID:     models.UUID(resumeID),
+			UserID:       models.UUID(userID),
 			ShareToken:   token,
 			Permission:   "self_only",
 			AccessLevel:  "view",
@@ -201,7 +201,7 @@ func AccessSharedResumeByResumeID(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		isOwner := userID != "" && userID == share.UserID
+		isOwner := userID != "" && userID == string(share.UserID)
 
 		// Check permission
 		if share.Permission == "self_only" {

@@ -65,8 +65,8 @@ func ListUsers(c *gin.Context) {
 
 	baseQuery := database.DB.Unscoped().Model(&models.User{})
 	if search != "" {
-		like := "%" + search + "%"
-		baseQuery = baseQuery.Where("username ILIKE ? OR email ILIKE ?", like, like)
+		like := "%" + strings.ToLower(search) + "%"
+		baseQuery = baseQuery.Where("LOWER(username) LIKE ? OR LOWER(email) LIKE ?", like, like)
 	}
 	var total int64
 	baseQuery.Session(&gorm.Session{}).Count(&total)
@@ -76,7 +76,7 @@ func ListUsers(c *gin.Context) {
 
 	userIDs := make([]string, len(dbUsers))
 	for i, u := range dbUsers {
-		userIDs[i] = u.ID
+		userIDs[i] = string(u.ID)
 	}
 
 	// Fetch quotas in batch
@@ -84,7 +84,7 @@ func ListUsers(c *gin.Context) {
 	database.DB.Where("user_id IN ?", userIDs).Find(&quotas)
 	quotaMap := map[string]models.UserQuota{}
 	for _, q := range quotas {
-		quotaMap[q.UserID] = q
+		quotaMap[string(q.UserID)] = q
 	}
 
 	// Fetch resume counts in batch
@@ -102,7 +102,7 @@ func ListUsers(c *gin.Context) {
 
 	users := make([]AdminUserItem, 0, len(dbUsers))
 	for _, u := range dbUsers {
-		q := quotaMap[u.ID]
+		q := quotaMap[string(u.ID)]
 		status := "active"
 		if u.DeletedAt.Valid {
 			status = "deleted"
@@ -116,10 +116,10 @@ func ListUsers(c *gin.Context) {
 			deletedAt = u.DeletedAt.Time.Format("2006-01-02 15:04")
 		}
 		users = append(users, AdminUserItem{
-			ID: u.ID, Username: u.Username, Email: u.Email,
+			ID: string(u.ID), Username: u.Username, Email: u.Email,
 			Avatar: buildAvatarURL(u.Avatar), Role: u.Role, Status: status,
 			CreatedAt:   u.CreatedAt.Format("2006-01-02 15:04"),
-			LastLoginAt: lastLogin, ResumeCount: countMap[u.ID],
+			LastLoginAt: lastLogin, ResumeCount: countMap[string(u.ID)],
 			MaxResumes: q.MaxResumes, ExportCount: q.ExportCount,
 			DailyLimit: q.DailyLimitTokens, MonthlyLimit: q.MonthlyLimitTokens,
 			DeletedAt: deletedAt,
@@ -154,7 +154,7 @@ func UpdateUserQuota(c *gin.Context) {
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			// Create quota record
-			q := models.UserQuota{UserID: userID}
+			q := models.UserQuota{UserID: models.UUID(userID)}
 			if req.MaxResumes != nil {
 				q.MaxResumes = *req.MaxResumes
 			}

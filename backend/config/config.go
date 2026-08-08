@@ -2,10 +2,13 @@ package config
 
 import (
 	"errors"
+	"net"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	mysqlconfig "github.com/go-sql-driver/mysql"
 )
 
 const defaultDevelopmentJWTSecret = "pudding-resume-dev-secret-change-in-production"
@@ -16,7 +19,8 @@ type Config struct {
 	ServerPort   string
 	CookieSecure bool
 
-	// PostgreSQL
+	// Database (PostgreSQL or MySQL)
+	DBDriver   string
 	DBHost     string
 	DBPort     string
 	DBUser     string
@@ -24,6 +28,8 @@ type Config struct {
 	DBName     string
 	DBSSLMode  string
 	DBTimeZone string
+	DBCharset  string
+	DBTLS      string
 
 	// JWT
 	JWTSecret            string
@@ -79,18 +85,30 @@ type Config struct {
 // Load reads configuration from environment variables with sensible defaults.
 func Load() *Config {
 	appEnv := strings.ToLower(getEnv("APP_ENV", "development"))
+	dbDriver := normalizeDBDriver(getEnv("DB_DRIVER", "postgres"))
+	dbPort := "5432"
+	dbUser := "postgres"
+	dbPassword := "postgres"
+	if dbDriver == "mysql" {
+		dbPort = "3306"
+		dbUser = "root"
+		dbPassword = ""
+	}
 	return &Config{
 		AppEnv:       appEnv,
 		ServerPort:   getEnv("SERVER_PORT", "8080"),
 		CookieSecure: getEnvBool("COOKIE_SECURE", false),
 
+		DBDriver:   dbDriver,
 		DBHost:     getEnv("DB_HOST", "localhost"),
-		DBPort:     getEnv("DB_PORT", "5432"),
-		DBUser:     getEnv("DB_USER", "postgres"),
-		DBPassword: getEnv("DB_PASSWORD", "postgres"),
+		DBPort:     getEnv("DB_PORT", dbPort),
+		DBUser:     getEnv("DB_USER", dbUser),
+		DBPassword: getEnv("DB_PASSWORD", dbPassword),
 		DBName:     getEnv("DB_NAME", "pudding_resume"),
 		DBSSLMode:  getEnv("DB_SSLMODE", "disable"),
 		DBTimeZone: getEnv("DB_TIMEZONE", "Asia/Shanghai"),
+		DBCharset:  getEnv("DB_CHARSET", "utf8mb4"),
+		DBTLS:      getEnv("DB_TLS", "false"),
 
 		JWTSecret:            getEnv("JWT_SECRET", defaultDevelopmentJWTSecret),
 		JWTExpiration:        getEnv("JWT_EXPIRATION", "1h"),
@@ -137,6 +155,12 @@ func Load() *Config {
 // Validate rejects development-only defaults when running in production.
 func (c *Config) Validate() error {
 	var problems []string
+	if driver := normalizeDBDriver(c.DBDriver); driver != "postgres" && driver != "mysql" {
+		problems = append(problems, "DB_DRIVER must be postgres or mysql")
+	}
+	if _, err := time.LoadLocation(c.DBTimeZone); c.DBTimeZone != "" && err != nil {
+		problems = append(problems, "DB_TIMEZONE must be a valid IANA time zone")
+	}
 	if c.RegistrationEmailCodeEnabled {
 		if c.RedisAddr == "" {
 			problems = append(problems, "REDIS_ADDR must be set when registration email codes are enabled")
@@ -207,8 +231,32 @@ func (c *Config) Validate() error {
 	return nil
 }
 
-// DSN returns the PostgreSQL connection string.
+// DatabaseDriver returns the normalized GORM database driver name.
+func (c *Config) DatabaseDriver() string {
+	return normalizeDBDriver(c.DBDriver)
+}
+
+// DSN returns a driver-specific connection string.
 func (c *Config) DSN() string {
+	if c.DatabaseDriver() == "mysql" {
+		location, err := time.LoadLocation(c.DBTimeZone)
+		if err != nil {
+			location = time.UTC
+		}
+		mysqlDSN := mysqlconfig.Config{
+			User:                 c.DBUser,
+			Passwd:               c.DBPassword,
+			Net:                  "tcp",
+			Addr:                 net.JoinHostPort(c.DBHost, c.DBPort),
+			DBName:               c.DBName,
+			Params:               map[string]string{"charset": c.DBCharset},
+			ParseTime:            true,
+			Loc:                  location,
+			TLSConfig:            c.DBTLS,
+			AllowNativePasswords: true,
+		}
+		return mysqlDSN.FormatDSN()
+	}
 	return "host=" + c.DBHost +
 		" user=" + c.DBUser +
 		" password=" + c.DBPassword +
@@ -216,6 +264,17 @@ func (c *Config) DSN() string {
 		" port=" + c.DBPort +
 		" sslmode=" + c.DBSSLMode +
 		" TimeZone=" + c.DBTimeZone
+}
+
+func normalizeDBDriver(value string) string {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "", "pg", "postgres", "postgresql":
+		return "postgres"
+	case "mysql":
+		return "mysql"
+	default:
+		return strings.ToLower(strings.TrimSpace(value))
+	}
 }
 
 // CORSOrigins returns the allowed origins as a string slice.

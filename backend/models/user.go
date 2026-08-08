@@ -8,7 +8,7 @@ import (
 
 // User 用户表 — 存储用户基本信息与认证数据
 type User struct {
-	ID              string         `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:用户唯一标识（UUID v4）"`
+	ID              UUID           `json:"id" gorm:"type:uuid;primaryKey;comment:用户唯一标识（UUID v4）"`
 	Username        string         `json:"username" gorm:"size:64;not null;comment:用户名（展示用，可重复）"`
 	Email           string         `json:"email" gorm:"size:128;not null;comment:邮箱地址"`
 	Password        string         `json:"-" gorm:"size:256;not null;comment:密码哈希（json:\"-\" 禁止序列化输出）"`
@@ -28,8 +28,8 @@ func (User) TableName() string {
 
 // UserPreference 用户偏好设置表 — 存储用户的个性化配置
 type UserPreference struct {
-	ID               string `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:偏好记录唯一标识（UUID v4）"`
-	UserID           string `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
+	ID               UUID   `json:"id" gorm:"type:uuid;primaryKey;comment:偏好记录唯一标识（UUID v4）"`
+	UserID           UUID   `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
 	AutoSaveInterval int    `json:"auto_save_interval" gorm:"default:120;not null;comment:自动保存间隔（秒），0 表示关闭"`
 	AiPolishEnabled  bool   `json:"ai_polish_enabled" gorm:"default:false;not null;comment:是否启用 AI 润色"`
 	ThemeMode        string `json:"theme_mode" gorm:"size:16;default:system;not null;comment:UI 主题模式：light / dark / system"`
@@ -68,8 +68,8 @@ func (UserPreference) TableName() string {
 
 // AIServiceConfig AI 服务商配置表 — 存储用户配置的 AI 模型连接参数
 type AIServiceConfig struct {
-	ID        string    `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:配置记录唯一标识（UUID v4）"`
-	UserID    string    `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
+	ID        UUID      `json:"id" gorm:"type:uuid;primaryKey;comment:配置记录唯一标识（UUID v4）"`
+	UserID    UUID      `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
 	ApiUrl    string    `json:"api_url" gorm:"size:512;default:'';comment:AI 模型 API 地址"`
 	ApiKey    string    `json:"api_key" gorm:"size:256;default:'';comment:AI 模型的 API Key"`
 	Model     string    `json:"model" gorm:"size:128;default:'';comment:AI 模型名称"`
@@ -84,8 +84,8 @@ func (AIServiceConfig) TableName() string {
 
 // UserQuota 用户配额表 — 记录用户的最大简历数、导出次数等配额
 type UserQuota struct {
-	ID                 string    `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:配额记录唯一标识（UUID v4）"`
-	UserID             string    `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
+	ID                 UUID      `json:"id" gorm:"type:uuid;primaryKey;comment:配额记录唯一标识（UUID v4）"`
+	UserID             UUID      `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
 	MaxResumes         int       `json:"max_resumes" gorm:"default:10;not null;comment:最大简历创建数量"`
 	ExportCount        int       `json:"export_count" gorm:"default:100;not null;comment:剩余导出次数"`
 	DailyLimitTokens   int       `json:"daily_limit_tokens" gorm:"default:0;not null;comment:每日 AI token 额度预留，0 表示不限"`
@@ -99,8 +99,8 @@ func (UserQuota) TableName() string {
 
 // UserStats 用户统计表 — 记录用户的创建简历数、导出次数、编辑时长等累计统计
 type UserStats struct {
-	ID                  string    `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:统计记录唯一标识（UUID v4）"`
-	UserID              string    `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
+	ID                  UUID      `json:"id" gorm:"type:uuid;primaryKey;comment:统计记录唯一标识（UUID v4）"`
+	UserID              UUID      `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
 	TotalResumesCreated int       `json:"total_resumes_created" gorm:"default:0;not null;comment:累计创建简历数"`
 	TotalExports        int       `json:"total_exports" gorm:"default:0;not null;comment:累计导出次数"`
 	TotalEditingSeconds int64     `json:"total_editing_seconds" gorm:"default:0;not null;comment:累计编辑时长（秒）"`
@@ -115,8 +115,8 @@ func (UserStats) TableName() string {
 
 // UserDailyStats 每日统计表 — 按天记录用户的简历创建、导出、编辑增量数据
 type UserDailyStats struct {
-	ID             string `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid();comment:每日统计唯一标识（UUID v4）"`
-	UserID         string `json:"user_id" gorm:"type:uuid;not null;uniqueIndex:idx_daily_user_date;comment:关联的用户ID"`
+	ID             UUID   `json:"id" gorm:"type:uuid;primaryKey;comment:每日统计唯一标识（UUID v4）"`
+	UserID         UUID   `json:"user_id" gorm:"type:uuid;not null;uniqueIndex:idx_daily_user_date;comment:关联的用户ID"`
 	Date           string `json:"date" gorm:"type:date;not null;uniqueIndex:idx_daily_user_date;comment:统计日期"`
 	ResumesCreated int    `json:"resumes_created" gorm:"default:0;not null;comment:当日创建简历数"`
 	ExportsCount   int    `json:"exports_count" gorm:"default:0;not null;comment:当日导出次数"`

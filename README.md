@@ -49,7 +49,7 @@ Pudding Resume 是一个前后端分离的在线简历编辑与生成系统。�
 | 图表 | Recharts |
 | 后端语言 | Go 1.26 |
 | Web 框架 | Gin |
-| ORM | GORM + PostgreSQL |
+| ORM | GORM + PostgreSQL / MySQL |
 | 缓存与任务队列 | Redis（注册邮箱验证码、限流、注册凭证、邮件队列） |
 | 认证 | JWT（golang-jwt） |
 | 导出引擎 | Chromedp（无头 Chrome） |
@@ -128,7 +128,7 @@ pudding-resume/
 |------|----------|
 | Go | ≥ 1.26 |
 | pnpm | ≥ 8（推荐使用 `corepack enable`） |
-| PostgreSQL | ≥ 14 |
+| 数据库（二选一） | PostgreSQL ≥ 14 或 MySQL ≥ 8.0 |
 | Redis | ≥ 6（启用注册邮箱验证时必需，推荐 Redis 7） |
 | Chrome/Chromium | 用于 PDF/PNG 导出（可不安装，导出功能将不可用） |
 
@@ -139,11 +139,18 @@ git clone https://github.com/mikulc/pudding-resume.git
 cd pudding-resume
 ```
 
-### 2. 准备 PostgreSQL 与 Redis
+### 2. 准备数据库与 Redis
+
+后端支持 PostgreSQL 和 MySQL，通过 `backend/.env` 中的 `DB_DRIVER` 选择。
 
 ```sql
 -- 在 PostgreSQL 中创建后端数据库
 CREATE DATABASE pudding_resume;
+
+-- 或在 MySQL 8.0 中创建后端数据库
+CREATE DATABASE pudding_resume
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
 ```
 
 注册邮箱验证依赖 Redis。推荐使用 Docker 启动本地 Redis：
@@ -231,13 +238,16 @@ chromium --version
 | `APP_ENV` | 运行环境；生产部署设为 `production` | `development` |
 | `SERVER_PORT` | 后端服务端口 | `8080` |
 | `COOKIE_SECURE` | 刷新令牌 Cookie 仅通过 HTTPS 发送 | 开发环境 `false`，生产环境 `true` |
-| `DB_HOST` | PostgreSQL 主机 | `localhost` |
-| `DB_PORT` | PostgreSQL 端口 | `5432` |
-| `DB_USER` | 数据库用户名 | `postgres` |
-| `DB_PASSWORD` | 数据库密码 | **必填，无默认值** |
+| `DB_DRIVER` | 数据库驱动：`postgres` 或 `mysql` | `postgres` |
+| `DB_HOST` | 数据库主机 | `localhost` |
+| `DB_PORT` | 数据库端口 | PostgreSQL `5432`；MySQL `3306` |
+| `DB_USER` | 数据库用户名 | PostgreSQL `postgres`；MySQL `root` |
+| `DB_PASSWORD` | 数据库密码 | **生产环境必填** |
 | `DB_NAME` | 数据库名 | `pudding_resume` |
-| `DB_SSLMODE` | SSL 模式 | `disable` |
-| `DB_TIMEZONE` | 数据库时区 | `Asia/Shanghai` |
+| `DB_SSLMODE` | PostgreSQL SSL 模式 | `disable` |
+| `DB_CHARSET` | MySQL 字符集 | `utf8mb4` |
+| `DB_TLS` | MySQL TLS 配置（如 `false`、`true`、`skip-verify`） | `false` |
+| `DB_TIMEZONE` | IANA 数据库时区 | `Asia/Shanghai` |
 | `JWT_SECRET` | JWT 签名密钥 | **生产环境务必修改为强随机串** |
 | `JWT_EXPIRATION` | Access Token 过期时间 | `1h` |
 | `JWT_REFRESH_EXPIRATION` | Refresh Token 过期时间 | `168h` |
@@ -366,7 +376,7 @@ GOOS=linux GOARCH=amd64 go build -o pudding-resume-backend
              │   │  │
              ▼   ▼  ▼
        ┌──────────┐ ┌───────┐ ┌──────┐
-       │PostgreSQL│ │ Redis │ │ SMTP │
+       │PG / MySQL│ │ Redis │ │ SMTP │
        └──────────┘ └───────┘ └──────┘
 ```
 

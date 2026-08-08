@@ -3,6 +3,8 @@ package config
 import (
 	"strings"
 	"testing"
+
+	mysqlconfig "github.com/go-sql-driver/mysql"
 )
 
 func TestValidateAllowsDevelopmentDefaults(t *testing.T) {
@@ -96,5 +98,59 @@ func TestValidateEmailCodeConfiguration(t *testing.T) {
 	cfg.EmailCodeSecret = "CHANGE_ME_TO_A_RANDOM_SECRET_WITH_AT_LEAST_32_CHARACTERS"
 	if err := cfg.Validate(); err == nil || !strings.Contains(err.Error(), "EMAIL_CODE_SECRET") {
 		t.Fatalf("placeholder EMAIL_CODE_SECRET error = %v", err)
+	}
+}
+
+func TestDatabaseDriverAliases(t *testing.T) {
+	for input, expected := range map[string]string{
+		"": "postgres", "pg": "postgres", "postgresql": "postgres", "mysql": "mysql",
+	} {
+		if got := (&Config{DBDriver: input}).DatabaseDriver(); got != expected {
+			t.Fatalf("DatabaseDriver(%q) = %q, want %q", input, got, expected)
+		}
+	}
+}
+
+func TestMySQLDSN(t *testing.T) {
+	cfg := &Config{
+		DBDriver:   "mysql",
+		DBHost:     "db.example.com",
+		DBPort:     "3307",
+		DBUser:     "resume",
+		DBPassword: "p@ss:word",
+		DBName:     "pudding_resume",
+		DBTimeZone: "Asia/Shanghai",
+		DBCharset:  "utf8mb4",
+		DBTLS:      "false",
+	}
+
+	parsed, err := mysqlconfig.ParseDSN(cfg.DSN())
+	if err != nil {
+		t.Fatalf("ParseDSN: %v", err)
+	}
+	if parsed.Addr != "db.example.com:3307" || parsed.User != "resume" || parsed.Passwd != "p@ss:word" {
+		t.Fatalf("unexpected MySQL DSN: %#v", parsed)
+	}
+	if !parsed.ParseTime || parsed.Loc.String() != "Asia/Shanghai" || parsed.Params["charset"] != "utf8mb4" {
+		t.Fatalf("missing MySQL DSN options: %#v", parsed)
+	}
+}
+
+func TestLoadUsesMySQLDefaults(t *testing.T) {
+	t.Setenv("DB_DRIVER", "mysql")
+	t.Setenv("DB_PORT", "")
+	t.Setenv("DB_USER", "")
+	t.Setenv("DB_PASSWORD", "")
+
+	cfg := Load()
+	if cfg.DatabaseDriver() != "mysql" || cfg.DBPort != "3306" || cfg.DBUser != "root" || cfg.DBPassword != "" {
+		t.Fatalf("unexpected MySQL defaults: driver=%q port=%q user=%q password=%q", cfg.DatabaseDriver(), cfg.DBPort, cfg.DBUser, cfg.DBPassword)
+	}
+}
+
+func TestValidateRejectsUnknownDatabaseDriver(t *testing.T) {
+	cfg := &Config{DBDriver: "sqlite"}
+	if err := cfg.Validate(); err == nil || !strings.Contains(err.Error(), "DB_DRIVER") {
+		t.Fatalf("invalid DB_DRIVER error = %v", err)
 	}
 }
