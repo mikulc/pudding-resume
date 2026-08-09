@@ -52,7 +52,6 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
   const [themeMode, setThemeMode] = useState<ThemeMode>(initialSettings.theme_mode);
   const [language, setLanguage] = useState<SupportedLanguage>(normalizeLanguage(initialSettings.language));
   const [exportJsonWithSettings, setExportJsonWithSettings] = useState(initialSettings.export_json_with_settings);
-  const [savingInterval, setSavingInterval] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [dropdownDir, setDropdownDir] = useState<'up' | 'down'>('up');
@@ -70,7 +69,6 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
 
   const savePreferences = useCallback(
     async (interval: number, polish: boolean, apiUrl?: string, apiKey?: string, model?: string) => {
-      setSavingInterval(true);
       try {
         const body: Record<string, unknown> = {
           auto_save_interval: interval,
@@ -92,31 +90,33 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
         setAutoSaveInterval(initialSettings.auto_save_interval);
         setAiPolishEnabled(initialSettings.ai_polish_enabled);
         saveFailureHandlerRef.current();
-      } finally {
-        setSavingInterval(false);
       }
     },
     [storageMode, initialSettings, saveToCloud],
   );
 
-  // Debounced save ref for auto-save interval changes
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const handleIntervalChange = (value: number) => {
     setAutoSaveInterval(value);
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => {
-      savePreferences(value, aiPolishEnabled);
-    }, 600);
+    void savePreferences(value, aiPolishEnabled);
   };
 
   const handleThemeModeChange = async (mode: ThemeMode) => {
     const next = normalizeThemeMode(mode);
     if (next === themeMode) return;
 
+    const previous = themeMode;
     setThemeMode(next);
     saveThemeMode(next);
     applyThemeMode(next, { transition: true });
+
+    if (!isLoggedIn) return;
+    try {
+      await saveToCloud({ theme_mode: next });
+    } catch {
+      setThemeMode(previous);
+      saveThemeMode(previous);
+      applyThemeMode(previous, { transition: true });
+    }
   };
 
   const handleLanguageChange = async (lang: SupportedLanguage) => {
@@ -169,13 +169,6 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
     refs: [dropdownRef],
     onOutsideClick: () => setDropdownOpen(false),
   });
-  // Cleanup timers on unmount
-  useEffect(() => {
-    return () => {
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    };
-  }, []);
-
   // Sync theme mode and language when another settings surface changes them.
   useEffect(() => {
     const syncSettings = () => {
@@ -259,7 +252,6 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
     fetchingModels,
     availableModels,
     modelDropdownOpen,
-    savingInterval,
     dropdownOpen,
     setDropdownOpen,
     dropdownDir,

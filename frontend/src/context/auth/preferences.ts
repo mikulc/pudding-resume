@@ -180,7 +180,6 @@ export function isExportJsonWithSettingsEnabled(): boolean {
 }
 
 const DEVICE_SETTING_KEYS = [
-  'theme_mode',
   'ai_service_api_key',
   'live2d_enabled',
   'live2d_position',
@@ -204,6 +203,7 @@ const DEVICE_SETTING_KEYS = [
 ] as const satisfies ReadonlyArray<keyof LocalSettingsPayload>;
 
 const PORTABLE_SETTING_KEYS = [
+  'theme_mode',
   'auto_save_interval',
   'ai_polish_enabled',
   'language',

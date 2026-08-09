@@ -1,5 +1,5 @@
 import type { SettingsPreferences } from '../useSettingsPreferences';
-import { Loader2, CheckCircle2, Settings, Clock, ChevronDown, Monitor, Braces, Globe } from 'lucide-react';
+import { CheckCircle2, Settings, Clock, ChevronDown, Monitor, Braces, Globe } from 'lucide-react';
 import type { SupportedLanguage } from '../../../utils/localSettings';
 
 interface PreferencesSectionProps { settings: SettingsPreferences; }
@@ -18,7 +18,6 @@ export function PreferencesSection({ settings }: PreferencesSectionProps) {
     themeMode,
     language,
     exportJsonWithSettings,
-    savingInterval,
     dropdownOpen,
     setDropdownOpen,
     dropdownDir,
@@ -46,9 +45,6 @@ export function PreferencesSection({ settings }: PreferencesSectionProps) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {savingInterval && (
-              <Loader2 className="w-4 h-4 text-blue-500 animate-spin flex-shrink-0 dark:text-[#fbbf24]" />
-            )}
             <div ref={dropdownRef} className="relative flex-shrink-0">
               <button
                 ref={dropdownBtnRef}
