@@ -558,13 +558,14 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
                 }}
               >
                 {watermarkEl}
-                  <div style={{
+                  <div className="resume-page-viewport" style={{
                   position: 'relative',
                   zIndex: 1,
                   height: `${pageHeight}px`,
+                  '--resume-page-slice-height': `${pageHeight}px`,
                   marginTop: isSidebarLayout ? `${theme.pageMargin}mm` : undefined,
                   overflow: 'hidden',
-                }}>
+                } as React.CSSProperties}>
                   <div style={{ transform: `translateY(-${pageStart}px)` }}>
                     <div className={isSidebarLayout ? sidebarPagedShellClassName : undefined}>
                       {renderFlowContent(sectionInfos, true)}

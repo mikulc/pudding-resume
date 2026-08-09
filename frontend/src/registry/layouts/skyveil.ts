@@ -8,9 +8,14 @@ export const skyveilLayout: LayoutDefinition = {
     .resume-paper {
       background: #ffffff !important;
     }
+
+    .resume-paper[data-layout="skyveil"] .skyveil-contact-icon {
+      color: var(--theme-border) !important;
+    }
   `,
   defaultColor: '#3B82F6',
   headerMode: 'bar',
   signature: { layout: 'single-column', headerDecoration: 'solid-bar', sectionStyle: 'filled-title' },
-  previewVersion: '1',
+  previewVersion: '2',
+  personalInfoClass: 'skyveil-contact-icon',
 };

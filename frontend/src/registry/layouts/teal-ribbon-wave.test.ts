@@ -14,4 +14,13 @@ describe('tealRibbonWaveLayout', () => {
     expect(tealRibbonWaveLayout.css).toContain('padding: calc(var(--personal-photo-width) + 12mm - var(--resume-page-margin)) 24mm 0 !important');
     expect(tealRibbonWaveLayout.css).toContain('data-animated-section="personal"');
   });
+
+  it('extends the first-page clipping viewport into the top margin', () => {
+    expect(tealRibbonWaveLayout.css).toMatch(
+      /\[data-page-index="0"\]\s+\.resume-page-viewport\s*\{[\s\S]*margin-top:\s*calc\(-1 \* var\(--resume-page-margin\)\)[\s\S]*padding-top:\s*var\(--resume-page-margin\)/,
+    );
+    expect(tealRibbonWaveLayout.css).toContain(
+      'height: calc(var(--resume-page-slice-height) + var(--resume-page-margin)) !important',
+    );
+  });
 });

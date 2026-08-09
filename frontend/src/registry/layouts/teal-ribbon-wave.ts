@@ -33,6 +33,16 @@ export const tealRibbonWaveLayout: LayoutDefinition = {
       content: none !important;
     }
 
+    /* The paginated renderer normally clips at the content-box edge. Extend
+       only the first sheet's viewport through the top page margin so the
+       raised portrait remains visible, while preserving the bottom slice. */
+    .resume-paper[data-layout="teal-ribbon-wave"][data-page-index="0"] .resume-page-viewport {
+      box-sizing: border-box !important;
+      height: calc(var(--resume-page-slice-height) + var(--resume-page-margin)) !important;
+      margin-top: calc(-1 * var(--resume-page-margin)) !important;
+      padding-top: var(--resume-page-margin) !important;
+    }
+
     .resume-paper[data-layout="teal-ribbon-wave"] [data-page-section="personal"] {
       position: relative !important;
       min-height: 48mm !important;
@@ -219,6 +229,6 @@ export const tealRibbonWaveLayout: LayoutDefinition = {
   defaultColor: '#248f83',
   headerMode: 'bar',
   signature: { layout: 'single-column', headerDecoration: 'wave', sectionStyle: 'filled-title' },
-  previewVersion: '2',
+  previewVersion: '3',
   personalInfoClass: 'teal-ribbon-wave-contact-icon',
 };

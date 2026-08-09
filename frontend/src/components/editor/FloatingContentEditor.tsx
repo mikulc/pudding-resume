@@ -19,6 +19,7 @@ import { useConfirm } from '../common/ConfirmModal';
 import { useToast } from '../common/Toast';
 import { Tooltip } from '../common/Tooltip';
 import { aiPolish } from '../../api/ai';
+import { getAIConfig, validateAIConfig } from '../../utils/aiConfig';
 import { AiOptimizePanel, type OptimizeStatus, type OptimizeTab } from './AiOptimizePanel';
 import {
   type PanelGeometry,
@@ -475,6 +476,12 @@ export function FloatingContentEditor() {
   }, [resolveCallbacks, close]);
 
   const handleAiAction = useCallback(async () => {
+    const aiConfigValidation = validateAIConfig(getAIConfig());
+    if (!aiConfigValidation.ok) {
+      showToast(t('longTextEditor.toast.aiConfigMissing'), 'error');
+      return;
+    }
+
     const currentText = getCurrentDraftText();
     if (currentText.trim().length < 5) {
       showToast(t('longTextEditor.toast.textTooShort'), 'info');

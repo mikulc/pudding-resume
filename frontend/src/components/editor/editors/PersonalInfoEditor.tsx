@@ -638,7 +638,7 @@ export function PersonalInfoEditor() {
                     onRename={handleRenameField}
                     onResetLabel={!isCustom ? () => handleResetFieldLabel(field) : undefined}
                     hasCustomLabel={!isCustom && !!fieldLabels[field]}
-                    onChangeIcon={handleChangeIcon}
+                    onChangeIcon={field === 'fullName' ? undefined : handleChangeIcon}
                     iconMap={iconMap}
                     isCustomField={isCustom}
                     hiddenFields={hiddenFields}

@@ -103,4 +103,27 @@ describe('PersonalInfoEditor photo settings', () => {
       payload: { photoStyle: { width: 100, height: 133, borderRadius: 6 } },
     });
   });
+
+  it('does not offer icon replacement for the full name field', () => {
+    render(<PersonalInfoEditor />);
+
+    const fullNameCard = document.querySelectorAll<HTMLElement>('.field-card')[0];
+    const moreButton = fullNameCard.querySelector<HTMLButtonElement>('button');
+    expect(moreButton).not.toBeNull();
+
+    fireEvent.click(moreButton!);
+
+    expect(screen.getByText('fieldMenu.renameLabel')).toBeTruthy();
+    expect(screen.getByText('fieldMenu.hideField')).toBeTruthy();
+    expect(screen.queryByText('fieldMenu.changeIcon')).toBeNull();
+  });
+
+  it('shows a prohibited cursor on the pinned full name drag handle', () => {
+    render(<PersonalInfoEditor />);
+
+    const fullNameCard = document.querySelectorAll<HTMLElement>('.field-card')[0];
+    const dragHandle = fullNameCard.querySelector<HTMLElement>('.cursor-not-allowed');
+
+    expect(dragHandle).not.toBeNull();
+  });
 });

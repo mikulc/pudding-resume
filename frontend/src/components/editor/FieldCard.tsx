@@ -252,7 +252,7 @@ export function FieldCard({
           <span
             {...attributes}
             {...listeners}
-            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-gray-300 cursor-default hover:text-gray-300 hover:bg-transparent"
+            className="inline-flex h-6 w-6 shrink-0 cursor-not-allowed items-center justify-center rounded-md text-gray-300 hover:text-gray-300 hover:bg-transparent"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" d="M4 8h16M4 12h16M4 16h16" />
