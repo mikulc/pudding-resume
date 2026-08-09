@@ -67,6 +67,24 @@ describe('ResumeThemeCards', () => {
     expect(getByText('Current Resume Name')).toBeTruthy();
   });
 
+  it('shows the current tag without applying selected-card highlighting', () => {
+    const { container } = render(
+      <ResumeThemeCards
+        entries={[entry]}
+        content={createEmptyResumeData()}
+        loading={false}
+        selectedLayoutId={null}
+        currentLayoutId={entry.layoutId}
+        showCurrentBadge
+        onSelect={vi.fn()}
+      />,
+    );
+
+    const card = container.querySelector('.resume-theme-card');
+    expect(card?.className).not.toContain('resume-theme-card-selected');
+    expect(container.querySelector('.resume-theme-current-badge')?.textContent).toContain('themePicker.current');
+  });
+
   it('derives available visual categories in product order', () => {
     expect(deriveThemeCategories([entry])).toEqual([
       ALL_THEME_CATEGORY,

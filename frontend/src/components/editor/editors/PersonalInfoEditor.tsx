@@ -1,6 +1,6 @@
 ﻿import { closestCenter,DndContext,DragEndEvent,PointerSensor,TouchSensor,useSensor,useSensors } from '@dnd-kit/core';
 import { arrayMove,SortableContext,verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Eye,EyeOff,Link,Unlink,X } from 'lucide-react';
+import { Eye,EyeOff,Link,RotateCcw,Unlink,X } from 'lucide-react';
 import React,{ useCallback,useEffect,useLayoutEffect,useMemo,useRef,useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -212,6 +212,10 @@ export function PersonalInfoEditor() {
     setSelectedPhotoRadius('custom');
     dispatch({ type: 'SET_PERSONAL_INFO', payload: { photoStyle: DEFAULT_PHOTO_STYLE } });
   };
+
+  const isPhotoStyleDefault = photoStyle.width === DEFAULT_PHOTO_STYLE.width
+    && photoStyle.height === DEFAULT_PHOTO_STYLE.height
+    && photoStyle.borderRadius === DEFAULT_PHOTO_STYLE.borderRadius;
 
   const hiddenFields = personalInfo.hiddenFields || [];
 
@@ -449,8 +453,17 @@ export function PersonalInfoEditor() {
                     className="avatar-settings-popover field-more-menu-enter z-[9999] w-[312px] max-w-[calc(100vw-16px)] overflow-hidden rounded-[18px] border border-[rgba(31,45,61,0.08)] bg-white/[0.98] shadow-[0_16px_40px_rgba(15,23,42,0.14),0_3px_10px_rgba(15,23,42,0.06)] dark:border-white/[0.08] dark:bg-[rgba(20,24,32,0.72)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.34),0_3px_10px_rgba(0,0,0,0.20)] dark:backdrop-blur-[18px] dark:backdrop-saturate-[1.4]"
                   >
                     <div className="relative border-b border-gray-900/[0.05] px-[18px] pb-3.5 pt-[18px] dark:border-white/[0.07]">
-                      <h3 className="pr-8 text-base font-semibold leading-5 text-gray-900 dark:text-white/90">{t('photo.adjust')}</h3>
+                      <h3 className="pr-24 text-base font-semibold leading-5 text-gray-900 dark:text-white/90">{t('photo.adjust')}</h3>
                       <p className="mt-1 text-xs leading-5 text-gray-400 dark:text-white/55">{t('photo.description')}</p>
+                      <button
+                        type="button"
+                        onClick={resetPhotoStyle}
+                        disabled={isPhotoStyleDefault}
+                        className="absolute right-11 top-3 flex h-7 items-center gap-1 rounded-lg px-2 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 disabled:cursor-default disabled:text-gray-300 disabled:hover:bg-transparent dark:text-white/55 dark:hover:bg-white/[0.06] dark:hover:text-white/80 dark:disabled:text-white/25 dark:disabled:hover:bg-transparent"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        {t('common:button.reset')}
+                      </button>
                       <button
                         type="button"
                         onClick={() => setPhotoStyleOpen(false)}
@@ -574,22 +587,6 @@ export function PersonalInfoEditor() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 border-t border-gray-900/[0.05] px-[18px] pb-2.5 pt-2 dark:border-white/[0.07]">
-                      <button
-                        type="button"
-                        onClick={resetPhotoStyle}
-                        className="h-9 rounded-[9px] px-3 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-white/55 dark:hover:bg-white/[0.06] dark:hover:text-white/80"
-                      >
-                        {t('common:button.reset')}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPhotoStyleOpen(false)}
-                        className="h-9 rounded-[9px] bg-blue-500 px-3.5 text-xs font-medium text-white transition-colors hover:bg-blue-600"
-                      >
-                        {t('common:button.done')}
-                      </button>
-                    </div>
                   </div>,
                   document.body,
                 )}

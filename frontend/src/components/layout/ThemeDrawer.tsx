@@ -146,7 +146,7 @@ export function ThemeDrawer({ open, onClose, currentLayoutId, content, onApply }
             entries={filteredEntries}
             content={content}
             loading={loading}
-            selectedLayoutId={currentLayoutId}
+            selectedLayoutId={null}
             currentLayoutId={currentLayoutId}
             showCurrentBadge
             onSelect={handleSelect}

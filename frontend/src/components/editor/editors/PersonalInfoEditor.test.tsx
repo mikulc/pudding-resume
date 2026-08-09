@@ -79,4 +79,28 @@ describe('PersonalInfoEditor photo settings', () => {
       },
     });
   });
+
+  it('keeps reset in the header and removes the footer completion action', () => {
+    const data = mockedResume.data as ReturnType<typeof createEmptyResumeData>;
+    mockedResume.data = {
+      ...data,
+      personalInfo: {
+        ...data.personalInfo,
+        photoStyle: { width: 100, height: 100, borderRadius: 999 },
+      },
+    };
+    render(<PersonalInfoEditor />);
+    fireEvent.click(screen.getByRole('button', { name: 'photo.adjust' }));
+
+    const resetButton = screen.getByRole('button', { name: 'common:button.reset' });
+    expect((resetButton as HTMLButtonElement).disabled).toBe(false);
+    expect(screen.queryByRole('button', { name: 'common:button.done' })).toBeNull();
+
+    fireEvent.click(resetButton);
+
+    expect(mockedResume.dispatch).toHaveBeenLastCalledWith({
+      type: 'SET_PERSONAL_INFO',
+      payload: { photoStyle: { width: 100, height: 133, borderRadius: 6 } },
+    });
+  });
 });
