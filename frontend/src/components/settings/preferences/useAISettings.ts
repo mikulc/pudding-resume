@@ -44,7 +44,7 @@ export function useAISettings({
   useEffect(() => {
     if (!profile || storageMode !== 'cloud') return;
     setAiServiceApiUrl(profile.ai_service_api_url ?? '');
-    setAiServiceApiKey(profile.ai_service_api_key ?? '');
+    // API keys belong to this browser and are never hydrated from the profile.
     setAiServiceModel(profile.ai_service_model ?? '');
   }, [profile, storageMode]);
 
@@ -63,7 +63,6 @@ export function useAISettings({
   const handleApiKeyChange = (value: string) => {
     setAiServiceApiKey(value);
     saveAIConfig({ apiKey: value });
-    scheduleAIConfigSave({ apiKey: value });
   };
   const handleModelChange = (value: string) => {
     setAiServiceModel(value);

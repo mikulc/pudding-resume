@@ -34,26 +34,14 @@ func GetPreferences(c *gin.Context) {
 		"theme_mode":         normalizeThemeMode(pref.ThemeMode),
 		"language":           normalizeLanguage(pref.Language),
 		"ai_service_api_url": aifc.ApiUrl,
-		"ai_service_api_key": aifc.ApiKey,
 		"ai_service_model":   aifc.Model,
 		"ai_service_prompt":  aifc.Prompt,
 		"live2d_enabled":     pref.Live2dEnabled,
 		"live2d_position":    pref.Live2dPosition,
-		"live2d_h_offset":    pref.Live2dHOffset,
-		"live2d_v_offset":    pref.Live2dVOffset,
-		"live2d_width":       pref.Live2dWidth,
-		"live2d_height":      pref.Live2dHeight,
-		"live2d_scale":       pref.Live2dScale,
-		"live2d_opacity":     pref.Live2dOpacity,
 		"live2d_show_editor": pref.Live2dShowEditor,
 		"live2d_mobile_show": pref.Live2dMobileShow,
 		"live2d_enable_pointer_events_pass_through": pref.Live2dEnablePointerEventsPassThrough,
-		"live2d_peek_visible_ratio":                 pref.Live2dPeekVisibleRatio,
-		"live2d_nearby_retract_ratio":               pref.Live2dNearbyRetractRatio,
 		"live2d_nearby_behavior":                    pref.Live2dNearbyBehavior,
-		"live2d_proximity_threshold":                pref.Live2dProximityThreshold,
-		"live2d_restore_delay":                      pref.Live2dRestoreDelay,
-		"live2d_transition_duration":                pref.Live2dTransitionDuration,
 		"live2d_pinned":                             pref.Live2dPinned,
 		"local_storage_enabled":                     pref.LocalStorageEnabled,
 		"local_storage_path":                        pref.LocalStoragePath,
@@ -122,10 +110,6 @@ func UpdatePreferences(c *gin.Context) {
 		aiUpdates["api_url"] = *req.AiServiceApiUrl
 	}
 
-	if req.AiServiceApiKey != nil {
-		aiUpdates["api_key"] = *req.AiServiceApiKey
-	}
-
 	if req.AiServiceModel != nil {
 		aiUpdates["model"] = *req.AiServiceModel
 	}
@@ -146,41 +130,6 @@ func UpdatePreferences(c *gin.Context) {
 		}
 		updates["live2d_position"] = p
 	}
-	if req.Live2dHOffset != nil {
-		updates["live2d_h_offset"] = *req.Live2dHOffset
-	}
-	if req.Live2dVOffset != nil {
-		updates["live2d_v_offset"] = *req.Live2dVOffset
-	}
-	if req.Live2dWidth != nil {
-		if *req.Live2dWidth < 50 || *req.Live2dWidth > 500 {
-			respondError(c, http.StatusBadRequest, "看板娘宽度需在 50~500 之间")
-			return
-		}
-		updates["live2d_width"] = *req.Live2dWidth
-	}
-	if req.Live2dHeight != nil {
-		if *req.Live2dHeight < 50 || *req.Live2dHeight > 500 {
-			respondError(c, http.StatusBadRequest, "看板娘高度需在 50~500 之间")
-			return
-		}
-		updates["live2d_height"] = *req.Live2dHeight
-	}
-	if req.Live2dScale != nil {
-		if *req.Live2dScale < 0.1 || *req.Live2dScale > 3 {
-			respondError(c, http.StatusBadRequest, "看板娘缩放比例需在 0.1~3 之间")
-			return
-		}
-		updates["live2d_scale"] = *req.Live2dScale
-	}
-	if req.Live2dOpacity != nil {
-		if *req.Live2dOpacity < 0 || *req.Live2dOpacity > 1 {
-			respondError(c, http.StatusBadRequest, "看板娘透明度需在 0~1 之间")
-			return
-		}
-		updates["live2d_opacity"] = *req.Live2dOpacity
-	}
-
 	if req.Live2dShowEditor != nil {
 		updates["live2d_show_editor"] = *req.Live2dShowEditor
 	}
@@ -192,20 +141,6 @@ func UpdatePreferences(c *gin.Context) {
 	if req.Live2dEnablePointerEventsPassThrough != nil {
 		updates["live2d_enable_pointer_events_pass_through"] = *req.Live2dEnablePointerEventsPassThrough
 	}
-	if req.Live2dPeekVisibleRatio != nil {
-		if *req.Live2dPeekVisibleRatio < 0.05 || *req.Live2dPeekVisibleRatio > 1 {
-			respondError(c, http.StatusBadRequest, "看板娘出来比例需在 0.05~1 之间")
-			return
-		}
-		updates["live2d_peek_visible_ratio"] = *req.Live2dPeekVisibleRatio
-	}
-	if req.Live2dNearbyRetractRatio != nil {
-		if *req.Live2dNearbyRetractRatio < 0.05 || *req.Live2dNearbyRetractRatio > 1 {
-			respondError(c, http.StatusBadRequest, "看板娘探头比例需在 0.05~1 之间")
-			return
-		}
-		updates["live2d_nearby_retract_ratio"] = *req.Live2dNearbyRetractRatio
-	}
 	if req.Live2dNearbyBehavior != nil {
 		behavior := *req.Live2dNearbyBehavior
 		if behavior != "expand" && behavior != "retract" {
@@ -213,27 +148,6 @@ func UpdatePreferences(c *gin.Context) {
 			return
 		}
 		updates["live2d_nearby_behavior"] = behavior
-	}
-	if req.Live2dProximityThreshold != nil {
-		if *req.Live2dProximityThreshold < 0 || *req.Live2dProximityThreshold > 320 {
-			respondError(c, http.StatusBadRequest, "看板娘靠近触发距离需在 0~320px 之间")
-			return
-		}
-		updates["live2d_proximity_threshold"] = *req.Live2dProximityThreshold
-	}
-	if req.Live2dRestoreDelay != nil {
-		if *req.Live2dRestoreDelay < 0 || *req.Live2dRestoreDelay > 2000 {
-			respondError(c, http.StatusBadRequest, "看板娘恢复延迟需在 0~2000ms 之间")
-			return
-		}
-		updates["live2d_restore_delay"] = *req.Live2dRestoreDelay
-	}
-	if req.Live2dTransitionDuration != nil {
-		if *req.Live2dTransitionDuration < 100 || *req.Live2dTransitionDuration > 1000 {
-			respondError(c, http.StatusBadRequest, "看板娘动画时长需在 100~1000ms 之间")
-			return
-		}
-		updates["live2d_transition_duration"] = *req.Live2dTransitionDuration
 	}
 	if req.Live2dPinned != nil {
 		updates["live2d_pinned"] = *req.Live2dPinned
@@ -278,8 +192,6 @@ func UpdatePreferences(c *gin.Context) {
 					switch k {
 					case "api_url":
 						aifc.ApiUrl = v.(string)
-					case "api_key":
-						aifc.ApiKey = v.(string)
 					case "model":
 						aifc.Model = v.(string)
 					case "prompt":
@@ -314,26 +226,14 @@ func UpdatePreferences(c *gin.Context) {
 		"theme_mode":         normalizeThemeMode(pref.ThemeMode),
 		"language":           normalizeLanguage(pref.Language),
 		"ai_service_api_url": aifc.ApiUrl,
-		"ai_service_api_key": aifc.ApiKey,
 		"ai_service_model":   aifc.Model,
 		"ai_service_prompt":  aifc.Prompt,
 		"live2d_enabled":     pref.Live2dEnabled,
 		"live2d_position":    pref.Live2dPosition,
-		"live2d_h_offset":    pref.Live2dHOffset,
-		"live2d_v_offset":    pref.Live2dVOffset,
-		"live2d_width":       pref.Live2dWidth,
-		"live2d_height":      pref.Live2dHeight,
-		"live2d_scale":       pref.Live2dScale,
-		"live2d_opacity":     pref.Live2dOpacity,
 		"live2d_show_editor": pref.Live2dShowEditor,
 		"live2d_mobile_show": pref.Live2dMobileShow,
 		"live2d_enable_pointer_events_pass_through": pref.Live2dEnablePointerEventsPassThrough,
-		"live2d_peek_visible_ratio":                 pref.Live2dPeekVisibleRatio,
-		"live2d_nearby_retract_ratio":               pref.Live2dNearbyRetractRatio,
 		"live2d_nearby_behavior":                    pref.Live2dNearbyBehavior,
-		"live2d_proximity_threshold":                pref.Live2dProximityThreshold,
-		"live2d_restore_delay":                      pref.Live2dRestoreDelay,
-		"live2d_transition_duration":                pref.Live2dTransitionDuration,
 		"local_storage_enabled":                     pref.LocalStorageEnabled,
 		"local_storage_path":                        pref.LocalStoragePath,
 		"export_json_with_settings":                 pref.ExportJsonWithSettings,

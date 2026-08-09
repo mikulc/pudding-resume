@@ -9,13 +9,11 @@ type InitialSettings = ReturnType<typeof getInitialSettings>;
 interface UseLive2dSettingsOptions {
   initialSettings: InitialSettings;
   profile: UserProfile | null;
-  storageMode: 'local' | 'cloud';
-  saveToCloud: (changes: Record<string, unknown>) => Promise<void>;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   t: TFunction<'settings'>;
 }
 
-export function useLive2dSettings({ initialSettings, profile, storageMode, saveToCloud, showToast, t }: UseLive2dSettingsOptions) {
+export function useLive2dSettings({ initialSettings, profile, showToast, t }: UseLive2dSettingsOptions) {
   const [live2dPosition, setLive2dPosition] = useState(initialSettings.live2d_position);
   const [live2dShowEditor, setLive2dShowEditor] = useState(initialSettings.live2d_show_editor);
   const [live2dEnabled, setLive2dEnabled] = useState(initialSettings.live2d_enabled);
@@ -26,7 +24,7 @@ export function useLive2dSettings({ initialSettings, profile, storageMode, saveT
   const [live2dMoreSettingsOpen, setLive2dMoreSettingsOpen] = useState(false);
 
   useEffect(() => {
-    if (!profile || storageMode !== 'cloud') return;
+    if (!profile) return;
     setLive2dEnabled(profile.live2d_enabled ?? true);
     setLive2dPosition(profile.live2d_position ?? 'right');
     setLive2dShowEditor(profile.live2d_show_editor ?? true);
@@ -34,12 +32,12 @@ export function useLive2dSettings({ initialSettings, profile, storageMode, saveT
     setLive2dPointerPassThrough(profile.live2d_enable_pointer_events_pass_through ?? true);
     setLive2dNearbyBehavior(profile.live2d_nearby_behavior ?? 'retract');
     setLive2dPinned(profile.live2d_pinned ?? false);
-  }, [profile, storageMode]);
+  }, [profile]);
 
   const saveLive2dPreferences = useCallback(async (changes: Record<string, unknown>) => {
     try {
-      if (storageMode === 'local') saveSettings(changes as Partial<LocalSettingsPayload>);
-      else await saveToCloud(changes);
+      // Layout and mascot behavior are device-specific preferences.
+      saveSettings(changes as Partial<LocalSettingsPayload>);
     } catch (err: unknown) {
       showToast(err instanceof Error ? err.message : t('common:saveFailed'), 'error');
       setLive2dEnabled(initialSettings.live2d_enabled);
@@ -50,7 +48,7 @@ export function useLive2dSettings({ initialSettings, profile, storageMode, saveT
       setLive2dNearbyBehavior(initialSettings.live2d_nearby_behavior);
       setLive2dPinned(initialSettings.live2d_pinned);
     }
-  }, [initialSettings, saveToCloud, showToast, storageMode, t]);
+  }, [initialSettings, showToast, t]);
 
   const handleLive2dToggle = () => {
     const next = !live2dEnabled;

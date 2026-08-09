@@ -26,35 +26,23 @@ type UserProfileResponse struct {
 	ThemeMode          string `json:"theme_mode"`
 	Language           string `json:"language"`
 	AiServiceApiUrl    string `json:"ai_service_api_url"`
-	AiServiceApiKey    string `json:"ai_service_api_key"`
 	AiServiceModel     string `json:"ai_service_model"`
 	AiServicePrompt    string `json:"ai_service_prompt"`
 	// Live2D preferences
-	Live2dEnabled                        bool    `json:"live2d_enabled"`
-	Live2dPosition                       string  `json:"live2d_position"`
-	Live2dHOffset                        int     `json:"live2d_h_offset"`
-	Live2dVOffset                        int     `json:"live2d_v_offset"`
-	Live2dWidth                          int     `json:"live2d_width"`
-	Live2dHeight                         int     `json:"live2d_height"`
-	Live2dScale                          float64 `json:"live2d_scale"`
-	Live2dOpacity                        float64 `json:"live2d_opacity"`
-	Live2dShowEditor                     bool    `json:"live2d_show_editor"`
-	Live2dMobileShow                     bool    `json:"live2d_mobile_show"`
-	Live2dEnablePointerEventsPassThrough bool    `json:"live2d_enable_pointer_events_pass_through"`
-	Live2dPeekVisibleRatio               float64 `json:"live2d_peek_visible_ratio"`
-	Live2dNearbyRetractRatio             float64 `json:"live2d_nearby_retract_ratio"`
-	Live2dNearbyBehavior                 string  `json:"live2d_nearby_behavior"`
-	Live2dProximityThreshold             int     `json:"live2d_proximity_threshold"`
-	Live2dRestoreDelay                   int     `json:"live2d_restore_delay"`
-	Live2dTransitionDuration             int     `json:"live2d_transition_duration"`
-	Live2dPinned                         bool    `json:"live2d_pinned"`
-	LocalStorageEnabled                  bool    `json:"local_storage_enabled"`
-	LocalStoragePath                     string  `json:"local_storage_path"`
-	ExportJsonWithSettings               bool    `json:"export_json_with_settings"`
-	QuotaUpdatedAt                       string  `json:"quota_updated_at"`
-	CreatedAt                            string  `json:"created_at"`
-	LastLoginAt                          string  `json:"last_login_at"`
-	EmailVerifiedAt                      string  `json:"email_verified_at"`
+	Live2dEnabled                        bool   `json:"live2d_enabled"`
+	Live2dPosition                       string `json:"live2d_position"`
+	Live2dShowEditor                     bool   `json:"live2d_show_editor"`
+	Live2dMobileShow                     bool   `json:"live2d_mobile_show"`
+	Live2dEnablePointerEventsPassThrough bool   `json:"live2d_enable_pointer_events_pass_through"`
+	Live2dNearbyBehavior                 string `json:"live2d_nearby_behavior"`
+	Live2dPinned                         bool   `json:"live2d_pinned"`
+	LocalStorageEnabled                  bool   `json:"local_storage_enabled"`
+	LocalStoragePath                     string `json:"local_storage_path"`
+	ExportJsonWithSettings               bool   `json:"export_json_with_settings"`
+	QuotaUpdatedAt                       string `json:"quota_updated_at"`
+	CreatedAt                            string `json:"created_at"`
+	LastLoginAt                          string `json:"last_login_at"`
+	EmailVerifiedAt                      string `json:"email_verified_at"`
 }
 
 type UpdatePreferencesRequest struct {
@@ -63,28 +51,16 @@ type UpdatePreferencesRequest struct {
 	ThemeMode        *string `json:"theme_mode"`
 	Language         *string `json:"language"`
 	AiServiceApiUrl  *string `json:"ai_service_api_url"`
-	AiServiceApiKey  *string `json:"ai_service_api_key"`
 	AiServiceModel   *string `json:"ai_service_model"`
 	AiServicePrompt  *string `json:"ai_service_prompt"`
 	// Live2D preferences (pointer for partial update)
-	Live2dEnabled                        *bool    `json:"live2d_enabled"`
-	Live2dPosition                       *string  `json:"live2d_position"`
-	Live2dHOffset                        *int     `json:"live2d_h_offset"`
-	Live2dVOffset                        *int     `json:"live2d_v_offset"`
-	Live2dWidth                          *int     `json:"live2d_width"`
-	Live2dHeight                         *int     `json:"live2d_height"`
-	Live2dScale                          *float64 `json:"live2d_scale"`
-	Live2dOpacity                        *float64 `json:"live2d_opacity"`
-	Live2dShowEditor                     *bool    `json:"live2d_show_editor"`
-	Live2dMobileShow                     *bool    `json:"live2d_mobile_show"`
-	Live2dEnablePointerEventsPassThrough *bool    `json:"live2d_enable_pointer_events_pass_through"`
-	Live2dPeekVisibleRatio               *float64 `json:"live2d_peek_visible_ratio"`
-	Live2dNearbyRetractRatio             *float64 `json:"live2d_nearby_retract_ratio"`
-	Live2dNearbyBehavior                 *string  `json:"live2d_nearby_behavior"`
-	Live2dProximityThreshold             *int     `json:"live2d_proximity_threshold"`
-	Live2dRestoreDelay                   *int     `json:"live2d_restore_delay"`
-	Live2dTransitionDuration             *int     `json:"live2d_transition_duration"`
-	Live2dPinned                         *bool    `json:"live2d_pinned"`
+	Live2dEnabled                        *bool   `json:"live2d_enabled"`
+	Live2dPosition                       *string `json:"live2d_position"`
+	Live2dShowEditor                     *bool   `json:"live2d_show_editor"`
+	Live2dMobileShow                     *bool   `json:"live2d_mobile_show"`
+	Live2dEnablePointerEventsPassThrough *bool   `json:"live2d_enable_pointer_events_pass_through"`
+	Live2dNearbyBehavior                 *string `json:"live2d_nearby_behavior"`
+	Live2dPinned                         *bool   `json:"live2d_pinned"`
 	// 鏈湴瀛樺偍鍋忓ソ
 	LocalStorageEnabled *bool   `json:"local_storage_enabled"`
 	LocalStoragePath    *string `json:"local_storage_path"`
@@ -164,26 +140,14 @@ func formatUserProfile(user *models.User) UserProfileResponse {
 		ThemeMode:                            normalizeThemeMode(pref.ThemeMode),
 		Language:                             normalizeLanguage(pref.Language),
 		AiServiceApiUrl:                      aifc.ApiUrl,
-		AiServiceApiKey:                      aifc.ApiKey,
 		AiServiceModel:                       aifc.Model,
 		AiServicePrompt:                      aifc.Prompt,
 		Live2dEnabled:                        pref.Live2dEnabled,
 		Live2dPosition:                       pref.Live2dPosition,
-		Live2dHOffset:                        pref.Live2dHOffset,
-		Live2dVOffset:                        pref.Live2dVOffset,
-		Live2dWidth:                          pref.Live2dWidth,
-		Live2dHeight:                         pref.Live2dHeight,
-		Live2dScale:                          pref.Live2dScale,
-		Live2dOpacity:                        pref.Live2dOpacity,
 		Live2dShowEditor:                     pref.Live2dShowEditor,
 		Live2dMobileShow:                     pref.Live2dMobileShow,
 		Live2dEnablePointerEventsPassThrough: pref.Live2dEnablePointerEventsPassThrough,
-		Live2dPeekVisibleRatio:               pref.Live2dPeekVisibleRatio,
-		Live2dNearbyRetractRatio:             pref.Live2dNearbyRetractRatio,
 		Live2dNearbyBehavior:                 pref.Live2dNearbyBehavior,
-		Live2dProximityThreshold:             pref.Live2dProximityThreshold,
-		Live2dRestoreDelay:                   pref.Live2dRestoreDelay,
-		Live2dTransitionDuration:             pref.Live2dTransitionDuration,
 		Live2dPinned:                         pref.Live2dPinned,
 		LocalStorageEnabled:                  pref.LocalStorageEnabled,
 		LocalStoragePath:                     pref.LocalStoragePath,

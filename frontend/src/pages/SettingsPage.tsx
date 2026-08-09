@@ -227,9 +227,17 @@ export default function SettingsPage() {
                       setSyncing(false);
                       return;
                     }
-                    await api.put('/api/user/preferences', local);
+                    const cloudPreferences = {
+                      auto_save_interval: local.auto_save_interval,
+                      ai_polish_enabled: local.ai_polish_enabled,
+                      language: local.language,
+                      ai_service_api_url: local.ai_service_api_url,
+                      ai_service_model: local.ai_service_model,
+                      export_json_with_settings: local.export_json_with_settings,
+                    };
+                    await api.put('/api/user/preferences', cloudPreferences);
                     if (profile && setProfile) {
-                      setProfile({ ...profile, ...local } as typeof profile);
+                      setProfile({ ...profile, ...cloudPreferences } as typeof profile);
                     }
                     showToast(t('page.synced'), 'success');
                   } catch (err: unknown) {

@@ -70,6 +70,8 @@ func Init(cfg *config.Config) {
 	}
 
 	migrateActiveUserEmailUniqueIndex(DB)
+	dropAIServiceConfigAPIKeyColumn(DB)
+	dropUnusedLive2DPreferenceColumns(DB)
 	dropThemeLibraryDescriptionColumn(DB)
 	dropThemeLibraryLegacyCategoryColumn(DB)
 	dropRetiredAdminAuditLogsTable(DB)
@@ -220,6 +222,43 @@ func dropThemeLibraryDescriptionColumn(db *gorm.DB) {
 	}
 	if err := db.Migrator().DropColumn(&models.ThemeLibrary{}, "description"); err != nil {
 		log.Fatalf("Failed to drop theme_library.description: %v", err)
+	}
+}
+
+// dropAIServiceConfigAPIKeyColumn removes credentials persisted by older
+// versions. API keys are now supplied per request from browser-local storage.
+func dropAIServiceConfigAPIKeyColumn(db *gorm.DB) {
+	if !db.Migrator().HasColumn(&models.AIServiceConfig{}, "api_key") {
+		return
+	}
+	if err := db.Migrator().DropColumn(&models.AIServiceConfig{}, "api_key"); err != nil {
+		log.Fatalf("Failed to drop ai_service_config.api_key: %v", err)
+	}
+}
+
+// dropUnusedLive2DPreferenceColumns keeps only settings that are exposed by
+// the product UI. Rendering constants remain browser-side defaults.
+func dropUnusedLive2DPreferenceColumns(db *gorm.DB) {
+	columns := []string{
+		"live2d_h_offset",
+		"live2d_v_offset",
+		"live2d_width",
+		"live2d_height",
+		"live2d_scale",
+		"live2d_opacity",
+		"live2d_peek_visible_ratio",
+		"live2d_nearby_retract_ratio",
+		"live2d_proximity_threshold",
+		"live2d_restore_delay",
+		"live2d_transition_duration",
+	}
+	for _, column := range columns {
+		if !db.Migrator().HasColumn(&models.UserPreference{}, column) {
+			continue
+		}
+		if err := db.Migrator().DropColumn(&models.UserPreference{}, column); err != nil {
+			log.Fatalf("Failed to drop user_preference.%s: %v", column, err)
+		}
 	}
 }
 

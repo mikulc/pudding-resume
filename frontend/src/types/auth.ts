@@ -54,27 +54,15 @@ export interface UserProfile {
   theme_mode: 'light' | 'dark' | 'system'; // UI theme mode
   language?: string;               // UI language: "zh-CN" | "en-US"
   ai_service_api_url: string;     // user configured AI model API URL
-  ai_service_api_key: string;     // user configured AI model API key
   ai_service_model: string;       // user configured AI model name
   ai_service_prompt: string;      // user customized AI prompt template
   // Live2D preferences
   live2d_enabled: boolean;     // whether Live2D mascot is enabled
   live2d_position: string;     // mascot position: "left" | "right" | "bottom" | "right-bottom"
-  live2d_h_offset: number;     // horizontal offset (px)
-  live2d_v_offset: number;     // vertical offset (px)
-  live2d_width: number;        // canvas width (px)
-  live2d_height: number;       // canvas height (px)
-  live2d_scale: number;        // model scale (0.1~3)
-  live2d_opacity: number;      // opacity (0~1)
   live2d_show_editor: boolean; // whether to show in editor page
   live2d_mobile_show: boolean; // whether to show on mobile devices
   live2d_enable_pointer_events_pass_through: boolean; // whether the mascot ignores pointer events
-  live2d_peek_visible_ratio: number;        // default visible ratio while peeking from the edge
-  live2d_nearby_retract_ratio: number;      // visible ratio while mouse is nearby
   live2d_nearby_behavior: string;           // "expand" shows more when nearby, "retract" shows less
-  live2d_proximity_threshold: number;       // mouse proximity threshold in px
-  live2d_restore_delay: number;             // delay before restoring peek state in ms
-  live2d_transition_duration: number;       // peek/retract animation duration in ms
   live2d_pinned: boolean;                  // always fully visible, disable retract behavior
   // 本地存储偏好
   local_storage_path: string;    // display name of the selected local directory (空字符串表示未启用)

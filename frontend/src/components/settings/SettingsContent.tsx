@@ -1,5 +1,4 @@
 import type { UserProfile } from '../../types/auth';
-import { SettingsSyncModal } from './SettingsSyncModal';
 import { useSettingsPreferences } from './useSettingsPreferences';
 import { PreferencesSection } from './sections/PreferencesSection';
 import { StorageSection } from './sections/StorageSection';
@@ -19,11 +18,6 @@ export function SettingsContent({ isLoggedIn, profile }: { isLoggedIn: boolean; 
       <Live2DSection settings={settings} />
       <ShortcutsSection settings={settings} />
       <AboutSection settings={settings} />
-      <SettingsSyncModal
-        open={settings.syncModalOpen}
-        onConfirm={settings.handleSyncConfirm}
-        onCancel={settings.handleSyncCancel}
-      />
     </>
   );
 }

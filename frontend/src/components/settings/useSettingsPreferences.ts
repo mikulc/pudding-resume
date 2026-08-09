@@ -3,10 +3,10 @@ import { useOutsideClick } from '../../hooks/useOutsideClick';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../common/Toast';
 import { api } from '../../utils/api';
-import { loadSettings, saveSettings, getStorageMode, setStorageMode as persistStorageMode, compareWithProfile, normalizeThemeMode, normalizeLanguage, type ThemeMode, type SupportedLanguage, type LocalSettingsPayload } from '../../utils/localSettings';
+import { loadSettings, saveSettings, normalizeThemeMode, normalizeLanguage, type ThemeMode, type SupportedLanguage, type LocalSettingsPayload } from '../../utils/localSettings';
 import i18n from '../../utils/i18n';
 import { useTranslation } from 'react-i18next';
-import { applyThemeMode, readStoredThemeMode, saveThemeMode } from '../../utils/themeMode';
+import { applyThemeMode, saveThemeMode } from '../../utils/themeMode';
 import type { UserProfile } from '../../types/auth';
 import { getInitialSettings } from './settingsConstants';
 import { useAISettings } from './preferences/useAISettings';
@@ -21,92 +21,20 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
   const initialSettings = getInitialSettings(profile, isLoggedIn);
 
   // ── 存储模式状态 ──
-  const [storageMode, setStorageModeState] = useState<'local' | 'cloud'>(() => {
-    if (!isLoggedIn) return 'local';
-    const mode = getStorageMode();
-    return mode === 'local' ? 'local' : 'cloud';
-  });
+  const storageMode: 'local' | 'cloud' = isLoggedIn ? 'cloud' : 'local';
 
-  // 同步检测弹窗
-  const [syncModalOpen, setSyncModalOpen] = useState(false);
-
-  // 登录后首次进入设置页：检测本地与云端差异
-  useEffect(() => {
-    if (!isLoggedIn || !profile) return;
-    if (getStorageMode() !== null) return; // 已确定 storageMode，不再弹窗
-
-    const local = loadSettings();
-    if (!local) return; // 无本地设置，无需同步
-
-    const diffs = compareWithProfile(local, profile);
-    if (diffs.length === 0) {
-      // 无差异，标记为云端模式，清理本地存储
-      persistStorageMode('cloud');
-      setStorageModeState('cloud');
-      return;
-    }
-
-    // 有差异，弹出同步确认弹窗
-    setSyncModalOpen(true);
-  }, [isLoggedIn, profile]);
-
-  // 同步弹窗回调：使用云端配置，拉取云端数据覆盖本地 localStorage
-  const handleSyncConfirm = () => {
-    setSyncModalOpen(false);
-    if (!profile) return;
-
-    // 将 profile（云端数据）写入 localStorage，覆盖本地旧值
-    saveSettings({
-      auto_save_interval: profile.auto_save_interval ?? 120,
-      ai_polish_enabled: profile.ai_polish_enabled ?? false,
-      language: normalizeLanguage(profile.language),
-      ai_service_api_url: profile.ai_service_api_url ?? '',
-      ai_service_api_key: profile.ai_service_api_key ?? '',
-      ai_service_model: profile.ai_service_model ?? '',
-      live2d_enabled: profile.live2d_enabled ?? true,
-      live2d_position: profile.live2d_position ?? 'right',
-      live2d_h_offset: profile.live2d_h_offset ?? 20,
-      live2d_v_offset: profile.live2d_v_offset ?? -40,
-      live2d_width: profile.live2d_width ?? 140,
-      live2d_height: profile.live2d_height ?? 260,
-      live2d_scale: profile.live2d_scale ?? 1,
-      live2d_opacity: profile.live2d_opacity ?? 0.8,
-      live2d_show_editor: profile.live2d_show_editor ?? true,
-      live2d_mobile_show: profile.live2d_mobile_show ?? false,
-      live2d_enable_pointer_events_pass_through: profile.live2d_enable_pointer_events_pass_through ?? true,
-      live2d_peek_visible_ratio: profile.live2d_peek_visible_ratio ?? 0.72,
-      live2d_nearby_retract_ratio: profile.live2d_nearby_retract_ratio ?? 0.28,
-      live2d_nearby_behavior: profile.live2d_nearby_behavior ?? 'retract',
-      live2d_proximity_threshold: profile.live2d_proximity_threshold ?? 120,
-      live2d_restore_delay: profile.live2d_restore_delay ?? 400,
-      live2d_transition_duration: profile.live2d_transition_duration ?? 320,
-      local_storage_path: profile.local_storage_path ?? '',
-      export_json_with_settings: profile.export_json_with_settings ?? false,
-    });
-    const nextThemeMode = readStoredThemeMode();
-    setThemeMode(nextThemeMode);
-    applyThemeMode(nextThemeMode);
-    setLanguage(normalizeLanguage(profile.language));
-    i18n.changeLanguage(normalizeLanguage(profile.language));
-    persistStorageMode('cloud');
-    setStorageModeState('cloud');
-    showToast(t('page.switchedToCloud'), 'success');
-  };
-
-  const handleSyncCancel = () => {
-    setSyncModalOpen(false);
-    // 用户选择不覆盖云端，使用本地存储
-    persistStorageMode('local');
-    setStorageModeState('local');
-  };
-
-  // ── 通用保存辅助 ──
   const saveToCloud = useCallback(
     async (changes: Record<string, unknown>) => {
       try {
-        await api.put('/api/user/preferences', changes);
+        const cloudChanges = { ...changes };
+        delete cloudChanges.ai_service_api_key;
+        if (Object.keys(cloudChanges).length === 0) {
+          saveSettings(changes as Partial<LocalSettingsPayload>);
+          return;
+        }
+        await api.put('/api/user/preferences', cloudChanges);
         if (profile && setProfile) {
-          setProfile({ ...profile, ...changes } as UserProfile);
+          setProfile({ ...profile, ...cloudChanges } as UserProfile);
         }
         // 双写 localStorage，保持本地与云端一致，避免页面刷新闪烁
         saveSettings(changes as Partial<LocalSettingsPayload>);
@@ -226,8 +154,8 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
   };
 
   const aiSettings = useAISettings({ initialSettings, autoSaveInterval, aiPolishEnabled, savePreferences, storageMode, profile, showToast, t });
-  const live2dSettings = useLive2dSettings({ initialSettings, profile, storageMode, saveToCloud, showToast, t });
-  const localStorageSettings = useLocalStorageSettings({ initialSettings, profile, storageMode, saveToCloud, showToast, t });
+  const live2dSettings = useLive2dSettings({ initialSettings, profile, showToast, t });
+  const localStorageSettings = useLocalStorageSettings({ initialSettings, profile, showToast, t });
   saveFailureHandlerRef.current = () => {
     aiSettings.resetAISettings();
     live2dSettings.resetLive2dSettings();
@@ -282,8 +210,6 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
 
   return {
     isLoggedIn,
-    handleSyncConfirm,
-    handleSyncCancel,
     modelDropdownRef,
     dropdownRef,
     dropdownBtnRef,
@@ -305,7 +231,6 @@ export function useSettingsPreferences(isLoggedIn: boolean, profile: UserProfile
     handleSelectModel,
     intervalOptions,
     themeModeOptions,
-    syncModalOpen,
     autoSaveInterval,
     themeMode,
     language,

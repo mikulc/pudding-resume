@@ -35,24 +35,13 @@ type UserPreference struct {
 	ThemeMode        string `json:"theme_mode" gorm:"size:16;default:system;not null;comment:UI 主题模式：light / dark / system"`
 	Language         string `json:"language" gorm:"size:16;default:zh-CN;not null;comment:界面语言：zh-CN / en-US"`
 	// Live2D 看板娘偏好
-	Live2dEnabled                        bool    `json:"live2d_enabled" gorm:"default:false;not null;comment:是否启用 Live2D 看板娘"`
-	Live2dPosition                       string  `json:"live2d_position" gorm:"size:16;default:right;not null;comment:看板娘位置（left / right / bottom / right-bottom）"`
-	Live2dHOffset                        int     `json:"live2d_h_offset" gorm:"default:20;not null;comment:看板娘水平偏移"`
-	Live2dVOffset                        int     `json:"live2d_v_offset" gorm:"default:-40;not null;comment:看板娘垂直偏移"`
-	Live2dWidth                          int     `json:"live2d_width" gorm:"default:140;not null;comment:看板娘画布宽度"`
-	Live2dHeight                         int     `json:"live2d_height" gorm:"default:260;not null;comment:看板娘画布高度"`
-	Live2dScale                          float64 `json:"live2d_scale" gorm:"default:1;not null;comment:看板娘缩放比例"`
-	Live2dOpacity                        float64 `json:"live2d_opacity" gorm:"default:0.8;not null;comment:看板娘透明度(0~1)"`
-	Live2dShowEditor                     bool    `json:"live2d_show_editor" gorm:"default:true;not null;comment:是否在编辑器页面显示看板娘"`
-	Live2dMobileShow                     bool    `json:"live2d_mobile_show" gorm:"default:false;not null;comment:是否在手机端显示看板娘"`
-	Live2dEnablePointerEventsPassThrough bool    `json:"live2d_enable_pointer_events_pass_through" gorm:"default:true;not null;comment:是否启用看板娘点击穿透"`
-	Live2dPeekVisibleRatio               float64 `json:"live2d_peek_visible_ratio" gorm:"default:0.72;not null;comment:看板娘默认探出可见比例"`
-	Live2dNearbyRetractRatio             float64 `json:"live2d_nearby_retract_ratio" gorm:"default:0.28;not null;comment:鼠标靠近时看板娘缩回后的可见比例"`
-	Live2dNearbyBehavior                 string  `json:"live2d_nearby_behavior" gorm:"size:16;default:retract;not null;comment:鼠标靠近时看板娘行为（expand / retract）"`
-	Live2dProximityThreshold             int     `json:"live2d_proximity_threshold" gorm:"default:120;not null;comment:看板娘鼠标靠近触发距离(px)"`
-	Live2dRestoreDelay                   int     `json:"live2d_restore_delay" gorm:"default:400;not null;comment:看板娘恢复探出延迟(ms)"`
-	Live2dTransitionDuration             int     `json:"live2d_transition_duration" gorm:"default:320;not null;comment:看板娘探出缩回动画时长(ms)"`
-	Live2dPinned                         bool    `json:"live2d_pinned" gorm:"default:false;not null;comment:看板娘常驻模式，关闭靠近缩回行为"`
+	Live2dEnabled                        bool   `json:"live2d_enabled" gorm:"default:false;not null;comment:是否启用 Live2D 看板娘"`
+	Live2dPosition                       string `json:"live2d_position" gorm:"size:16;default:right;not null;comment:看板娘位置（left / right / bottom / right-bottom）"`
+	Live2dShowEditor                     bool   `json:"live2d_show_editor" gorm:"default:true;not null;comment:是否在编辑器页面显示看板娘"`
+	Live2dMobileShow                     bool   `json:"live2d_mobile_show" gorm:"default:false;not null;comment:是否在手机端显示看板娘"`
+	Live2dEnablePointerEventsPassThrough bool   `json:"live2d_enable_pointer_events_pass_through" gorm:"default:true;not null;comment:是否启用看板娘点击穿透"`
+	Live2dNearbyBehavior                 string `json:"live2d_nearby_behavior" gorm:"size:16;default:retract;not null;comment:鼠标靠近时看板娘行为（expand / retract）"`
+	Live2dPinned                         bool   `json:"live2d_pinned" gorm:"default:false;not null;comment:看板娘常驻模式，关闭靠近缩回行为"`
 	// 本地存储偏好
 	LocalStorageEnabled bool   `json:"local_storage_enabled" gorm:"default:false;not null;comment:是否启用本地文件存储"`
 	LocalStoragePath    string `json:"local_storage_path" gorm:"size:256;default:'';comment:本地存储目录名称（仅用于展示）"`
@@ -71,7 +60,6 @@ type AIServiceConfig struct {
 	ID        UUID      `json:"id" gorm:"type:uuid;primaryKey;comment:配置记录唯一标识（UUID v4）"`
 	UserID    UUID      `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
 	ApiUrl    string    `json:"api_url" gorm:"size:512;default:'';comment:AI 模型 API 地址"`
-	ApiKey    string    `json:"api_key" gorm:"size:256;default:'';comment:AI 模型的 API Key"`
 	Model     string    `json:"model" gorm:"size:128;default:'';comment:AI 模型名称"`
 	Prompt    string    `json:"prompt" gorm:"type:text;comment:自定义提示词模板（已弃用）"`
 	CreatedAt time.Time `json:"created_at" gorm:"comment:创建时间"`

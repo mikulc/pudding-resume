@@ -14,14 +14,13 @@ const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
 const UsersPage = lazy(() => import('./pages/admin/UsersPage'));
 import { LoginModal } from './components/auth/LoginModal';
 import { RegisterModal } from './components/auth/RegisterModal';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './components/common/Toast';
 import { ConfirmProvider } from './components/common/ConfirmModal';
 import { GlobalContextMenu } from './components/common/GlobalContextMenu';
 import { Live2D, type Live2DNearbyBehavior, type Live2DPosition } from './components/effects/Live2D';
 import {
   DEFAULT_SETTINGS,
-  getStorageMode,
   loadSettings,
   normalizeLanguage,
   saveSettings,
@@ -33,7 +32,6 @@ import { DEFAULT_LOCALE, getDefaultLocalePath, isSupportedLocale } from './utils
 import { buildAuthPath, getAuthReturnPath, type AuthRouteState } from './utils/authNavigation';
 
 function Live2DWrapper() {
-  const { profile, isLoggedIn } = useAuth();
   const location = useLocation();
   const [localSettings, setLocalSettings] = useState<LocalSettingsPayload>(() => (
     loadSettings() ?? DEFAULT_SETTINGS
@@ -62,8 +60,8 @@ function Live2DWrapper() {
     };
   }, []);
 
-  const useLocalSettings = !isLoggedIn || getStorageMode() === 'local';
-  const live2dSettings = useLocalSettings ? localSettings : profile;
+  // Live2D layout is device-specific for both guests and signed-in users.
+  const live2dSettings = localSettings;
 
   // 未登录默认开启；登录后按偏好设置决定
   const enabled = live2dSettings?.live2d_enabled ?? false;

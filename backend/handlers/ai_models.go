@@ -34,14 +34,13 @@ func ListAiModels(c *gin.Context) {
 
 	apiURL := req.ApiUrl
 	apiKey := req.ApiKey
-	if apiURL == "" && apiKey == "" && userID != "" {
+	if apiURL == "" && userID != "" {
 		var config models.AIServiceConfig
 		if err := database.DB.Where("user_id = ?", userID).First(&config).Error; err != nil {
 			respondError(c, http.StatusInternalServerError, "服务器内部错误")
 			return
 		}
 		apiURL = config.ApiUrl
-		apiKey = config.ApiKey
 	}
 
 	if err := validateCustomAIConfig(apiURL, apiKey, "", false); err != nil {

@@ -2,10 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"log"
 	"pudding-resume-backend/database"
 	"pudding-resume-backend/middleware"
@@ -109,31 +107,6 @@ func extractAIConfig(c *gin.Context, reqApiUrl, reqApiKey, reqModel string) (res
 			Model:        reqModel,
 			SystemPrompt: getSystemPromptForUser(userID),
 			Provider:     detectAIProvider(reqApiUrl, reqModel),
-		}, nil
-	}
-
-	if userID != "" {
-		var aifc models.AIServiceConfig
-		if err := database.DB.Where("user_id = ?", userID).First(&aifc).Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return resolvedAIConfig{}, fmt.Errorf("请先配置 API 地址")
-			}
-			return resolvedAIConfig{}, fmt.Errorf("服务器内部错误")
-		}
-		if err := validateCustomAIConfig(aifc.ApiUrl, aifc.ApiKey, aifc.Model, true); err != nil {
-			return resolvedAIConfig{}, err
-		}
-
-		systemPrompt := aifc.Prompt
-		if systemPrompt == "" {
-			systemPrompt = defaultSystemPrompt
-		}
-		return resolvedAIConfig{
-			ApiURL:       aifc.ApiUrl,
-			ApiKey:       aifc.ApiKey,
-			Model:        aifc.Model,
-			SystemPrompt: systemPrompt,
-			Provider:     detectAIProvider(aifc.ApiUrl, aifc.Model),
 		}, nil
 	}
 

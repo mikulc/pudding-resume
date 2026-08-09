@@ -12,7 +12,7 @@ import type {
 import { api,getAuthToken,setAuthToken } from '../../utils/api';
 import { removeCloudPreviewCaches } from '../../utils/previewCache';
 
-import { syncPreferences } from './preferences';
+import { markPreferencesMerged, syncPreferences } from './preferences';
 
 // --- Storage keys (kept for username/role only, NOT for token) ---
 const USERNAME_KEY = 'pudding_resume_username';
@@ -157,13 +157,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfileLoading(true);
     try {
       const data = await api.get<UserProfile>('/api/user/profile');
-      setProfileState(data);
-      syncPreferences(data);
+      const merged = syncPreferences(data);
+      setProfileState(merged.profile);
       // Sync username from server (in case it was updated elsewhere)
       setUsername(data.username);
       setRole(data.role);
       localStorage.setItem(USERNAME_KEY, data.username);
       localStorage.setItem(ROLE_KEY, data.role);
+      if (Object.keys(merged.cloudUpdates).length > 0) {
+        await api.put('/api/user/preferences', merged.cloudUpdates);
+      }
+      markPreferencesMerged(data.id);
     } catch {
       // Profile fetch failed — token may be expired, handled by api.ts
     } finally {
@@ -247,8 +251,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   /** Manually update profile (e.g. after avatar upload) */
   const setProfile = useCallback((p: UserProfile) => {
-    setProfileState(p);
-    syncPreferences(p);
+    const merged = syncPreferences(p);
+    setProfileState(merged.profile);
+    markPreferencesMerged(p.id);
     setUsername(p.username);
     setRole(p.role);
     localStorage.setItem(USERNAME_KEY, p.username);
