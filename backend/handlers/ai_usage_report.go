@@ -165,16 +165,7 @@ func listProviderUsage(userID string, filters aiUsageQuery) []aiUsageBreakdown {
 		Where("user_id = ? AND created_at >= ? AND created_at < ?", userID, filters.MonthStart, filters.MonthEnd)
 	query = applyAIUsageFilters(query, aiUsageQuery{Model: filters.Model})
 	query.
-		Select(`
-			provider AS key,
-			COUNT(*) AS request_count,
-			COALESCE(SUM(prompt_tokens), 0) AS prompt_tokens,
-			COALESCE(SUM(completion_tokens), 0) AS completion_tokens,
-			COALESCE(SUM(total_tokens), 0) AS total_tokens,
-			COALESCE(SUM(reasoning_tokens), 0) AS reasoning_tokens,
-			COALESCE(SUM(cache_hit_tokens), 0) AS cache_hit_tokens,
-			COALESCE(SUM(cache_miss_tokens), 0) AS cache_miss_tokens
-		`).
+		Select(providerUsageSelectSQL).
 		Group("provider").
 		Scan(&rows)
 
@@ -267,20 +258,9 @@ func listDailyTrend(userID string, filters aiUsageQuery) []aiUsageDailyTrend {
 		Where("user_id = ? AND created_at >= ? AND created_at < ?", userID, filters.MonthStart, filters.MonthEnd)
 	query = applyAIUsageFilters(query, filters)
 	query.
-		Select(`
-			TO_CHAR(created_at, 'YYYY-MM-DD') AS date,
-			provider,
-			model,
-			COUNT(*) AS request_count,
-			COALESCE(SUM(prompt_tokens), 0) AS prompt_tokens,
-			COALESCE(SUM(completion_tokens), 0) AS completion_tokens,
-			COALESCE(SUM(total_tokens), 0) AS total_tokens,
-			COALESCE(SUM(reasoning_tokens), 0) AS reasoning_tokens,
-			COALESCE(SUM(cache_hit_tokens), 0) AS cache_hit_tokens,
-			COALESCE(SUM(cache_miss_tokens), 0) AS cache_miss_tokens
-		`).
-		Group("date, provider, model").
-		Order("date ASC, total_tokens DESC").
+		Select(dailyTrendSelectSQL(database.DB.Dialector.Name())).
+		Group("usage_date, provider, model").
+		Order("usage_date ASC, total_tokens DESC").
 		Scan(&rows)
 	return rows
 }

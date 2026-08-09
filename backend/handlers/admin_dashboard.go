@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"pudding-resume-backend/database"
@@ -82,24 +83,24 @@ func GetDashboard(c *gin.Context) {
 
 	// Daily new users (30 days)
 	var dailyUsers []struct {
-		Date  string
+		Date  string `gorm:"column:usage_date"`
 		Count int64
 	}
 	database.DB.Model(&models.User{}).Where("created_at >= ?", days30Ago).
-		Select("TO_CHAR(created_at, 'YYYY-MM-DD') as date, COUNT(*) as count").
-		Group("date").Order("date ASC").Scan(&dailyUsers)
+		Select(fmt.Sprintf("%s AS usage_date, COUNT(*) AS count", dateOnlyExpression(database.DB.Dialector.Name(), "created_at"))).
+		Group("usage_date").Order("usage_date ASC").Scan(&dailyUsers)
 	for _, d := range dailyUsers {
 		resp.DailyNewUsers = append(resp.DailyNewUsers, DailyCountItem{Date: d.Date, Count: d.Count})
 	}
 
 	// Daily tokens (30 days)
 	var dailyTokens []struct {
-		Date   string
+		Date   string `gorm:"column:usage_date"`
 		Tokens int64
 	}
 	database.DB.Model(&models.AIUsageLog{}).Where("created_at >= ?", days30Ago).
-		Select("TO_CHAR(created_at, 'YYYY-MM-DD') as date, COALESCE(SUM(total_tokens), 0) as tokens").
-		Group("date").Order("date ASC").Scan(&dailyTokens)
+		Select(fmt.Sprintf("%s AS usage_date, COALESCE(SUM(total_tokens), 0) AS tokens", dateOnlyExpression(database.DB.Dialector.Name(), "created_at"))).
+		Group("usage_date").Order("usage_date ASC").Scan(&dailyTokens)
 	for _, d := range dailyTokens {
 		resp.DailyTokens = append(resp.DailyTokens, DailyTokenItem{Date: d.Date, Tokens: d.Tokens})
 	}

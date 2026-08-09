@@ -65,6 +65,29 @@ func TestUUIDCreateCallbackAssignsID(t *testing.T) {
 	}
 }
 
+func TestMySQLUserStatsCreateDoesNotWriteZeroDate(t *testing.T) {
+	db, err := gorm.Open(mysql.New(mysql.Config{
+		DSN:                       "resume:password@tcp(localhost:3306)/pudding_resume?parseTime=true",
+		SkipInitializeWithVersion: true,
+	}), &gorm.Config{DisableAutomaticPing: true, SkipDefaultTransaction: true, DryRun: true})
+	if err != nil {
+		t.Fatalf("open dry-run database: %v", err)
+	}
+	registerUUIDCreateCallback(db)
+
+	stats := models.UserStats{UserID: models.NewUUID()}
+	result := db.Create(&stats)
+	if result.Error != nil {
+		t.Fatalf("dry-run create: %v", result.Error)
+	}
+	if stats.LastActiveAt.IsZero() {
+		t.Fatal("LastActiveAt remained zero during create")
+	}
+	if sql := result.Statement.SQL.String(); strings.Contains(sql, "0000-00-00") {
+		t.Fatalf("create writes a MySQL zero date: %s", sql)
+	}
+}
+
 func TestMySQLMigrationDataTypes(t *testing.T) {
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DSN:                       "resume:password@tcp(localhost:3306)/pudding_resume?parseTime=true",

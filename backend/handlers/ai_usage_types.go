@@ -30,7 +30,7 @@ type aiUsageTotals struct {
 }
 
 type aiUsageBreakdown struct {
-	Key              string `json:"key" gorm:"column:key"`
+	Key              string `json:"key" gorm:"column:provider_key"`
 	Label            string `json:"label"`
 	RequestCount     int64  `json:"request_count"`
 	PromptTokens     int    `json:"prompt_tokens"`
@@ -78,7 +78,7 @@ type aiUsageLimits struct {
 }
 
 type aiUsageDailyTrend struct {
-	Date             string `json:"date" gorm:"column:date"`
+	Date             string `json:"date" gorm:"column:usage_date"`
 	Provider         string `json:"provider"`
 	Model            string `json:"model"`
 	RequestCount     int64  `json:"request_count"`

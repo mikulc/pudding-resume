@@ -54,7 +54,8 @@ func validateActiveSession(claims *utils.Claims) (*models.User, string) {
 }
 
 func injectCurrentUser(c *gin.Context, user *models.User) {
-	c.Set("userID", user.ID)
+	// Keep the request-context contract independent from database model types.
+	c.Set("userID", string(user.ID))
 	c.Set("username", user.Username)
 	c.Set("role", user.Role)
 }
@@ -145,7 +146,14 @@ func GetUserID(c *gin.Context) string {
 	if !exists {
 		return ""
 	}
-	return id.(string)
+	switch value := id.(type) {
+	case string:
+		return value
+	case models.UUID:
+		return string(value)
+	default:
+		return ""
+	}
 }
 
 // GetUsername extracts the authenticated username from context.

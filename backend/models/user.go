@@ -104,7 +104,7 @@ type UserStats struct {
 	TotalResumesCreated int       `json:"total_resumes_created" gorm:"default:0;not null;comment:累计创建简历数"`
 	TotalExports        int       `json:"total_exports" gorm:"default:0;not null;comment:累计导出次数"`
 	TotalEditingSeconds int64     `json:"total_editing_seconds" gorm:"default:0;not null;comment:累计编辑时长（秒）"`
-	LastActiveAt        time.Time `json:"last_active_at" gorm:"comment:最近活跃时间"`
+	LastActiveAt        time.Time `json:"last_active_at" gorm:"autoCreateTime;comment:最近活跃时间"`
 	CreatedAt           time.Time `json:"created_at" gorm:"comment:统计记录创建时间"`
 	UpdatedAt           time.Time `json:"updated_at" gorm:"comment:统计记录更新时间"`
 }
