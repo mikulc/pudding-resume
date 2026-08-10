@@ -15,7 +15,7 @@ function sanitizeFileName(name: string): string {
 }
 
 /** 生成本地简历文件名 */
-function makeResumeFileName(resumeName: string, resumeId: string): string {
+export function makeResumeFileName(resumeName: string, resumeId: string): string {
   const safeName = sanitizeFileName(resumeName || i18n.t('list.unnamedResume', { ns: 'resume' }));
   const shortId = resumeId.replace(/-/g, '').slice(0, 8);
   return `${safeName}_${shortId}.json`;

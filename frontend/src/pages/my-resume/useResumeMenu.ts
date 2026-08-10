@@ -98,18 +98,20 @@ export function useResumeMenu() {
   // Measure the rendered portal before paint so an above-positioned menu
   // keeps the same gap from its trigger regardless of its actions.
   useLayoutEffect(() => {
-    if (menuOpenId) updateMenuPosition(menuOpenId);
-  }, [menuOpenId, updateMenuPosition]);
+    const activeId = menuOpenId ?? renamingId;
+    if (activeId) updateMenuPosition(activeId);
+  }, [menuOpenId, renamingId, updateMenuPosition]);
 
   useEffect(() => {
-    if (!menuOpenId) return;
+    const activeId = menuOpenId ?? renamingId;
+    if (!activeId) return;
 
     let frameId: number | null = null;
     const scheduleUpdate = () => {
       if (frameId !== null) return;
       frameId = window.requestAnimationFrame(() => {
         frameId = null;
-        updateMenuPosition(menuOpenId);
+        updateMenuPosition(activeId);
       });
     };
 
@@ -121,7 +123,7 @@ export function useResumeMenu() {
       window.removeEventListener('resize', scheduleUpdate);
       window.removeEventListener('scroll', scheduleUpdate, true);
     };
-  }, [menuOpenId, updateMenuPosition]);
+  }, [menuOpenId, renamingId, updateMenuPosition]);
 
   // Close menu on click outside
   const handleMenuClose = useCallback(() => {

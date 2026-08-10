@@ -13,6 +13,7 @@ import { ResumeCard } from './my-resume/ResumeCard';
 import { useResumeMenu } from './my-resume/useResumeMenu';
 import { useResumeActions } from './my-resume/useResumeActions';
 import { ResumeActionsMenu } from './my-resume/ResumeActionsMenu';
+import { ResumeRenamePopover } from './my-resume/ResumeRenamePopover';
 
 
 export default function MyResumePage() {
@@ -23,7 +24,7 @@ export default function MyResumePage() {
   const {
     resumes, loading, loadingMore, hasMore, totalResumeCount, error,
     scrollContainerRef, loadMoreTriggerRef, handleResumeListScroll,
-    handleResumeListWheel, refreshList,
+    handleResumeListWheel, refreshList, removeResumeFromList, addResumeToList,
   } = useResumeLibrary(isLoggedIn, sessionLoading);
 
   const menu = useResumeMenu();
@@ -32,7 +33,9 @@ export default function MyResumePage() {
     renamingId, renameValue, setRenameValue, handleMenuToggle, handleMenuClose,
   } = menu;
 
-  const actions = useResumeActions({ resumes, refreshList, menu });
+  const actions = useResumeActions({
+    resumes, refreshList, removeResumeFromList, addResumeToList, menu,
+  });
   const {
     showCreateModal, setShowCreateModal, handleCardPreviewClick, handleDeleteClick,
     handleCopy, handleUploadToCloud, handleRenameStart, handleRenameCancel,
@@ -171,13 +174,8 @@ export default function MyResumePage() {
                       isRenaming={renamingId === resume.id}
                       scrollContainerRef={scrollContainerRef}
                       menuBtnRefs={menuBtnRefs}
-                      renamePopoverRef={renamePopoverRef}
-                      renameValue={renameValue}
-                      setRenameValue={setRenameValue}
                       onPreview={handleCardPreviewClick}
                       onMenuToggle={handleMenuToggle}
-                      onRenameSubmit={handleRenameSubmit}
-                      onRenameCancel={handleRenameCancel}
                     />
                   ))}
                   {(hasMore || loadingMore) && (
@@ -211,6 +209,16 @@ export default function MyResumePage() {
         onRename={handleRenameStart}
         onUpload={handleUploadToCloud}
         onDelete={handleDeleteClick}
+      />
+
+      <ResumeRenamePopover
+        open={renamingId !== null}
+        position={menuPos}
+        popoverRef={renamePopoverRef}
+        value={renameValue}
+        onChange={setRenameValue}
+        onSubmit={handleRenameSubmit}
+        onCancel={handleRenameCancel}
       />
 
       {/* ========== Create Resume Modal ========== */}

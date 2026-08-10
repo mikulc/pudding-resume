@@ -235,6 +235,46 @@ export function useResumeLibrary(isLoggedIn: boolean, sessionLoading: boolean) {
     await fetchResumes();
   }, [fetchResumes]);
 
+  const removeResumeFromList = useCallback((resume: DisplayResume) => {
+    setResumes((current) => current.filter((item) => item.id !== resume.id));
+    setTotalResumeCount((current) => Math.max(0, current - 1));
+
+    if (resume._hasCloud) {
+      nextCloudOffsetRef.current = Math.max(0, nextCloudOffsetRef.current - 1);
+    }
+
+    if (resume._hasLocal) {
+      const localIndex = localResumesRef.current.findIndex((item) =>
+        item.id === resume.id
+        || (Boolean(resume.local_file_name) && item.local_file_name === resume.local_file_name),
+      );
+      if (localIndex >= 0) {
+        const [removedLocalResume] = localResumesRef.current.splice(localIndex, 1);
+        usedLocalIdsRef.current.delete(removedLocalResume.id);
+        if (localIndex < nextLocalIndexRef.current) {
+          nextLocalIndexRef.current = Math.max(0, nextLocalIndexRef.current - 1);
+        }
+      }
+    }
+
+    syncHasMore();
+  }, [syncHasMore]);
+
+  const addResumeToList = useCallback((resume: DisplayResume) => {
+    setResumes((current) => [resume, ...current.filter((item) => item.id !== resume.id)]);
+    setTotalResumeCount((current) => current + 1);
+
+    if (resume._hasCloud) {
+      nextCloudOffsetRef.current += 1;
+    }
+
+    if (resume._hasLocal) {
+      localResumesRef.current.unshift(resume);
+      usedLocalIdsRef.current.add(resume.id);
+      nextLocalIndexRef.current += 1;
+    }
+  }, []);
+
   return {
     resumes,
     loading,
@@ -247,5 +287,7 @@ export function useResumeLibrary(isLoggedIn: boolean, sessionLoading: boolean) {
     handleResumeListScroll,
     handleResumeListWheel,
     refreshList,
+    removeResumeFromList,
+    addResumeToList,
   };
 }

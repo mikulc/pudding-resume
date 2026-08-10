@@ -13,13 +13,8 @@ interface ResumeCardProps {
   isRenaming: boolean;
   scrollContainerRef: RefObject<HTMLDivElement | null>;
   menuBtnRefs: MutableRefObject<Record<string, HTMLButtonElement | null>>;
-  renamePopoverRef: RefObject<HTMLDivElement | null>;
-  renameValue: string;
-  setRenameValue: (value: string) => void;
   onPreview: (id: string) => void;
   onMenuToggle: (event: MouseEvent<HTMLButtonElement>, id: string) => void;
-  onRenameSubmit: () => void;
-  onRenameCancel: () => void;
 }
 
 export function formatResumeTime(iso: string): string {
@@ -30,8 +25,7 @@ export function formatResumeTime(iso: string): string {
 
 export function ResumeCard({
   resume, isMenuOpen, isRenaming, scrollContainerRef, menuBtnRefs,
-  renamePopoverRef, renameValue, setRenameValue, onPreview, onMenuToggle,
-  onRenameSubmit, onRenameCancel,
+  onPreview, onMenuToggle,
 }: ResumeCardProps) {
   const { t } = useTranslation(['resume', 'common']);
 
@@ -126,45 +120,6 @@ export function ResumeCard({
 
 
 
-                        {/* Rename popup 鈥?on card, near bottom-right */}
-                        {isRenaming && (
-                          <div
-                            ref={renamePopoverRef as RefObject<HTMLDivElement>}
-                            className="resume-popover-enter absolute right-3 bottom-4 z-30 w-[240px] rounded-2xl border border-slate-200/70 bg-white p-4 shadow-[0_12px_32px_rgba(15,23,42,0.10)] dark:border-slate-800 dark:bg-slate-950"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <p className="mb-2.5 text-xs font-medium text-slate-500 dark:text-slate-400">{t('list.rename')}</p>
-                            <input
-                              id="resume-rename-input"
-                              autoFocus
-                              type="text"
-                              value={renameValue}
-                              onChange={(e) => setRenameValue(e.target.value)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') onRenameSubmit();
-                                if (e.key === 'Escape') onRenameCancel();
-                              }}
-                              className="rename-input mb-3 h-10 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3 text-sm text-slate-800 transition-colors placeholder:text-slate-300 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-blue-500/70 dark:focus:bg-slate-900 dark:focus:ring-blue-500/15"
-                              maxLength={100}
-                            />
-                            <div className="flex items-center justify-end gap-2.5">
-                              <button
-                                type="button"
-                                onClick={onRenameCancel}
-                                className="h-8 rounded-lg px-2.5 text-xs font-medium text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-900 dark:hover:text-slate-300"
-                              >
-                                {t('common:button.cancel')}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={onRenameSubmit}
-                                className="h-8 rounded-[10px] bg-slate-900 px-3.5 text-xs font-medium text-white transition-colors hover:bg-slate-800 active:scale-[0.98] dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-white"
-                              >
-                                {t('common:button.ok')}
-                              </button>
-                            </div>
-                          </div>
-                        )}
                       </div>
   );
 }

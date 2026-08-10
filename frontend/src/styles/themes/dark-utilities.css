@@ -294,8 +294,8 @@
 
 /* 重命名弹窗输入框 focus — 覆盖全局 dark 输入框样式，做柔和蓝光 */
 .dark .rename-input:focus {
-  border-color: rgba(68, 147, 248, 0.7) !important;
-  box-shadow: 0 0 0 4px rgba(68, 147, 248, 0.15) !important;
+  border-color: rgb(255, 200, 72) !important;
+  box-shadow: none !important;
 }
 
 .dark .from-gray-50,
@@ -325,4 +325,3 @@
 .dark .to-indigo-50 {
   --tw-gradient-to: rgba(99, 102, 241, 0.1) var(--tw-gradient-to-position);
 }
-

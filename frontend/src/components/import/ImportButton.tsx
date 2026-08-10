@@ -224,7 +224,7 @@ export function ImportButton({ onImportComplete }: ImportButtonProps) {
       <button
         onClick={() => setOpen(!open)}
         disabled={importing}
-        className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[rgba(50,114,255,0.14)] bg-[rgba(50,114,255,0.08)] px-4 text-sm font-medium text-[#3272ff] shadow-none transition-colors hover:border-[rgba(50,114,255,0.22)] hover:bg-[rgba(50,114,255,0.13)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+        className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#2248ff] bg-[#2248ff] px-4 text-sm font-medium text-white shadow-none disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto dark:border-[#fbbf24] dark:bg-[#fbbf24] dark:text-[#1e2836]"
       >
         {importing ? (
           <>
@@ -232,7 +232,7 @@ export function ImportButton({ onImportComplete }: ImportButtonProps) {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            {t('import.parsingFormat', { format: formatLabel })}
+            <span>{t('import.parsingFormat', { format: formatLabel })}</span>
           </>
         ) : (
           <>

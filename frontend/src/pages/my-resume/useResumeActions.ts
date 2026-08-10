@@ -4,18 +4,25 @@ import { useTranslation } from 'react-i18next';
 import { deleteResume, copyResume, updateResumeName, createResume } from '../../api/resumes';
 import { useToast } from '../../components/common/Toast';
 import { useConfirm } from '../../components/common/ConfirmModal';
-import { deleteLocalResume, saveResumeToLocal, generateLocalId } from '../../utils/localStorage';
+import {
+  deleteLocalResume, saveResumeToLocal, generateLocalId, makeResumeFileName,
+} from '../../utils/localStorage';
 import { clearResumeLaunchSession, stageExistingResumeLaunch, stageLocalResumeLaunch } from '../../utils/resumeLaunch';
+import { getErrorMessage } from '../../utils/errors';
 import type { DisplayResume } from './useResumeLibrary';
 import type { ResumeMenuModel } from './useResumeMenu';
 
 interface ResumeActionsOptions {
   resumes: DisplayResume[];
   refreshList: () => Promise<void>;
+  removeResumeFromList: (resume: DisplayResume) => void;
+  addResumeToList: (resume: DisplayResume) => void;
   menu: ResumeMenuModel;
 }
 
-export function useResumeActions({ resumes, refreshList, menu }: ResumeActionsOptions) {
+export function useResumeActions({
+  resumes, refreshList, removeResumeFromList, addResumeToList, menu,
+}: ResumeActionsOptions) {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const confirm = useConfirm();
@@ -74,12 +81,12 @@ export function useResumeActions({ resumes, refreshList, menu }: ResumeActionsOp
       if (!isLocal) {
         await deleteResume(id);
       }
+      removeResumeFromList(resume);
       showToast(t('list.deleted'), 'success');
-      await refreshList();
     } catch {
       showToast(t('list.deleteFailed'), 'error');
     }
-  }, [resumes, confirm, showToast, refreshList, t]);
+  }, [resumes, confirm, showToast, removeResumeFromList, t]);
 
   // Copy handler
   const handleCopy = useCallback(async (id: string) => {
@@ -91,30 +98,46 @@ export function useResumeActions({ resumes, refreshList, menu }: ResumeActionsOp
       // Local copy: create new file with same content
       const newId = generateLocalId();
       const newName = t('list.copyName', { name: resume.name });
+      const updatedAt = new Date().toISOString();
       const ok = await saveResumeToLocal({
         id: newId,
         name: newName,
         content: resume.content,
         settings: resume.settings,
-        updated_at: new Date().toISOString(),
+        updated_at: updatedAt,
       });
       if (ok) {
+        addResumeToList({
+          id: newId,
+          name: newName,
+          content: resume.content,
+          settings: resume.settings,
+          updated_at: updatedAt,
+          source: 'local',
+          local_file_name: makeResumeFileName(newName, newId),
+          _hasCloud: false,
+          _hasLocal: true,
+        });
         showToast(t('list.localCopied'), 'success');
-        await refreshList();
       } else {
         showToast(t('list.copyLocalFailed'), 'error');
       }
     } else {
       // Cloud copy: call API
       try {
-        await copyResume(id);
+        const copiedResume = await copyResume(id);
+        addResumeToList({
+          ...copiedResume,
+          source: 'cloud',
+          _hasCloud: true,
+          _hasLocal: false,
+        });
         showToast(t('list.copied'), 'success');
-        await refreshList();
-      } catch {
-        showToast(t('list.copyFailed'), 'error');
+      } catch (error) {
+        showToast(getErrorMessage(error, t('list.copyFailed')), 'error');
       }
     }
-  }, [resumes, setMenuOpenId, showToast, refreshList, t]);
+  }, [resumes, setMenuOpenId, showToast, addResumeToList, t]);
 
   // Upload local resume to cloud
   const handleUploadToCloud = useCallback(async (id: string) => {
