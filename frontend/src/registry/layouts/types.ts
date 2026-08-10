@@ -1,5 +1,5 @@
 import type React from 'react';
-import type { SectionKey } from '../../types/resume';
+import type { PersonalPhotoStyle, SectionKey } from '../../types/resume';
 
 /**
  * 标题渲染模式
@@ -33,6 +33,8 @@ export interface LayoutDefinition {
   defaultPageMargin?: number;
   /** Theme-specific portrait position used until the user explicitly chooses one. */
   defaultPhotoLayout?: 'left' | 'right';
+  /** Theme-specific portrait dimensions and shape used until the user customizes them. */
+  defaultPhotoStyle?: PersonalPhotoStyle;
   /** 标题渲染模式 */
   headerMode: HeaderMode;
   /** Compact visual fingerprint used in the settings panel. */

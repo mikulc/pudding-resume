@@ -178,6 +178,7 @@ export function resumeReducer(state: ResumeData, action: ResumeAction): ResumeDa
           email: payload.personalInfo?.email ?? '',
           photoUrl: payload.personalInfo?.photoUrl ?? '',
           photoStyle: payload.personalInfo?.photoStyle,
+          photoStyleCustomized: payload.personalInfo?.photoStyleCustomized,
           jobStatus: payload.personalInfo?.jobStatus ?? '',
           jobTarget: payload.personalInfo?.jobTarget ?? '',
           location: payload.personalInfo?.location ?? '',

@@ -118,6 +118,7 @@ function normalizeResumeData(content: ResumeData): ResumeData {
       email: personalInfo.email ?? '',
       photoUrl: personalInfo.photoUrl ?? '',
       photoStyle: personalInfo.photoStyle,
+      photoStyleCustomized: personalInfo.photoStyleCustomized,
       jobStatus: personalInfo.jobStatus ?? '',
       jobTarget: personalInfo.jobTarget ?? '',
       location: personalInfo.location ?? '',

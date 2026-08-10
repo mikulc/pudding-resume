@@ -99,7 +99,7 @@ export const azureSidebarLayout: LayoutDefinition = {
     .resume-paper[data-layout="azure-sidebar"] .azure-sidebar-name {
       margin: 0 0 11mm !important;
       color: #ffffff !important;
-      font-size: 1.3em !important;
+      font-size: 1.7em !important;
       line-height: 1.2 !important;
       font-weight: 500 !important;
       letter-spacing: 0 !important;
@@ -238,7 +238,7 @@ export const azureSidebarLayout: LayoutDefinition = {
   defaultPhotoLayout: 'left',
   headerMode: 'underline',
   signature: { layout: 'double-column', headerDecoration: 'side-block', sectionStyle: 'underline' },
-  previewVersion: '2',
+  previewVersion: '3',
   personalInfoClass: 'azure-sidebar-contact-icon',
   contentMode: 'sidebar',
   sidebarSections: ['personal'],

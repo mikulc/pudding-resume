@@ -4,8 +4,9 @@ import { Eye,EyeOff,Link,RotateCcw,Unlink,X } from 'lucide-react';
 import React,{ useCallback,useEffect,useLayoutEffect,useMemo,useRef,useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { useResume } from '../../../context/ResumeContext';
+import { useAppUI,useResume } from '../../../context/ResumeContext';
 import { useDismissibleLayer } from '../../../hooks/useDismissibleLayer';
+import { getLayoutDefaultPhotoStyle,resolvePhotoStyle } from '../../../registry/layouts';
 import {
 BUILTIN_PERSONAL_FIELDS,
 DEFAULT_PERSONAL_FIELD_ORDER,
@@ -17,7 +18,6 @@ import { FieldCard } from '../FieldCard';
 import { Camera } from '../../icons';
 import {
 clampNumber,
-DEFAULT_PHOTO_STYLE,
 normalizePersonalFieldOrder,
 normalizePhotoStyle,
 parseDimensionInput,
@@ -36,9 +36,18 @@ import { StyledComboInput } from '../StyledInputs';
 export function PersonalInfoEditor() {
   const { t } = useTranslation(['editor', 'resume', 'common']);
   const { data, dispatch } = useResume();
+  const { ui } = useAppUI();
   const { showToast } = useToast();
   const { personalInfo } = data;
-  const photoStyle = useMemo(() => normalizePhotoStyle(personalInfo.photoStyle), [personalInfo.photoStyle]);
+  const defaultPhotoStyle = useMemo(
+    () => normalizePhotoStyle(getLayoutDefaultPhotoStyle(ui.theme.layoutId)),
+    [ui.theme.layoutId],
+  );
+  const photoStyle = useMemo(() => normalizePhotoStyle(resolvePhotoStyle(
+    ui.theme.layoutId,
+    personalInfo.photoStyle,
+    personalInfo.photoStyleCustomized,
+  )), [personalInfo.photoStyle, personalInfo.photoStyleCustomized, ui.theme.layoutId]);
   const [photoStyleOpen, setPhotoStyleOpen] = useState(false);
   const [originalPhotoRatio, setOriginalPhotoRatio] = useState<number | null>(null);
   const [selectedPhotoAspect, setSelectedPhotoAspect] = useState<PhotoAspectKey>('custom');
@@ -94,7 +103,10 @@ export function PersonalInfoEditor() {
   const applyPhotoStyle = useCallback((nextStyle: Partial<PersonalPhotoStyle>) => {
     dispatch({
       type: 'SET_PERSONAL_INFO',
-      payload: { photoStyle: normalizePhotoStyle({ ...photoStyle, ...nextStyle }) },
+      payload: {
+        photoStyle: normalizePhotoStyle({ ...photoStyle, ...nextStyle }),
+        photoStyleCustomized: true,
+      },
     });
   }, [dispatch, photoStyle]);
 
@@ -210,12 +222,16 @@ export function PersonalInfoEditor() {
   const resetPhotoStyle = () => {
     setSelectedPhotoAspect('custom');
     setSelectedPhotoRadius('custom');
-    dispatch({ type: 'SET_PERSONAL_INFO', payload: { photoStyle: DEFAULT_PHOTO_STYLE } });
+    dispatch({
+      type: 'SET_PERSONAL_INFO',
+      payload: { photoStyle: defaultPhotoStyle, photoStyleCustomized: false },
+    });
   };
 
-  const isPhotoStyleDefault = photoStyle.width === DEFAULT_PHOTO_STYLE.width
-    && photoStyle.height === DEFAULT_PHOTO_STYLE.height
-    && photoStyle.borderRadius === DEFAULT_PHOTO_STYLE.borderRadius;
+  const isPhotoStyleDefault = !personalInfo.photoStyleCustomized
+    && photoStyle.width === defaultPhotoStyle.width
+    && photoStyle.height === defaultPhotoStyle.height
+    && photoStyle.borderRadius === defaultPhotoStyle.borderRadius;
 
   const hiddenFields = personalInfo.hiddenFields || [];
 
@@ -483,7 +499,7 @@ export function PersonalInfoEditor() {
                           style={{
                             width: `${Math.min(120, 80 * (photoStyle.width / photoStyle.height))}px`,
                             height: `${Math.min(80, 120 * (photoStyle.height / photoStyle.width))}px`,
-                            borderRadius: `${Math.min(photoStyle.borderRadius, 36)}px`,
+                            borderRadius: `${photoStyle.borderRadius}px`,
                           }}
                         />
                         <span className="absolute bottom-2 right-2 z-[1] rounded-md bg-white/80 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-gray-500 backdrop-blur-sm dark:bg-black/20 dark:text-white/55">

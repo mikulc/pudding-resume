@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { resolvePhotoStyle } from './index';
 import { tealRibbonWaveLayout } from './teal-ribbon-wave';
 
 describe('tealRibbonWaveLayout', () => {
@@ -6,10 +7,19 @@ describe('tealRibbonWaveLayout', () => {
     expect(tealRibbonWaveLayout.defaultColor).toBe('#248f83');
   });
 
-  it('renders a circular portrait and raises the header wave', () => {
+  it('resolves the theme default dynamically but preserves an explicit user shape', () => {
+    expect(resolvePhotoStyle(tealRibbonWaveLayout.id, { width: 100, height: 133, borderRadius: 6 }))
+      .toEqual({ width: 100, height: 100, borderRadius: 999 });
+    expect(resolvePhotoStyle(tealRibbonWaveLayout.id, { width: 120, height: 160, borderRadius: 0 }, true))
+      .toEqual({ width: 120, height: 160, borderRadius: 0 });
+  });
+
+  it('defaults to a circular portrait while letting the shared photo style control its shape', () => {
     expect(tealRibbonWaveLayout.css).toContain('height: 52mm !important');
     expect(tealRibbonWaveLayout.css).toContain('width: var(--personal-photo-width) !important');
-    expect(tealRibbonWaveLayout.css).toContain('border-radius: 50% !important');
+    expect(tealRibbonWaveLayout.css).toContain('height: var(--personal-photo-height) !important');
+    expect(tealRibbonWaveLayout.css).not.toContain('.personal-photo img {');
+    expect(tealRibbonWaveLayout.defaultPhotoStyle).toEqual({ width: 100, height: 100, borderRadius: 999 });
     expect(tealRibbonWaveLayout.css).toContain('top: calc(5mm - var(--resume-page-margin)) !important');
     expect(tealRibbonWaveLayout.css).toContain('padding: calc(var(--personal-photo-width) + 12mm - var(--resume-page-margin)) 24mm 0 !important');
     expect(tealRibbonWaveLayout.css).toContain('data-animated-section="personal"');

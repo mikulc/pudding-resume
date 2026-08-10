@@ -29,8 +29,12 @@ export const blueBannerIconsLayout: LayoutDefinition = {
 
     .resume-paper[data-layout="blue-banner-icons"] [data-page-section="personal"].blue-banner-icons-personal {
       position: relative !important;
-      min-height: var(--blue-banner-profile-height) !important;
-      margin-bottom: 6mm !important;
+      width: calc(100% + 2 * var(--resume-page-margin)) !important;
+      min-height: calc(var(--resume-page-margin) + var(--blue-banner-profile-height)) !important;
+      margin-top: calc(-1 * var(--resume-page-margin)) !important;
+      margin-right: calc(-1 * var(--resume-page-margin)) !important;
+      margin-bottom: 8mm !important;
+      margin-left: calc(-1 * var(--resume-page-margin)) !important;
       border-radius: 0 !important;
       text-align: center !important;
     }
@@ -39,14 +43,23 @@ export const blueBannerIconsLayout: LayoutDefinition = {
       position: relative !important;
       display: grid !important;
       grid-template-columns: minmax(0, 1fr) !important;
-      min-height: var(--blue-banner-profile-height) !important;
+      box-sizing: border-box !important;
+      min-height: calc(var(--resume-page-margin) + var(--blue-banner-profile-height)) !important;
+      padding-right: var(--resume-page-margin) !important;
+      padding-left: var(--resume-page-margin) !important;
+    }
+
+    /* The profile banner extends upward through the page's top margin. Keep
+       the section animation wrapper from clipping that visible area. */
+    .resume-paper[data-layout="blue-banner-icons"] [data-animated-section="personal"][data-section-hidden="false"] > .overflow-hidden {
+      overflow: visible !important;
     }
 
     .resume-paper[data-layout="blue-banner-icons"] [data-page-section="personal"] .flex-1 {
       grid-area: 1 / 1 !important;
       align-self: center !important;
       width: 100% !important;
-      padding: 0 31mm 0 !important;
+      padding: 0 calc(var(--personal-photo-width) + 5mm) !important;
       text-align: center !important;
     }
 
@@ -97,7 +110,7 @@ export const blueBannerIconsLayout: LayoutDefinition = {
     .resume-paper[data-layout="blue-banner-icons"] [data-page-section="personal"] .personal-photo-placeholder {
       position: relative !important;
       grid-area: 1 / 1 !important;
-      align-self: start !important;
+      align-self: center !important;
       justify-self: end !important;
       margin-top: 0 !important;
       border: 0 !important;
@@ -206,7 +219,7 @@ export const blueBannerIconsLayout: LayoutDefinition = {
   defaultColor: '#1e3a5f',
   headerMode: 'icons',
   signature: { layout: 'single-column', headerDecoration: 'solid-bar', sectionStyle: 'icon-line' },
-  previewVersion: '5',
+  previewVersion: '8',
   iconMap: ICONS,
   personalInfoClass: 'blue-banner-icons-contact-icon',
 };

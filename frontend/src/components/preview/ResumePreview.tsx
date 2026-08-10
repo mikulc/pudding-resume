@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { getFontStack } from '../../config/fonts';
 import { useAppUI,useResume } from '../../context/ResumeContext';
-import { getLayoutCSS,resolveLayout,resolvePhotoLayout } from '../../registry/layouts';
+import { getLayoutCSS,resolveLayout,resolvePhotoLayout,resolvePhotoStyle } from '../../registry/layouts';
 import {
 DEFAULT_SECTION_ORDER,
 SectionKey,
@@ -370,8 +370,8 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
     '--resume-content-height': `${pageContentHeight}px`,
     '--resume-page-margin': `${theme.pageMargin}mm`,
     '--resume-line-spacing': theme.lineSpacing,
-    '--personal-photo-width': `${resolvePersonalPhotoStyle(data.personalInfo.photoStyle).width}px`,
-    '--personal-photo-height': `${resolvePersonalPhotoStyle(data.personalInfo.photoStyle).height}px`,
+    '--personal-photo-width': `${resolvePersonalPhotoStyle(resolvePhotoStyle(theme.layoutId, data.personalInfo.photoStyle, data.personalInfo.photoStyleCustomized)).width}px`,
+    '--personal-photo-height': `${resolvePersonalPhotoStyle(resolvePhotoStyle(theme.layoutId, data.personalInfo.photoStyle, data.personalInfo.photoStyleCustomized)).height}px`,
   };
 
   const colorStyle = `

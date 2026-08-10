@@ -6,12 +6,32 @@ describe('blueBannerIconsLayout', () => {
     expect(blueBannerIconsLayout.defaultPageMargin).toBeUndefined();
   });
 
-  it('aligns the photo with the top content margin', () => {
+  it('vertically centers the photo in the full colored banner', () => {
     const photoRule = blueBannerIconsLayout.css.match(
       /\.personal-photo,\s*[\s\S]*?\.personal-photo-placeholder\s*\{([\s\S]*?)\}/,
     )?.[1];
 
-    expect(photoRule).toContain('margin-top: 0 !important');
+    expect(photoRule).toContain('align-self: center !important');
+  });
+
+  it('uses the page margin as the banner content horizontal inset', () => {
+    const personalSectionRule = blueBannerIconsLayout.css.match(
+      /\[data-page-section="personal"\]\.blue-banner-icons-personal\s*\{([\s\S]*?)\}/,
+    )?.[1];
+    const personalContentRule = blueBannerIconsLayout.css.match(
+      /\[data-page-section="personal"\] > div\s*\{([\s\S]*?)\}/,
+    )?.[1];
+
+    expect(personalSectionRule).toContain('margin-left: calc(-1 * var(--resume-page-margin)) !important');
+    expect(personalSectionRule).toContain('width: calc(100% + 2 * var(--resume-page-margin)) !important');
+    expect(personalContentRule).toContain('padding-right: var(--resume-page-margin) !important');
+    expect(personalContentRule).toContain('padding-left: var(--resume-page-margin) !important');
+  });
+
+  it('does not clip profile content that extends into the top page margin', () => {
+    expect(blueBannerIconsLayout.css).toMatch(
+      /\[data-animated-section="personal"\]\[data-section-hidden="false"\] > \.overflow-hidden\s*\{[\s\S]*overflow:\s*visible !important/,
+    );
   });
 
   it('uses compact spacing below the profile banner', () => {
@@ -19,7 +39,10 @@ describe('blueBannerIconsLayout', () => {
       /\[data-page-section="personal"\]\.blue-banner-icons-personal\s*\{([\s\S]*?)\}/,
     )?.[1];
 
-    expect(personalSectionRule).toContain('margin-bottom: 6mm !important');
+    expect(personalSectionRule).toContain('margin-bottom: 8mm !important');
+    expect(personalSectionRule).toContain(
+      'min-height: calc(var(--resume-page-margin) + var(--blue-banner-profile-height)) !important',
+    );
     expect(blueBannerIconsLayout.css).toContain(
       '--blue-banner-profile-height: max(35mm, calc(var(--personal-photo-height) + 5mm))',
     );

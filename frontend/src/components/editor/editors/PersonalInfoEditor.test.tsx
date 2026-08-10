@@ -6,6 +6,7 @@ import { PersonalInfoEditor } from './PersonalInfoEditor';
 const mockedResume = vi.hoisted(() => ({
   data: null as unknown,
   dispatch: vi.fn(),
+  layoutId: 'skyveil',
 }));
 
 vi.mock('react-i18next', async (importOriginal) => ({
@@ -18,6 +19,7 @@ vi.mock('react-i18next', async (importOriginal) => ({
 
 vi.mock('../../../context/ResumeContext', () => ({
   useResume: () => mockedResume,
+  useAppUI: () => ({ ui: { theme: { layoutId: mockedResume.layoutId } } }),
 }));
 
 vi.mock('../../common/Toast', () => ({
@@ -37,6 +39,20 @@ describe('PersonalInfoEditor photo settings', () => {
       },
     };
     mockedResume.dispatch.mockClear();
+    mockedResume.layoutId = 'skyveil';
+  });
+
+  it('uses the active theme portrait style in the popover until customized', () => {
+    mockedResume.layoutId = 'teal-ribbon-wave';
+    render(<PersonalInfoEditor />);
+    fireEvent.click(screen.getByRole('button', { name: 'photo.adjust' }));
+
+    const preview = document.querySelector<HTMLImageElement>('.avatar-preview-grid img')!;
+    expect(preview.style.width).toBe('80px');
+    expect(preview.style.height).toBe('80px');
+    expect(preview.style.borderRadius).toBe('999px');
+    expect((document.getElementById('photo-width') as HTMLInputElement).value).toBe('100');
+    expect((document.getElementById('photo-height') as HTMLInputElement).value).toBe('100');
   });
 
   it('keeps a dimension input empty while the user replaces its value', () => {
@@ -59,6 +75,7 @@ describe('PersonalInfoEditor photo settings', () => {
           height: 160,
           borderRadius: 6,
         },
+        photoStyleCustomized: true,
       },
     });
   });
@@ -76,6 +93,7 @@ describe('PersonalInfoEditor photo settings', () => {
           height: 100,
           borderRadius: 999,
         },
+        photoStyleCustomized: true,
       },
     });
   });
@@ -100,7 +118,10 @@ describe('PersonalInfoEditor photo settings', () => {
 
     expect(mockedResume.dispatch).toHaveBeenLastCalledWith({
       type: 'SET_PERSONAL_INFO',
-      payload: { photoStyle: { width: 100, height: 133, borderRadius: 6 } },
+      payload: {
+        photoStyle: { width: 100, height: 133, borderRadius: 6 },
+        photoStyleCustomized: false,
+      },
     });
   });
 

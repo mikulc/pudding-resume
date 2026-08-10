@@ -6,6 +6,8 @@ export interface PersonalInfo {
   email: string;
   photoUrl: string;
   photoStyle?: PersonalPhotoStyle;
+  /** Whether the user has overridden the active theme's default portrait style. */
+  photoStyleCustomized?: boolean;
   jobStatus?: string;
   jobTarget?: string;
   location?: string;

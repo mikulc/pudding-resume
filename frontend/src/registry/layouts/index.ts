@@ -11,6 +11,7 @@ import { tealRibbonWaveLayout } from './teal-ribbon-wave';
 import { blueBannerIconsLayout } from './blue-banner-icons';
 import { azureSidebarLayout } from './azure-sidebar';
 import i18n from '../../utils/i18n';
+import { DEFAULT_PERSONAL_PHOTO_STYLE, type PersonalPhotoStyle } from '../../types/resume';
 
 /**
  * 布局注册表 —— 所有可用布局的唯一入口
@@ -76,6 +77,21 @@ export function resolvePhotoLayout(
   if (customized && savedLayout) return savedLayout;
   if (themeDefault) return themeDefault;
   return savedLayout ?? 'right';
+}
+
+export function getLayoutDefaultPhotoStyle(layoutId: string): PersonalPhotoStyle {
+  return layoutRegistry[layoutId]?.defaultPhotoStyle ?? DEFAULT_PERSONAL_PHOTO_STYLE;
+}
+
+export function resolvePhotoStyle(
+  layoutId: string,
+  savedStyle?: Partial<PersonalPhotoStyle>,
+  customized = false,
+): Partial<PersonalPhotoStyle> {
+  const themeDefault = layoutRegistry[layoutId]?.defaultPhotoStyle;
+  if (customized && savedStyle) return savedStyle;
+  if (themeDefault) return themeDefault;
+  return savedStyle ?? DEFAULT_PERSONAL_PHOTO_STYLE;
 }
 
 /**

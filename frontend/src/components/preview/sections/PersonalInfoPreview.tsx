@@ -1,7 +1,7 @@
 import React,{ useEffect,useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppUI,useResume } from '../../../context/ResumeContext';
-import { resolveLayout,resolvePhotoLayout } from '../../../registry/layouts';
+import { resolveLayout,resolvePhotoLayout,resolvePhotoStyle } from '../../../registry/layouts';
 import {
 DEFAULT_PERSONAL_FIELD_ORDER,
 getPersonalFieldLabels
@@ -111,7 +111,11 @@ export function PersonalInfoPreview() {
     personalInfo.photoLayout,
     personalInfo.photoLayoutCustomized,
   );
-  const photoStyle = resolvePersonalPhotoStyle(personalInfo.photoStyle);
+  const photoStyle = resolvePersonalPhotoStyle(resolvePhotoStyle(
+    layout.id,
+    personalInfo.photoStyle,
+    personalInfo.photoStyleCustomized,
+  ));
 
   const hasPhoto = !!personalInfo.photoUrl;
   // 浠呭湪鏈夌収鐗囨垨缂栬緫妯″紡涓嬫樉绀虹収鐗囧尯鍩燂紱姝ｅ紡灞曠ず鏃舵棤鐓х墖鍒欎笉鏄剧ず

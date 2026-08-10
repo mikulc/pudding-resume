@@ -12,6 +12,18 @@ describe('azureSidebarLayout', () => {
     expect(azureSidebarLayout.defaultPhotoLayout).toBe('left');
     expect(resolvePhotoLayout(azureSidebarLayout.id)).toBe('left');
   });
+
+  it('matches the light sidebar theme name size', () => {
+    const azureNameRule = azureSidebarLayout.css.match(
+      /\.azure-sidebar-name\s*\{([\s\S]*?)\}/,
+    )?.[1];
+    const lightNameRule = leftSidebarTwoColumnLayout.css.match(
+      /\.left-sidebar-two-column-name\s*\{([\s\S]*?)\}/,
+    )?.[1];
+
+    expect(azureNameRule).toContain('font-size: 1.7em !important');
+    expect(lightNameRule).toContain('font-size: 1.7em !important');
+  });
 });
 
 describe('leftSidebarTwoColumnLayout', () => {

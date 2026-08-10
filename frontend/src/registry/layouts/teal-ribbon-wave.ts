@@ -115,16 +115,11 @@ export const tealRibbonWaveLayout: LayoutDefinition = {
       top: calc(5mm - var(--resume-page-margin)) !important;
       left: 50% !important;
       width: var(--personal-photo-width) !important;
-      height: var(--personal-photo-width) !important;
+      height: var(--personal-photo-height) !important;
       transform: translateX(-50%) !important;
-      border-radius: 50% !important;
       border: 0 !important;
       box-shadow: 0 1mm 2mm rgba(15, 23, 42, 0.08) !important;
       background: #f8fafc !important;
-    }
-
-    .resume-paper[data-layout="teal-ribbon-wave"] [data-page-section="personal"] .personal-photo img {
-      border-radius: 50% !important;
     }
 
     .resume-paper[data-layout="teal-ribbon-wave"] .section-header {
@@ -227,6 +222,7 @@ export const tealRibbonWaveLayout: LayoutDefinition = {
     }
   `,
   defaultColor: '#248f83',
+  defaultPhotoStyle: { width: 100, height: 100, borderRadius: 999 },
   headerMode: 'bar',
   signature: { layout: 'single-column', headerDecoration: 'wave', sectionStyle: 'filled-title' },
   previewVersion: '3',
