@@ -147,4 +147,17 @@ describe('PersonalInfoEditor photo settings', () => {
 
     expect(dragHandle).not.toBeNull();
   });
+
+  it('keeps the photo actions on one compact row inside the card', () => {
+    render(<PersonalInfoEditor />);
+
+    const adjustButton = screen.getByRole('button', { name: 'photo.adjust' });
+    const deleteButton = screen.getByRole('button', { name: 'common:button.delete' });
+    const actionRow = adjustButton.parentElement;
+
+    expect(actionRow).toBe(deleteButton.parentElement);
+    expect(['flex-nowrap', 'overflow-hidden', 'gap-0.5'].every((name) => actionRow?.classList.contains(name))).toBe(true);
+    expect(['min-w-0', 'px-1.5'].every((name) => adjustButton.classList.contains(name))).toBe(true);
+    expect(['min-w-0', 'px-1.5'].every((name) => deleteButton.classList.contains(name))).toBe(true);
+  });
 });

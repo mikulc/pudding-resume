@@ -2,13 +2,17 @@ import type { AppUIAction, AppUIState } from '../../../types/resume';
 import { DEFAULT_THEME, deriveCustomColors } from '../../../types/resume';
 import { getLayoutDefaultColor } from '../../../registry/layouts';
 import i18n from '../../../utils/i18n';
+import { MAX_PREVIEW_ZOOM, MIN_PREVIEW_ZOOM } from '../../../utils/previewZoom';
 
 export function appUIReducer(state: AppUIState, action: AppUIAction): AppUIState {
   switch (action.type) {
     case 'SET_ACTIVE_SECTION':
       return { ...state, activeSection: action.payload };
     case 'SET_ZOOM':
-      return { ...state, zoom: Math.max(0.3, Math.min(1.5, action.payload)) };
+      return {
+        ...state,
+        zoom: Math.max(MIN_PREVIEW_ZOOM, Math.min(MAX_PREVIEW_ZOOM, action.payload)),
+      };
     case 'TOGGLE_SETTINGS':
       return { ...state, settingsOpen: !state.settingsOpen };
     case 'SET_SETTINGS_OPEN':

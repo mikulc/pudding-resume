@@ -26,6 +26,27 @@ type ResumeResponse struct {
 	UpdatedAt string          `json:"updated_at"`
 }
 
+// resumeListID is deliberately narrow: MySQL must not include the potentially
+// large content/settings JSON values in the filesort used for pagination.
+type resumeListID struct {
+	ID models.UUID `gorm:"column:id"`
+}
+
+func buildResumeListIDQuery(db *gorm.DB, userID string, limit, offset int) *gorm.DB {
+	query := db.Model(&models.Resume{}).
+		Select("id").
+		Where("user_id = ?", userID).
+		Order("updated_at DESC").
+		Order("id DESC")
+	if limit > 0 {
+		query = query.Limit(limit)
+	}
+	if offset > 0 {
+		query = query.Offset(offset)
+	}
+	return query
+}
+
 // GetLatestResume handles GET /api/resumes/latest (requires auth)
 // Returns the current user's most recently updated resume content, or 404 if none exists.
 func GetLatestResume(c *gin.Context) {
@@ -97,22 +118,36 @@ func ListResumes(c *gin.Context) {
 		return
 	}
 
-	var resumes []models.Resume
-	query := database.DB.Where("user_id = ?", userID).
-		Order("updated_at DESC")
-	if limit > 0 {
-		query = query.Limit(limit)
-	}
-	if offset > 0 {
-		query = query.Offset(offset)
-	}
-	if err := query.Find(&resumes).Error; err != nil {
+	var pageRows []resumeListID
+	if err := buildResumeListIDQuery(database.DB, userID, limit, offset).Find(&pageRows).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "服务器内部错误"})
 		return
 	}
 
+	resumeIDs := make([]models.UUID, 0, len(pageRows))
+	for _, row := range pageRows {
+		resumeIDs = append(resumeIDs, row.ID)
+	}
+
+	var resumes []models.Resume
+	if len(resumeIDs) > 0 {
+		if err := database.DB.Where("id IN ?", resumeIDs).Find(&resumes).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "服务器内部错误"})
+			return
+		}
+	}
+
+	resumesByID := make(map[models.UUID]models.Resume, len(resumes))
+	for _, resume := range resumes {
+		resumesByID[resume.ID] = resume
+	}
+
 	items := make([]models.ResumeListItem, 0, len(resumes))
-	for _, r := range resumes {
+	for _, id := range resumeIDs {
+		r, found := resumesByID[id]
+		if !found {
+			continue
+		}
 		items = append(items, models.ResumeListItem{
 			ID:        string(r.ID),
 			Name:      r.Name,

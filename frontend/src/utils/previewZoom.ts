@@ -1,5 +1,5 @@
 export const MIN_PREVIEW_ZOOM = 0.3;
-export const MAX_PREVIEW_ZOOM = 1.5;
+export const MAX_PREVIEW_ZOOM = 2;
 export const PREVIEW_PAGE_WIDTH = 794;
 
 export function normalizePreviewZoom(

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppUI } from '../../context/ResumeContext';
 import { useToast } from '../../components/common/Toast';
+import { stepPreviewZoom } from '../../utils/previewZoom';
 
 export function useAutoFitResume() {
   const { ui, uiDispatch } = useAppUI();
@@ -39,8 +40,8 @@ export function useAutoFitResume() {
     (newZoom: number) => uiDispatch({ type: 'SET_ZOOM', payload: newZoom }),
     [uiDispatch],
   );
-  const handleZoomIn = useCallback(() => setZoom(Math.min(1.5, ui.zoom + 0.1)), [ui.zoom, setZoom]);
-  const handleZoomOut = useCallback(() => setZoom(Math.max(0.3, ui.zoom - 0.1)), [ui.zoom, setZoom]);
+  const handleZoomIn = useCallback(() => setZoom(stepPreviewZoom(ui.zoom, 0.1)), [ui.zoom, setZoom]);
+  const handleZoomOut = useCallback(() => setZoom(stepPreviewZoom(ui.zoom, -0.1)), [ui.zoom, setZoom]);
   const handleResetZoom = useCallback(() => setZoom(1), [setZoom]);
   const handleFitToWidth = useCallback(() => {
     // 由 PreviewPanel 覆盖实现，此处提供 noop 以满足类型要求

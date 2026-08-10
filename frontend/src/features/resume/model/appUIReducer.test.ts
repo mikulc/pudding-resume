@@ -33,7 +33,8 @@ const state: AppUIState = {
 describe('appUIReducer', () => {
   it('clamps zoom to the supported range', () => {
     expect(appUIReducer(state, { type: 'SET_ZOOM', payload: 0.1 }).zoom).toBe(0.3);
-    expect(appUIReducer(state, { type: 'SET_ZOOM', payload: 2 }).zoom).toBe(1.5);
+    expect(appUIReducer(state, { type: 'SET_ZOOM', payload: 2 }).zoom).toBe(2);
+    expect(appUIReducer(state, { type: 'SET_ZOOM', payload: 2.5 }).zoom).toBe(2);
   });
 
   it('keeps the selected layout while resetting style values', () => {
