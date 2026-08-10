@@ -24,8 +24,8 @@ export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) 
                   onClick={() => resumeDispatch({ type: 'SET_PERSONAL_INFO', payload: { displayMode: 'icon' } })}
                   className={`theme-color-transition flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium ${
                     (data.personalInfo?.displayMode ?? 'icon') === 'icon'
-                      ? 'bg-white text-gray-800 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
+                      ? 'bg-white text-gray-800 shadow-sm hover:!text-[var(--theme-accent)]'
+                      : 'text-gray-500 hover:text-[var(--theme-accent)] dark:hover:!text-[var(--theme-accent)]'
                   }`}
                 >
                   {t('document.layout.iconMode')}
@@ -34,8 +34,8 @@ export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) 
                   onClick={() => resumeDispatch({ type: 'SET_PERSONAL_INFO', payload: { displayMode: 'text' } })}
                   className={`theme-color-transition flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium ${
                     (data.personalInfo?.displayMode ?? 'icon') === 'text'
-                      ? 'bg-white text-gray-800 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
+                      ? 'bg-white text-gray-800 shadow-sm hover:!text-[var(--theme-accent)]'
+                      : 'text-gray-500 hover:text-[var(--theme-accent)] dark:hover:!text-[var(--theme-accent)]'
                   }`}
                 >
                   {t('document.layout.textMode')}
@@ -44,8 +44,8 @@ export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) 
                   onClick={() => resumeDispatch({ type: 'SET_PERSONAL_INFO', payload: { displayMode: 'none' } })}
                   className={`theme-color-transition flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium ${
                     data.personalInfo?.displayMode === 'none'
-                      ? 'bg-white text-gray-800 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
+                      ? 'bg-white text-gray-800 shadow-sm hover:!text-[var(--theme-accent)]'
+                      : 'text-gray-500 hover:text-[var(--theme-accent)] dark:hover:!text-[var(--theme-accent)]'
                   }`}
                 >
                   {t('document.layout.noneMode')}
@@ -63,8 +63,8 @@ export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) 
                   onClick={() => resumeDispatch({ type: 'SET_PERSONAL_INFO', payload: { photoLayout: 'right', photoLayoutCustomized: true } })}
                   className={`theme-color-transition flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium disabled:cursor-not-allowed ${
                     !photoLayoutDisabled && effectivePhotoLayout === 'right'
-                      ? 'bg-white text-gray-800 shadow-sm'
-                      : photoLayoutDisabled ? 'text-gray-400' : 'text-gray-500 hover:text-gray-700'
+                      ? 'bg-white text-gray-800 shadow-sm hover:!text-[var(--theme-accent)]'
+                      : photoLayoutDisabled ? 'text-gray-400' : 'text-gray-500 hover:text-[var(--theme-accent)] dark:hover:!text-[var(--theme-accent)]'
                   }`}
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -78,8 +78,8 @@ export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) 
                   onClick={() => resumeDispatch({ type: 'SET_PERSONAL_INFO', payload: { photoLayout: 'left', photoLayoutCustomized: true } })}
                   className={`theme-color-transition flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium disabled:cursor-not-allowed ${
                     !photoLayoutDisabled && effectivePhotoLayout === 'left'
-                      ? 'bg-white text-gray-800 shadow-sm'
-                      : photoLayoutDisabled ? 'text-gray-400' : 'text-gray-500 hover:text-gray-700'
+                      ? 'bg-white text-gray-800 shadow-sm hover:!text-[var(--theme-accent)]'
+                      : photoLayoutDisabled ? 'text-gray-400' : 'text-gray-500 hover:text-[var(--theme-accent)] dark:hover:!text-[var(--theme-accent)]'
                   }`}
                 >
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -104,8 +104,8 @@ export function LayoutSettingsSection({ model }: { model: SettingsPanelModel }) 
                     onClick={() => updateTheme({ titleLayout: key })}
                     className={`theme-color-transition flex-1 flex items-center justify-center px-2 py-1.5 rounded-md text-xs font-medium ${
                       theme.titleLayout === key
-                        ? 'bg-white text-gray-800 shadow-sm'
-                        : 'text-gray-500 hover:text-gray-700'
+                        ? 'bg-white text-gray-800 shadow-sm hover:!text-[var(--theme-accent)]'
+                        : 'text-gray-500 hover:text-[var(--theme-accent)] dark:hover:!text-[var(--theme-accent)]'
                     }`}
                   >
                     {label}

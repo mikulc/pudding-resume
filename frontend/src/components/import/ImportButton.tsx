@@ -224,7 +224,7 @@ export function ImportButton({ onImportComplete }: ImportButtonProps) {
       <button
         onClick={() => setOpen(!open)}
         disabled={importing}
-        className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#2248ff] bg-[#2248ff] px-4 text-sm font-medium text-white shadow-none disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto dark:border-[#fbbf24] dark:bg-[#fbbf24] dark:text-[#1e2836]"
+        className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[var(--theme-accent)] bg-[var(--theme-accent)] px-4 text-sm font-medium text-[var(--theme-accent-foreground)] shadow-none disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
       >
         {importing ? (
           <>

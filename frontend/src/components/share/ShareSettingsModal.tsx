@@ -231,34 +231,34 @@ export function ShareSettingsModal({ open, resumeId, shareState, onClose, onSave
         .share-permission-section-content { display: grid; gap: 8px; }
         .share-permission-option { display: flex; min-height: 64px; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e8edf3; border-radius: 14px; background: #fff; cursor: pointer; transition: color 170ms, border-color 170ms, background-color 170ms; }
         .share-permission-option:hover { border-color: #dce3ec; background: #f8fafc; }
-        .share-permission-option.is-selected { border-color: rgba(50,114,255,.30); background: rgba(50,114,255,.055); }
+        .share-permission-option.is-selected { border-color: var(--theme-accent); background: var(--theme-accent-soft); }
         .share-permission-icon { display: grid; width: 32px; height: 32px; flex: none; place-items: center; border-radius: 10px; background: #f3f6f9; color: #8994a5; transition: color 170ms, background-color 170ms; }
         .share-permission-icon svg { width: 16px; height: 16px; }
-        .is-selected .share-permission-icon, .share-permission-icon.is-active { color: #3272ff; }
+        .is-selected .share-permission-icon, .share-permission-icon.is-active { color: var(--theme-accent); }
         .share-permission-option-title, .share-permission-description { display: block; }
         .share-permission-option-title { font-size: 14px; line-height: 20px; font-weight: 500; color: #263244; }
         .share-permission-description { display: -webkit-box; margin-top: 2px; overflow: hidden; font-size: 12px; line-height: 1.45; color: #98a2b3; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
         .share-permission-check { display: grid; width: 18px; height: 18px; flex: none; place-items: center; border: 1px solid #d8e0e9; border-radius: 50%; color: transparent; transition: color 170ms, border-color 170ms, background-color 170ms; }
-        .share-permission-check.is-visible { border-color: #3272ff; background: #3272ff; color: white; }
+        .share-permission-check.is-visible { border-color: var(--theme-accent); background: var(--theme-accent); color: var(--theme-accent-foreground); }
         .share-permission-settings-panel { overflow: hidden; border: 1px solid #e8edf3; border-radius: 14px; background: #fff; }
         .share-permission-setting-row { display: grid; min-height: 64px; grid-template-columns: 32px minmax(0,1fr) auto; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; transition: background-color 170ms; }
         .share-permission-setting-row + .share-permission-setting-row { border-top: 1px solid rgba(15,23,42,.06); }
         .share-permission-setting-row:hover { background: #f8fafc; }
         .share-permission-switch { position: relative; width: 42px; height: 24px; flex: none; border-radius: 999px; background: #dfe5ec; transition: background-color 180ms; }
         .share-permission-switch span { position: absolute; top: 4px; left: 4px; width: 16px; height: 16px; border-radius: 50%; background: white; box-shadow: 0 1px 3px rgba(15,23,42,.22); transition: transform 180ms; }
-        .share-permission-switch.is-checked { background: #3272ff; }
+        .share-permission-switch.is-checked { background: var(--theme-accent); }
         .share-permission-switch.is-checked span { transform: translateX(18px); }
         .share-permission-footer { display: flex; min-height: 68px; flex: none; justify-content: flex-end; gap: 10px; padding: 12px 20px calc(16px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid rgba(15,23,42,.06); background: rgba(255,255,255,.94); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
-        .share-permission-footer button { position: relative; height: 40px; border-radius: 10px; padding: 0 16px; font-size: 14px; font-weight: 500; transition: background-color 170ms, color 170ms, transform 120ms; }
+        .share-permission-footer button { position: relative; height: 40px; border-radius: 10px; padding: 0 16px; font-size: 14px; font-weight: 500; transition: background-color 170ms, color 170ms, opacity 170ms, transform 120ms; }
         .share-permission-cancel { border: 1px solid #e3e8ef; background: #fff; color: #596579; }
         .share-permission-cancel:hover { background: #eef2f6; color: #344054; }
-        .share-permission-save { width: 104px; background: #3272ff; color: white; box-shadow: 0 4px 12px rgba(50,114,255,.18); }
-        .share-permission-save:hover { background: #2866eb; }
+        .share-permission-save { width: 104px; background: var(--theme-accent); color: var(--theme-accent-foreground); box-shadow: 0 4px 12px color-mix(in srgb, var(--theme-accent) 22%, transparent); }
+        .share-permission-save:hover { opacity: .9; }
         .share-permission-save:active { transform: scale(.985); }
         .share-permission-footer button:disabled { cursor: not-allowed; opacity: .68; }
-        .share-permission-spinner { position: absolute; top: 50%; left: 50%; width: 16px; height: 16px; margin: -8px; border: 2px solid rgba(255,255,255,.45); border-top-color: white; border-radius: 50%; animation: share-spin .7s linear infinite; }
-        .share-permission-dialog :focus-visible { outline: 3px solid rgba(50,114,255,.18); outline-offset: 2px; }
-        .share-permission-option:has(input:focus-visible) { outline: 3px solid rgba(50,114,255,.18); outline-offset: 2px; }
+        .share-permission-spinner { position: absolute; top: 50%; left: 50%; width: 16px; height: 16px; margin: -8px; border: 2px solid color-mix(in srgb, var(--theme-accent-foreground) 35%, transparent); border-top-color: var(--theme-accent-foreground); border-radius: 50%; animation: share-spin .7s linear infinite; }
+        .share-permission-dialog :focus-visible { outline: 3px solid color-mix(in srgb, var(--theme-accent) 22%, transparent); outline-offset: 2px; }
+        .share-permission-option:has(input:focus-visible) { outline: 3px solid color-mix(in srgb, var(--theme-accent) 22%, transparent); outline-offset: 2px; }
         @keyframes share-dialog-in { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
         @keyframes share-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
         @keyframes share-spin { to { transform: rotate(360deg); } }
@@ -271,15 +271,15 @@ export function ShareSettingsModal({ open, resumeId, shareState, onClose, onSave
         .dark .share-permission-section h4 { color: rgba(255,255,255,.62); }
         .dark .share-permission-option, .dark .share-permission-settings-panel { border-color: rgba(255,255,255,.08); background: rgba(255,255,255,.035); }
         .dark .share-permission-option:hover, .dark .share-permission-setting-row:hover { border-color: rgba(255,255,255,.13); background: rgba(255,255,255,.06); }
-        .dark .share-permission-option.is-selected { border-color: rgba(88,140,255,.34); background: rgba(50,114,255,.12); }
+        .dark .share-permission-option.is-selected { border-color: var(--theme-accent); background: var(--theme-accent-soft); }
         .dark .share-permission-setting-row + .share-permission-setting-row { border-color: rgba(255,255,255,.07); }
         .dark .share-permission-icon { background: rgba(255,255,255,.055); color: rgba(255,255,255,.48); }
-        .dark .is-selected .share-permission-icon, .dark .share-permission-icon.is-active { color: #69a0ff; background: rgba(50,114,255,.14); }
+        .dark .is-selected .share-permission-icon, .dark .share-permission-icon.is-active { color: var(--theme-accent); background: var(--theme-accent-soft); }
         .dark .share-permission-option-title { color: rgba(255,255,255,.9); }
         .dark .share-permission-check { border-color: rgba(255,255,255,.2); }
-        .dark .share-permission-check.is-visible { border-color: #4e85ff; background: #4e85ff; }
+        .dark .share-permission-check.is-visible { border-color: var(--theme-accent); background: var(--theme-accent); color: var(--theme-accent-foreground); }
         .dark .share-permission-switch { background: rgba(255,255,255,.16); }
-        .dark .share-permission-switch.is-checked { background: #3272ff; }
+        .dark .share-permission-switch.is-checked { background: var(--theme-accent); }
         .dark .share-permission-footer { background: rgba(20,24,32,.72); }
         .dark .share-permission-cancel { border-color: rgba(255,255,255,.09); background: rgba(255,255,255,.045); color: rgba(255,255,255,.66); }
         @media (max-width: 639px) {

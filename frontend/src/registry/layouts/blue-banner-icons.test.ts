@@ -34,6 +34,32 @@ describe('blueBannerIconsLayout', () => {
     );
   });
 
+  it('shows the profile banner decoration only on the first page', () => {
+    expect(blueBannerIconsLayout.css).toMatch(
+      /\[data-page-index\]:not\(\[data-page-index="0"\]\)::before\s*\{[\s\S]*content:\s*none !important/,
+    );
+  });
+
+  it('keeps the top-bleeding banner out of the measured content height', () => {
+    expect(blueBannerIconsLayout.css).toMatch(
+      /\[data-page-flow-root\]\s*\{[\s\S]*display:\s*flow-root !important/,
+    );
+  });
+
+  it('exposes the first-page banner without reducing the usable page height', () => {
+    const firstPageViewportRule = blueBannerIconsLayout.css.match(
+      /\[data-page-index="0"\] \.resume-page-viewport\s*\{([\s\S]*?)\}/,
+    )?.[1];
+
+    expect(firstPageViewportRule).toContain(
+      'height: calc(var(--resume-page-slice-height) + var(--resume-page-margin)) !important',
+    );
+    expect(firstPageViewportRule).toContain(
+      'margin-top: calc(-1 * var(--resume-page-margin)) !important',
+    );
+    expect(firstPageViewportRule).toContain('padding-top: var(--resume-page-margin) !important');
+  });
+
   it('uses compact spacing below the profile banner', () => {
     const personalSectionRule = blueBannerIconsLayout.css.match(
       /\[data-page-section="personal"\]\.blue-banner-icons-personal\s*\{([\s\S]*?)\}/,

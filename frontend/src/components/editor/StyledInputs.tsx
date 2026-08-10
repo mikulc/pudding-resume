@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useLayoutEffect, useId } from 'react';
 import { createPortal } from 'react-dom';
+import { CheckCircle2 } from 'lucide-react';
 import { DatePicker } from './DatePicker';
 import { useDismissibleLayer } from '../../hooks/useDismissibleLayer';
 
@@ -159,18 +160,18 @@ export function StyledComboInput({
           style={{ position: 'fixed', top: pos.top, left: pos.left, width: pos.width }}
           className="z-[9999] animate-fadeIn"
         >
-          <div className="bg-white rounded-xl shadow-xl border border-gray-200 py-1 mt-1 overflow-hidden">
+          <div className="editor-combo-menu rounded-xl shadow-xl border py-1 mt-1 overflow-hidden">
             {options.map((opt) => (
               <button
                 key={opt}
                 type="button"
                 onClick={() => handleSelect(opt)}
-                className={`w-full text-left px-3 py-2 transition-colors ${size === 'md' ? 'text-sm' : 'text-xs'} ${
-                  opt === inputVal
-                    ? 'bg-blue-50 text-blue-600 font-medium'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
+                data-selected={opt === inputVal ? 'true' : 'false'}
+                className={`editor-combo-option w-full flex items-center gap-2 text-left px-3 py-2 transition-colors ${size === 'md' ? 'text-sm' : 'text-xs'} ${opt === inputVal ? 'font-medium' : ''}`}
               >
+                <span className="w-4 flex-shrink-0 flex items-center justify-center">
+                  {opt === inputVal && <CheckCircle2 className="w-3.5 h-3.5 text-[var(--theme-accent)]" />}
+                </span>
                 {opt}
               </button>
             ))}

@@ -341,7 +341,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
                         }}
                         className={`aspect-square flex items-center justify-center rounded-lg text-xs font-medium transition-all ${
                           selected
-                            ? 'bg-blue-500 text-white shadow-sm'
+                            ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)] shadow-sm'
                             : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/[0.08]'
                         }`}
                       >
@@ -367,8 +367,8 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
                           type="button"
                           onClick={() => setPickDay(day)}
                           className={`flex h-7 items-center justify-center rounded-lg text-[11px] font-medium transition-colors ${
-                            selected ? 'bg-blue-500 text-white shadow-sm'
-                            : today ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/35 dark:text-blue-400'
+                            selected ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)] shadow-sm'
+                            : today ? 'bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]'
                             : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/[0.08]'
                           }`}
                         >
@@ -404,7 +404,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
                       onClick={() => selectMonth(m)}
                       className={`aspect-square flex items-center justify-center rounded-lg text-xs font-medium transition-all ${
                         selected
-                          ? 'bg-blue-500 text-white shadow-sm'
+                          ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)] shadow-sm'
                           : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/[0.08]'
                       }`}
                     >
@@ -430,7 +430,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
                     onClick={() => selectYear(y)}
                     className={`aspect-square flex items-center justify-center rounded-lg text-[11px] font-medium transition-all tabular-nums ${
                       selected
-                        ? 'bg-blue-500 text-white shadow-sm'
+                        ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)] shadow-sm'
                         : 'text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-white/[0.08]'
                     }`}
                   >
@@ -453,7 +453,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
               setPickDay(n.getDate());
               setPickerView('calendar');
             }}
-            className="text-xs text-gray-400 hover:text-blue-500 dark:text-slate-500 dark:hover:text-blue-400 transition-colors"
+            className="text-xs text-gray-400 hover:!text-[var(--theme-accent)] dark:text-slate-500 transition-colors"
           >
             {t('date.thisMonth')}
           </button>
@@ -474,7 +474,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
             <button
               type="button"
               onClick={() => handleConfirm()}
-              className="flex items-center gap-1 px-3 py-1 rounded-lg bg-blue-500 text-white text-xs font-medium hover:bg-blue-600 transition-colors"
+              className="flex items-center gap-1 px-3 py-1 rounded-lg bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)] text-xs font-medium transition-opacity hover:opacity-90"
             >
               <Check size={12} />
               {t('button.ok')}

@@ -18,7 +18,7 @@ export function FontSettingsSection({ model }: { model: SettingsPanelModel }) {
               <div className="mb-1.5 flex min-h-[18px] items-center justify-between gap-2">
                 <span className="text-xs text-gray-500">{t('document.font.family')}</span>
                 {fontLoadStatus === 'loading' && (
-                  <span className="inline-flex min-w-0 items-center gap-1 text-[11px] leading-none text-blue-600">
+                  <span className="inline-flex min-w-0 items-center gap-1 text-[11px] leading-none text-[var(--theme-accent)]">
                     <Loader2 className="h-3 w-3 flex-shrink-0 animate-spin" />
                     <span className="truncate">{t('document.font.loadingInline')}</span>
                   </span>
@@ -50,7 +50,7 @@ export function FontSettingsSection({ model }: { model: SettingsPanelModel }) {
                     setFontDropdownOpen(!fontDropdownOpen);
                   }}
                   className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white
-                             hover:border-blue-300 hover:bg-blue-50/30
+                             hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)]
                              focus:outline-none
                              transition-colors"
                   style={{ fontFamily: FONT_OPTIONS[0].cssValue }}
@@ -82,13 +82,13 @@ export function FontSettingsSection({ model }: { model: SettingsPanelModel }) {
                           }}
                           className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm transition-colors ${
                             isActive
-                              ? 'text-blue-700 bg-blue-50 font-medium'
+                              ? 'text-[var(--theme-accent)] bg-[var(--theme-accent-soft)] font-medium'
                               : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                           }`}
                           style={{ fontFamily: FONT_OPTIONS[0].cssValue }}
                         >
                           <span className="w-4 flex-shrink-0 flex items-center justify-center">
-                            {isActive && <CheckCircle2 className="w-3.5 h-3.5 text-blue-500" />}
+                            {isActive && <CheckCircle2 className="w-3.5 h-3.5 text-[var(--theme-accent)]" />}
                           </span>
                           <span className="text-left">{t(font.nameKey)}</span>
                         </button>

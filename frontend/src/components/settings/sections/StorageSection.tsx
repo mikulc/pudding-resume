@@ -44,7 +44,7 @@ export function StorageSection({ settings }: StorageSectionProps) {
                 type="button"
                 onClick={handleSelectDirectory}
                 disabled={selectingDir || !fsApiAvailable}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 bg-white hover:border-blue-300 hover:bg-blue-50/30 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors disabled:opacity-50 dark:hover:border-[#fbbf24]/50 dark:hover:bg-[#fbbf24]/10 dark:focus:ring-[#fbbf24]/30 dark:focus:border-[#fbbf24]"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 bg-white hover:!border-[var(--theme-accent)] hover:!bg-[var(--theme-accent-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--theme-accent)] focus:border-[var(--theme-accent)] transition-colors disabled:opacity-50"
               >
                 {selectingDir ? (
                   <>
@@ -89,7 +89,7 @@ export function StorageSection({ settings }: StorageSectionProps) {
             )}
           </div>
 
-          <div className="rounded-xl bg-blue-50 border border-blue-100 p-3 dark:border-[#fbbf24]/20 dark:bg-[#fbbf24]/10">
+          <div className="rounded-xl bg-[var(--theme-accent-soft)] border border-[var(--theme-accent)] p-3">
             <p className="text-xs text-gray-500 leading-relaxed">
               {t('localStorage.backupDescription')}
             </p>

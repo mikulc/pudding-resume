@@ -1,4 +1,4 @@
-import type { SettingsPreferences } from '../useSettingsPreferences';
+﻿import type { SettingsPreferences } from '../useSettingsPreferences';
 import { RotateCcw, Settings, ChevronDown, SmilePlus, Move, Check, Smartphone, Monitor, Pin } from 'lucide-react';
 import { LIVE2D_POSITION_OPTIONS, formatLive2dNearbyBehavior } from '../settingsConstants';
 
@@ -38,8 +38,8 @@ export function Live2DSection({ settings }: Live2DSectionProps) {
           role="switch"
           aria-checked={live2dEnabled}
           onClick={handleLive2dToggle}
-          className={`ml-auto relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-[#fbbf24]/30 ${
-            live2dEnabled ? 'bg-blue-600 dark:bg-[#fbbf24]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'
+          className={`ml-auto relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
+            live2dEnabled ? 'bg-[var(--theme-accent)]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'
           }`}
         >
           <span
@@ -72,7 +72,7 @@ export function Live2DSection({ settings }: Live2DSectionProps) {
                 saveLive2dPreferences({ live2d_mobile_show: next });
               }}
               className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-                live2dMobileShow ? 'bg-blue-600 dark:bg-[#fbbf24]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'
+                live2dMobileShow ? 'bg-[var(--theme-accent)]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'
               }`}
             >
               <span
@@ -101,7 +101,7 @@ export function Live2DSection({ settings }: Live2DSectionProps) {
                 saveLive2dPreferences({ live2d_show_editor: next });
               }}
               className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-                live2dShowEditor ? 'bg-blue-600 dark:bg-[#fbbf24]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'
+                live2dShowEditor ? 'bg-[var(--theme-accent)]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'
               }`}
             >
               <span
@@ -131,7 +131,7 @@ export function Live2DSection({ settings }: Live2DSectionProps) {
                         onClick={() => handleLive2dPositionChange(opt.value)}
                         className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
                           isSelected
-                            ? 'bg-white text-gray-900 shadow-sm'
+                            ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)] shadow-sm'
                             : 'text-gray-500 hover:text-gray-700'
                         }`}
                       >
@@ -183,7 +183,7 @@ export function Live2DSection({ settings }: Live2DSectionProps) {
                         saveLive2dPreferences({ live2d_enable_pointer_events_pass_through: next });
                       }}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-                        live2dPointerPassThrough ? 'bg-blue-600 dark:bg-[#fbbf24]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'
+                        live2dPointerPassThrough ? 'bg-[var(--theme-accent)]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'
                       }`}
                     >
                       <span
@@ -215,7 +215,7 @@ export function Live2DSection({ settings }: Live2DSectionProps) {
                           saveLive2dPreferences({ live2d_nearby_behavior: next });
                         }}
                         className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-                          live2dNearbyBehavior === 'expand' ? 'bg-blue-600 dark:bg-[#fbbf24]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'
+                          live2dNearbyBehavior === 'expand' ? 'bg-[var(--theme-accent)]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'
                         }`}
                       >
                         <span
@@ -227,7 +227,7 @@ export function Live2DSection({ settings }: Live2DSectionProps) {
                     </div>
                   </div>
 
-                  {/* 常驻模式 */}
+                  {/* 甯搁┗妯″紡 */}
                   <div className="flex items-center justify-between gap-4">
                     <span className="text-sm text-gray-600 flex-shrink-0 flex items-center gap-1.5">
                       <Pin className="w-3.5 h-3.5" />
@@ -243,7 +243,7 @@ export function Live2DSection({ settings }: Live2DSectionProps) {
                         saveLive2dPreferences({ live2d_pinned: next });
                       }}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-                        live2dPinned ? 'bg-blue-600 dark:bg-[#fbbf24]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'
+                        live2dPinned ? 'bg-[var(--theme-accent)]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'
                       }`}
                     >
                       <span

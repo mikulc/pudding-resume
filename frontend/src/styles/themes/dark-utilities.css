@@ -292,8 +292,10 @@
   box-shadow: 0 0 0 2px rgba(68, 147, 248, 0.25);
 }
 
-/* 重命名弹窗输入框 focus — 覆盖全局 dark 输入框样式，做柔和蓝光 */
-.dark .rename-input:focus {
+/* Inputs that use a single focus border instead of the global dark focus glow. */
+.dark .rename-input:focus,
+.dark .settings-input:focus,
+.dark .field-input:focus {
   border-color: rgb(255, 200, 72) !important;
   box-shadow: none !important;
 }

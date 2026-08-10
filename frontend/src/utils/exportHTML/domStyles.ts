@@ -142,6 +142,13 @@ const SKIP_STYLE_PROPS = new Set([
 function inlineComputedStyle(cloneEl: HTMLElement, origEl: HTMLElement): void {
   const computed = window.getComputedStyle(origEl);
   const styles: string[] = [];
+  const inlineCustomProperties = Array.from(origEl.style)
+    .filter((property) => property.startsWith('--'))
+    .map((property) => ({
+      property,
+      value: origEl.style.getPropertyValue(property),
+      priority: origEl.style.getPropertyPriority(property),
+    }));
 
   for (const prop of RELEVANT_CSS_PROPS) {
     if (SKIP_STYLE_PROPS.has(prop)) continue;
@@ -163,6 +170,13 @@ function inlineComputedStyle(cloneEl: HTMLElement, origEl: HTMLElement): void {
 
   if (styles.length > 0) {
     cloneEl.setAttribute('style', styles.join('; '));
+  }
+
+  // Layout decorations and pagination geometry depend on inline CSS
+  // variables such as --resume-page-margin and --personal-photo-height.
+  // Reapply them after replacing the style attribute with computed values.
+  for (const { property, value, priority } of inlineCustomProperties) {
+    cloneEl.style.setProperty(property, value, priority);
   }
 }
 

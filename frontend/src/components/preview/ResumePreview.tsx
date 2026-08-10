@@ -566,7 +566,7 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
                   marginTop: isSidebarLayout ? `${theme.pageMargin}mm` : undefined,
                   overflow: 'hidden',
                 } as React.CSSProperties}>
-                  <div style={{ transform: `translateY(-${pageStart}px)` }}>
+                  <div data-page-flow-root style={{ transform: `translateY(-${pageStart}px)` }}>
                     <div className={isSidebarLayout ? sidebarPagedShellClassName : undefined}>
                       {renderFlowContent(sectionInfos, true)}
                     </div>
@@ -597,6 +597,7 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
       <style key={`${scopeClass ?? 'global'}-${theme.layoutId}-single`}>{cssContent}</style>
       {watermarkEl}
       <div
+        data-page-flow-root
         className={isSidebarLayout ? sidebarShellClassName : undefined}
         style={{ position: 'relative', zIndex: 1 }}
       >

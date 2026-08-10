@@ -26,6 +26,9 @@
     --text-muted: #9ca3af;
 
     /* Accent */
+    --theme-accent: #425aef;
+    --theme-accent-soft: rgba(66, 90, 239, 0.1);
+    --theme-accent-foreground: #ffffff;
     --primary: #3b82f6;
     --primary-hover: #2563eb;
     --primary-active: #1d4ed8;
@@ -82,6 +85,9 @@
     --text-muted: #656c76;
 
     /* Accent */
+    --theme-accent: #ffc848;
+    --theme-accent-soft: rgba(255, 200, 72, 0.12);
+    --theme-accent-foreground: #17191d;
     --primary: #4493f8;
     --primary-hover: #58a6ff;
     --primary-active: #3182f6;

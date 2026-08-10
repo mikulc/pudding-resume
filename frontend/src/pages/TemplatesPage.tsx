@@ -88,8 +88,8 @@ export default function TemplatesPage() {
                       type="button"
                       onClick={() => setActiveCategory(cat)}
                       className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full px-4 text-[15px] font-bold tracking-normal transition-colors ${activeCategory === cat
-                          ? 'bg-[#2248ff] text-white dark:bg-[#fbbf24] dark:text-[#17191d]'
-                          : 'text-gray-800 hover:bg-[#2248ff] hover:text-white dark:text-[color:var(--text-secondary)] dark:hover:bg-[#fbbf24] dark:hover:text-[#17191d]'
+                          ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)]'
+                          : 'text-gray-800 hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] dark:text-[color:var(--text-secondary)]'
                         }`}
                     >
                       {cat === ALL_TEMPLATE_CATEGORY
@@ -150,7 +150,7 @@ export default function TemplatesPage() {
                                 <button
                                   type="button"
                                   onClick={() => navigate(`/templates/${encodeURIComponent(entry.id)}/preview`)}
-                                  className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition-colors hover:border-[#2248ff]/40 hover:bg-[#2248ff]/5 hover:text-[#2248ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/30"
+                                  className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition-colors hover:!border-[var(--theme-accent)] hover:!bg-[var(--theme-accent-soft)] hover:!text-[var(--theme-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)]"
                                   aria-label={t('templatesPage.previewAria', { name: entry.name })}
                                 >
                                   <Eye className="h-4 w-4" />
@@ -159,7 +159,7 @@ export default function TemplatesPage() {
                                 <button
                                   type="button"
                                   onClick={() => void createFromTemplate(entry)}
-                                  className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#2248ff] px-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#193be0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/35 dark:bg-[#fbbf24] dark:text-[#17191d] dark:hover:bg-[#f6b914]"
+                                  className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-[var(--theme-accent)] px-3 text-sm font-semibold text-[var(--theme-accent-foreground)] shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)]"
                                   aria-label={t('templatesPage.useAria', { name: entry.name })}
                                 >
                                   {t('templatesPage.use')}

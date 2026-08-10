@@ -248,7 +248,7 @@ export default function SettingsPage() {
                   }
                 }}
                 disabled={syncing}
-                className="mt-1 inline-flex flex-shrink-0 items-center gap-1.5 text-sm text-blue-500 hover:text-blue-600 disabled:text-gray-300 transition-colors font-medium dark:text-[#fbbf24] dark:hover:text-[#f59e0b]"
+                className="mt-1 inline-flex flex-shrink-0 items-center gap-1.5 text-sm text-[var(--theme-accent)] hover:opacity-80 disabled:text-gray-300 transition-opacity font-medium"
               >
                 {syncing ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -273,7 +273,7 @@ export default function SettingsPage() {
                     onClick={() => handleNavClick(s.id)}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                       isActive
-                        ? 'bg-blue-50 text-blue-600 dark:bg-[#fbbf24] dark:text-[#17191d]'
+                        ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)]'
                         : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                     }`}
                   >
@@ -300,11 +300,11 @@ export default function SettingsPage() {
                       onClick={() => handleNavClick(s.id)}
                       className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left ${
                         isActive
-                          ? 'bg-[#2248ff] text-white font-medium dark:bg-[#fbbf24] dark:text-[#17191d]'
+                          ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)] font-medium'
                           : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                       }`}
                     >
-                      <span className={isActive ? 'text-white dark:text-[#17191d]' : 'text-gray-400'}>
+                      <span className={isActive ? 'text-[var(--theme-accent-foreground)]' : 'text-gray-400'}>
                         {s.icon}
                       </span>
                       {s.label}

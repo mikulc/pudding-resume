@@ -406,7 +406,7 @@ export function PersonalInfoEditor() {
         </div>
         <div className="grid min-w-0 grid-cols-[88px_minmax(0,1fr)] items-start gap-2.5">
           {personalInfo.photoUrl ? (
-            <label htmlFor="photo-upload" className="relative flex-shrink-0 cursor-pointer group/avatar w-[88px] h-[88px] rounded-2xl overflow-hidden border-2 border-blue-500 bg-gray-50">
+            <label htmlFor="photo-upload" className="relative flex-shrink-0 cursor-pointer group/avatar w-[88px] h-[88px] rounded-2xl overflow-hidden bg-gray-50">
               <input id="photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
               <img
                 src={personalInfo.photoUrl}

@@ -165,7 +165,7 @@
 
 .resume-grid-card:hover {
   transform: translate3d(0, -3px, 0);
-  border-color: rgba(147, 197, 253, 0.7);
+  border-color: var(--theme-accent);
   box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
 }
 
@@ -181,11 +181,11 @@
 }
 
 .resume-grid-card:hover .resume-card-title {
-  color: rgb(34, 72, 255) !important;
+  color: var(--theme-accent) !important;
 }
 
 .dark .resume-grid-card:hover .resume-card-title {
-  color: rgb(251, 191, 36) !important;
+  color: var(--theme-accent) !important;
 }
 
 .resume-grid-card-footer-spacer {
@@ -273,4 +273,3 @@
     opacity: 1;
   }
 }
-

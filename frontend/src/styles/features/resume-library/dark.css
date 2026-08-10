@@ -99,7 +99,7 @@
 }
 
 .dark .resume-grid-card:hover {
-  border-color: rgba(145, 152, 161, 0.32) !important;
+  border-color: var(--theme-accent) !important;
   box-shadow:
     0 14px 34px rgba(23, 25, 29, 0.36),
     0 0 0 1px rgba(68, 147, 248, 0.06) !important;
@@ -132,4 +132,3 @@
 .dark .resume-grid-card-preview-surface {
   background-color: var(--bg-card-muted) !important;
 }
-

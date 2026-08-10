@@ -1,11 +1,11 @@
 .theme-drawer-back-button:hover {
-  background-color: #2248ff !important;
-  color: #ffffff !important;
+  background-color: var(--theme-accent) !important;
+  color: var(--theme-accent-foreground) !important;
 }
 
 .dark .theme-drawer-back-button:hover {
-  background-color: #fbbf24 !important;
-  color: #17191d !important;
+  background-color: var(--theme-accent) !important;
+  color: var(--theme-accent-foreground) !important;
 }
 
 .dark #preview-container [role="toolbar"],
@@ -120,4 +120,3 @@
 .dark [data-global-toolbar-collapsed-btn] {
   background-color: rgba(23, 25, 29, 0.92) !important;
 }
-

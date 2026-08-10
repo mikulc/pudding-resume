@@ -11,11 +11,11 @@
   line-height: 1.45;
   color: #344054;
   background-color: #f7f9fc;
-  border: 1px solid transparent;
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
   outline: none;
   appearance: none;
-  box-shadow: inset 0 0 0 1px rgba(31, 45, 61, 0.025);
+  box-shadow: none;
   transition: background-color 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 .field-input::placeholder {
@@ -23,15 +23,16 @@
 }
 .field-input:hover {
   background-color: #f3f6fa;
-  box-shadow: inset 0 0 0 1px rgba(31, 45, 61, 0.05);
+  border-color: #e2e8f0;
+  box-shadow: none;
 }
-/* focus / active 与默认完全一致：不改背景、不出现蓝线、不出现外圈、无 outline */
+/* Focus uses a single accent border without an outer ring or shadow. */
 .field-input:focus,
 .field-input:active {
   background-color: #f7f9fc;
-  border-color: transparent;
+  border-color: rgb(66, 90, 239);
   outline: none;
-  box-shadow: inset 0 0 0 1px rgba(31, 45, 61, 0.025);
+  box-shadow: none;
 }
 .field-input:disabled {
   opacity: 0.6;
@@ -41,6 +42,28 @@
 /* 带右侧触发图标的输入（下拉 / 日期） */
 .field-input--icon {
   padding-right: 40px;
+}
+
+/* Portal-rendered combo menu follows the global light/dark accent tokens. */
+.editor-combo-menu {
+  border-color: var(--border-soft);
+  background-color: #ffffff;
+}
+
+.editor-combo-option {
+  color: #4b5563;
+  background-color: transparent;
+}
+
+.editor-combo-option:hover:not([data-selected='true']) {
+  color: #111827;
+  background-color: #f9fafb;
+}
+
+.editor-combo-option[data-selected='true'],
+.editor-combo-option[data-selected='true']:hover {
+  color: var(--theme-accent);
+  background-color: var(--theme-accent-soft);
 }
 
 /* Homepage hero: one clear product surface, with a reserved A4 preview pane. */
@@ -286,19 +309,20 @@
 .dark .field-input {
   color: #e6e8ec;
   background-color: rgba(255, 255, 255, 0.035);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  border-color: #334155;
+  box-shadow: none;
 }
 .dark .field-input::placeholder {
   color: #6b7280;
 }
 .dark .field-input:hover {
   background-color: rgba(255, 255, 255, 0.055);
+  border-color: #334155;
 }
 .dark .field-input:focus,
 .dark .field-input:active {
   background-color: rgba(255, 255, 255, 0.035);
-  border-color: transparent;
+  border-color: rgb(255, 200, 72);
   outline: none;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  box-shadow: none;
 }
-

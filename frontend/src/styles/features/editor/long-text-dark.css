@@ -47,8 +47,8 @@
   z-index: 30;
   opacity: 1 !important;
   background: rgba(68, 147, 248, 0.08) !important;
-  border-color: rgba(88, 166, 255, 0.55) !important;
-  box-shadow: 0 0 0 1px rgba(68, 147, 248, 0.18) !important;
+  border-color: var(--theme-accent) !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--theme-accent) 35%, transparent) !important;
 }
 
 .dark .long-text-field-entry-active,
@@ -80,7 +80,7 @@
 
 .dark .long-text-field-entry-active:hover {
   background: rgba(68, 147, 248, 0.1) !important;
-  border-color: rgba(88, 166, 255, 0.7) !important;
+  border-color: var(--theme-accent) !important;
 }
 
 .dark .rounded-xl:has(> .long-text-field-entry-active) {
@@ -101,4 +101,3 @@
   background: linear-gradient(180deg, #58a6ff 0%, #4493f8 100%) !important;
   box-shadow: 0 0 0 1px rgba(68, 147, 248, 0.18), 0 0 12px rgba(68, 147, 248, 0.22);
 }
-

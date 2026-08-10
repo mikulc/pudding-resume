@@ -130,8 +130,8 @@ export function ThemeDrawer({ open, onClose, currentLayoutId, content, onApply }
                 onClick={() => setActiveCategory(category)}
                 className={`inline-flex h-9 flex-shrink-0 items-center justify-center whitespace-nowrap rounded-full px-4 text-[15px] font-bold transition-colors ${
                   activeCategory === category
-                    ? 'bg-[#2248ff] text-white dark:bg-[#fbbf24] dark:text-[#17191d]'
-                    : 'text-gray-800 hover:bg-[#2248ff] hover:text-white dark:text-[color:var(--text-secondary)] dark:hover:bg-[#fbbf24] dark:hover:text-[#17191d]'
+                    ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)]'
+                    : 'text-gray-800 hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] dark:text-[color:var(--text-secondary)]'
                 }`}
               >
                 {category === ALL_THEME_CATEGORY ? t('themePicker.all') : category}

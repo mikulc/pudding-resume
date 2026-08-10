@@ -127,7 +127,7 @@ export function SettingDropdown({
           type="button"
           onClick={handleToggle}
           className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white
-                     hover:border-blue-300 hover:bg-blue-50/30
+                     hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)]
                      focus:outline-none
                      transition-colors"
         >
@@ -154,12 +154,12 @@ export function SettingDropdown({
                   }}
                   className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm transition-colors ${
                     selected
-                      ? 'text-blue-700 bg-blue-50 font-medium'
+                      ? 'text-[var(--theme-accent)] bg-[var(--theme-accent-soft)] font-medium'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
                   <span className="w-4 flex-shrink-0 flex items-center justify-center">
-                    {selected && <CheckCircle2 className="w-3.5 h-3.5 text-blue-500" />}
+                    {selected && <CheckCircle2 className="w-3.5 h-3.5 text-[var(--theme-accent)]" />}
                   </span>
                   {formatValue(v)}
                 </button>

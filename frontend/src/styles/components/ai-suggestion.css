@@ -240,28 +240,28 @@
 }
 
 .editor-action-button--secondary {
-  border-color: rgba(50, 114, 255, 0.10);
-  background: rgba(50, 114, 255, 0.08);
-  color: #3272ff;
+  border-color: color-mix(in srgb, var(--theme-accent) 20%, transparent);
+  background: var(--theme-accent-soft);
+  color: var(--theme-accent);
 }
 
 .editor-action-button--secondary:hover:not(:disabled),
 .editor-action-button--secondary[data-open='true'] {
-  border-color: rgba(50, 114, 255, 0.18);
-  background: rgba(50, 114, 255, 0.13);
+  border-color: var(--theme-accent);
+  background: var(--theme-accent-soft);
 }
 
 .editor-action-button--primary {
-  border-color: #3272ff;
-  background: #3272ff;
-  color: #fff;
-  box-shadow: 0 2px 6px rgba(50, 114, 255, 0.18);
+  border-color: var(--theme-accent);
+  background: var(--theme-accent);
+  color: var(--theme-accent-foreground);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--theme-accent) 20%, transparent);
 }
 
 .editor-action-button--primary:hover:not(:disabled) {
-  border-color: #2865ea;
-  background: #2865ea;
-  box-shadow: 0 4px 10px rgba(50, 114, 255, 0.22);
+  border-color: var(--theme-accent);
+  background: var(--theme-accent);
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--theme-accent) 24%, transparent);
 }
 
 .editor-action-button:active:not(:disabled) {
@@ -270,11 +270,11 @@
 
 .editor-action-button:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(50, 114, 255, 0.08);
+  box-shadow: 0 0 0 3px var(--theme-accent-soft);
 }
 
 .editor-action-button--primary:focus-visible {
-  box-shadow: 0 2px 6px rgba(50, 114, 255, 0.18), 0 0 0 3px rgba(50, 114, 255, 0.08);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--theme-accent) 20%, transparent), 0 0 0 3px var(--theme-accent-soft);
 }
 
 .editor-action-button:disabled {
@@ -295,15 +295,14 @@
 }
 
 .dark .editor-action-button--secondary {
-  border-color: rgba(96, 165, 250, 0.18);
-  background: rgba(50, 114, 255, 0.14);
-  color: #7eb0ff;
+  border-color: color-mix(in srgb, var(--theme-accent) 24%, transparent);
+  background: var(--theme-accent-soft);
+  color: var(--theme-accent);
 }
 
 .dark .editor-action-button--secondary:hover:not(:disabled),
 .dark .editor-action-button--secondary[data-open='true'] {
-  border-color: rgba(96, 165, 250, 0.28);
-  background: rgba(50, 114, 255, 0.22);
-  color: #9bc2ff;
+  border-color: var(--theme-accent);
+  background: var(--theme-accent-soft);
+  color: var(--theme-accent);
 }
-

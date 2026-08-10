@@ -51,7 +51,7 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                     onChange={(e) => handleApiUrlChange(e.target.value)}
                     onFocus={() => setApiUrlDropdownOpen(true)}
                     placeholder="https://api.openai.com/v1"
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors dark:focus:ring-[#fbbf24]/30 dark:focus:border-[#fbbf24]"
+                    className="settings-input w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 transition-colors focus:border-[#425aef] focus:outline-none focus:ring-0 dark:focus:border-[#ffc848] dark:focus:ring-0"
                   />
                   {/* Provider dropdown - 始终渲染，CSS 控制显隐以缓存图标 */}
                   <div
@@ -72,7 +72,7 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                             setApiUrlDropdownOpen(false);
                           }}
                           className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-gray-50 ${
-                            isSelected ? 'bg-blue-50/50 dark:bg-[#fbbf24]/10' : ''
+                            isSelected ? 'bg-[var(--theme-accent-soft)]' : ''
                           }`}
                         >
                           <img
@@ -81,7 +81,7 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                             className="w-6 h-6 rounded flex-shrink-0"
                           />
                           <div className="flex-1 min-w-0 text-left">
-                            <p className={`font-medium ${isSelected ? 'text-blue-600 dark:text-[#fbbf24]' : 'text-gray-700'}`}>
+                            <p className={`font-medium ${isSelected ? 'text-[var(--theme-accent)]' : 'text-gray-700'}`}>
                               {provider.name}
                               {provider.tagKey && (
                                 <span className="ml-1.5 inline-flex items-center px-1.5 py-px rounded-full text-[10px] font-normal bg-orange-100 text-orange-500 leading-none">
@@ -91,7 +91,7 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                             </p>
                             <p className="text-[11px] text-gray-400 truncate">{provider.url}</p>
                           </div>
-                          {isSelected && <Check className="w-4 h-4 text-blue-500 flex-shrink-0 dark:text-[#fbbf24]" />}
+                          {isSelected && <Check className="w-4 h-4 text-[var(--theme-accent)] flex-shrink-0" />}
                         </button>
                       );
                     })}
@@ -109,7 +109,7 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                   value={aiServiceApiKey}
                   onChange={(e) => handleApiKeyChange(e.target.value)}
                   placeholder="sk-..."
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors dark:focus:ring-[#fbbf24]/30 dark:focus:border-[#fbbf24]"
+                  className="settings-input w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 transition-colors focus:border-[#425aef] focus:outline-none focus:ring-0 dark:focus:border-[#ffc848] dark:focus:ring-0"
                 />
               </div>
 
@@ -125,7 +125,7 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                       value={aiServiceModel}
                       onChange={(e) => handleModelChange(e.target.value)}
                       placeholder="gpt-3.5-turbo"
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors dark:focus:ring-[#fbbf24]/30 dark:focus:border-[#fbbf24]"
+                      className="settings-input w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 transition-colors focus:border-[#425aef] focus:outline-none focus:ring-0 dark:focus:border-[#ffc848] dark:focus:ring-0"
                     />
                     {/* Model list dropdown */}
                     {modelDropdownOpen && availableModels.length > 0 && (
@@ -137,7 +137,7 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                             onClick={() => handleSelectModel(m)}
                             className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                               m === aiServiceModel
-                                ? 'text-blue-700 bg-blue-50 font-medium dark:bg-[#fbbf24]/10 dark:text-[#fbbf24]'
+                                ? 'text-[var(--theme-accent)] bg-[var(--theme-accent-soft)] font-medium'
                                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                             }`}
                           >

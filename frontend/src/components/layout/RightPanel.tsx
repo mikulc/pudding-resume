@@ -66,7 +66,7 @@ export function RightPanel({ isMobile = false }: RightPanelProps) {
           data-editor-sub-header="right"
         >
           <div className="flex items-center gap-2.5">
-            <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400">
+            <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]">
               {isAts ? (
                 <Target className="w-4 h-4" />
               ) : (

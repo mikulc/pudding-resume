@@ -232,7 +232,7 @@ export function ShareDropdown({ resumeId, compact = false }: ShareDropdownProps)
 
           <button
             onClick={handleCopyLink}
-            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:bg-[rgba(34,72,255,0.06)] transition-colors dark:text-slate-200 dark:hover:bg-[rgba(34,72,255,0.14)]"
+            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:!bg-[var(--theme-accent-soft)] transition-colors dark:text-slate-200"
           >
             <Link className="w-4 h-4 text-blue-400 transition-colors group-hover/menu:text-blue-500 dark:group-hover/menu:text-blue-300" />
             <div className="text-left">
@@ -242,7 +242,7 @@ export function ShareDropdown({ resumeId, compact = false }: ShareDropdownProps)
 
           <button
             onClick={handleQRCode}
-            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:bg-[rgba(34,72,255,0.06)] transition-colors dark:text-slate-200 dark:hover:bg-[rgba(34,72,255,0.14)]"
+            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:!bg-[var(--theme-accent-soft)] transition-colors dark:text-slate-200"
           >
             <QrCode className="w-4 h-4 text-purple-400 transition-colors group-hover/menu:text-purple-500 dark:group-hover/menu:text-purple-300" />
             <div className="text-left">
@@ -252,7 +252,7 @@ export function ShareDropdown({ resumeId, compact = false }: ShareDropdownProps)
 
           <button
             onClick={handleSettings}
-            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:bg-[rgba(34,72,255,0.06)] transition-colors dark:text-slate-200 dark:hover:bg-[rgba(34,72,255,0.14)]"
+            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:!bg-[var(--theme-accent-soft)] transition-colors dark:text-slate-200"
           >
             <Shield className="w-4 h-4 text-amber-500 transition-colors group-hover/menu:text-amber-600 dark:group-hover/menu:text-amber-300" />
             <div className="text-left">

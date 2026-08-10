@@ -64,9 +64,9 @@ export function LongTextFieldEntry({
       onClick={handleClick}
       className={[
         'long-text-field-entry group relative w-full min-w-0 max-w-full cursor-pointer overflow-hidden rounded-[22px] border p-3 text-left transition-colors',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)]',
         isActive
-          ? 'long-text-field-entry-active border-blue-300 bg-blue-50/70 ring-1 ring-blue-200'
+          ? 'long-text-field-entry-active border-[var(--theme-accent)] bg-blue-50/70 ring-1 ring-[var(--theme-accent)]'
           : 'border-gray-200 bg-slate-50/60 hover:border-blue-200 hover:bg-blue-50/40',
       ].join(' ')}
     >

@@ -27,6 +27,29 @@ export const blueBannerIconsLayout: LayoutDefinition = {
       z-index: 0 !important;
     }
 
+    /* The solid profile banner belongs to the first sheet only. Each
+       paginated sheet is a separate paper, so hide the decoration on all
+       continuation pages. */
+    .resume-paper[data-layout="blue-banner-icons"][data-page-index]:not([data-page-index="0"])::before {
+      content: none !important;
+    }
+
+    /* The profile section bleeds into the top page margin. Isolate its
+       negative margin so it does not collapse through the flow root and get
+       counted as extra document height by the paginator. */
+    .resume-paper[data-layout="blue-banner-icons"] [data-page-flow-root] {
+      display: flow-root !important;
+    }
+
+    /* Keep the first page's viewport aligned with the physical sheet while
+       retaining a full content-height slice below the top bleed. */
+    .resume-paper[data-layout="blue-banner-icons"][data-page-index="0"] .resume-page-viewport {
+      box-sizing: border-box !important;
+      height: calc(var(--resume-page-slice-height) + var(--resume-page-margin)) !important;
+      margin-top: calc(-1 * var(--resume-page-margin)) !important;
+      padding-top: var(--resume-page-margin) !important;
+    }
+
     .resume-paper[data-layout="blue-banner-icons"] [data-page-section="personal"].blue-banner-icons-personal {
       position: relative !important;
       width: calc(100% + 2 * var(--resume-page-margin)) !important;

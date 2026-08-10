@@ -331,7 +331,7 @@ export function ColorPicker({ value, onChange, size = 'sm' }: ColorPickerProps) 
                 onBlur={handleHexSubmit}
                 onKeyDown={handleHexKeyDown}
                 maxLength={6}
-                className="w-full pl-5 pr-2 py-1 text-xs border border-gray-200 rounded-md focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 font-mono uppercase"
+                className="settings-input w-full pl-5 pr-2 py-1 text-xs border border-gray-200 rounded-md focus:outline-none focus:border-[var(--theme-accent)] focus:ring-0 font-mono uppercase"
               />
             </div>
           </div>

@@ -37,8 +37,8 @@ export function TopNavLinks() {
             onMouseLeave={clearClickedItem}
             className={`inline-flex h-9 items-center justify-center rounded-full px-4 text-base font-bold tracking-normal transition-colors duration-150 ${
               activePath === item.path
-                ? 'bg-[#2248ff] text-white dark:bg-[#fbbf24] dark:text-[#17191d]'
-                : 'text-gray-800 hover:bg-[#2248ff] hover:text-white dark:text-slate-200 dark:hover:bg-[#fbbf24] dark:hover:text-[#17191d]'
+                ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)]'
+                : 'text-gray-800 hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] dark:text-slate-200'
             }`}
           >
             {t(item.labelKey)}

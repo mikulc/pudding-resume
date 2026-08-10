@@ -14,7 +14,7 @@ export function WatermarkSettingsSection({ model }: { model: SettingsPanelModel 
             <span>{t('document.watermark.title')}</span>
             <button
               onClick={() => uiDispatch({ type: 'SET_WATERMARK', payload: { enabled: !theme.watermark.enabled } })}
-              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${theme.watermark.enabled ? 'bg-blue-500' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'}`}
+              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${theme.watermark.enabled ? 'bg-[var(--theme-accent)]' : 'bg-gray-300 hover:bg-gray-400 dark:bg-white/[0.12] dark:hover:bg-white/[0.18]'}`}
             >
               <span
                 className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform shadow-sm ${theme.watermark.enabled ? 'translate-x-[18px]' : 'translate-x-[3px]'}`}
@@ -34,7 +34,7 @@ export function WatermarkSettingsSection({ model }: { model: SettingsPanelModel 
                     onChange={(e) => uiDispatch({ type: 'SET_WATERMARK', payload: { content: e.target.value, isCustomContent: true } })}
                     placeholder={t('document.watermark.contentPlaceholder')}
                     maxLength={20}
-                    className="w-full px-2.5 py-2.5 pr-8 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-colors"
+                    className="w-full px-2.5 py-2.5 pr-8 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[var(--theme-accent)] focus:ring-0 transition-colors"
                   />
                   {theme.watermark.isCustomContent && (
                     <button
@@ -50,7 +50,7 @@ export function WatermarkSettingsSection({ model }: { model: SettingsPanelModel 
                       }}
                       title={t('document.watermark.restoreDefault')}
                       aria-label={t('document.watermark.restoreDefault')}
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded text-gray-400 hover:text-blue-500 hover:bg-blue-50/60 transition-colors"
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded text-gray-400 hover:!text-[var(--theme-accent)] hover:!bg-[var(--theme-accent-soft)] transition-colors"
                     >
                       <RotateCcw className="h-3.5 w-3.5" />
                     </button>
@@ -88,7 +88,7 @@ export function WatermarkSettingsSection({ model }: { model: SettingsPanelModel 
                       onClick={() => uiDispatch({ type: 'SET_WATERMARK', payload: { density: opt.value as 'low' | 'medium' | 'high' } })}
                       className={`theme-color-transition flex-1 px-2 py-1.5 rounded-lg border text-xs font-medium ${
                         theme.watermark.density === opt.value
-                          ? 'border-blue-300 bg-blue-50 text-blue-600'
+                          ? 'border-[var(--theme-accent)] bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]'
                           : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:bg-gray-50'
                       }`}
                     >
