@@ -206,15 +206,12 @@ export default function SettingsPage() {
       {/* ================================================================
           Main Content
           ================================================================ */}
-      <main ref={contentRef} className="pt-24 pb-24">
-        <div className="mx-auto w-full max-w-[1360px] px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
+      <main ref={contentRef} className="pb-24 pt-20 sm:pt-24">
+        <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
           {/* ---- Page header ---- */}
-          <div className="mb-10 flex items-start justify-between gap-4">
+          <div className="mb-7 flex items-start justify-between gap-4 sm:mb-8">
             <div className="min-w-0">
-              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{t('page.title')}</h1>
-              <p className="text-gray-400 mt-2 text-[15px]">
-                {t('page.subtitle')}
-              </p>
+              <h1 className="text-[28px] font-semibold tracking-tight text-[#111827] dark:text-slate-50 sm:text-[32px]">{t('page.title')}</h1>
             </div>
             {isLoggedIn && (
               <button

@@ -122,7 +122,7 @@ export function ThemeDrawer({ open, onClose, currentLayoutId, content, onApply }
 
         {/* Visual style categories */}
         <div className="flex-shrink-0 border-b border-gray-50 px-5 py-3 dark:border-[color:var(--border-soft)]">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex flex-wrap items-center gap-2 pb-1 sm:flex-nowrap sm:overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {categories.map((category) => (
               <button
                 key={category}

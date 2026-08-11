@@ -301,6 +301,7 @@
     "fromTemplate": {
       "title": "Start from a template",
       "description": "Choose an existing theme to create a resume quickly.",
+      "browse": "Browse templates",
       "empty": "No themes available"
     }
   },

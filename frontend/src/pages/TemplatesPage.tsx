@@ -49,7 +49,7 @@ export default function TemplatesPage() {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col pt-14 sm:pt-[60px] min-h-0">
+      <main className="flex-1 flex min-h-0 flex-col pt-20 sm:pt-24">
         {creatingLayoutId ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center gap-3 text-gray-400">
@@ -67,21 +67,18 @@ export default function TemplatesPage() {
         ) : (
           <div className="flex-1 flex flex-col min-h-0">
             <div className="flex-shrink-0">
-              <div className="mx-auto w-full max-w-[1360px] px-6 pb-4 pt-8 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
-                <div className="min-w-0">
+              <div className="mx-auto w-full max-w-[1360px] px-4 pb-4 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
+                <div className="mb-7 min-w-0 sm:mb-8">
                   <div className="flex items-center gap-2.5">
-                    <h1 className="text-[28px] font-bold leading-[1.2] tracking-[-0.02em] text-gray-900">
+                    <h1 className="text-[28px] font-semibold tracking-tight text-[#111827] dark:text-slate-50 sm:text-[32px]">
                       {t('templatesPage.title')}
                     </h1>
                     <span className="inline-flex h-6 flex-shrink-0 items-center rounded-full bg-slate-100 px-[9px] text-xs font-semibold text-[#3f5f8a]">
                       {t('templatesPage.count', { count: entries.length })}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-sm leading-[1.5] text-[#667085]">
-                    {t('templatesPage.description')}
-                  </p>
                 </div>
-                <div className="mt-4 flex flex-wrap items-center gap-2 pb-1 sm:flex-nowrap sm:overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex flex-wrap items-center gap-2 pb-1 sm:flex-nowrap sm:overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                   {categories.map((cat) => (
                     <button
                       key={cat}
@@ -102,7 +99,7 @@ export default function TemplatesPage() {
             </div>
 
             <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
-              <div className="mx-auto w-full max-w-[1360px] px-6 py-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]" data-global-toolbar-content>
+              <div className="mx-auto w-full max-w-[1360px] px-4 py-6 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]" data-global-toolbar-content>
                 {filteredEntries.length === 0 ? (
                   <div className="flex min-h-[360px] flex-col items-center justify-center text-gray-400">
                     <p className="text-sm">{t('templatesPage.empty')}</p>

@@ -56,7 +56,7 @@ export default function MyResumePage() {
       </header>
 
       {/* ========== Main Content ========== */}
-      <main className="flex-1 flex flex-col pt-14 sm:pt-[60px] min-h-0">
+      <main className="flex-1 flex min-h-0 flex-col pt-20 sm:pt-24">
         {loading ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center gap-3 text-gray-400">
@@ -89,7 +89,7 @@ export default function MyResumePage() {
             <div className="flex-shrink-0">
               {/* Local Storage Hint Card 鈥?only for non-logged-in users without local storage */}
               {showHintCard && (
-                <div className="mx-auto w-full max-w-[1360px] px-6 pt-5 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
+                <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
                   <div className="rounded-xl border border-orange-100 bg-gradient-to-r from-orange-50 to-amber-50/60 px-4 py-2.5 flex items-center gap-3">
                     <HardDrive className="w-4 h-4 text-orange-400 flex-shrink-0" />
                     <span className="flex-1 text-xs text-gray-600 truncate">{t('list.localStorageHint')}</span>
@@ -102,24 +102,23 @@ export default function MyResumePage() {
                   </div>
                 </div>
               )}
-              <div
-                className={`mx-auto flex w-full max-w-[1360px] flex-col gap-4 px-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)] ${showHintCard ? 'pt-4' : 'pt-8'}`}
-              >
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2.5">
-                    <h1 className="text-[28px] font-bold leading-[1.2] tracking-[-0.02em] text-gray-900">
-                      {t('list.myResumes')}
-                    </h1>
-                    <span className="inline-flex h-6 flex-shrink-0 items-center rounded-full bg-slate-100 px-[9px] text-xs font-semibold text-[#3f5f8a]">
-                      {t('list.resumeCount', { count: totalResumeCount })}
-                    </span>
+              <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
+                <div
+                  className={`mb-7 flex flex-col items-start justify-between gap-4 sm:mb-8 sm:flex-row ${showHintCard ? 'mt-4' : ''}`}
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2.5">
+                      <h1 className="text-[28px] font-semibold tracking-tight text-[#111827] dark:text-slate-50 sm:text-[32px]">
+                        {t('list.myResumes')}
+                      </h1>
+                      <span className="inline-flex h-6 flex-shrink-0 items-center rounded-full bg-slate-100 px-[9px] text-xs font-semibold text-[#3f5f8a]">
+                        {t('list.resumeCount', { count: totalResumeCount })}
+                      </span>
+                    </div>
                   </div>
-                  <p className="mt-1.5 text-sm leading-[1.5] text-[#667085]">
-                    {t('list.pageDescription')}
-                  </p>
-                </div>
-                <div className="w-full flex-shrink-0 sm:w-auto">
-                  <ImportButton onImportComplete={refreshList} />
+                  <div className="w-full flex-shrink-0 sm:w-auto">
+                    <ImportButton onImportComplete={refreshList} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -127,11 +126,11 @@ export default function MyResumePage() {
             {/* Resume Grid */}
             <div
               ref={scrollContainerRef}
-              className="flex-1 overflow-y-auto"
+              className="-mt-1 flex-1 overflow-y-auto pt-1"
               onScroll={handleResumeListScroll}
               onWheel={handleResumeListWheel}
             >
-              <div className="mx-auto w-full max-w-[1360px] px-6 pb-6 pt-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]" data-global-toolbar-content>
+              <div className="mx-auto w-full max-w-[1360px] px-4 pb-6 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]" data-global-toolbar-content>
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6">
                   {/* New Resume Card 鈥?always shown */}
                   <button

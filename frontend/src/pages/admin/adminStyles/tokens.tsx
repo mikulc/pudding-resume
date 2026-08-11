@@ -30,7 +30,7 @@ export const adminCardClass =
 
 
 export const adminInputClass =
-  'h-10 w-full min-w-0 rounded-xl border border-[#E6EAF0] bg-white px-3 text-sm text-slate-700 shadow-[0_1px_2px_rgba(16,24,40,0.02)] transition-[border-color,box-shadow] duration-200 placeholder:text-[#98A2B3] focus:border-[#3272FF]/60 focus:outline-none focus:ring-[3px] focus:ring-[#3272FF]/[0.08] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-blue-400';
+  'h-10 w-full min-w-0 rounded-xl border border-gray-200 bg-white px-3 text-sm text-slate-700 transition-colors duration-200 placeholder:text-[#98A2B3] focus:border-[#425AEF] focus:outline-none focus:ring-0 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-[#FFC848] dark:focus:ring-0';
 
 
 export const adminTableHeadClass =

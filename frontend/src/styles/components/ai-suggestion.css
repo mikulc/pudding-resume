@@ -211,7 +211,8 @@
 }
 
 .editor-action-button--compact {
-  width: 34px;
+  width: 46px;
+  border-radius: 9999px;
   padding: 0;
 }
 

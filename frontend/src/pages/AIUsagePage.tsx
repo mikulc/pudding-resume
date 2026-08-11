@@ -382,16 +382,8 @@ function Metric({ label, value }: { label: string; value: number }) {
 
 function UsagePageHeader({ t }: { t: (key: string) => string }) {
   return (
-    <div className="space-y-3">
-      <h1 className="text-xl font-semibold tracking-tight text-gray-900 md:hidden">{t('aiUsage.title')}</h1>
-
-      <div className="hidden md:block">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">{t('aiUsage.title')}</h1>
-      </div>
-
-      <p className="text-sm leading-6 text-[#6b7280]">
-        {t('aiUsage.description')}
-      </p>
+    <div className="mb-7 sm:mb-8">
+      <h1 className="text-[28px] font-semibold tracking-tight text-[#111827] dark:text-slate-50 sm:text-[32px]">{t('aiUsage.title')}</h1>
     </div>
   );
 }
@@ -454,11 +446,13 @@ export default function AIUsagePage() {
         </div>
       </header>
 
-      <main className="pb-16 pt-24">
-        <div className="mx-auto w-full max-w-[1360px] space-y-5 px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
+      <main className="pb-16 pt-20 sm:pt-24">
+        <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
           <UsagePageHeader
             t={t}
           />
+
+          <div className="space-y-5">
 
           {loading && <LoadingSkeleton />}
 
@@ -494,6 +488,7 @@ export default function AIUsagePage() {
               {t('aiUsage.loadingUsage')}
             </div>
           )}
+          </div>
         </div>
       </main>
     </div>

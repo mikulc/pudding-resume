@@ -5,5 +5,5 @@ export function AdminInput({
   className,
   ...props
 }: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={cn(adminInputClass, className)} {...props} />;
+  return <input className={cn('admin-input', adminInputClass, className)} {...props} />;
 }

@@ -1,15 +1,12 @@
-import { useAccentStyle } from './StyledInputs';
-
 /**
  * 编辑器区块底部的"添加条目"按钮。
  * 统一了 Education / Work / Project / Honor / Certification / Portfolio 等编辑器的添加按钮样式。
  */
 export function AddEntryButton({ onClick, label }: { onClick: () => void; label: string }) {
-  const accent = useAccentStyle();
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-[22px] border border-dashed border-gray-300 text-gray-400 ${accent.className.addHover} transition-all text-xs`}
+      className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-[22px] border border-dashed border-[var(--theme-accent)] bg-transparent text-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)] transition-all text-xs"
     >
       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

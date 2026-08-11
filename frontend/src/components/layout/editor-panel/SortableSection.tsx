@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
+import { EyeOff } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useAppUI } from '../../../context/ResumeContext';
@@ -281,6 +282,14 @@ export function SortableSection({ sectionKey, title, children, isExpanded, onTog
                 {title}
               </h3>
             )}
+            {isHidden && (
+              <span
+                className="inline-flex flex-shrink-0 items-center text-gray-400 dark:text-[#656c76]"
+                aria-label={t('sectionMenu.hideModule')}
+              >
+                <EyeOff className="h-4 w-4" aria-hidden="true" />
+              </span>
+            )}
 
           </div>
           <div className="flex items-center gap-1 ml-2">
@@ -389,7 +398,7 @@ export function SortableSection({ sectionKey, title, children, isExpanded, onTog
                 if (e.key === 'Enter') confirmRename();
                 if (e.key === 'Escape') closeRenamePanel();
               }}
-              className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-gray-800 text-sm placeholder:text-gray-400 outline-none focus:outline-none focus-visible:outline-none focus:ring-1 focus:ring-blue-400/30 focus:border-blue-400/60 transition-shadow"
+              className="field-input"
               placeholder={t('sectionRename.placeholder')}
             />
             {renameError && (

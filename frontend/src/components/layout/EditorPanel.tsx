@@ -247,7 +247,7 @@ export function EditorPanel({ isMobile = false }: EditorPanelProps) {
                 setExpandedSection(id);
                 window.localStorage.setItem(LAST_EXPANDED_SECTION_STORAGE_KEY, id);
               }}
-              className="theme-color-transition w-full flex items-center justify-center gap-2 rounded-[22px] border border-dashed border-blue-300 bg-transparent text-blue-400 hover:bg-blue-50/40 hover:border-blue-400 hover:text-blue-500 px-4 py-3.5 text-sm font-medium"
+              className="theme-color-transition w-full flex items-center justify-center gap-2 rounded-[22px] border border-dashed border-[var(--theme-accent)] bg-transparent text-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)] px-4 py-3.5 text-sm font-medium"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />

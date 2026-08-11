@@ -57,7 +57,6 @@ export default function ProfilePage() {
             {/* Back button — mobile */}
             {/* Back button + title — desktop */}
             <h1 className="text-[28px] font-semibold tracking-tight text-[#111827] dark:text-slate-50 sm:text-[32px]">{i18n.language?.startsWith('en') ? 'Profile' : '个人中心'}</h1>
-            <p className="mt-2 text-sm leading-6 text-[#64748B] dark:text-slate-400">{i18n.language?.startsWith('en') ? 'Manage your profile, account security, and quota in one place.' : '集中管理个人信息、账号安全和套餐用量。'}</p>
           </div>
 
           {/* Loading state */}

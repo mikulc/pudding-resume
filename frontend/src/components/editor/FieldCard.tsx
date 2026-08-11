@@ -334,7 +334,7 @@ export function FieldCard({
                 value={iconSearch}
                 onChange={(e) => setIconSearch(e.target.value)}
                 placeholder={t('fieldIcon.searchPlaceholder')}
-                className="h-10 w-full rounded-xl border border-gray-200 bg-white pl-9 pr-3 text-sm text-gray-700 outline-none transition-[border-color,box-shadow] placeholder:text-gray-400 focus:border-gray-300 focus:ring-2 focus:ring-gray-200/70 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-600 dark:focus:ring-slate-700/70"
+                className="field-input !pl-9 !pr-3"
               />
             </div>
 

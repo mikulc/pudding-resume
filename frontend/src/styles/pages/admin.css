@@ -19,6 +19,18 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Keep numeric fields visually consistent with text fields. */
+.admin-input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.admin-input[type="number"]::-webkit-inner-spin-button,
+.admin-input[type="number"]::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
 .admin-date-picker,
 .admin-date-picker > div,
 .admin-date-picker .field-input {
@@ -33,9 +45,9 @@
   font-size: 14px;
   color: #334155;
   background: #fff;
-  border: 1px solid #e6eaf0;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
-  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.02);
+  box-shadow: none;
 }
 
 .admin-date-picker .field-input::placeholder {
@@ -49,8 +61,8 @@
 
 .admin-date-picker .field-input:focus {
   background: #fff;
-  border-color: rgba(50, 114, 255, 0.6);
-  box-shadow: 0 0 0 3px rgba(50, 114, 255, 0.08);
+  border-color: #425aef;
+  box-shadow: none;
 }
 
 .dark .admin-date-picker .field-input,
@@ -59,6 +71,10 @@
   color: #e2e8f0;
   background: #0f172a;
   border-color: #334155;
+}
+
+.dark .admin-date-picker .field-input:focus {
+  border-color: #ffc848;
 }
 
 /* Admin sidebar: keep a stable two-column DOM while its rail animates. */

@@ -82,7 +82,7 @@ function TemplatePreviewCanvas({ entry, onBack, onUse }: TemplatePreviewCanvasPr
               <button
                 type="button"
                 onClick={onBack}
-                className="inline-flex h-9 flex-shrink-0 items-center justify-center gap-1 rounded-xl px-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#2248ff] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/30 dark:text-gray-300 dark:hover:!bg-[#fbbf24] dark:hover:!text-[#17191d] dark:focus-visible:ring-[#fbbf24]/30 sm:px-3"
+                className="inline-flex h-9 flex-shrink-0 items-center justify-center gap-1 rounded-xl px-2 text-sm font-medium text-gray-600 transition-colors hover:bg-[#425aef] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2248ff]/30 dark:text-gray-300 dark:hover:!bg-[#fbbf24] dark:hover:!text-[#17191d] dark:focus-visible:ring-[#fbbf24]/30 sm:px-3"
                 aria-label={t('resume:templatesPage.backToList')}
               >
                 <ChevronLeft className="h-4 w-4" />
