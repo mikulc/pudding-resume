@@ -132,7 +132,7 @@ export function StyledComboInput({
   return (
     <div ref={containerRef} className={`field-item ${className}`}>
       {label && <label htmlFor={id} className={`text-gray-500 font-medium mb-2 block ${size === 'md' ? 'text-sm' : 'text-xs'}`}>{label}</label>}
-      <div className="relative">
+      <div className="relative editor-combo-control" data-open={open ? 'true' : 'false'}>
         <input
           id={id}
           type="text"
@@ -140,7 +140,7 @@ export function StyledComboInput({
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={() => setOpen(true)}
           placeholder={placeholder}
-          className="field-input field-input--icon"
+          className="field-input field-input--icon field-input--combo"
         />
         <button
           type="button"

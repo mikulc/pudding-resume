@@ -83,8 +83,8 @@ export const leftSidebarTwoColumnLayout: LayoutDefinition = {
 
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-photo .personal-photo,
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-photo .personal-photo-placeholder {
-      border: 1px solid rgba(139, 115, 86, 0.18) !important;
-      box-shadow: 0 1px 2px rgba(48, 38, 30, 0.08) !important;
+      border: 0 !important;
+      box-shadow: none !important;
     }
 
     .resume-paper[data-layout="left-sidebar-two-column"] .left-sidebar-two-column-name {

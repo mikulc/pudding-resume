@@ -79,7 +79,7 @@ export const classicHorizontalLayout: LayoutDefinition = {
       grid-area: 1 / 1 !important;
       align-self: start !important;
       justify-self: end !important;
-      border: 1px solid #d1d5db !important;
+      border: 0 !important;
       box-shadow: none !important;
     }
 

@@ -131,6 +131,8 @@ export function PersonalInfoPreview() {
         src={personalInfo.photoUrl}
         alt={t('photo.alt')}
         className="w-full h-full object-cover"
+        draggable={false}
+        onDragStart={(event) => event.preventDefault()}
         onError={() => setPhotoError(true)}
       />
     </div>

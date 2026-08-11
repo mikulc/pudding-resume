@@ -11,4 +11,19 @@ describe('blueprintIconsLayout', () => {
     expect(blueprintIconsLayout.css).not.toContain('.resume-paper[data-layout="blueprint-icons"]::after');
     expect(blueprintIconsLayout.signature.headerDecoration).toBe('none');
   });
+
+  it('keeps the following section below the portrait with spacing', () => {
+    expect(blueprintIconsLayout.css).toMatch(
+      /\[data-page-section="personal"\]\s*\{[\s\S]*?min-height:\s*max\(30mm, var\(--personal-photo-height\)\) !important;[\s\S]*?margin-bottom:\s*11mm !important;/,
+    );
+    expect(blueprintIconsLayout.css).toMatch(
+      /\[data-page-section="personal"\] > div\s*\{[\s\S]*?min-height:\s*max\(30mm, var\(--personal-photo-height\)\) !important;/,
+    );
+  });
+
+  it('vertically aligns personal details with the portrait', () => {
+    expect(blueprintIconsLayout.css).toMatch(
+      /\[data-page-section="personal"\] > div\s*\{[\s\S]*?display:\s*flex !important;[\s\S]*?align-items:\s*center !important;/,
+    );
+  });
 });

@@ -44,6 +44,13 @@
   padding-right: 40px;
 }
 
+/* Match the right settings-panel dropdown hover/open treatment. */
+.editor-combo-control:hover .field-input--combo,
+.editor-combo-control[data-open='true'] .field-input--combo {
+  background-color: var(--theme-accent-soft);
+  border-color: var(--theme-accent);
+}
+
 /* Portal-rendered combo menu follows the global light/dark accent tokens. */
 .editor-combo-menu {
   border-color: var(--border-soft);

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Loader2, AlertCircle, X, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '../../components/common/Toast';
 import { api } from '../../utils/api';
+import { lockModalScroll } from '../../utils/modalScrollLock';
 
 // ========================
 // Change Password Modal
@@ -33,6 +34,11 @@ export function ChangePasswordModal({
       setConfirmPassword('');
       setError('');
     }
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    return lockModalScroll();
   }, [open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -101,7 +107,7 @@ export function ChangePasswordModal({
                 type={showOld ? 'text' : 'password'}
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
-                className="w-full px-4 py-2.5 pr-10 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors"
+                className="settings-input w-full rounded-xl border border-gray-200 px-4 py-2.5 pr-10 text-sm text-gray-900 transition-colors focus:border-[#425aef] focus:outline-none focus:ring-0 dark:focus:border-[#ffc848] dark:focus:ring-0"
                 placeholder={t('profile.oldPasswordPlaceholder')}
               />
               <button
@@ -123,7 +129,7 @@ export function ChangePasswordModal({
                 type={showNew ? 'text' : 'password'}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-4 py-2.5 pr-10 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors"
+                className="settings-input w-full rounded-xl border border-gray-200 px-4 py-2.5 pr-10 text-sm text-gray-900 transition-colors focus:border-[#425aef] focus:outline-none focus:ring-0 dark:focus:border-[#ffc848] dark:focus:ring-0"
                 placeholder={t('profile.newPasswordPlaceholder')}
               />
               <button
@@ -145,7 +151,7 @@ export function ChangePasswordModal({
                 type={showConfirm ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-2.5 pr-10 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors"
+                className="settings-input w-full rounded-xl border border-gray-200 px-4 py-2.5 pr-10 text-sm text-gray-900 transition-colors focus:border-[#425aef] focus:outline-none focus:ring-0 dark:focus:border-[#ffc848] dark:focus:ring-0"
                 placeholder={t('profile.confirmPasswordPlaceholder')}
               />
               <button
@@ -193,4 +199,3 @@ export function ChangePasswordModal({
     </div>
   );
 }
-

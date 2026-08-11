@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Loader2, AlertCircle, X } from 'lucide-react';
 import { useToast } from '../../components/common/Toast';
 import { api } from '../../utils/api';
+import { lockModalScroll } from '../../utils/modalScrollLock';
 import type { UserProfile } from '../../types/auth';
 
 // ========================
@@ -32,6 +33,11 @@ export function EditProfileModal({
       setError('');
     }
   }, [open, profile.username]);
+
+  useEffect(() => {
+    if (!open) return;
+    return lockModalScroll();
+  }, [open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,7 +115,7 @@ export function EditProfileModal({
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors"
+              className="settings-input w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 transition-colors focus:border-[#425aef] focus:outline-none focus:ring-0 dark:focus:border-[#ffc848] dark:focus:ring-0"
               placeholder={t('profile.usernamePlaceholder')}
               autoFocus
               maxLength={10}
@@ -127,7 +133,7 @@ export function EditProfileModal({
               type="email"
               value={profile.email}
               disabled
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-100 bg-gray-50 text-gray-400 text-sm cursor-not-allowed"
+              className="settings-input w-full cursor-not-allowed rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-400"
             />
             <p className="text-xs text-gray-400 mt-1">{t('profile.emailReadonly')}</p>
           </div>
@@ -169,4 +175,3 @@ export function EditProfileModal({
     </div>
   );
 }
-

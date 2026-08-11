@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../utils/api';
 import { getErrorMessage } from '../../utils/errors';
+import { lockModalScroll } from '../../utils/modalScrollLock';
 
 export function DeactivateAccountModal({
   open,
@@ -24,6 +25,11 @@ export function DeactivateAccountModal({
       setError('');
       setSubmitting(false);
     }
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    return lockModalScroll();
   }, [open]);
 
   if (!open) return null;

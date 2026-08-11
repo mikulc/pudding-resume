@@ -57,6 +57,24 @@ describe('PersonalInfoPreview', () => {
     expect(container.querySelector('.personal-photo')).toBeNull();
   });
 
+  it('prevents portrait dragging in every layout', () => {
+    const data = createEmptyResumeData();
+    mockedResume.data = {
+      ...data,
+      personalInfo: {
+        ...data.personalInfo,
+        photoUrl: '/images/avatar.jpg',
+      },
+    };
+
+    const portrait = render(<PersonalInfoPreview />).getByRole('img', { name: 'photo.alt' });
+    const dragStart = new Event('dragstart', { bubbles: true, cancelable: true });
+
+    expect(portrait.getAttribute('draggable')).toBe('false');
+    expect(portrait.dispatchEvent(dragStart)).toBe(false);
+    expect(dragStart.defaultPrevented).toBe(true);
+  });
+
   it('renders values separated by pipes in none mode', () => {
     const data = createEmptyResumeData();
     mockedResume.data = {

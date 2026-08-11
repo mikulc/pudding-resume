@@ -48,6 +48,13 @@
 }
 
 /* 打印时隐藏未上传头像的占位 */
+/* Disable native image dragging for portraits in every resume layout. */
+.resume-paper .personal-photo,
+.resume-paper .personal-photo img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
 @media print {
   .resume-paper .personal-photo-placeholder {
     display: none !important;
