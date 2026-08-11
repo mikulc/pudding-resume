@@ -6,7 +6,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Tooltip } from '../common/Tooltip';
 import { useDismissibleLayer } from '../../hooks/useDismissibleLayer';
 import { getPersonalFieldLabels } from '../../types/resume';
-import { Search } from 'lucide-react';
+import { EyeOff, Search } from 'lucide-react';
 import { MoreMenu } from './MoreMenu';
 import {
   FIELD_ICONS,
@@ -281,13 +281,23 @@ export function FieldCard({
             {currentIcon}
           </span>
           {/* 标签 */}
-          <span
-            ref={titleAnchorRef}
-            onPointerDown={(e) => e.stopPropagation()}
-            className="flex-1 min-w-0 truncate text-left text-sm font-medium text-[#667085]"
-          >
-            {label}
-          </span>
+          <div className="flex min-w-0 flex-1 items-center gap-1.5">
+            <span
+              ref={titleAnchorRef}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="min-w-0 truncate text-left text-sm font-medium text-[#667085]"
+            >
+              {label}
+            </span>
+            {isHidden && (
+              <span
+                className="inline-flex shrink-0 items-center text-gray-400 dark:text-[#656c76]"
+                aria-label={t('fieldMenu.hideField')}
+              >
+                <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
+              </span>
+            )}
+          </div>
           {/* 更多菜单 */}
           <MoreMenu
             field={field}

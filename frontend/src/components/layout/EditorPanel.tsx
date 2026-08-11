@@ -127,7 +127,7 @@ export function EditorPanel({ isMobile = false }: EditorPanelProps) {
           data-editor-sub-header="left"
         >
           <div className="flex items-center gap-2">
-            <PanelLeft className="w-4 h-4 text-[#3B82F6]" />
+            <PanelLeft className="h-4 w-4 text-[var(--theme-accent)]" />
             <h2 className="text-gray-800 font-semibold text-sm">{t('panel.title')}</h2>
           </div>
           <div className="flex items-center gap-1">

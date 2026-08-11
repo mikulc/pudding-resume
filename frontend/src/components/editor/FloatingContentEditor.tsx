@@ -1029,7 +1029,7 @@ export function FloatingContentEditor() {
   if (!isVisible) return null;
 
   const toolButtonClass = 'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200';
-  const editorSurfaceClass = 'hide-scrollbar h-full w-full overflow-y-auto whitespace-pre-wrap break-words rounded-xl border border-gray-200 bg-slate-50 px-3.5 py-3 text-sm leading-6 text-gray-800 transition-colors focus:outline-none select-text cursor-text';
+  const editorSurfaceClass = 'hide-scrollbar h-full w-full overflow-y-auto whitespace-pre-wrap break-words rounded-xl border border-[var(--theme-accent)] bg-slate-50 px-3.5 py-3 text-sm leading-6 text-gray-800 transition-colors focus:outline-none select-text cursor-text';
   const hasOptimizePanel = optimizeStatus !== 'idle';
   const panelTransform = isAnimating
     ? 'translate3d(0, 0, 0)'
@@ -1077,7 +1077,7 @@ export function FloatingContentEditor() {
                   type="button"
                   disabled={optimizeStatus !== 'success'}
                   onClick={handleApplyOptimization}
-                  className="inline-flex h-7 items-center justify-center rounded-lg bg-blue-500 px-3 text-xs font-medium text-white shadow-sm transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex h-7 items-center justify-center rounded-lg bg-[var(--theme-accent)] px-3 text-xs font-medium text-[var(--theme-accent-foreground)] shadow-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {t('longTextEditor.aiOptimize.applyOptimization', { defaultValue: 'Apply optimization' })}
                 </button>
@@ -1094,7 +1094,7 @@ export function FloatingContentEditor() {
                 <button
                   type="button"
                   onClick={handleSaveAndClose}
-                  className="inline-flex h-7 items-center justify-center rounded-lg bg-blue-500 px-3 text-xs font-medium text-white shadow-sm transition-colors hover:bg-blue-600"
+                  className="inline-flex h-7 items-center justify-center rounded-lg bg-[var(--theme-accent)] px-3 text-xs font-medium text-[var(--theme-accent-foreground)] shadow-sm transition-opacity hover:opacity-90"
                 >
                   {t('common:button.done')}
                 </button>

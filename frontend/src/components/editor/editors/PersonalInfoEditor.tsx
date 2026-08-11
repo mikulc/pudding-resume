@@ -683,7 +683,7 @@ export function PersonalInfoEditor() {
           <button
             type="button"
             onClick={handleAddCustomField}
-            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs text-gray-400 hover:text-blue-500 transition-colors"
+            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs text-[var(--theme-accent)] transition-colors hover:bg-[var(--theme-accent-soft)]"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />

@@ -66,14 +66,14 @@ export function LongTextFieldEntry({
         'long-text-field-entry group relative w-full min-w-0 max-w-full cursor-pointer overflow-hidden rounded-[22px] border p-3 text-left transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)]',
         isActive
-          ? 'long-text-field-entry-active border-[var(--theme-accent)] bg-blue-50/70 ring-1 ring-[var(--theme-accent)]'
-          : 'border-gray-200 bg-slate-50/60 hover:border-blue-200 hover:bg-blue-50/40',
+          ? 'long-text-field-entry-active border-[var(--theme-accent)] bg-[var(--theme-accent-soft)] ring-1 ring-[var(--theme-accent)]'
+          : 'border-gray-200 bg-slate-50/60 hover:border-[var(--theme-accent)] hover:bg-[var(--theme-accent-soft)]',
       ].join(' ')}
     >
       <div className="flex min-w-0 items-start justify-between gap-2">
         <div className="min-w-0 max-w-full overflow-hidden">
           <div className="long-text-field-entry-label text-sm font-medium text-gray-600">{label}</div>
-          <div className={`long-text-field-entry-status ${isActive ? 'mt-1 text-xs font-medium text-blue-600' : 'mt-1 text-xs text-gray-400'}`}>
+          <div className={`long-text-field-entry-status ${isActive ? 'mt-1 text-xs font-medium text-[var(--theme-accent)]' : 'mt-1 text-xs text-gray-400'}`}>
             {statusText}
           </div>
         </div>
@@ -83,8 +83,8 @@ export function LongTextFieldEntry({
             'long-text-field-entry-action',
             'inline-flex h-7 shrink-0 items-center gap-1 rounded-lg px-2 text-xs font-medium transition-colors',
             isActive
-              ? 'bg-white text-blue-600 ring-1 ring-blue-200'
-              : 'text-blue-500 hover:text-blue-600',
+              ? 'bg-[var(--theme-accent-soft)] text-[var(--theme-accent)] ring-1 ring-[var(--theme-accent)]'
+              : 'text-[var(--theme-accent)] hover:opacity-80',
           ].join(' ')}
         >
           <Maximize2 className="h-3 w-3" />
