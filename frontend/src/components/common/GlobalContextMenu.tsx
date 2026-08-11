@@ -24,6 +24,7 @@ const zh = {
   switchToChinese: '\u5207\u6362\u4e2d\u6587',
   switchToEnglish: '\u5207\u6362\u82f1\u6587',
   languageSyncFailed: '\u8bed\u8a00\u504f\u597d\u540c\u6b65\u5931\u8d25',
+  themeSyncFailed: '\u4e3b\u9898\u504f\u597d\u540c\u6b65\u5931\u8d25',
   copyAddress: '\u590d\u5236\u5730\u5740',
   copied: '\u5730\u5740\u5df2\u590d\u5236',
   copyFailed: '\u590d\u5236\u5931\u8d25',
@@ -84,6 +85,7 @@ export function GlobalContextMenu() {
       ? (isZh ? zh.switchToEnglish : 'Switch to English')
       : (isZh ? zh.switchToChinese : 'Switch to Chinese'),
     languageSyncFailed: isZh ? zh.languageSyncFailed : 'Failed to sync language preference',
+    themeSyncFailed: isZh ? zh.themeSyncFailed : 'Failed to sync theme preference',
     copyAddress: isZh ? zh.copyAddress : 'Copy address',
     copied: isZh ? zh.copied : 'Address copied',
     copyFailed: isZh ? zh.copyFailed : 'Copy failed',
@@ -177,11 +179,26 @@ export function GlobalContextMenu() {
     void Promise.resolve(action()).finally(close);
   };
 
-  const toggleTheme = () => {
+  const toggleTheme = async () => {
+    const previousMode = themeMode;
     const nextMode: ThemeMode = isDark ? 'light' : 'dark';
     setThemeMode(nextMode);
     saveThemeMode(nextMode);
     applyThemeMode(nextMode, { transition: true });
+
+    if (!isLoggedIn) return;
+
+    try {
+      await api.put('/api/user/preferences', { theme_mode: nextMode });
+      if (profile && setProfile) {
+        setProfile({ ...profile, theme_mode: nextMode } as UserProfile);
+      }
+    } catch {
+      setThemeMode(previousMode);
+      saveThemeMode(previousMode);
+      applyThemeMode(previousMode, { transition: true });
+      showToast(labels.themeSyncFailed, 'error');
+    }
   };
 
   const copyAddress = async () => {
