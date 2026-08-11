@@ -400,7 +400,7 @@ function SharedResumeViewInner({ data }: SharedResumeViewProps) {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <NavbarAuth hideUsernameOnMobile />
+            <NavbarAuth />
           </div>
         </div>
       </header>

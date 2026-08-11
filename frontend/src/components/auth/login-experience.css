@@ -454,7 +454,7 @@ html.theme-changing .pudding-login-character--yellow {
 }
 
 .pudding-login-input {
-  --pudding-login-input-bg: #fff;
+  --pudding-login-input-bg: #f7f9fc;
 
   display: flex;
   height: 50px;
@@ -463,25 +463,30 @@ html.theme-changing .pudding-login-character--yellow {
   padding: 0 15px;
   margin-bottom: 20px;
   background: var(--pudding-login-input-bg);
-  border: 1px solid #e3e8ef;
+  border: 1px solid #e2e8f0;
   border-radius: 999px;
-  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.pudding-login-input:hover {
+  background: #f3f6fa;
+  border-color: #e2e8f0;
 }
 
 .pudding-login-input:focus-within {
-  border-color: rgb(34 72 255);
-  box-shadow: 0 0 0 4px rgb(34 72 255 / 10%);
-  transform: translateY(-1px);
+  background: var(--pudding-login-input-bg);
+  border-color: var(--theme-accent);
+  box-shadow: none;
 }
 
 .pudding-login-input.is-error {
   border-color: #e34b55;
-  box-shadow: 0 0 0 3px rgb(227 75 85 / 8%);
+  box-shadow: none;
 }
 
 .pudding-login-input.is-error:focus-within {
   border-color: #e34b55;
-  box-shadow: 0 0 0 4px rgb(227 75 85 / 12%);
+  box-shadow: none;
 }
 
 .pudding-login-field .pudding-login-input {
@@ -830,8 +835,8 @@ html.theme-changing .pudding-login-character--yellow {
 }
 
 .dark .pudding-login-input:focus-within {
-  border-color: rgb(34 72 255);
-  box-shadow: 0 0 0 4px rgb(34 72 255 / 14%);
+  border-color: var(--theme-accent);
+  box-shadow: none;
 }
 
 .dark .pudding-login-input > svg,

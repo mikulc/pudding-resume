@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { User, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/common/Toast';
+import { useConfirm } from '../components/common/ConfirmModal';
 import { NavbarAuth } from '../components/auth/NavbarAuth';
 import LogoIcon from '../components/common/LogoIcon';
 import { TopNavLinks } from '../components/common/TopNavLinks';
@@ -18,10 +19,24 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const { isLoggedIn, profile, profileLoading, sessionLoading, setProfile, refreshProfile, logout } = useAuth();
   const { showToast } = useToast();
+  const { confirm } = useConfirm();
   const { t, i18n } = useTranslation('auth');
   const [editOpen, setEditOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [deactivateOpen, setDeactivateOpen] = useState(false);
+
+  const handleLogout = async () => {
+    const confirmed = await confirm({
+      title: t('common:dialog.logout.title'),
+      message: t('common:dialog.logout.message'),
+      confirmText: t('common:dialog.logout.confirm'),
+      confirmVariant: 'danger',
+    });
+    if (!confirmed) return;
+    await logout();
+    showToast(t('logoutSuccess'), 'info');
+    navigate('/', { replace: true });
+  };
 
   // Auth guard: redirect to home if not logged in
   useEffect(() => {
@@ -74,6 +89,7 @@ export default function ProfilePage() {
                 onAvatarUpdate={(updatedProfile) => setProfile(updatedProfile)}
                 onEdit={() => setEditOpen(true)}
                 onChangePassword={() => setPasswordOpen(true)}
+                onLogout={() => { void handleLogout(); }}
                 onDeactivate={() => setDeactivateOpen(true)}
               />
               <QuotaPanel profile={profile} />

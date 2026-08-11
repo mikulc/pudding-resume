@@ -1,6 +1,6 @@
 
 import { useTranslation } from 'react-i18next';
-import { Calendar, Pencil, Lock, Clock, UserX } from 'lucide-react';
+import { Calendar, Pencil, Lock, Clock, LogOut, UserX } from 'lucide-react';
 import type { UserProfile } from '../../types/auth';
 
 import { AvatarSection } from './AvatarSection';
@@ -10,12 +10,14 @@ export function ProfileInfo({
   onAvatarUpdate,
   onEdit,
   onChangePassword,
+  onLogout,
   onDeactivate,
 }: {
   profile: UserProfile;
   onAvatarUpdate: (profile: UserProfile) => void;
   onEdit: () => void;
   onChangePassword: () => void;
+  onLogout: () => void;
   onDeactivate: () => void;
 }) {
   const { t, i18n } = useTranslation('auth');
@@ -35,6 +37,7 @@ export function ProfileInfo({
           <div className="flex flex-wrap gap-2 sm:justify-end">
             <button onClick={onEdit} className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#111827] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#253044] dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"><Pencil className="h-4 w-4" />{t('profile.editProfile')}</button>
             <button onClick={onChangePassword} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#E2E7EE] bg-white px-4 py-2 text-sm font-medium text-[#475569] transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-300 dark:hover:bg-white/[0.08]"><Lock className="h-4 w-4" />{t('profile.changePassword')}</button>
+            <button onClick={onLogout} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#E2E7EE] bg-white px-4 py-2 text-sm font-medium text-[#475569] transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-300 dark:hover:bg-white/[0.08]"><LogOut className="h-4 w-4" />{t('logout')}</button>
             <button onClick={onDeactivate} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 dark:border-red-500/30 dark:bg-white/[0.04] dark:text-red-300 dark:hover:bg-red-500/10"><UserX className="h-4 w-4" />{t('profile.deactivateAccount')}</button>
           </div>
         </div>
