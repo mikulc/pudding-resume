@@ -6,9 +6,18 @@ import (
 	"pudding-resume-backend/models"
 	"time"
 
-	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
+
+func dailyStatsIncrementExpression(field string, increment int64) clause.Expr {
+	return clause.Expr{
+		SQL: "? + ?",
+		Vars: []any{
+			clause.Column{Table: clause.CurrentTable, Name: field},
+			increment,
+		},
+	}
+}
 
 func UpsertDailyStats(userID string, field string, increment int64) {
 	today := time.Now().Format("2006-01-02")
@@ -32,7 +41,7 @@ func UpsertDailyStats(userID string, field string, increment int64) {
 	err := database.DB.Clauses(clause.OnConflict{
 		Columns: []clause.Column{{Name: "user_id"}, {Name: "date"}},
 		DoUpdates: clause.Assignments(map[string]any{
-			field: gorm.Expr(field+" + ?", increment),
+			field: dailyStatsIncrementExpression(field, increment),
 		}),
 	}).Create(&entry).Error
 	if err != nil {
