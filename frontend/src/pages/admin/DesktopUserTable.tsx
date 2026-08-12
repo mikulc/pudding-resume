@@ -85,7 +85,7 @@ export function DesktopUserTable({
                   {u.email}
                 </td>
                 <td className="px-4 py-3">
-                  <AdminBadge tone={u.role === 'admin' ? 'violet' : 'neutral'}>
+                  <AdminBadge tone={u.role === 'admin' ? 'brand' : 'neutral'}>
                     {u.role === 'admin' ? '管理员' : '普通用户'}
                   </AdminBadge>
                 </td>
@@ -102,10 +102,10 @@ export function DesktopUserTable({
                   <div className="flex items-center justify-end gap-1">
                     {u.status !== 'deleted' ? (
                       <>
-                        <AdminIconButton tone="warning" onClick={() => onOpenQuota(u)} aria-label={actionLabelQuota}>
+                        <AdminIconButton tone="brand" onClick={() => onOpenQuota(u)} aria-label={actionLabelQuota}>
                           <SlidersHorizontal size={15} />
                         </AdminIconButton>
-                        <AdminIconButton tone="success" onClick={() => onResetPassword(u.id, u.username)} aria-label={actionLabelPassword}>
+                        <AdminIconButton tone="brand" onClick={() => onResetPassword(u.id, u.username)} aria-label={actionLabelPassword}>
                           <Key size={15} />
                         </AdminIconButton>
                         <AdminIconButton tone="danger" onClick={() => onDelete(u.id, u.username)} aria-label={actionLabelDelete}>

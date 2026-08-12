@@ -26,16 +26,25 @@ interface NavbarAuthProps {
 function ProfileAvatarButton({
   username,
   onClick,
+  active,
 }: {
   username: string | null | undefined;
   onClick: () => void;
+  active: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={username || 'Account'}
-      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-600 transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 dark:text-slate-300"
+      aria-current={active ? 'page' : undefined}
+      style={active ? {
+        backgroundColor: 'var(--theme-accent)',
+        color: 'var(--theme-accent-foreground)',
+      } : undefined}
+      className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] ${
+        active ? '' : 'text-gray-600 dark:text-slate-300'
+      }`}
     >
       <User className="h-[18px] w-[18px]" strokeWidth={3.2} />
     </button>
@@ -210,18 +219,29 @@ export function NavbarAuth({ settingsShortcut }: NavbarAuthProps) {
   if (isLoggedIn) {
     const usageLabel = t('usageInfo', { defaultValue: '用量信息' });
     const adminLabel = t('admin:layout.title');
+    const isProfileActive = location.pathname.startsWith('/profile');
+    const isUsageActive = location.pathname.startsWith('/ai-usage');
+    const isAdminActive = location.pathname.startsWith('/admin');
 
     return (
       <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
         <ProfileAvatarButton
           username={username}
           onClick={() => navigate('/profile')}
+          active={isProfileActive}
         />
         <button
           type="button"
           onClick={() => navigate('/ai-usage')}
           aria-label={usageLabel}
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-gray-600 transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 dark:text-slate-300"
+          aria-current={isUsageActive ? 'page' : undefined}
+          style={isUsageActive ? {
+            backgroundColor: 'var(--theme-accent)',
+            color: 'var(--theme-accent-foreground)',
+          } : undefined}
+          className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] ${
+            isUsageActive ? '' : 'text-gray-600 dark:text-slate-300'
+          }`}
         >
           <BarChart3 className="h-[18px] w-[18px]" strokeWidth={3.2} />
         </button>
@@ -230,7 +250,14 @@ export function NavbarAuth({ settingsShortcut }: NavbarAuthProps) {
             type="button"
             onClick={() => navigate('/admin')}
             aria-label={adminLabel}
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-600 transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 dark:text-slate-300"
+            aria-current={isAdminActive ? 'page' : undefined}
+            style={isAdminActive ? {
+              backgroundColor: 'var(--theme-accent)',
+              color: 'var(--theme-accent-foreground)',
+            } : undefined}
+            className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] ${
+              isAdminActive ? '' : 'text-gray-600 dark:text-slate-300'
+            }`}
           >
             <Shield className="h-[18px] w-[18px]" strokeWidth={3.2} />
           </button>

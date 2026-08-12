@@ -5,37 +5,37 @@ export function cn(...classes: Array<string | false | null | undefined>) {
 
 
 export const adminTokens = {
-  brand: '#2248FF',
-  brandHover: '#1D3FE8',
-  brandText: '#2454FF',
-  brandSoft: '#EEF4FF',
-  pageBg: '#F5F7FB',
-  border: '#E6EAF2',
-  title: '#0F172A',
-  body: '#334155',
-  muted: '#64748B',
-  subtle: '#94A3B8',
-  hover: '#F8FAFF',
-  chartGrid: '#E6EAF2',
-  chartAxis: '#94A3B8',
-  chartBlue: '#2248FF',
-  chartBlueSoft: '#5B78FF',
-  chartPurpleSoft: '#8B7CFF',
-  chartBar: '#6B84FF',
+  brand: 'var(--theme-accent)',
+  brandHover: 'var(--primary-hover)',
+  brandText: 'var(--theme-accent)',
+  brandSoft: 'var(--theme-accent-soft)',
+  pageBg: 'var(--bg-page)',
+  border: 'var(--border-soft)',
+  title: 'var(--text-primary)',
+  body: 'var(--text-secondary)',
+  muted: 'var(--text-secondary)',
+  subtle: 'var(--text-muted)',
+  hover: 'var(--bg-hover)',
+  chartGrid: 'var(--border-soft)',
+  chartAxis: 'var(--text-muted)',
+  chartBlue: 'var(--theme-accent)',
+  chartBlueSoft: 'var(--theme-accent)',
+  chartPurpleSoft: 'var(--theme-accent)',
+  chartBar: 'var(--theme-accent)',
 };
 
 
 export const adminCardClass =
-  'rounded-2xl border border-[#E9EDF3] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04),0_6px_18px_rgba(16,24,40,0.04)] transition-[transform,box-shadow] duration-200 dark:border-slate-800 dark:bg-slate-900';
+  'rounded-2xl border border-gray-100 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.035)] transition-[border-color,box-shadow] duration-200 dark:border-white/[0.08] dark:bg-white/[0.045]';
 
 
 export const adminInputClass =
-  'h-10 w-full min-w-0 rounded-xl border border-gray-200 bg-white px-3 text-sm text-slate-700 transition-colors duration-200 placeholder:text-[#98A2B3] focus:border-[#425AEF] focus:outline-none focus:ring-0 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-[#FFC848] dark:focus:ring-0';
+  'h-10 w-full min-w-0 rounded-xl border border-gray-200 bg-white px-3 text-sm text-slate-700 transition-colors duration-200 placeholder:text-[#98A2B3] focus:border-[var(--theme-accent)] focus:outline-none focus:ring-0 dark:border-white/[0.1] dark:bg-white/[0.045] dark:text-slate-200 dark:focus:border-[var(--theme-accent)] dark:focus:ring-0';
 
 
 export const adminTableHeadClass =
-  'bg-[#F8FAFC] text-xs font-semibold text-slate-500 dark:bg-slate-800/60 dark:text-slate-400';
+  'bg-[#F9FAFB] text-xs font-semibold text-slate-500 dark:bg-white/[0.035] dark:text-slate-400';
 
 
 export const adminTableRowClass =
-  'transition-colors hover:bg-[#F8FAFF] dark:hover:bg-slate-800/40';
+  'transition-colors hover:bg-[var(--theme-accent-soft)] dark:hover:bg-white/[0.035]';

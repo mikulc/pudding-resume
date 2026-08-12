@@ -27,7 +27,7 @@ export function AdminPageHeader({
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-3">
-          <h2 className="text-[30px] font-bold leading-tight tracking-[-0.025em] text-slate-900 dark:text-white sm:text-[32px]">
+          <h2 className="text-[24px] font-semibold leading-tight tracking-tight text-slate-900 dark:text-white sm:text-[26px]">
             {title}
           </h2>
           {meta}
@@ -65,7 +65,7 @@ export function AdminButton({
 }) {
   const variants = {
     primary:
-      'bg-[#2248FF] text-white shadow-sm hover:bg-[#1D3FE8] disabled:bg-slate-300 disabled:text-white',
+      'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)] shadow-sm hover:opacity-90 disabled:bg-slate-300 disabled:text-white',
     secondary:
       'border border-[#E6EAF2] bg-white text-slate-600 hover:border-[#D8E0EE] hover:bg-[#F8FAFF] hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800',
     ghost:
@@ -99,7 +99,7 @@ export function AdminIconButton({
 }) {
   const tones = {
     neutral: 'text-slate-400 hover:bg-slate-50 hover:text-slate-700 dark:hover:bg-slate-800',
-    brand: 'text-slate-400 hover:bg-blue-50 hover:text-[#2454FF] dark:hover:bg-blue-950/35',
+    brand: 'text-slate-400 hover:bg-[var(--theme-accent-soft)] hover:text-[var(--theme-accent)] dark:hover:bg-[var(--theme-accent-soft)]',
     success: 'text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/35',
     warning: 'text-slate-400 hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-950/35',
     danger: 'text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/35',

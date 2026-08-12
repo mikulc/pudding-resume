@@ -6,14 +6,15 @@ import type { DashboardData, ModelUsageItem } from '../../types/admin';
 import {
   Users, FileText, TrendingUp,
   Activity, BarChart3, RefreshCw,
+  Bot, Zap, CalendarDays, Database,
 } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, BarChart, Bar,
 } from 'recharts';
 import {
-  AdminChartCard, AdminMetricCard, AdminPage,
-  AdminPageHeader, AdminStatCard, AdminCard, adminTokens,
+  AdminChartCard, AdminOverviewCard, AdminPage,
+  AdminCard, adminTokens,
 } from './adminStyles';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import {
@@ -55,7 +56,7 @@ function ModelRankingMobile({ items }: { items: ModelUsageItem[] }) {
             <div className="grid grid-cols-[24px_minmax(0,1fr)_auto] items-center gap-2">
               <span
                 className={`text-xs font-bold tabular-nums text-right ${
-                  isFirst ? 'text-[#2248FF]' : 'text-slate-400'
+                  isFirst ? 'text-[var(--theme-accent)]' : 'text-slate-400'
                 }`}
               >
                 {idx + 1}
@@ -77,8 +78,8 @@ function ModelRankingMobile({ items }: { items: ModelUsageItem[] }) {
             {/* Progress bar */}
             <div className="h-2 overflow-hidden rounded-full bg-[#EEF0F4] dark:bg-white/10">
               <div
-                className={`h-full rounded-full transition-[width] duration-500 ease-out ${
-                  isFirst ? 'bg-[#2248FF]' : 'bg-[#6B84FF]/70'
+                className={`h-full rounded-full bg-[var(--theme-accent)] transition-[width] duration-500 ease-out ${
+                  isFirst ? '' : 'opacity-60'
                 }`}
                 style={{ width: `${pct}%` }}
               />
@@ -107,7 +108,6 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   const isMobile = useMediaQuery('(max-width: 767px)');
-  const isNarrow = useMediaQuery('(max-width: 639px)');
 
   // Chart container refs for ResizeObserver
   const lineChartRef1 = useChartResizeObserver();
@@ -150,59 +150,22 @@ export default function DashboardPage() {
   if (!data) return <p className="text-gray-500">{t('dashboard.loadFailed')}</p>;
 
   // ---- Card data ----
-  const cards = [
-    { labelKey: 'dashboard.metrics.totalUsers', value: data.total_users, icon: Users, tone: 'blue' as const },
-    { labelKey: 'dashboard.metrics.todayNewUsers', value: data.today_new_users, icon: TrendingUp, tone: 'emerald' as const },
-    { labelKey: 'dashboard.metrics.totalResumes', value: data.total_resumes, icon: FileText, tone: 'violet' as const },
-    { labelKey: 'dashboard.metrics.activeUsers30d', value: data.active_users_30d, icon: Activity, tone: 'amber' as const },
-  ];
-
-  const tokenCards = [
-    { labelKey: 'dashboard.tokens.todayRequests', value: data.today_ai_requests },
-    { labelKey: 'dashboard.tokens.todayTokens', value: formatTokens(data.today_tokens) },
-    { labelKey: 'dashboard.tokens.monthTokens', value: formatTokens(data.month_tokens) },
-    { labelKey: 'dashboard.tokens.totalTokens', value: formatTokens(data.total_tokens) },
+  const overviewItems = [
+    { label: t('dashboard.metrics.totalUsers'), value: data.total_users, icon: Users },
+    { label: t('dashboard.metrics.todayNewUsers'), value: data.today_new_users, icon: TrendingUp },
+    { label: t('dashboard.metrics.totalResumes'), value: data.total_resumes, icon: FileText },
+    { label: t('dashboard.metrics.activeUsers30d'), value: data.active_users_30d, icon: Activity },
+    { label: t('dashboard.tokens.todayRequests'), value: data.today_ai_requests, icon: Bot },
+    { label: t('dashboard.tokens.todayTokens'), value: data.today_tokens, icon: Zap, formatValue: formatTokens },
+    { label: t('dashboard.tokens.monthTokens'), value: data.month_tokens, icon: CalendarDays, formatValue: formatTokens },
+    { label: t('dashboard.tokens.totalTokens'), value: data.total_tokens, icon: Database, formatValue: formatTokens },
   ];
 
   const lineChartHeight = isMobile ? 260 : 250;
 
-  // ---- Grid classes ----
-  const statCardGrid = isNarrow
-    ? 'grid grid-cols-1 gap-4'
-    : isMobile
-      ? 'grid grid-cols-2 gap-4'
-      : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4';
-
-  const tokenCardGrid = isMobile
-    ? 'grid grid-cols-2 gap-4'
-    : 'grid grid-cols-2 lg:grid-cols-4 gap-4';
-
   return (
     <AdminPage>
-      <AdminPageHeader
-        title={t('dashboard.title')}
-        description={t('dashboard.subtitle')}
-      />
-
-      {/* ---- Summary Cards ---- */}
-      <div className={statCardGrid}>
-        {cards.map(({ labelKey, value, icon, tone }) => (
-          <AdminStatCard
-            key={labelKey}
-            label={t(labelKey)}
-            value={value.toLocaleString()}
-            icon={icon}
-            tone={tone}
-          />
-        ))}
-      </div>
-
-      {/* ---- Token Cards ---- */}
-      <div className={tokenCardGrid}>
-        {tokenCards.map(({ labelKey, value }) => (
-          <AdminMetricCard key={labelKey} label={t(labelKey)} value={value} />
-        ))}
-      </div>
+      <AdminOverviewCard title={t('dashboard.overview')} items={overviewItems} />
 
       {/* ---- Line Charts ---- */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
@@ -264,7 +227,7 @@ export default function DashboardPage() {
                 <XAxis
                   dataKey="date"
                   tick={isMobile ? { fontSize: 11, fill: '#94a3b8' } : { fontSize: 11 }}
-                  stroke="#9ca3af"
+                  stroke={adminTokens.chartAxis}
                   axisLine={false}
                   tickLine={false}
                   ticks={tokenTicks}
@@ -278,7 +241,7 @@ export default function DashboardPage() {
                 />
                 <YAxis
                   tick={{ fontSize: 11 }}
-                  stroke="#9ca3af"
+                  stroke={adminTokens.chartAxis}
                   tickFormatter={formatTokens}
                   axisLine={false}
                   tickLine={false}
@@ -295,7 +258,7 @@ export default function DashboardPage() {
                 <Line
                   type="monotone"
                   dataKey="tokens"
-                  stroke={adminTokens.chartPurpleSoft}
+                  stroke={adminTokens.chartBlueSoft}
                   strokeWidth={isMobile ? 2 : 2.5}
                   dot={false}
                   name={t('dashboard.tokens.unit')}
@@ -313,7 +276,7 @@ export default function DashboardPage() {
             /* Mobile: list + progress bars */
             <AdminCard className="p-4">
               <h3 className="mb-[18px] flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white">
-                <span className="text-[#2454FF]"><BarChart3 size={18} /></span>
+                <span className="text-[var(--theme-accent)]"><BarChart3 size={18} /></span>
                 {t('dashboard.charts.modelRanking')}
               </h3>
               <ModelRankingMobile items={data.model_usage} />
@@ -325,8 +288,8 @@ export default function DashboardPage() {
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={data.model_usage} layout="vertical" margin={{ left: 80 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke={adminTokens.chartGrid} horizontal={false} />
-                    <XAxis type="number" tick={{ fontSize: 11 }} stroke="#9ca3af" />
-                    <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} stroke="#9ca3af" width={80} />
+                    <XAxis type="number" tick={{ fontSize: 11 }} stroke={adminTokens.chartAxis} />
+                    <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} stroke={adminTokens.chartAxis} width={80} />
                     <Tooltip formatter={(v: number) => [v.toLocaleString(), t('dashboard.charts.requests')]} />
                     <Bar dataKey="count" fill={adminTokens.chartBar} radius={[0, 7, 7, 0]} name={t('dashboard.charts.requests')} />
                   </BarChart>

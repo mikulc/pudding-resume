@@ -11,7 +11,7 @@ import type { AdminUserItem } from '../../types/admin';
 import { Search, X } from 'lucide-react';
 import {
   AdminBadge, AdminButton, AdminInput, AdminModal,
-  AdminPage, AdminPageHeader,
+  AdminPage,
 } from './adminStyles';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { DesktopUserTable } from './DesktopUserTable';
@@ -188,26 +188,10 @@ export default function UsersPage() {
 
   return (
     <AdminPage>
-      {/* ---- Page Header ---- */}
-      <AdminPageHeader
-        title={t('users.title')}
-        description={isMobile ? undefined : t('users.subtitle')}
-        meta={<AdminBadge tone="brand">{t('users.userCount', { count: total })}</AdminBadge>}
-      />
-
-      {/* Mobile subtitle */}
-      {isMobile && (
-        <p className="text-[14px] text-slate-500 dark:text-slate-400 -mt-3 mb-0">
-          {t('users.subtitle')}
-        </p>
-      )}
-
       {/* ---- Toolbar ---- */}
       {isMobile ? (
-        /* ---- Mobile Toolbar: 2-row layout ---- */
-        <div className="space-y-3" style={{ marginTop: isMobile ? '20px' : undefined }}>
-          {/* Row 1: Search */}
-          <div className="relative">
+        <div className="flex items-center gap-3">
+          <div className="relative min-w-0 flex-1">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <AdminInput
               type="text"
@@ -225,11 +209,13 @@ export default function UsersPage() {
               </button>
             )}
           </div>
-
+          <AdminBadge tone="brand" className="shrink-0">
+            {t('users.userCount', { count: total })}
+          </AdminBadge>
         </div>
       ) : (
         /* ---- Desktop Toolbar ---- */
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="relative flex-1 min-w-[200px] max-w-sm">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <AdminInput
@@ -248,6 +234,7 @@ export default function UsersPage() {
               </button>
             )}
           </div>
+          <AdminBadge tone="brand">{t('users.userCount', { count: total })}</AdminBadge>
         </div>
       )}
 

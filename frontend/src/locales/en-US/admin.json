@@ -1,7 +1,7 @@
 {
   "layout": {
     "title": "Admin Console",
-    "subtitle": "PUDDING RESUME",
+    "subtitle": "Pudding Resume · Administration",
     "backToSite": "Back to Site",
     "logout": "Log Out"
   },
@@ -12,6 +12,7 @@
   "dashboard": {
     "title": "Dashboard",
     "subtitle": "Overview of user growth, resumes and AI usage trends",
+    "overview": "Data Overview",
     "loadFailed": "Failed to load",
     "metrics": {
       "totalUsers": "Total Users",

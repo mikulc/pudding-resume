@@ -1,6 +1,7 @@
 import { Users, X } from 'lucide-react';
 import type { AdminUserItem } from '../../types/admin';
 import { MobileUserCard } from './MobileUserCard';
+import { adminCardClass, cn } from './adminStyles';
 
 interface MobileUserCardListProps {
   users: AdminUserItem[];
@@ -33,7 +34,7 @@ export function MobileUserCardList({
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-2xl border border-[#E9EDF3] bg-white p-4 animate-pulse dark:border-slate-800 dark:bg-slate-900"
+            className={cn(adminCardClass, 'animate-pulse p-4')}
           >
             <div className="flex items-center gap-3">
               <div className="w-[42px] h-[42px] rounded-full bg-slate-200 dark:bg-slate-700" />

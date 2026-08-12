@@ -1,4 +1,4 @@
-/* Admin design system: shared motion and the editor month picker adapter. */
+/* Admin surfaces reuse the product theme and settings-page layout rhythm. */
 @keyframes adminDropdownIn {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
@@ -74,126 +74,60 @@
 }
 
 .dark .admin-date-picker .field-input:focus {
-  border-color: #ffc848;
+  border-color: var(--theme-accent);
 }
 
-/* Admin sidebar: keep a stable two-column DOM while its rail animates. */
-.admin-sidebar-item {
+.admin-overview-grid {
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr);
-  align-items: center;
-  padding-inline: 2px;
-  transition: grid-template-columns 220ms cubic-bezier(0.4, 0, 0.2, 1), background-color 160ms ease, color 160ms ease;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.admin-sidebar[data-collapsed="true"] .admin-sidebar-item {
-  grid-template-columns: 40px 0fr;
+.admin-overview-item:nth-child(even) {
+  border-left: 1px solid #f3f4f6;
 }
 
-.admin-sidebar-icon {
-  display: flex;
-  width: 40px;
-  height: 40px;
-  flex: none;
-  align-items: center;
-  justify-content: center;
+.admin-overview-item:nth-child(n + 3) {
+  border-top: 1px solid #f3f4f6;
 }
 
-.admin-sidebar-icon svg {
-  flex: none;
+.dark .admin-overview-item:nth-child(even) {
+  border-left-color: rgba(255, 255, 255, 0.08);
 }
 
-.admin-sidebar-label-wrapper {
-  min-width: 0;
-  overflow: hidden;
+.dark .admin-overview-item:nth-child(n + 3) {
+  border-top-color: rgba(255, 255, 255, 0.08);
 }
 
-.admin-sidebar-label {
-  display: block;
-  overflow: hidden;
-  white-space: nowrap;
-  opacity: 1;
-  transform: translateX(0);
-  visibility: visible;
-  transition: opacity 160ms ease 80ms, transform 180ms ease 80ms, visibility 0ms linear 0ms;
-}
+@media (min-width: 1200px) {
+  .admin-overview-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 
-.admin-sidebar[data-collapsed="true"] .admin-sidebar-label {
-  opacity: 0;
-  transform: translateX(-6px);
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 100ms ease, transform 120ms ease, visibility 0ms linear 120ms;
-}
+  .admin-overview-item:nth-child(even) {
+    border-left: 0;
+  }
 
-.admin-sidebar-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 12px 12px 18px;
-}
+  .admin-overview-item:nth-child(4n + 2),
+  .admin-overview-item:nth-child(4n + 3),
+  .admin-overview-item:nth-child(4n + 4) {
+    border-left: 1px solid #f3f4f6;
+  }
 
-.admin-sidebar-footer-action {
-  display: flex;
-  height: 44px;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
-  padding-inline: 16px;
-  overflow: hidden;
-  border-radius: 12px;
-  text-align: left;
-  transition: padding 220ms cubic-bezier(0.4, 0, 0.2, 1), background-color 160ms ease, color 160ms ease;
-}
+  .admin-overview-item:nth-child(n + 3) {
+    border-top: 0;
+  }
 
-.admin-sidebar-footer-icon {
-  display: flex;
-  width: 20px;
-  height: 20px;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-}
+  .admin-overview-item:nth-child(n + 5) {
+    border-top: 1px solid #f3f4f6;
+  }
 
-.admin-sidebar-footer-icon svg {
-  flex: none;
-}
+  .dark .admin-overview-item:nth-child(4n + 2),
+  .dark .admin-overview-item:nth-child(4n + 3),
+  .dark .admin-overview-item:nth-child(4n + 4) {
+    border-left-color: rgba(255, 255, 255, 0.08);
+  }
 
-.admin-sidebar-footer-label {
-  display: block;
-  max-width: 140px;
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  opacity: 1;
-  transform: translateX(0);
-  visibility: visible;
-  transition: opacity 160ms ease 80ms, max-width 220ms cubic-bezier(0.4, 0, 0.2, 1), transform 180ms ease 80ms, visibility 0ms linear;
-}
-
-.admin-sidebar[data-collapsed="true"] .admin-sidebar-footer-action {
-  justify-content: center;
-  gap: 0;
-  padding-inline: 0;
-}
-
-.admin-sidebar[data-collapsed="true"] .admin-sidebar-footer-label {
-  max-width: 0;
-  opacity: 0;
-  transform: translateX(-4px);
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 100ms ease, max-width 220ms cubic-bezier(0.4, 0, 0.2, 1), transform 120ms ease, visibility 0ms linear 120ms;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .admin-sidebar,
-  .admin-sidebar-item,
-  .admin-sidebar-label,
-  .admin-sidebar-footer-action,
-  .admin-sidebar-footer-label,
-  .admin-sidebar-toggle {
-    transition-duration: 0.01ms !important;
-    transition-delay: 0ms !important;
+  .dark .admin-overview-item:nth-child(n + 5) {
+    border-top-color: rgba(255, 255, 255, 0.08);
   }
 }

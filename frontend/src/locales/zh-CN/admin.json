@@ -1,7 +1,7 @@
 {
   "layout": {
     "title": "后台管理",
-    "subtitle": "PUDDING RESUME",
+    "subtitle": "布丁简历 · 管理模块",
     "backToSite": "返回前台",
     "logout": "退出登录"
   },
@@ -12,6 +12,7 @@
   "dashboard": {
     "title": "仪表盘",
     "subtitle": "概览用户增长、简历与 AI 使用趋势",
+    "overview": "数据概览",
     "loadFailed": "加载失败",
     "metrics": {
       "totalUsers": "总用户数",

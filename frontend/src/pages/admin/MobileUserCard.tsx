@@ -4,7 +4,7 @@ import {
   Key, Trash2, RotateCcw,
 } from 'lucide-react';
 import type { AdminUserItem } from '../../types/admin';
-import { AdminBadge } from './adminStyles';
+import { AdminBadge, adminCardClass } from './adminStyles';
 import { formatMobileTimeShort } from './userTimeFormat';
 import { cn } from './adminStyles';
 
@@ -35,10 +35,9 @@ export function MobileUserCard({
   return (
     <div
       className={cn(
-        'relative rounded-2xl border border-[#E9EDF3] bg-white p-4 w-full min-w-0',
-        'shadow-[0_1px_2px_rgba(16,24,40,0.04),0_2px_8px_rgba(16,24,40,0.04)]',
+        adminCardClass,
+        'relative w-full min-w-0 p-4',
         'transition-[background-color] [transition-duration:140ms]',
-        'dark:border-slate-800 dark:bg-slate-900',
       )}
     >
       {/* Row 1: Avatar + Username + Role + More */}
@@ -61,7 +60,7 @@ export function MobileUserCard({
           <span className="text-[15px] font-semibold text-slate-800 dark:text-slate-200 truncate">
             {user.username}
           </span>
-          <AdminBadge tone={user.role === 'admin' ? 'violet' : 'neutral'} className="shrink-0 text-[11px] leading-[22px]">
+          <AdminBadge tone={user.role === 'admin' ? 'brand' : 'neutral'} className="shrink-0 text-[11px] leading-[22px]">
             {roleLabel}
           </AdminBadge>
           {user.status === 'deleted' && (
@@ -73,7 +72,7 @@ export function MobileUserCard({
         <div className="relative shrink-0" ref={menuRef}>
             <button
               onClick={handleToggleMenu}
-              className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] text-slate-400 hover:bg-slate-50 active:bg-[#EEF4FF] active:text-[#3272FF] dark:hover:bg-slate-800 dark:active:bg-blue-950/35 transition-colors duration-150"
+              className="flex h-[36px] w-[36px] items-center justify-center rounded-[10px] text-slate-400 hover:bg-slate-50 active:bg-[var(--theme-accent-soft)] active:text-[var(--theme-accent)] dark:hover:bg-white/[0.05] transition-colors duration-150"
             >
               <MoreHorizontal size={18} />
             </button>
