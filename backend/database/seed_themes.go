@@ -172,6 +172,3 @@ func seedThemeLibraries() {
 		log.Printf("Theme library synced: %d built-in entries updated", updated)
 	}
 }
-
-// seedDemoContent populates the demo_content table with a sample resume
-// if the table is currently empty (safe to call on every server start).

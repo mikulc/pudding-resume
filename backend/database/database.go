@@ -64,7 +64,7 @@ func Init(cfg *config.Config) {
 		&models.Resume{}, &models.ResumeShare{},
 		&models.ThemeLibrary{}, &models.TemplateLibrary{},
 		&models.UserQuota{}, &models.UserStats{}, &models.UserDailyStats{},
-		&models.DocumentSetting{}, &models.DemoContent{},
+		&models.DocumentSetting{},
 	); err != nil {
 		log.Fatalf("Failed to auto-migrate database: %v", err)
 	}
@@ -77,6 +77,7 @@ func Init(cfg *config.Config) {
 	dropRetiredAdminAuditLogsTable(DB)
 	dropRetiredAIModelPoolSchema(DB)
 	dropRetiredChangelogTable(DB)
+	dropRetiredDemoContentTable(DB)
 	seedAll()
 	migrateTableComments(DB)
 
@@ -320,12 +321,22 @@ func dropRetiredChangelogTable(db *gorm.DB) {
 	}
 }
 
+// dropRetiredDemoContentTable removes the hardcoded preview resume storage.
+// Resume templates are imported as JSON instead of being seeded at startup.
+func dropRetiredDemoContentTable(db *gorm.DB) {
+	const table = "demo_content"
+	if !db.Migrator().HasTable(table) {
+		return
+	}
+	if err := db.Migrator().DropTable(table); err != nil {
+		log.Fatalf("Failed to drop %s: %v", table, err)
+	}
+}
+
 // seedAll runs all table seeders. Each seeder is a no-op when the table already has data.
 func seedAll() {
 	seedThemeLibraries()
 	seedDocSettings()
-	seedDemoContent()
-	seedTemplateLibraries()
 	migrateBundledAvatarURLs()
 }
 
@@ -348,7 +359,6 @@ func migrateTableComments(db *gorm.DB) {
 		"user_daily_stats":  "每日统计表",
 		"doc_settings":      "文档设置表",
 		"resume_shares":     "简历分享配置表",
-		"demo_content":      "示例简历内容表",
 	}
 
 	for table, comment := range comments {

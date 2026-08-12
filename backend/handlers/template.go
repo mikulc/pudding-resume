@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -34,18 +33,4 @@ func GetTemplateLibraries(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"templates": entries})
-}
-
-// GetDemoContent returns the demo resume content.
-// GET /api/templates/demo-content
-func GetDemoContent(c *gin.Context) {
-	var demo models.DemoContent
-	if err := database.DB.Take(&demo).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"message": "示例内容不存在"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"content":    json.RawMessage(demo.Content),
-		"updated_at": demo.UpdatedAt.Format("2006-01-02 15:04:05"),
-	})
 }

@@ -69,15 +69,3 @@ export async function getTemplateLibraries(): Promise<TemplateLibraryEntry[]> {
     version: template.version,
   }));
 }
-
-/** Demo content API response */
-interface DemoContentResponse {
-  content: ResumeData;
-  updated_at: string;
-}
-
-/** Get the demo resume content for theme previews */
-export async function getDemoContent(): Promise<ResumeData> {
-  const res = await api.get<DemoContentResponse>('/api/templates/demo-content');
-  return res.content;
-}

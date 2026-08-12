@@ -280,7 +280,6 @@ func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDepende
 		templates := api.Group("/templates")
 		{
 			templates.GET("", handlers.GetTemplateLibraries)
-			templates.GET("/demo-content", handlers.GetDemoContent)
 		}
 
 		// Document settings routes (public, no auth required)
