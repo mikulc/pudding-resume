@@ -81,7 +81,7 @@ export function ResumeCard({
                                   isRenaming
                                     ? 'invisible'
                                     : isMenuOpen
-                                      ? 'text-white dark:text-[#17191d]'
+                                      ? 'text-[var(--theme-accent-foreground)]'
                                       : 'text-slate-400'
                                 }`}
                                 aria-label={t('list.moreActionsAria')}

@@ -29,7 +29,7 @@ export default function MyResumePage() {
 
   const menu = useResumeMenu();
   const {
-    menuOpenId, menuPos, menuBtnRefs, menuRef, renamePopoverRef,
+    menuOpenId, menuPos, renamePos, menuBtnRefs, menuRef, renamePopoverRef,
     renamingId, renameValue, setRenameValue, handleMenuToggle, handleMenuClose,
   } = menu;
 
@@ -104,17 +104,17 @@ export default function MyResumePage() {
               )}
               <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
                 <div
-                  className={`mb-7 flex w-full items-center justify-between sm:mb-8 ${showHintCard ? 'mt-4' : ''}`}
+                  className={`mb-7 flex w-full flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between ${showHintCard ? 'mt-4' : ''}`}
                 >
                   <div className="flex min-w-0 items-center gap-2.5">
-                    <h1 className="text-[28px] font-semibold tracking-tight text-[#111827] dark:text-slate-50 sm:text-[32px]">
+                    <h1 className="whitespace-nowrap text-[28px] font-semibold tracking-tight text-[#111827] dark:text-slate-50 sm:text-[32px]">
                       {t('list.allResumes')}
                     </h1>
                     <span className="inline-flex h-6 flex-shrink-0 items-center rounded-full bg-[var(--theme-accent)] px-[9px] text-xs font-semibold text-[var(--theme-accent-foreground)]">
                       {t('list.resumeCount', { count: totalResumeCount })}
                     </span>
                   </div>
-                  <div className="flex-shrink-0">
+                  <div className="w-full flex-shrink-0 sm:w-auto">
                     <ImportButton onImportComplete={refreshList} />
                   </div>
                 </div>
@@ -210,7 +210,7 @@ export default function MyResumePage() {
 
       <ResumeRenamePopover
         open={renamingId !== null}
-        position={menuPos}
+        position={renamePos}
         popoverRef={renamePopoverRef}
         value={renameValue}
         onChange={setRenameValue}

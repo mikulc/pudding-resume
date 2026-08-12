@@ -252,7 +252,7 @@ export function ImportButton({ onImportComplete }: ImportButtonProps) {
         >
           <button
             onClick={() => handleSelectFormat('pdf')}
-            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:bg-[rgb(236,238,253)] transition-colors dark:text-slate-200 dark:hover:bg-[rgba(34,72,255,0.14)]"
+            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:bg-[var(--theme-accent-soft)] transition-colors dark:text-slate-200"
           >
             <FileText className="w-4 h-4 text-red-400 transition-colors group-hover/menu:text-red-500 dark:group-hover/menu:text-red-300" />
             <div className="text-left">
@@ -262,7 +262,7 @@ export function ImportButton({ onImportComplete }: ImportButtonProps) {
 
           <button
             onClick={() => handleSelectFormat('json')}
-            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:bg-[rgb(236,238,253)] transition-colors dark:text-slate-200 dark:hover:bg-[rgba(34,72,255,0.14)]"
+            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:bg-[var(--theme-accent-soft)] transition-colors dark:text-slate-200"
           >
             <FileJson className="w-4 h-4 text-amber-500 transition-colors group-hover/menu:text-amber-600 dark:group-hover/menu:text-amber-300" />
             <div className="text-left">
@@ -272,7 +272,7 @@ export function ImportButton({ onImportComplete }: ImportButtonProps) {
 
           <button
             onClick={() => handleSelectFormat('word')}
-            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:bg-[rgb(236,238,253)] transition-colors dark:text-slate-200 dark:hover:bg-[rgba(34,72,255,0.14)]"
+            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:bg-[var(--theme-accent-soft)] transition-colors dark:text-slate-200"
           >
             <svg className="w-4 h-4 text-blue-500 transition-colors group-hover/menu:text-blue-600 dark:group-hover/menu:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
@@ -286,7 +286,7 @@ export function ImportButton({ onImportComplete }: ImportButtonProps) {
 
           <button
             onClick={() => handleSelectFormat('markdown')}
-            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:bg-[rgb(236,238,253)] transition-colors dark:text-slate-200 dark:hover:bg-[rgba(34,72,255,0.14)]"
+            className="group/menu w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-[10px] text-sm text-gray-700 hover:bg-[var(--theme-accent-soft)] transition-colors dark:text-slate-200"
           >
             <FileCode2 className="w-4 h-4 text-green-500 transition-colors group-hover/menu:text-green-600 dark:group-hover/menu:text-green-300" />
             <div className="text-left">

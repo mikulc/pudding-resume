@@ -476,7 +476,7 @@ export function CanvasFloatingToolbar({
       [
         'inline-flex shrink-0 items-center justify-center gap-1 rounded-full text-sm font-medium transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)]',
-        'disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent',
+        'disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-gray-600',
         isVertical
           ? 'h-10 w-10'
           : isCompactHorizontal && withText
@@ -488,7 +488,7 @@ export function CanvasFloatingToolbar({
           ? 'canvas-toolbar-button-active text-[var(--theme-accent)]'
           : active
             ? 'canvas-toolbar-button-active canvas-toolbar-button-active-bg bg-[var(--theme-accent-soft)] text-[var(--theme-accent)] shadow-sm'
-            : 'text-gray-600 hover:text-gray-900',
+            : 'text-gray-600 hover:bg-[var(--theme-accent-soft)] hover:text-[var(--theme-accent)]',
       ].join(' '),
     [isCompactHorizontal, isVertical],
   );
@@ -561,7 +561,7 @@ export function CanvasFloatingToolbar({
             type="button"
             onPointerDown={handleDragStart}
             className={[
-              'inline-flex shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:text-gray-700',
+              'inline-flex shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-[var(--theme-accent-soft)] hover:text-[var(--theme-accent)]',
               isVertical ? 'h-8 w-10 cursor-grab' : 'h-9 w-8 cursor-grab',
             ].join(' ')}
             style={{ touchAction: 'none' }}

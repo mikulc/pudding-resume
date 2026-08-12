@@ -55,6 +55,20 @@ describe('PersonalInfoEditor photo settings', () => {
     expect((document.getElementById('photo-height') as HTMLInputElement).value).toBe('100');
   });
 
+  it('uses theme accent tokens for active photo controls', () => {
+    render(<PersonalInfoEditor />);
+    fireEvent.click(screen.getByRole('button', { name: 'photo.adjust' }));
+
+    const aspectButton = screen.getByRole('button', { name: '3:4' });
+    const radiusButton = screen.getByRole('button', { name: 'photo.radius.rounded' });
+    const ratioLockButton = screen.getByRole('button', { name: 'photo.lockRatio' });
+
+    for (const button of [aspectButton, radiusButton, ratioLockButton]) {
+      expect(button.classList.contains('bg-[var(--theme-accent-soft)]')).toBe(true);
+      expect(button.classList.contains('text-[var(--theme-accent)]')).toBe(true);
+    }
+  });
+
   it('keeps a dimension input empty while the user replaces its value', () => {
     render(<PersonalInfoEditor />);
     fireEvent.click(screen.getByRole('button', { name: 'photo.adjust' }));

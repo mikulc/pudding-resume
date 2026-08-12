@@ -153,7 +153,7 @@ export function PreferencesSection({ settings }: PreferencesSectionProps) {
               <p className="text-xs text-gray-400">{t('preferences.languageDesc')}</p>
             </div>
           </div>
-          <div className="inline-flex rounded-xl border border-gray-200 bg-gray-50 p-1">
+          <div className="inline-flex shrink-0 rounded-xl border border-gray-200 bg-gray-50 p-1">
             {[
               { value: 'zh-CN' as SupportedLanguage, label: t('preferences.languageZh') },
               { value: 'en-US' as SupportedLanguage, label: t('preferences.languageEn') },
@@ -164,7 +164,7 @@ export function PreferencesSection({ settings }: PreferencesSectionProps) {
                   key={opt.value}
                   type="button"
                   onClick={() => handleLanguageChange(opt.value)}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  className={`shrink-0 whitespace-nowrap px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
                     selected
                       ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)] shadow-sm'
                       : 'text-gray-500 hover:text-gray-700'

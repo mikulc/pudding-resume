@@ -63,14 +63,22 @@
 }
 
 .editor-combo-option:hover:not([data-selected='true']) {
-  color: #111827;
-  background-color: #f9fafb;
+  color: var(--text-primary);
+  background-color: var(--bg-hover);
 }
 
 .editor-combo-option[data-selected='true'],
 .editor-combo-option[data-selected='true']:hover {
   color: var(--theme-accent);
   background-color: var(--theme-accent-soft);
+}
+
+.dark .editor-combo-menu {
+  background-color: var(--bg-elevated);
+}
+
+.dark .editor-combo-option {
+  color: var(--text-secondary);
 }
 
 /* Homepage hero: one clear product surface, with a reserved A4 preview pane. */

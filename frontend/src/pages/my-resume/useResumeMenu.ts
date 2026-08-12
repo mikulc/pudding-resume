@@ -2,6 +2,8 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 
 const MENU_WIDTH = 148;
 const MENU_ESTIMATED_HEIGHT = 196;
+const RENAME_POPOVER_WIDTH = 240;
+const RENAME_POPOVER_ESTIMATED_HEIGHT = 142;
 const MENU_GAP = 8;
 const MENU_VIEWPORT_PADDING = 8;
 
@@ -43,10 +45,39 @@ export function calculateResumeMenuPosition(
   return { top, left };
 }
 
+export function calculateResumeRenamePosition(
+  rect: MenuAnchorRect,
+  viewport: MenuViewport,
+  popoverHeight: number,
+) {
+  const spaceBelow = viewport.height - rect.bottom;
+  const spaceAbove = rect.top;
+  const showBelow = spaceBelow >= popoverHeight + MENU_GAP || spaceBelow >= spaceAbove;
+  const rawTop = showBelow
+    ? rect.bottom + MENU_GAP
+    : rect.top - popoverHeight - MENU_GAP;
+  const maxTop = Math.max(
+    MENU_VIEWPORT_PADDING,
+    viewport.height - popoverHeight - MENU_VIEWPORT_PADDING,
+  );
+  const top = Math.min(Math.max(MENU_VIEWPORT_PADDING, rawTop), maxTop);
+  const maxLeft = Math.max(
+    MENU_VIEWPORT_PADDING,
+    viewport.width - RENAME_POPOVER_WIDTH - MENU_VIEWPORT_PADDING,
+  );
+  const left = Math.min(
+    Math.max(MENU_VIEWPORT_PADDING, rect.right - RENAME_POPOVER_WIDTH),
+    maxLeft,
+  );
+
+  return { top, left };
+}
+
 export function useResumeMenu() {
   // Dropdown menu state
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
+  const [renamePos, setRenamePos] = useState({ top: 0, left: 0 });
   const menuBtnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const menuRef = useRef<HTMLDivElement | null>(null);
   const renamePopoverRef = useRef<HTMLDivElement | null>(null);
@@ -80,6 +111,27 @@ export function useResumeMenu() {
     setMenuPos(nextPosition);
   }, [getMenuPosition]);
 
+  const updateRenamePosition = useCallback((id: string) => {
+    const btn = menuBtnRefs.current[id];
+    if (!btn || !document.body.contains(btn)) {
+      setRenamingId((currentId) => (currentId === id ? null : currentId));
+      return;
+    }
+
+    const rect = btn.getBoundingClientRect();
+    const viewport = { height: window.innerHeight, width: window.innerWidth };
+    if (rect.bottom < 0 || rect.top > viewport.height) {
+      setRenamingId((currentId) => (currentId === id ? null : currentId));
+      return;
+    }
+
+    const measuredHeight = renamePopoverRef.current?.getBoundingClientRect().height;
+    const popoverHeight = measuredHeight && measuredHeight > 0
+      ? measuredHeight
+      : RENAME_POPOVER_ESTIMATED_HEIGHT;
+    setRenamePos(calculateResumeRenamePosition(rect, viewport, popoverHeight));
+  }, []);
+
   // Open menu on button click and position it above or below based on available space.
   const handleMenuToggle = useCallback((e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -98,9 +150,9 @@ export function useResumeMenu() {
   // Measure the rendered portal before paint so an above-positioned menu
   // keeps the same gap from its trigger regardless of its actions.
   useLayoutEffect(() => {
-    const activeId = menuOpenId ?? renamingId;
-    if (activeId) updateMenuPosition(activeId);
-  }, [menuOpenId, renamingId, updateMenuPosition]);
+    if (menuOpenId) updateMenuPosition(menuOpenId);
+    if (renamingId) updateRenamePosition(renamingId);
+  }, [menuOpenId, renamingId, updateMenuPosition, updateRenamePosition]);
 
   useEffect(() => {
     const activeId = menuOpenId ?? renamingId;
@@ -111,7 +163,8 @@ export function useResumeMenu() {
       if (frameId !== null) return;
       frameId = window.requestAnimationFrame(() => {
         frameId = null;
-        updateMenuPosition(activeId);
+        if (menuOpenId) updateMenuPosition(menuOpenId);
+        if (renamingId) updateRenamePosition(renamingId);
       });
     };
 
@@ -123,7 +176,7 @@ export function useResumeMenu() {
       window.removeEventListener('resize', scheduleUpdate);
       window.removeEventListener('scroll', scheduleUpdate, true);
     };
-  }, [menuOpenId, renamingId, updateMenuPosition]);
+  }, [menuOpenId, renamingId, updateMenuPosition, updateRenamePosition]);
 
   // Close menu on click outside
   const handleMenuClose = useCallback(() => {
@@ -159,7 +212,7 @@ export function useResumeMenu() {
 
 
   return {
-    menuOpenId, setMenuOpenId, menuPos, menuBtnRefs, menuRef, renamePopoverRef,
+    menuOpenId, setMenuOpenId, menuPos, renamePos, menuBtnRefs, menuRef, renamePopoverRef,
     renamingId, setRenamingId, renameValue, setRenameValue,
     handleMenuToggle, handleMenuClose,
   };

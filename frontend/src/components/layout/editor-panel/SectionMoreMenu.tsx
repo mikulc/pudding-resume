@@ -115,7 +115,7 @@ export function SectionMoreMenu({
               <button
                 type="button"
                 onClick={() => { onEdit(); close(); }}
-                className="field-more-menu-item text-gray-700 hover:bg-[rgba(34,72,255,0.06)] hover:text-gray-900 rounded-[10px] dark:hover:bg-[rgba(34,72,255,0.14)]"
+                className="field-more-menu-item text-gray-700 hover:bg-[var(--theme-accent-soft)] hover:text-gray-900 rounded-[10px]"
               >
                 <Pencil className="field-more-menu-icon text-current" />
                 <span className="field-more-menu-label">{t('sectionMenu.renameLabel')}</span>
@@ -128,7 +128,7 @@ export function SectionMoreMenu({
                 <button
                   type="button"
                   onClick={() => { onResetTitle(); close(); }}
-                  className="field-more-menu-item text-gray-700 hover:bg-[rgba(34,72,255,0.06)] hover:text-gray-900 rounded-[10px] dark:hover:bg-[rgba(34,72,255,0.14)]"
+                  className="field-more-menu-item text-gray-700 hover:bg-[var(--theme-accent-soft)] hover:text-gray-900 rounded-[10px]"
                 >
                   <RotateCcw className="field-more-menu-icon text-current" />
                   <span className="field-more-menu-label">{t('fieldMenu.resetLabel')}</span>
@@ -139,7 +139,7 @@ export function SectionMoreMenu({
             <button
               type="button"
               onClick={() => { onToggleHidden(sectionKey); close(); }}
-              className="field-more-menu-item text-gray-700 hover:bg-[rgba(34,72,255,0.06)] hover:text-gray-900 rounded-[10px] dark:hover:bg-[rgba(34,72,255,0.14)]"
+              className="field-more-menu-item text-gray-700 hover:bg-[var(--theme-accent-soft)] hover:text-gray-900 rounded-[10px]"
             >
               {isHidden ? (
                 <Eye className="field-more-menu-icon text-current" />

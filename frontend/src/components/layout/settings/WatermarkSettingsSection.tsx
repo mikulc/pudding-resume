@@ -34,7 +34,7 @@ export function WatermarkSettingsSection({ model }: { model: SettingsPanelModel 
                     onChange={(e) => uiDispatch({ type: 'SET_WATERMARK', payload: { content: e.target.value, isCustomContent: true } })}
                     placeholder={t('document.watermark.contentPlaceholder')}
                     maxLength={20}
-                    className="w-full px-2.5 py-2.5 pr-8 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[var(--theme-accent)] focus:ring-0 transition-colors"
+                    className="settings-input w-full px-2.5 py-2.5 pr-8 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-[var(--theme-accent)] focus:ring-0 transition-colors"
                   />
                   {theme.watermark.isCustomContent && (
                     <button

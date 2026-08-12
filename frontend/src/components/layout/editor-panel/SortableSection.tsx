@@ -415,7 +415,7 @@ export function SortableSection({ sectionKey, title, children, isExpanded, onTog
               <button
                 type="button"
                 onClick={confirmRename}
-                className="px-3 py-1.5 text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
+                className="rounded-lg bg-[var(--theme-accent)] px-3 py-1.5 text-xs text-[var(--theme-accent-foreground)] transition-[filter] hover:brightness-95"
               >
                 {t('common:button.confirm')}
               </button>

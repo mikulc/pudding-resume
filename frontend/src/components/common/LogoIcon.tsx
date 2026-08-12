@@ -13,6 +13,7 @@ const getLogoClassName = (className?: string) => `${className ?? ''} select-none
 const LogoIcon: React.FC<LogoIconProps> = ({ className, asBrand = false, onClick }) => {
   const { t } = useTranslation(['homepage', 'common']);
   const fullName = t('homepage:brand.fullName');
+  const shortName = t('homepage:brand.shortName');
   const backHome = t('common:button.backHome');
 
   const image = (
@@ -34,7 +35,7 @@ const LogoIcon: React.FC<LogoIconProps> = ({ className, asBrand = false, onClick
       type="button"
       onClick={onClick}
       aria-label={backHome}
-      className="relative inline-flex h-9 min-w-[104px] items-center justify-start gap-2 text-[18px] font-bold tracking-normal text-gray-800 dark:text-slate-200"
+      className="relative inline-flex h-9 min-w-0 max-w-[45vw] items-center justify-start gap-2 text-[18px] font-bold tracking-normal text-gray-800 dark:text-slate-200 sm:max-w-none"
     >
       <img
         src={logo}
@@ -44,7 +45,8 @@ const LogoIcon: React.FC<LogoIconProps> = ({ className, asBrand = false, onClick
         draggable={false}
         onDragStart={(event) => event.preventDefault()}
       />
-      <span>{fullName}</span>
+      <span className="min-w-0 truncate whitespace-nowrap sm:hidden">{shortName}</span>
+      <span className="hidden min-w-0 truncate whitespace-nowrap sm:inline">{fullName}</span>
     </button>
   );
 };

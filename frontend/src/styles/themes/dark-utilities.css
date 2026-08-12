@@ -296,7 +296,7 @@
 .dark .rename-input:focus,
 .dark .settings-input:focus,
 .dark .field-input:focus {
-  border-color: rgb(255, 200, 72) !important;
+  border-color: var(--theme-accent) !important;
   box-shadow: none !important;
 }
 

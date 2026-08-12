@@ -380,7 +380,7 @@ export function PersonalInfoEditor() {
   const optionButtonClass = (active: boolean) => [
     'flex h-8 min-w-0 flex-1 items-center justify-center gap-1 rounded-[8px] px-1 text-[11px] font-medium whitespace-nowrap transition-colors duration-150',
     active
-      ? 'bg-white text-blue-600 shadow-sm dark:bg-white/[0.10] dark:text-blue-300'
+      ? 'bg-[var(--theme-accent-soft)] text-[var(--theme-accent)] shadow-sm'
       : 'text-gray-500 hover:bg-white/60 hover:text-gray-700 dark:text-white/55 dark:hover:bg-white/[0.06] dark:hover:text-white/80',
   ].join(' ');
 
@@ -490,7 +490,7 @@ export function PersonalInfoEditor() {
                       </button>
                     </div>
 
-                    <div className="space-y-4 px-[18px] pb-2.5 pt-4">
+                    <div className="space-y-4 px-[18px] pb-[18px] pt-4">
                       <div className="avatar-preview-grid relative flex h-[104px] items-center justify-center overflow-hidden rounded-[13px] border border-gray-900/[0.04] bg-gray-50 dark:border-white/[0.07] dark:bg-white/[0.04]">
                         <img
                           src={personalInfo.photoUrl}
@@ -531,7 +531,7 @@ export function PersonalInfoEditor() {
                             onClick={() => setPhotoRatioLocked((locked) => !locked)}
                             aria-label={t('photo.lockRatio')}
                             title={t('photo.lockRatio')}
-                            className={`mb-1 flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${photoRatioLocked ? 'bg-blue-50 text-blue-500 dark:bg-blue-500/15 dark:text-blue-300' : 'bg-gray-100 text-gray-400 hover:bg-gray-200/70 dark:bg-white/[0.04] dark:text-white/40 dark:hover:bg-white/[0.06]'}`}
+                            className={`mb-1 flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${photoRatioLocked ? 'bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]' : 'bg-gray-100 text-gray-400 hover:bg-gray-200/70 dark:bg-white/[0.04] dark:text-white/40 dark:hover:bg-white/[0.06]'}`}
                           >
                             {photoRatioLocked ? <Link className="h-3.5 w-3.5" /> : <Unlink className="h-3.5 w-3.5" />}
                           </button>

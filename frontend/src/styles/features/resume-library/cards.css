@@ -243,23 +243,13 @@
 }
 
 .resume-card-more-button:hover {
-  background-color: rgba(34, 72, 255, 0.08) !important;
-  color: rgb(34, 72, 255) !important;
+  background-color: var(--theme-accent-soft) !important;
+  color: var(--theme-accent) !important;
 }
 
 .resume-card-more-button[data-open='true'] {
-  background-color: rgb(34, 72, 255) !important;
-  color: #ffffff !important;
-}
-
-.dark .resume-card-more-button:hover {
-  background-color: rgba(34, 72, 255, 0.16) !important;
-  color: rgb(96, 165, 250) !important;
-}
-
-.dark .resume-card-more-button[data-open='true'] {
-  background-color: rgb(34, 72, 255) !important;
-  color: #ffffff !important;
+  background-color: var(--theme-accent) !important;
+  color: var(--theme-accent-foreground) !important;
 }
 
 /* Desktop: more button starts subdued, brightens on card hover / open */

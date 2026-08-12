@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateResumeMenuPosition } from './useResumeMenu';
+import { calculateResumeMenuPosition, calculateResumeRenamePosition } from './useResumeMenu';
 
 describe('calculateResumeMenuPosition', () => {
   it('keeps an above-positioned short menu next to its trigger', () => {
@@ -35,5 +35,15 @@ describe('calculateResumeMenuPosition', () => {
       { width: 320, height: 180 },
       170,
     )).toEqual({ top: 8, left: 8 });
+  });
+});
+
+describe('calculateResumeRenamePosition', () => {
+  it('keeps the wider rename popover inside a mobile viewport', () => {
+    expect(calculateResumeRenamePosition(
+      { top: 520, right: 390, bottom: 548 },
+      { width: 390, height: 844 },
+      142,
+    )).toEqual({ top: 556, left: 142 });
   });
 });
