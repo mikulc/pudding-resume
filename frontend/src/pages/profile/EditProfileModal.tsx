@@ -115,7 +115,7 @@ export function EditProfileModal({
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="settings-input w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 transition-colors focus:border-[#425aef] focus:outline-none focus:ring-0 dark:focus:border-[#ffc848] dark:focus:ring-0"
+              className="settings-input w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 transition-colors focus:border-[var(--theme-accent)] focus:outline-none focus:ring-0"
               placeholder={t('profile.usernamePlaceholder')}
               autoFocus
               maxLength={10}
@@ -158,7 +158,7 @@ export function EditProfileModal({
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[var(--theme-accent)] px-4 py-2.5 text-sm font-medium text-[var(--theme-accent-foreground)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {saving ? (
                 <>

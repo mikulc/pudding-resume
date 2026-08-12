@@ -237,6 +237,7 @@
   },
   "list": {
     "myResumes": "我的简历",
+    "allResumes": "全部简历",
     "resumeCount": "{{count}} 份",
     "pageDescription": "管理、创建和维护你的个人简历",
     "selectedResume": "已选择：{{name}}",

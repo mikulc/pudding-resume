@@ -67,11 +67,15 @@ export default function ProfilePage() {
       {/* ========== Main Content ========== */}
       <main className="pb-16 pt-20 sm:pt-24">
         <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]" data-global-toolbar-content>
-          {/* Page title with back button */}
-          <div className="mb-7 sm:mb-8">
-            {/* Back button — mobile */}
-            {/* Back button + title — desktop */}
-            <h1 className="text-[28px] font-semibold tracking-tight text-[#111827] dark:text-slate-50 sm:text-[32px]">{i18n.language?.startsWith('en') ? 'Profile' : '个人中心'}</h1>
+          <div className="mb-7 sm:mb-9">
+            <h1 className="text-[28px] font-semibold tracking-tight text-[#111827] dark:text-slate-50 sm:text-[32px]">
+              {i18n.language?.startsWith('en') ? 'Profile' : '个人中心'}
+            </h1>
+            <p className="mt-2 text-sm text-[#64748B] dark:text-slate-400 sm:text-[15px]">
+              {i18n.language?.startsWith('en')
+                ? 'Manage your personal information, account security and usage quota'
+                : '管理个人信息、账号安全与使用额度'}
+            </p>
           </div>
 
           {/* Loading state */}
@@ -83,7 +87,7 @@ export default function ProfilePage() {
 
           {/* Profile content */}
           {profile && (
-            <div className="space-y-5 sm:space-y-6">
+            <div className="grid items-start gap-5 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-6">
               <ProfileInfo
                 profile={profile}
                 onAvatarUpdate={(updatedProfile) => setProfile(updatedProfile)}

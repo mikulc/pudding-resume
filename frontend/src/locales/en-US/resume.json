@@ -237,6 +237,7 @@
   },
   "list": {
     "myResumes": "My Resumes",
+    "allResumes": "All Resumes",
     "resumeCount": "{{count}} resumes",
     "pageDescription": "Manage, create, and maintain your resumes",
     "selectedResume": "Selected: {{name}}",
