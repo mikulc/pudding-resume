@@ -1,17 +1,12 @@
 ﻿import { useEffect,useRef,useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-getParsedDocSettings,
-type DensityOption,
-type DocSettingsData,
-type SliderRange,
-} from '../../../api/docSettings';
-import {
 DENSITY_OPTIONS,
 PAGE_RANGES,
 PRESET_COLORS,
 WATERMARK_COLORS,
 WATERMARK_RANGES,
+type SliderRange,
 } from '../../../config/defaults';
 import {
 getFontLoadStatus,
@@ -35,7 +30,6 @@ export function useSettingsPanelModel() {
   const { confirm } = useConfirm();
   const { theme } = ui;
 
-  const [docSettings, setDocSettings] = useState<DocSettingsData | null>(null);
   const [fontLoadStatus, setFontLoadStatus] = useState<FontLoadStatus>(() => (
     getFontLoadStatus(theme.fontFamily)
   ));
@@ -58,15 +52,6 @@ export function useSettingsPanelModel() {
     refs: [fontDropdownRef],
     onOutsideClick: () => setFontDropdownOpen(false),
   });
-
-  // Fetch document settings from backend on mount
-  useEffect(() => {
-    getParsedDocSettings()
-      .then(setDocSettings)
-      .catch(() => {
-        // Backend unavailable — fallback to hardcoded defaults (already handled via fallback constants)
-      });
-  }, []);
 
   useEffect(() => {
     const syncFontLoadStatus = () => {
@@ -150,10 +135,9 @@ export function useSettingsPanelModel() {
     }
   };
 
-  // Resolved data with fallbacks (centralized defaults)
-  const presetColors = docSettings?.presetColors ?? [...PRESET_COLORS];
-  const watermarkColors = docSettings?.watermarkColors ?? [...WATERMARK_COLORS];
-  const densityOptions: DensityOption[] = docSettings?.watermarkDensity ?? [...DENSITY_OPTIONS];
+  const presetColors = PRESET_COLORS;
+  const watermarkColors = WATERMARK_COLORS;
+  const densityOptions = DENSITY_OPTIONS;
   const optionLabel = (option: { value?: string; label?: string; labelKey?: string }) => {
     if (option.labelKey) return t(option.labelKey);
     if (option.value === 'low' || option.value === 'medium' || option.value === 'high') {
@@ -162,20 +146,19 @@ export function useSettingsPanelModel() {
     return option.label ?? '';
   };
 
-  // Get slider range config for a specific key
+  // Get slider range config for a specific key.
   const getRange = (key: string): SliderRange | undefined =>
-    docSettings?.pageRanges?.find(r => r.key === key) ??
-    docSettings?.watermarkRanges?.find(r => r.key === key);
+    PAGE_RANGES.find(r => r.key === key) ??
+    WATERMARK_RANGES.find(r => r.key === key);
 
-  // Resolve slider props from backend ranges or centralized fallback
-  const pageMarginRange = getRange('pageMargin') ?? { ...PAGE_RANGES[0] };
-  const lineSpacingRange = getRange('lineSpacing') ?? { ...PAGE_RANGES[1] };
-  const fontSizeRange = getRange('fontSize') ?? { ...PAGE_RANGES[2] };
-  const sectionTitleFontSizeRange = getRange('sectionTitleFontSize') ?? { ...PAGE_RANGES[3] };
-  const entryTitleFontSizeRange = getRange('entryTitleFontSize') ?? { ...PAGE_RANGES[4] };
-  const wmOpacityRange = getRange('opacity') ?? { ...WATERMARK_RANGES[0] };
-  const wmFontSizeRange = getRange('fontSize_watermark') ?? getRange('fontSize') ?? { ...WATERMARK_RANGES[1] };
-  const wmRotationRange = getRange('rotation') ?? { ...WATERMARK_RANGES[2] };
+  const pageMarginRange = getRange('pageMargin')!;
+  const lineSpacingRange = getRange('lineSpacing')!;
+  const fontSizeRange = getRange('fontSize')!;
+  const sectionTitleFontSizeRange = getRange('sectionTitleFontSize')!;
+  const entryTitleFontSizeRange = getRange('entryTitleFontSize')!;
+  const wmOpacityRange = getRange('opacity')!;
+  const wmFontSizeRange = WATERMARK_RANGES.find(r => r.key === 'fontSize')!;
+  const wmRotationRange = getRange('rotation')!;
 
   return {
     uiDispatch, data, resumeDispatch, t, theme, fontLoadStatus,

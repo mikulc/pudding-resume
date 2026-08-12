@@ -64,7 +64,6 @@ func Init(cfg *config.Config) {
 		&models.Resume{}, &models.ResumeShare{},
 		&models.ThemeLibrary{}, &models.TemplateLibrary{},
 		&models.UserQuota{}, &models.UserStats{}, &models.UserDailyStats{},
-		&models.DocumentSetting{},
 	); err != nil {
 		log.Fatalf("Failed to auto-migrate database: %v", err)
 	}
@@ -78,6 +77,7 @@ func Init(cfg *config.Config) {
 	dropRetiredAIModelPoolSchema(DB)
 	dropRetiredChangelogTable(DB)
 	dropRetiredDemoContentTable(DB)
+	dropRetiredDocSettingsTable(DB)
 	seedAll()
 	migrateTableComments(DB)
 
@@ -333,19 +333,28 @@ func dropRetiredDemoContentTable(db *gorm.DB) {
 	}
 }
 
+// dropRetiredDocSettingsTable removes the former database-backed document
+// settings. These static UI defaults now live in the frontend configuration.
+func dropRetiredDocSettingsTable(db *gorm.DB) {
+	const table = "doc_settings"
+	if !db.Migrator().HasTable(table) {
+		return
+	}
+	if err := db.Migrator().DropTable(table); err != nil {
+		log.Fatalf("Failed to drop %s: %v", table, err)
+	}
+}
+
 // seedAll runs all table seeders. Each seeder is a no-op when the table already has data.
 func seedAll() {
 	seedThemeLibraries()
-	seedDocSettings()
 	migrateBundledAvatarURLs()
 }
 
-// migrateTableComments adds Chinese comments to PostgreSQL tables.
-// Safe to call on every startup — uses COMMENT ON which is idempotent.
+// migrateTableComments adds Chinese comments to PostgreSQL and MySQL tables.
+// Safe to call on every startup because both statements replace the current
+// table comment rather than appending to it.
 func migrateTableComments(db *gorm.DB) {
-	if db.Dialector.Name() != "postgres" {
-		return
-	}
 	comments := map[string]string{
 		"user_info":         "用户表",
 		"user_preference":   "用户偏好设置表",
@@ -357,14 +366,30 @@ func migrateTableComments(db *gorm.DB) {
 		"user_quota":        "用户配额表",
 		"user_stats":        "用户统计表",
 		"user_daily_stats":  "每日统计表",
-		"doc_settings":      "文档设置表",
 		"resume_shares":     "简历分享配置表",
 	}
 
 	for table, comment := range comments {
-		sql := "COMMENT ON TABLE " + table + " IS '" + strings.ReplaceAll(comment, "'", "''") + "'"
-		if err := db.Exec(sql).Error; err != nil {
+		statement, supported := tableCommentStatement(db.Dialector.Name(), table, comment)
+		if !supported {
+			return
+		}
+		if err := db.Exec(statement).Error; err != nil {
 			fmt.Printf("Warning: failed to set comment on table %s: %v\n", table, err)
 		}
+	}
+}
+
+func tableCommentStatement(dialect, table, comment string) (string, bool) {
+	escapedComment := strings.ReplaceAll(comment, "'", "''")
+	switch dialect {
+	case "postgres":
+		escapedTable := strings.ReplaceAll(table, `"`, `""`)
+		return fmt.Sprintf(`COMMENT ON TABLE "%s" IS '%s'`, escapedTable, escapedComment), true
+	case "mysql":
+		escapedTable := strings.ReplaceAll(table, "`", "``")
+		return fmt.Sprintf("ALTER TABLE `%s` COMMENT = '%s'", escapedTable, escapedComment), true
+	default:
+		return "", false
 	}
 }

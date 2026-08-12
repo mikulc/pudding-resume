@@ -282,9 +282,6 @@ func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDepende
 			templates.GET("", handlers.GetTemplateLibraries)
 		}
 
-		// Document settings routes (public, no auth required)
-		api.GET("/doc-settings", handlers.GetDocSettings)
-
 		// Admin routes (require JWT + admin role)
 		admin := api.Group("/admin")
 		admin.Use(middleware.AdminRequired(cfg))

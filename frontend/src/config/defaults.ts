@@ -1,9 +1,22 @@
 /**
- * 集中式前端默认值定义 —— 单一数据源，消除多处分发。
- *
- * 后端 seed_doc_settings.go 是权威数据源，此文件仅用作后端不可用时的降级 fallback。
- * 所有需要默认值的消费者统一从此文件导入，确保一致性和低修改成本。
+ * 集中式前端文档设置与默认值定义。
+ * 所有消费者统一从此文件导入，确保一致性和低修改成本。
  */
+
+export interface SliderRange {
+  key: string;
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  default: number;
+  labelKey: string;
+}
+
+export interface DensityOption {
+  value: 'low' | 'medium' | 'high';
+  labelKey: string;
+}
 
 // ======================== 主题色预设 ========================
 
@@ -42,7 +55,7 @@ export const DENSITY_OPTIONS = [
   { value: 'low', labelKey: 'document.watermark.density.low' },
   { value: 'medium', labelKey: 'document.watermark.density.medium' },
   { value: 'high', labelKey: 'document.watermark.density.high' },
-] as const;
+] as const satisfies readonly DensityOption[];
 
 // ======================== 自定义颜色默认值 ========================
 
@@ -71,7 +84,7 @@ export const PAGE_RANGES = [
   { key: 'fontSize', min: 12, max: 24, step: 2, unit: 'px', default: 16, labelKey: 'document.font.baseSize' },
   { key: 'sectionTitleFontSize', min: 12, max: 24, step: 2, unit: 'px', default: 16, labelKey: 'document.font.sectionTitleSize' },
   { key: 'entryTitleFontSize', min: 14, max: 24, step: 2, unit: 'px', default: 14, labelKey: 'document.font.entryTitleSize' },
-] as const;
+] as const satisfies readonly SliderRange[];
 
 // ======================== 水印设置滑块范围 ========================
 
@@ -79,7 +92,7 @@ export const WATERMARK_RANGES = [
   { key: 'opacity', min: 0.03, max: 0.3, step: 0.01, unit: '%', default: 0.08, labelKey: 'document.watermark.opacity' },
   { key: 'fontSize', min: 1, max: 48, step: 1, unit: 'px', default: 24, labelKey: 'document.watermark.fontSize' },
   { key: 'rotation', min: -90, max: 0, step: 5, unit: '°', default: -30, labelKey: 'document.watermark.rotation' },
-] as const;
+] as const satisfies readonly SliderRange[];
 
 // ======================== 水印默认值 ========================
 

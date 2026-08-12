@@ -103,6 +103,19 @@ func TestRemovedAdminAuditRouteIsNotRegistered(t *testing.T) {
 	}
 }
 
+func TestRemovedDocumentSettingsRouteIsNotRegistered(t *testing.T) {
+	cfg := config.Load()
+	router := NewRouter(cfg, t.TempDir())
+
+	request := httptest.NewRequest(http.MethodGet, "/api/doc-settings", nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+
+	if response.Code != http.StatusNotFound {
+		t.Fatalf("GET /api/doc-settings status = %d, want %d", response.Code, http.StatusNotFound)
+	}
+}
+
 func TestRemovedModelPoolRoutesAreNotRegistered(t *testing.T) {
 	cfg := config.Load()
 	router := NewRouter(cfg, t.TempDir())

@@ -1,8 +1,6 @@
 ﻿import { CheckCircle2,ChevronDown } from 'lucide-react';
 import { useRef,useState } from 'react';
-import {
-type SliderRange
-} from '../../../api/docSettings';
+import type { SliderRange } from '../../../config/defaults';
 import { useOutsideClick } from '../../../hooks/useOutsideClick';
 import { resolveLayout } from '../../../registry/layouts';
 import { DEFAULT_CUSTOM_COLORS,ThemeSettings } from '../../../types/resume';

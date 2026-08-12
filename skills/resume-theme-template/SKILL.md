@@ -13,8 +13,7 @@ description: Add or modify resume themes in this pudding-resume project. Use whe
 4. Register the export in `frontend/src/registry/layouts/index.ts`.
 5. Add `templateNames.<camelKey>` in both resume locale files.
 6. Add a `models.ThemeLibrary` entry in `backend/database/seed_themes.go`.
-7. Add the layout default color in `seedDocSettings()` -> `layout_default_colors`.
-8. Run validation commands and search for the new ID/name.
+7. Run validation commands and search for the new ID/name.
 
 ## Naming
 
@@ -81,11 +80,7 @@ previewVersion: '1',
 
 In `seedThemeLibraries()`, add one `models.ThemeLibrary` row with `Name`, visual `Categories`, `LayoutID`, `Highlights`, `PreviewColors`, and `SortOrder`. Theme categories describe appearance (for example 简约、商务、双栏); industry and position metadata belongs in `template_library`.
 
-In `seedDocSettings()`, add a default color:
-
-```go
-{LayoutID: "classic-horizontal", Color: "#333333"}
-```
+Keep the layout's default color in its frontend `LayoutDefinition.defaultColor`.
 
 Run:
 

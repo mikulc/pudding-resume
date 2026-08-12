@@ -108,7 +108,7 @@ export function WatermarkSettingsSection({ model }: { model: SettingsPanelModel 
                 onChange={(v) => uiDispatch({ type: 'SET_WATERMARK', payload: { rotation: v } })}
               />
 
-              {/* 颜色选择 — now driven by backend data */}
+              {/* 颜色选择 */}
               <div>
                 <span className="text-xs text-gray-500 mb-1.5 block">{t('document.watermark.color')}</span>
                 <div className="settings-watermark-color-row flex items-center gap-2">

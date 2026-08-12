@@ -1,12 +1,14 @@
 package database
 
 import (
+	"log"
 	"strings"
 	"testing"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"pudding-resume-backend/models"
 )
@@ -43,6 +45,40 @@ func TestDatabaseDialector(t *testing.T) {
 	}
 	if _, err := databaseDialector("sqlite", "ignored"); err == nil {
 		t.Fatal("unknown driver should fail")
+	}
+}
+
+func TestTableCommentStatementForMySQL(t *testing.T) {
+	statement, ok := tableCommentStatement("mysql", "user_info", "用户表")
+	if !ok {
+		t.Fatal("tableCommentStatement(mysql) reported unsupported dialect")
+	}
+	const want = "ALTER TABLE `user_info` COMMENT = '用户表'"
+	if statement != want {
+		t.Fatalf("tableCommentStatement(mysql) = %q, want %q", statement, want)
+	}
+}
+
+func TestMigrateTableCommentsEmitsMySQLAlterTableStatements(t *testing.T) {
+	var output strings.Builder
+	db, err := gorm.Open(mysql.New(mysql.Config{
+		DSN:                       "resume:password@tcp(localhost:3306)/pudding_resume?parseTime=true",
+		SkipInitializeWithVersion: true,
+	}), &gorm.Config{
+		DisableAutomaticPing: true,
+		DryRun:               true,
+		Logger: logger.New(log.New(&output, "", 0), logger.Config{
+			LogLevel: logger.Info,
+		}),
+	})
+	if err != nil {
+		t.Fatalf("open dry-run database: %v", err)
+	}
+
+	migrateTableComments(db)
+
+	if !strings.Contains(output.String(), "ALTER TABLE `user_info` COMMENT = '用户表'") {
+		t.Fatalf("MySQL table comment migration was not emitted:\n%s", output.String())
 	}
 }
 
