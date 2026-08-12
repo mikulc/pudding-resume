@@ -261,8 +261,13 @@
   }
 
   html.modal-scroll-lock {
-    scrollbar-gutter: auto;
+    scrollbar-gutter: stable;
     overflow: hidden;
+  }
+
+  html.admin-route-fullscreen.modal-scroll-lock,
+  html.resume-route-fullscreen.modal-scroll-lock {
+    scrollbar-gutter: auto;
   }
 
   html.modal-scroll-lock header.fixed {

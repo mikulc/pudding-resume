@@ -24,12 +24,14 @@ function ConfirmTrigger() {
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
   document.documentElement.classList.remove('modal-scroll-lock');
   document.documentElement.classList.remove('admin-route-fullscreen');
   document.body.style.overflow = '';
   document.body.style.overscrollBehavior = '';
   document.body.style.paddingRight = '';
   document.documentElement.style.overscrollBehavior = '';
+  document.documentElement.style.removeProperty('--modal-scrollbar-width');
 });
 
 describe('ConfirmProvider', () => {
@@ -70,6 +72,62 @@ describe('ConfirmProvider', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '打开' }));
 
+    expect(document.body.style.paddingRight).toBe('');
+  });
+
+  it('does not apply a native scrollbar fallback when the mobile viewport has no gutter', () => {
+    vi.stubGlobal('CSS', { supports: () => false });
+    vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(390);
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(100);
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this === document.documentElement ? 390 : 83;
+    });
+
+    render(
+      <ConfirmProvider>
+        <ConfirmTrigger />
+      </ConfirmProvider>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '打开' }));
+
+    expect(document.documentElement.style.getPropertyValue('--modal-scrollbar-width')).toBe('0px');
+    expect(document.body.style.paddingRight).toBe('');
+  });
+
+  it('compensates a scrollbar that is present in the viewport', () => {
+    vi.stubGlobal('CSS', { supports: () => false });
+    vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(1000);
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this === document.documentElement ? 983 : 100;
+    });
+
+    render(
+      <ConfirmProvider>
+        <ConfirmTrigger />
+      </ConfirmProvider>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '打开' }));
+
+    expect(document.documentElement.style.getPropertyValue('--modal-scrollbar-width')).toBe('17px');
+    expect(document.body.style.paddingRight).toBe('17px');
+  });
+
+  it('leaves compensation to a stable scrollbar gutter when supported', () => {
+    vi.stubGlobal('CSS', { supports: () => true });
+    vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(1000);
+    vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(983);
+
+    render(
+      <ConfirmProvider>
+        <ConfirmTrigger />
+      </ConfirmProvider>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '打开' }));
+
+    expect(document.documentElement.style.getPropertyValue('--modal-scrollbar-width')).toBe('0px');
     expect(document.body.style.paddingRight).toBe('');
   });
 });

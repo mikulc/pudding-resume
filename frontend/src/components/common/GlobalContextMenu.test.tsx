@@ -66,4 +66,17 @@ describe('GlobalContextMenu theme preference', () => {
     });
     expect(mocks.setProfile).toHaveBeenCalledWith(expect.objectContaining({ theme_mode: 'dark' }));
   });
+
+  it('renders above business modal layers', () => {
+    render(
+      <MemoryRouter>
+        <GlobalContextMenu />
+      </MemoryRouter>,
+    );
+
+    fireEvent.contextMenu(document.body, { clientX: 40, clientY: 40 });
+
+    const menuZIndex = Number(screen.getByRole('menu').style.zIndex);
+    expect(menuZIndex).toBeGreaterThan(10040);
+  });
 });

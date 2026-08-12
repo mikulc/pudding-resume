@@ -3,11 +3,6 @@
     "title": "Settings",
     "subtitle": "Manage your editing experience, data storage, and personalization",
     "back": "Back",
-    "syncing": "Syncing...",
-    "syncToCloud": "Sync to Cloud",
-    "synced": "Settings synced to cloud",
-    "syncFailed": "Sync failed",
-    "noLocalSettings": "No local settings to sync",
     "switchedToCloud": "Switched to cloud configuration"
   },
   "nav": {

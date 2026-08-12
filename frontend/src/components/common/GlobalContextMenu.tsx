@@ -14,6 +14,7 @@ import { useToast } from './Toast';
 const MENU_WIDTH = 157.6;
 const MENU_ESTIMATED_HEIGHT = 210;
 const VIEWPORT_PADDING = 12;
+const GLOBAL_CONTEXT_MENU_Z_INDEX = 10050;
 
 const zh = {
   back: '\u540e\u9000',
@@ -247,8 +248,8 @@ export function GlobalContextMenu() {
   return createPortal(
     <div
       ref={menuRef}
-      style={{ left: position.x, top: position.y }}
-      className="global-context-menu fixed z-[9999] w-[157.6px] overflow-hidden rounded-[12px] border border-transparent bg-white/70 px-1.5 py-1 text-[#2f343b] shadow-[0_0_10px_rgba(15,23,42,0.10),0_18px_42px_rgba(15,23,42,0.16)] backdrop-blur-[36px] backdrop-saturate-[1.65] context-menu-enter dark:border-transparent dark:bg-[#18181b]/72 dark:text-white dark:shadow-[0_0_10px_rgba(0,0,0,0.24),0_18px_42px_rgba(0,0,0,0.38)]"
+      style={{ left: position.x, top: position.y, zIndex: GLOBAL_CONTEXT_MENU_Z_INDEX }}
+      className="global-context-menu fixed w-[157.6px] overflow-hidden rounded-[12px] border border-transparent bg-white/70 px-1.5 py-1 text-[#2f343b] shadow-[0_0_10px_rgba(15,23,42,0.10),0_18px_42px_rgba(15,23,42,0.16)] backdrop-blur-[36px] backdrop-saturate-[1.65] context-menu-enter dark:border-transparent dark:bg-[#18181b]/72 dark:text-white dark:shadow-[0_0_10px_rgba(0,0,0,0.24),0_18px_42px_rgba(0,0,0,0.38)]"
       role="menu"
       aria-label="Context menu"
       onContextMenu={(event) => event.preventDefault()}

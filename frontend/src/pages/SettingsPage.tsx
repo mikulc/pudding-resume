@@ -6,8 +6,6 @@ import {
   HardDrive,
   Sparkles,
   SmilePlus,
-  CloudUpload,
-  Loader2,
   Command,
   Info,
 } from 'lucide-react';
@@ -16,9 +14,6 @@ import { NavbarAuth } from '../components/auth/NavbarAuth';
 import LogoIcon from '../components/common/LogoIcon';
 import { TopNavLinks } from '../components/common/TopNavLinks';
 import { SettingsContent } from '../components/settings/SettingsContent';
-import { useToast } from '../components/common/Toast';
-import { api } from '../utils/api';
-import { loadSettings } from '../utils/localSettings';
 import {
   getSettingsSectionFromHash,
   SETTINGS_SECTION_IDS,
@@ -43,8 +38,7 @@ const getStoredActiveSection = () => {
 };
 
 export default function SettingsPage() {
-  const { isLoggedIn, profile, setProfile } = useAuth();
-  const { showToast } = useToast();
+  const { isLoggedIn, profile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation('settings');
@@ -60,7 +54,6 @@ export default function SettingsPage() {
 
   const [activeSection, setActiveSection] = useState<string | null>(() => getStoredActiveSection());
   const [mobileSection, setMobileSection] = useState<string | null>(() => getStoredActiveSection());
-  const [syncing, setSyncing] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const manualScrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -209,52 +202,10 @@ export default function SettingsPage() {
       <main ref={contentRef} className="pb-24 pt-20 sm:pt-24">
         <div className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
           {/* ---- Page header ---- */}
-          <div className="mb-7 flex items-start justify-between gap-4 sm:mb-8">
+          <div className="mb-7 sm:mb-8">
             <div className="min-w-0">
               <h1 className="text-[28px] font-semibold tracking-tight text-[#111827] dark:text-slate-50 sm:text-[32px]">{t('page.title')}</h1>
             </div>
-            {isLoggedIn && (
-              <button
-                onClick={async () => {
-                  setSyncing(true);
-                  try {
-                    const local = loadSettings();
-                    if (!local) {
-                      showToast(t('page.noLocalSettings'), 'info');
-                      setSyncing(false);
-                      return;
-                    }
-                    const cloudPreferences = {
-                      auto_save_interval: local.auto_save_interval,
-                      ai_polish_enabled: local.ai_polish_enabled,
-                      language: local.language,
-                      ai_service_api_url: local.ai_service_api_url,
-                      ai_service_model: local.ai_service_model,
-                      export_json_with_settings: local.export_json_with_settings,
-                    };
-                    await api.put('/api/user/preferences', cloudPreferences);
-                    if (profile && setProfile) {
-                      setProfile({ ...profile, ...cloudPreferences } as typeof profile);
-                    }
-                    showToast(t('page.synced'), 'success');
-                  } catch (err: unknown) {
-                    const message = err instanceof Error ? err.message : t('page.syncFailed');
-                    showToast(message, 'error');
-                  } finally {
-                    setSyncing(false);
-                  }
-                }}
-                disabled={syncing}
-                className="mt-1 inline-flex flex-shrink-0 items-center gap-1.5 text-sm text-[var(--theme-accent)] hover:opacity-80 disabled:text-gray-300 transition-opacity font-medium"
-              >
-                {syncing ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <CloudUpload className="w-4 h-4" />
-                )}
-                {syncing ? t('page.syncing') : t('page.syncToCloud')}
-              </button>
-            )}
           </div>
 
           {/* ================================================================

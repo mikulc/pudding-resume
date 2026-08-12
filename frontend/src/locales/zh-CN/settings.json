@@ -3,11 +3,6 @@
     "title": "设置",
     "subtitle": "管理你的编辑体验、数据存储和个性化设置",
     "back": "返回",
-    "syncing": "同步中...",
-    "syncToCloud": "同步到云端",
-    "synced": "设置已同步到云端",
-    "syncFailed": "同步失败",
-    "noLocalSettings": "没有可同步的本地设置",
     "switchedToCloud": "已切换为云端配置"
   },
   "nav": {

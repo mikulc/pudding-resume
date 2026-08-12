@@ -1,16 +1,3 @@
-function measureNativeScrollbarWidth() {
-  const probe = document.createElement('div');
-  probe.style.position = 'absolute';
-  probe.style.top = '-9999px';
-  probe.style.width = '100px';
-  probe.style.height = '100px';
-  probe.style.overflow = 'scroll';
-  document.body.appendChild(probe);
-  const width = probe.offsetWidth - probe.clientWidth;
-  probe.remove();
-  return width;
-}
-
 export function lockModalScroll() {
   const root = document.documentElement;
   const body = document.body;
@@ -25,15 +12,16 @@ export function lockModalScroll() {
     root.classList.contains('resume-route-fullscreen') ||
     body.classList.contains('admin-route-fullscreen') ||
     body.classList.contains('resume-route-fullscreen');
-  // `clientWidth` may include a stable scrollbar gutter in some browsers.
-  // Measure a native scroll box as a fallback so the layout compensation
-  // remains identical on regular document-scrolling pages. Fullscreen routes
-  // already hide document scrolling, so adding this fallback there would
-  // shrink the page even though no viewport scrollbar was removed.
+  // Modern browsers keep the existing gutter through `scrollbar-gutter: stable`,
+  // so adding body padding would double-compensate it. In particular, an
+  // off-screen scroll box can report a desktop scrollbar on mobile emulation
+  // even though the viewport itself uses overlay scrollbars.
+  const hasStableScrollbarGutter =
+    typeof CSS !== 'undefined' && CSS.supports('scrollbar-gutter: stable');
   const viewportScrollbarWidth = Math.max(0, window.innerWidth - root.clientWidth);
-  const scrollbarWidth = documentScrollAlreadyLocked
+  const scrollbarWidth = documentScrollAlreadyLocked || hasStableScrollbarGutter
     ? 0
-    : Math.max(viewportScrollbarWidth, measureNativeScrollbarWidth());
+    : viewportScrollbarWidth;
 
   root.style.setProperty('--modal-scrollbar-width', `${scrollbarWidth}px`);
   root.classList.add('modal-scroll-lock');
