@@ -4,13 +4,11 @@
 
 /* Footer root — unified background */
 .footer-root {
-  background:
-    linear-gradient(180deg, #f8fafc 0%, #f8fafc 42%, #f1f5f9 100%);
+  background: rgb(247, 249, 254);
 }
 
 .dark .footer-root {
-  background:
-    linear-gradient(180deg, #080d15 0%, #050914 100%);
+  background: rgb(23, 25, 29);
 }
 .footer-link {
   display: inline-flex;
@@ -48,4 +46,3 @@
   color: #17191d;
   box-shadow: 0 6px 14px rgba(251, 191, 36, 0.25);
 }
-

@@ -40,7 +40,7 @@ createPortal(
               <button
                 type="button"
                 onClick={() => onCopy(menuOpenId)}
-                className="group/menu flex h-10 w-full items-center gap-2.5 rounded-[10px] px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-[rgba(34,72,255,0.06)] dark:text-slate-200 dark:hover:bg-[rgba(34,72,255,0.14)]"
+                className="group/menu flex h-10 w-full items-center gap-2.5 rounded-[10px] px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-[rgb(236,238,253)] dark:text-slate-200 dark:hover:bg-[rgba(34,72,255,0.14)]"
               >
                 <Copy className="h-4 w-4 text-slate-400 transition-colors group-hover/menu:text-slate-600 dark:text-slate-500 dark:group-hover/menu:text-slate-300" />
                 {t('list.copyResumeText')}
@@ -48,7 +48,7 @@ createPortal(
               <button
                 type="button"
                 onClick={() => onRename(menuOpenId)}
-                className="group/menu flex h-10 w-full items-center gap-2.5 rounded-[10px] px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-[rgba(34,72,255,0.06)] dark:text-slate-200 dark:hover:bg-[rgba(34,72,255,0.14)]"
+                className="group/menu flex h-10 w-full items-center gap-2.5 rounded-[10px] px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-[rgb(236,238,253)] dark:text-slate-200 dark:hover:bg-[rgba(34,72,255,0.14)]"
               >
                 <Pencil className="h-4 w-4 text-slate-400 transition-colors group-hover/menu:text-slate-600 dark:text-slate-500 dark:group-hover/menu:text-slate-300" />
                 {t('list.renameResumeText')}

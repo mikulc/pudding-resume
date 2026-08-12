@@ -114,7 +114,7 @@ export function ThemeDrawer({ open, onClose, currentLayoutId, content, onApply }
             <h2 className="truncate text-lg font-bold text-gray-900 dark:text-[color:var(--text-primary)]">
               {t('document.resumeTheme.title')}
             </h2>
-            <span className="inline-flex h-6 flex-shrink-0 items-center rounded-full bg-slate-100 px-2.5 text-xs font-semibold text-[#3f5f8a] dark:bg-white/[0.08] dark:text-slate-300">
+            <span className="inline-flex h-6 flex-shrink-0 items-center rounded-full bg-[var(--theme-accent)] px-2.5 text-xs font-semibold text-[var(--theme-accent-foreground)]">
               {t('themePicker.count', { count: entries.length })}
             </span>
           </div>

@@ -86,9 +86,6 @@
     "apiUrl": "接口地址",
     "modelName": "模型名称",
     "fetchModels": "获取模型",
-    "providerTag": {
-      "untested": "未测试"
-    },
     "validation": {
       "baseUrlRequired": "请先配置 API 地址",
       "apiKeyRequired": "请先配置 API Key",

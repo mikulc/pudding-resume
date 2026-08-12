@@ -475,7 +475,7 @@ export function CanvasFloatingToolbar({
     (active = false, withText = false, noActiveBg = false) =>
       [
         'inline-flex shrink-0 items-center justify-center gap-1 rounded-full text-sm font-medium transition-colors',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)]',
         'disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent',
         isVertical
           ? 'h-10 w-10'
@@ -485,9 +485,9 @@ export function CanvasFloatingToolbar({
             ? 'h-9 min-w-9 px-2.5'
             : 'h-9 w-9',
         active && noActiveBg
-          ? 'text-blue-600'
+          ? 'canvas-toolbar-button-active text-[var(--theme-accent)]'
           : active
-            ? 'bg-blue-100/80 text-blue-600 shadow-sm shadow-blue-100/80'
+            ? 'canvas-toolbar-button-active canvas-toolbar-button-active-bg bg-[var(--theme-accent-soft)] text-[var(--theme-accent)] shadow-sm'
             : 'text-gray-600 hover:text-gray-900',
       ].join(' '),
     [isCompactHorizontal, isVertical],
@@ -530,7 +530,7 @@ export function CanvasFloatingToolbar({
             onPointerDown={handleCollapsedPointerDown}
             onClick={handleCollapsedClick}
             className={[
-              'inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-white/45 text-blue-600',
+              'inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/60 bg-white/45 text-[var(--theme-accent)]',
               'shadow-[0_12px_28px_rgba(15,23,42,0.12),inset_0_1px_0_rgba(255,255,255,0.68)] ring-1 ring-slate-900/5 backdrop-blur-2xl',
               'transition-all duration-200 hover:bg-white/55',
               isCollapsedDragging && collapsedDragMovedRef.current

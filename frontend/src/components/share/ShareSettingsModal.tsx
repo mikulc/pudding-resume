@@ -209,7 +209,7 @@ export function ShareSettingsModal({ open, resumeId, shareState, onClose, onSave
       <style>{`
         .share-permission-layer { position: fixed; inset: 0; z-index: 10040; display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
         .share-permission-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,.38); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); animation: share-backdrop-in 200ms ease-out; }
-        .share-permission-dialog { position: relative; display: flex; width: min(520px, calc(100vw - 32px)); max-height: min(760px, calc(100dvh - 48px)); flex-direction: column; overflow: hidden; border: 1px solid rgba(15,23,42,.08); border-radius: 20px; background: #fff; box-shadow: 0 28px 80px rgba(15,23,42,.18), 0 8px 28px rgba(15,23,42,.08); color: #1f2937; animation: share-dialog-in 210ms cubic-bezier(.2,.8,.2,1); }
+        .share-permission-dialog { position: relative; display: flex; width: min(460px, calc(100vw - 32px)); max-height: min(760px, calc(100dvh - 48px)); flex-direction: column; overflow: hidden; border: 1px solid rgba(15,23,42,.08); border-radius: 20px; background: #fff; box-shadow: 0 28px 80px rgba(15,23,42,.18), 0 8px 28px rgba(15,23,42,.08); color: #1f2937; animation: share-dialog-in 210ms cubic-bezier(.2,.8,.2,1); }
         .share-permission-drag-handle { display: none; }
         .share-permission-header { position: relative; flex: none; padding: 20px 22px 16px; border-bottom: 1px solid rgba(31,45,61,.06); }
         .share-permission-header h3 { font-size: 18px; line-height: 26px; font-weight: 600; letter-spacing: -.01em; }
@@ -248,7 +248,7 @@ export function ShareSettingsModal({ open, resumeId, shareState, onClose, onSave
         .share-permission-switch span { position: absolute; top: 4px; left: 4px; width: 16px; height: 16px; border-radius: 50%; background: white; box-shadow: 0 1px 3px rgba(15,23,42,.22); transition: transform 180ms; }
         .share-permission-switch.is-checked { background: var(--theme-accent); }
         .share-permission-switch.is-checked span { transform: translateX(18px); }
-        .share-permission-footer { display: flex; min-height: 68px; flex: none; justify-content: flex-end; gap: 10px; padding: 12px 20px calc(16px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid rgba(15,23,42,.06); background: rgba(255,255,255,.94); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+        .share-permission-footer { display: flex; min-height: 68px; flex: none; justify-content: flex-end; gap: 10px; padding: 12px 20px calc(16px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid rgba(15,23,42,.06); background: transparent; }
         .share-permission-footer button { position: relative; height: 40px; border-radius: 10px; padding: 0 16px; font-size: 14px; font-weight: 500; transition: background-color 170ms, color 170ms, opacity 170ms, transform 120ms; }
         .share-permission-cancel { border: 1px solid #e3e8ef; background: #fff; color: #596579; }
         .share-permission-cancel:hover { background: #eef2f6; color: #344054; }
@@ -280,7 +280,7 @@ export function ShareSettingsModal({ open, resumeId, shareState, onClose, onSave
         .dark .share-permission-check.is-visible { border-color: var(--theme-accent); background: var(--theme-accent); color: var(--theme-accent-foreground); }
         .dark .share-permission-switch { background: rgba(255,255,255,.16); }
         .dark .share-permission-switch.is-checked { background: var(--theme-accent); }
-        .dark .share-permission-footer { background: rgba(20,24,32,.72); }
+        .dark .share-permission-footer { background: transparent; }
         .dark .share-permission-cancel { border-color: rgba(255,255,255,.09); background: rgba(255,255,255,.045); color: rgba(255,255,255,.66); }
         @media (max-width: 639px) {
           .share-permission-layer { align-items: flex-end; padding: 12px 0 0; }

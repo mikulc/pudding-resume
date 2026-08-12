@@ -4,7 +4,6 @@ import {
   ArrowRight,
   Bot,
   Download,
-  FileText,
   LayoutTemplate,
   Palette,
   Shield,
@@ -49,13 +48,8 @@ export default function HomePage() {
       </header>
 
       <section className="hero-shell relative min-h-[calc(100dvh-60px)] [overflow-x:clip] pb-14 pt-20 sm:pt-24 lg:pb-8 lg:pt-[60px]">
-        <div className="mx-auto grid min-h-[calc(100dvh-60px)] w-full max-w-[1360px] items-center gap-12 px-5 sm:px-6 lg:w-[calc(100%-3rem)] lg:grid-cols-[44fr_56fr] lg:gap-10 xl:w-[calc(100%-5rem)] xl:gap-16">
-          <div className="relative z-10 max-w-[560px] text-left">
-            <div className="mb-6 inline-flex h-8 max-w-full animate-fade-in-up items-center gap-2 rounded-full border border-blue-100 bg-white/80 px-3 text-[13px] font-medium text-slate-600 shadow-[0_5px_16px_rgba(15,23,42,0.035)] transition-colors duration-300 dark:border-white/10 dark:bg-white/[0.06] dark:text-slate-300">
-              <FileText className="h-4 w-4 shrink-0 text-gray-500 dark:text-slate-400" />
-              <span className="truncate">{t('hero.badge')}</span>
-            </div>
-
+        <div className="mx-auto grid min-h-[calc(100dvh-60px)] w-full max-w-[1360px] items-center gap-12 px-6 lg:w-[calc(100%-3rem)] lg:grid-cols-[44fr_56fr] lg:gap-10 xl:w-[calc(100%-5rem)] xl:gap-16">
+          <div className="relative z-10 max-w-[560px] text-left lg:-translate-y-4">
             <h1 className="animate-fade-in-up text-balance text-[2.6rem] font-extrabold leading-[1.05] tracking-[-0.035em] text-gray-950 transition-colors duration-300 dark:text-slate-50 sm:text-[clamp(3.25rem,4.5vw,4.25rem)]" style={{ animationDelay: '0.08s' }}>
               <span className="block">{t('hero.heading1')}</span>
               <span className="block font-light text-gray-900 dark:text-slate-200">{t('hero.heading2')}</span>
@@ -69,9 +63,9 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={handleStart}
-                className="group inline-flex h-14 min-w-0 items-center justify-center gap-2.5 rounded-2xl bg-blue-600 px-7 text-[15px] font-bold text-white shadow-[0_10px_24px_rgba(37,99,235,0.18)] transition-[background-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:bg-blue-700 hover:shadow-[0_14px_28px_rgba(37,99,235,0.22)] active:translate-y-0 dark:bg-blue-500 dark:hover:bg-blue-400"
+                className="group inline-flex h-14 min-w-0 items-center justify-center gap-2.5 rounded-2xl bg-[var(--theme-accent)] px-7 text-[15px] font-bold text-[var(--theme-accent-foreground)] shadow-[0_10px_24px_var(--theme-accent-soft)] transition-[box-shadow,filter,transform] duration-200 hover:-translate-y-px hover:brightness-105 hover:shadow-[0_14px_28px_var(--theme-accent-soft)] active:translate-y-0 active:brightness-95"
               >
-                <Sparkles className="h-5 w-5 shrink-0 text-amber-300" />
+                <Sparkles className="h-5 w-5 shrink-0 opacity-75" />
                 <span className="truncate">{t('hero.ctaPrimary')}</span>
                 <ArrowRight className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
               </button>

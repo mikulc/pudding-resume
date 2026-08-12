@@ -6,7 +6,6 @@ import {
   Clipboard,
   Clock,
   KeyRound,
-  LayoutTemplate,
   Lightbulb,
   Loader2,
   RotateCcw,
@@ -19,8 +18,6 @@ import { useAtsContext } from '../../context/AtsContext';
 import { useAppUI } from '../../context/ResumeContext';
 import { Tooltip } from '../common/Tooltip';
 import type { AtsIssue, SectionKey } from '../../types/resume';
-import { deriveCustomColors } from '../../types/resume';
-import { getLayoutDefaultColor, getLayoutName } from '../../registry/layouts';
 import { useToast } from '../common/Toast';
 import { useAiTask } from '../../context/AiTaskContext';
 
@@ -56,9 +53,9 @@ function clampSection(section?: SectionKey): SectionKey | null {
 function SectionHeader({ icon: Icon, title, count }: { icon: React.ComponentType<{ className?: string }>; title: string; count?: number }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="h-4 w-1 rounded-full bg-blue-500" aria-hidden="true" />
+      <span className="h-4 w-1 rounded-full bg-[var(--theme-accent)]" aria-hidden="true" />
       <h3 className="flex items-center gap-1.5 text-sm font-semibold text-gray-800 dark:text-[color:var(--text-primary)]">
-        {Icon && <Icon className="h-3.5 w-3.5 text-blue-500" />}
+        {Icon && <Icon className="h-3.5 w-3.5 text-[var(--theme-accent)]" />}
         {title}
       </h3>
       {count !== undefined && (
@@ -91,7 +88,7 @@ function LightButton({
       className={[
         'inline-flex h-7 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-medium transition-colors',
         blue
-          ? 'border-blue-200 bg-blue-50 text-blue-600 hover:border-blue-300 hover:bg-blue-100 dark:border-blue-400/30 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20'
+          ? 'border-[var(--theme-accent)] bg-[var(--theme-accent-soft)] text-[var(--theme-accent)] hover:brightness-95'
           : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10',
       ].join(' ')}
     >
@@ -151,7 +148,7 @@ function IssueList({
             return (
               <div
                 key={`${item.title}-${index}`}
-                className="w-full rounded-2xl border border-gray-100 bg-white p-3.5 text-left shadow-sm transition-all hover:border-blue-200 hover:shadow-sm dark:border-white/10 dark:hover:border-blue-400/40"
+                className="w-full rounded-2xl border border-gray-100 bg-white p-3.5 text-left shadow-sm transition-all hover:border-[var(--theme-accent)] hover:shadow-sm dark:border-white/10"
               >
                 <div className="mb-2 flex items-center gap-2">
                   <span
@@ -166,7 +163,7 @@ function IssueList({
                 <p className="text-xs leading-5 text-gray-500 dark:text-[color:var(--text-secondary)]">{item.description}</p>
                 {item.rewrite_hint && (
                   <div className="mt-2.5 flex gap-2.5 rounded-xl bg-slate-50 px-3 py-2 dark:bg-white/5">
-                    <span className="mt-0.5 h-auto w-0.5 flex-shrink-0 rounded-full bg-blue-400" aria-hidden="true" />
+                    <span className="mt-0.5 h-auto w-0.5 flex-shrink-0 rounded-full bg-[var(--theme-accent)]" aria-hidden="true" />
                     <p className="text-sm leading-5 text-slate-600 dark:text-[color:var(--text-secondary)]">{item.rewrite_hint}</p>
                   </div>
                 )}
@@ -194,7 +191,7 @@ function IssueList({
 export function AtsPanel() {
   const { t, i18n } = useTranslation('editor');
   const ats = useAtsContext();
-  const { ui, uiDispatch } = useAppUI();
+  const { uiDispatch } = useAppUI();
   const { showToast } = useToast();
   const { activeAiTask, requestAiTask, releaseAiTask } = useAiTask();
   const [historyExpanded, setHistoryExpanded] = useState(false);
@@ -233,19 +230,6 @@ export function AtsPanel() {
     }
   };
 
-  const handleApplyLayout = (layoutId: string) => {
-    const color = getLayoutDefaultColor(layoutId);
-    uiDispatch({
-      type: 'SET_THEME',
-      payload: {
-        layoutId,
-        colorTheme: 'custom',
-        customColors: deriveCustomColors(color),
-      },
-    });
-    showToast(t('atsPanel.layoutApplied'), 'success');
-  };
-
   const handleRunAtsAnalysis = async () => {
     if (ats.loading) return;
     if (activeAiTask && activeAiTask !== 'ats') {
@@ -264,7 +248,6 @@ export function AtsPanel() {
   const iconButtonClass =
     'flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/10 dark:hover:text-gray-200';
 
-  const currentLayoutId = ui.theme.layoutId;
   const visibleHistory = historyExpanded
     ? ats.history
     : ats.history.slice(0, DEFAULT_VISIBLE_HISTORY_COUNT);
@@ -295,13 +278,13 @@ export function AtsPanel() {
           <section className="settings-card rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_1px_3px_rgba(15,23,42,0.04)] dark:border-[color:var(--border-default)] dark:bg-[color:var(--bg-card)]">
             <div className="mb-3 flex items-center justify-between gap-2 px-0.5">
               <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-[color:var(--text-primary)]">
-                <Clock className="h-3.5 w-3.5 text-blue-500" />
+                <Clock className="h-3.5 w-3.5 text-[var(--theme-accent)]" />
                 <span>{t('atsPanel.history')}</span>
               </div>
               <button
                 type="button"
                 onClick={ats.clearHistory}
-                className="rounded-lg px-2 py-1 text-xs font-medium text-slate-400 transition-colors hover:bg-slate-50 hover:text-blue-600 dark:text-[color:var(--text-muted)] dark:hover:bg-white/5 dark:hover:text-blue-300"
+                className="rounded-lg px-2 py-1 text-xs font-medium text-slate-400 transition-colors hover:bg-[var(--theme-accent-soft)] hover:text-[var(--theme-accent)] dark:text-[color:var(--text-muted)]"
                 aria-label={t('atsPanel.clearHistory')}
               >
                 {t('atsPanel.clearHistoryAction')}
@@ -320,8 +303,8 @@ export function AtsPanel() {
                     className={[
                       'group block w-full rounded-xl border px-3.5 py-3 text-left transition-[border-color,background-color,box-shadow]',
                       isActive
-                        ? 'border-blue-300 bg-blue-50/80 shadow-[0_1px_3px_rgba(59,130,246,0.06)] dark:border-blue-400/50 dark:bg-blue-500/10'
-                        : 'border-slate-200 bg-slate-50/70 hover:border-blue-300 hover:bg-white hover:shadow-[0_2px_6px_rgba(15,23,42,0.05)] dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-blue-400/40 dark:hover:bg-white/5',
+                        ? 'border-[var(--theme-accent)] bg-[var(--theme-accent-soft)] shadow-[0_1px_3px_var(--theme-accent-soft)]'
+                        : 'border-slate-200 bg-slate-50/70 hover:border-[var(--theme-accent)] hover:bg-white hover:shadow-[0_2px_6px_rgba(15,23,42,0.05)] dark:border-white/10 dark:bg-white/[0.03] dark:hover:bg-white/5',
                     ].join(' ')}
                   >
                     <span className="flex min-w-0 items-center gap-3">
@@ -331,8 +314,8 @@ export function AtsPanel() {
                       <span className={[
                         'inline-flex min-w-8 flex-shrink-0 items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums transition-colors',
                         isActive
-                          ? 'bg-blue-100 text-blue-600 dark:bg-blue-400/20 dark:text-blue-300'
-                          : 'bg-white text-slate-500 group-hover:bg-blue-50 group-hover:text-blue-600 dark:bg-white/10 dark:text-slate-300 dark:group-hover:bg-blue-500/15 dark:group-hover:text-blue-300',
+                          ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)]'
+                          : 'bg-white text-slate-500 group-hover:bg-[var(--theme-accent-soft)] group-hover:text-[var(--theme-accent)] dark:bg-white/10 dark:text-slate-300',
                       ].join(' ')}>
                         {item.result.score}
                       </span>
@@ -341,7 +324,7 @@ export function AtsPanel() {
                       <span className="truncate">
                         {t('atsPanel.recentlyAnalyzed')} · {formatRelativeTime(item.analyzedAt, i18n.language)}
                       </span>
-                      <span className="flex-shrink-0 text-blue-500 opacity-0 transition-opacity group-hover:opacity-100 dark:text-blue-300">
+                      <span className="flex-shrink-0 text-[var(--theme-accent)] opacity-0 transition-opacity group-hover:opacity-100">
                         {t('atsPanel.reuseHistory')}
                       </span>
                     </span>
@@ -353,7 +336,7 @@ export function AtsPanel() {
               <button
                 type="button"
                 onClick={() => setHistoryExpanded((expanded) => !expanded)}
-                className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-blue-600 dark:text-[color:var(--text-secondary)] dark:hover:bg-white/5 dark:hover:text-blue-300"
+                className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-[var(--theme-accent-soft)] hover:text-[var(--theme-accent)] dark:text-[color:var(--text-secondary)]"
                 aria-expanded={historyExpanded}
               >
                 {historyExpanded
@@ -395,7 +378,7 @@ export function AtsPanel() {
           type="button"
           onClick={() => { void handleRunAtsAnalysis(); }}
           disabled={ats.loading || (activeAiTask !== null && activeAiTask !== 'ats')}
-          className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 px-3 text-sm font-medium text-white shadow-sm transition-all hover:from-blue-700 hover:to-blue-600 hover:shadow focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:cursor-progress disabled:opacity-80"
+          className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-[var(--theme-accent)] px-3 text-sm font-medium text-[var(--theme-accent-foreground)] shadow-sm transition-[filter,box-shadow] hover:brightness-105 hover:shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] disabled:cursor-progress disabled:opacity-80"
         >
           {ats.loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <SearchCheck className="h-4 w-4" />}
           <span>{ats.loading ? t('atsPanel.analyzing') : t('atsPanel.analyze')}</span>
@@ -458,45 +441,13 @@ export function AtsPanel() {
             onCopyHint={handleCopyHint}
           />
 
-          {/* ATS 友好模板 */}
-          {(result.recommended_layouts?.length ?? 0) > 0 && (
-            <section className="space-y-2.5">
-              <SectionHeader icon={LayoutTemplate} title={t('atsPanel.recommendedLayouts')} count={result.recommended_layouts?.length} />
-              <div className="space-y-2">
-                {result.recommended_layouts?.map((layoutId) => {
-                  const isCurrent = layoutId === currentLayoutId;
-                  return (
-                    <div
-                      key={layoutId}
-                      className={[
-                        'flex items-center justify-between gap-2 rounded-xl border bg-white px-3 py-2.5 shadow-sm transition-colors',
-                        isCurrent
-                          ? 'border-blue-300 bg-blue-50 dark:border-blue-400/40 dark:bg-blue-500/10'
-                          : 'border-gray-100 hover:bg-slate-50 dark:border-white/10 dark:bg-[color:var(--bg-card)] dark:hover:bg-white/5',
-                      ].join(' ')}
-                    >
-                      <div className="flex min-w-0 items-center gap-2.5">
-                        <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-500 dark:bg-blue-500/15 dark:text-blue-400">
-                          <LayoutTemplate className="h-4 w-4" />
-                        </span>
-                        <span className="truncate text-sm font-medium text-gray-800 dark:text-[color:var(--text-primary)]">{getLayoutName(layoutId)}</span>
-                      </div>
-                      <LightButton blue onClick={() => handleApplyLayout(layoutId)}>
-                        {t('atsPanel.applyLayout')}
-                      </LightButton>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-          )}
         </div>
       )}
 
       {/* 空状态 */}
       {!result && (
         <div className="mt-4 flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-slate-50 px-4 py-10 text-center dark:border-white/10 dark:bg-white/5">
-          <span className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-blue-50 text-blue-500 dark:bg-blue-500/15 dark:text-blue-400">
+          <span className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]">
             <SearchCheck className="h-5 w-5" />
           </span>
           <p className="text-sm font-semibold text-gray-700 dark:text-[color:var(--text-primary)]">{t('atsPanel.emptyTitle')}</p>

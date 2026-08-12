@@ -86,9 +86,6 @@
     "apiUrl": "API URL",
     "modelName": "Model name",
     "fetchModels": "Fetch models",
-    "providerTag": {
-      "untested": "Untested"
-    },
     "validation": {
       "baseUrlRequired": "Configure the API URL first.",
       "apiKeyRequired": "Configure the API key first.",

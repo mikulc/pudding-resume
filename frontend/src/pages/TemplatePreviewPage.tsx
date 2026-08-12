@@ -76,7 +76,7 @@ function TemplatePreviewCanvas({ entry, onBack, onUse }: TemplatePreviewCanvasPr
     <ResumeCardPreviewProvider content={entry.content} theme={theme} suppressWatermark>
       <FontPreloader fontFamilyId={theme.fontFamily ?? 'system'} />
       <div className="flex h-screen min-h-0 flex-col bg-slate-50 dark:bg-gray-900">
-        <header className="relative z-10 h-14 flex-shrink-0 bg-white after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-gray-200 after:content-[''] dark:bg-gray-800 dark:after:bg-transparent sm:h-[60px]">
+        <header className="relative z-10 h-[60px] flex-shrink-0 bg-white after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-gray-200 after:content-[''] dark:bg-gray-800 dark:after:bg-transparent">
           <div className="mx-auto flex h-full w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:px-6">
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button
@@ -97,7 +97,7 @@ function TemplatePreviewCanvas({ entry, onBack, onUse }: TemplatePreviewCanvasPr
             <button
               type="button"
               onClick={onUse}
-              className="inline-flex h-9 flex-shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-gray-900 px-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 dark:!bg-[#fbbf24] dark:!text-[#17191d] dark:hover:!bg-[#f6b914] dark:focus-visible:ring-[#fbbf24]/50 dark:focus-visible:ring-offset-gray-800 sm:px-4"
+              className="inline-flex h-9 flex-shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-[var(--theme-accent)] px-3.5 text-sm font-semibold text-[var(--theme-accent-foreground)] shadow-sm transition-[filter] hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] focus-visible:ring-offset-2 active:brightness-95 dark:focus-visible:ring-offset-gray-800 sm:px-4"
             >
               {t('resume:templatesPage.useThis')}
               <ArrowRight className="h-4 w-4" />

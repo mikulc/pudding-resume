@@ -55,7 +55,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-[var(--bg-page)] text-[#111827] transition-colors duration-200 dark:text-slate-50">
       {/* ========== Header ========== */}
       <header className="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-[var(--bg-header)] backdrop-blur-xl dark:border-white/5">
-        <div className="relative mx-auto flex h-14 w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:h-[60px] sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
+        <div className="relative mx-auto flex h-[60px] w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
           <LogoIcon asBrand onClick={() => navigate('/')} />
           <div className="flex items-center gap-2">
             <NavbarAuth />
@@ -71,11 +71,6 @@ export default function ProfilePage() {
             <h1 className="text-[28px] font-semibold tracking-tight text-[#111827] dark:text-slate-50 sm:text-[32px]">
               {i18n.language?.startsWith('en') ? 'Profile' : '个人中心'}
             </h1>
-            <p className="mt-2 text-sm text-[#64748B] dark:text-slate-400 sm:text-[15px]">
-              {i18n.language?.startsWith('en')
-                ? 'Manage your personal information, account security and usage quota'
-                : '管理个人信息、账号安全与使用额度'}
-            </p>
           </div>
 
           {/* Loading state */}

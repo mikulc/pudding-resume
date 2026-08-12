@@ -44,7 +44,7 @@ export function StorageSection({ settings }: StorageSectionProps) {
                 type="button"
                 onClick={handleSelectDirectory}
                 disabled={selectingDir || !fsApiAvailable}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 bg-white hover:!border-[var(--theme-accent)] hover:!bg-[var(--theme-accent-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--theme-accent)] focus:border-[var(--theme-accent)] transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 bg-white hover:!border-[var(--theme-accent)] hover:!bg-[var(--theme-accent-soft)] focus:outline-none focus-visible:border-[var(--theme-accent)] focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] transition-colors disabled:opacity-50"
               >
                 {selectingDir ? (
                   <>

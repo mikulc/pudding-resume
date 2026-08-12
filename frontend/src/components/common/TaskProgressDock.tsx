@@ -117,7 +117,7 @@ export function TaskProgressDock({
                 ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/12 dark:text-emerald-300'
                 : tone === 'rose'
                   ? 'bg-rose-50 text-rose-600 dark:bg-rose-500/12 dark:text-rose-300'
-                  : 'bg-blue-50 text-blue-600 dark:bg-blue-500/12 dark:text-blue-300',
+                  : 'bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]',
             ].join(' ')}
           >
             {status === 'success' ? (
@@ -161,7 +161,7 @@ export function TaskProgressDock({
             <div
               className={[
                 'h-full rounded-full transition-all duration-500',
-                tone === 'emerald' ? 'bg-emerald-500' : tone === 'rose' ? 'bg-rose-500' : 'bg-blue-500',
+                tone === 'emerald' ? 'bg-emerald-500' : tone === 'rose' ? 'bg-rose-500' : 'bg-[var(--theme-accent)]',
               ].join(' ')}
               style={{ width: `${normalizedProgress}%` }}
             />
@@ -178,7 +178,7 @@ export function TaskProgressDock({
                     action.variant === 'danger'
                       ? 'bg-rose-50 text-rose-600 hover:bg-rose-100 dark:bg-rose-500/12 dark:text-rose-200 dark:hover:bg-rose-500/18'
                       : action.variant === 'primary'
-                        ? 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-white'
+                        ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)] hover:brightness-105 active:brightness-95'
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-white/8 dark:text-[color:var(--text-secondary)] dark:hover:bg-white/12',
                   ].join(' ')}
                 >

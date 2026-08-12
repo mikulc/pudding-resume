@@ -27,14 +27,13 @@ export interface ProviderOption {
   name: string;
   url: string;
   icon: string;
-  tagKey?: string;
 }
 
 export const AI_PROVIDER_OPTIONS: ProviderOption[] = [
   { name: 'DeepSeek', url: 'https://api.deepseek.com/v1', icon: '/icons/deepseek.svg' },
-  { name: 'OpenAI', url: 'https://api.openai.com/v1', icon: '/icons/openai.svg', tagKey: 'aiService.providerTag.untested' },
+  { name: 'OpenAI', url: 'https://api.openai.com/v1', icon: '/icons/openai.svg' },
   { name: 'Xiaomi MiMo', url: 'https://api.xiaomimimo.com/v1', icon: '/icons/xiaomimimo.svg' },
-  { name: 'Gemini', url: 'https://generativelanguage.googleapis.com/v1beta/openai/', icon: '/icons/gemini-color.svg', tagKey: 'aiService.providerTag.untested' },
+  { name: 'Gemini', url: 'https://generativelanguage.googleapis.com/v1beta/openai/', icon: '/icons/gemini-color.svg' },
 ];
 
 export function getInitialSettings(profile: UserProfile | null, isLoggedIn: boolean): LocalSettingsPayload {

@@ -102,13 +102,13 @@
   color: rgba(255, 255, 255, 0.90) !important;
 }
 
-.dark .canvas-floating-toolbar button.bg-blue-100\/80 {
-  background-color: rgba(59, 130, 246, 0.16) !important;
-  color: #60a5fa !important;
+.dark .canvas-floating-toolbar button.canvas-toolbar-button-active-bg {
+  background-color: var(--theme-accent-soft) !important;
+  color: var(--theme-accent) !important;
 }
 
-.dark .canvas-floating-toolbar button.text-blue-600 {
-  color: #60a5fa !important;
+.dark .canvas-floating-toolbar button.canvas-toolbar-button-active {
+  color: var(--theme-accent) !important;
 }
 
 .dark .canvas-floating-toolbar button:disabled {

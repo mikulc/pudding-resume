@@ -55,10 +55,10 @@ html:not(.dark) .editor-section-card-active input.border:not([type='file']):focu
 }
 
 .dark .editor-section-accent-bar-active {
-  background: linear-gradient(180deg, #58a6ff 0%, #4493f8 100%) !important;
+  background: var(--theme-accent) !important;
   box-shadow:
-    0 0 0 1px rgba(68, 147, 248, 0.12),
-    0 0 8px rgba(68, 147, 248, 0.16) !important;
+    0 0 0 1px color-mix(in srgb, var(--theme-accent) 12%, transparent),
+    0 0 8px color-mix(in srgb, var(--theme-accent) 16%, transparent) !important;
 }
 
 .dark .editor-section-header-active {

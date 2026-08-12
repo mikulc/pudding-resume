@@ -83,11 +83,6 @@ export function AIServiceSection({ settings }: AIServiceSectionProps) {
                           <div className="flex-1 min-w-0 text-left">
                             <p className={`font-medium ${isSelected ? 'text-[var(--theme-accent)]' : 'text-gray-700'}`}>
                               {provider.name}
-                              {provider.tagKey && (
-                                <span className="ml-1.5 inline-flex items-center px-1.5 py-px rounded-full text-[10px] font-normal bg-orange-100 text-orange-500 leading-none">
-                                  {t(provider.tagKey)}
-                                </span>
-                              )}
                             </p>
                             <p className="text-[11px] text-gray-400 truncate">{provider.url}</p>
                           </div>

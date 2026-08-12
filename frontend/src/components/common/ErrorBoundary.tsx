@@ -54,7 +54,7 @@ function ErrorFallback({ onReload, onHome }: { onReload: () => void; onHome: () 
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-gray-950 flex items-center justify-center px-4">
-      <div className="bg-white dark:bg-gray-900 rounded-[20px] p-8 w-[420px] max-w-[calc(100vw-32px)] text-center shadow-[0_20px_60px_rgba(15,23,42,0.08),0_0_0_1px_rgba(226,232,240,0.6)]">
+      <div className="w-[420px] max-w-[calc(100vw-32px)] rounded-[20px] border border-slate-200/60 bg-white p-8 text-center shadow-[0_20px_60px_rgba(15,23,42,0.08)] dark:border-[color:var(--border-soft)] dark:bg-gray-900 dark:shadow-[0_20px_60px_rgba(0,0,0,0.24)]">
         <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-900/20">
           <AlertTriangle className="h-8 w-8 text-amber-500 dark:text-amber-400" />
         </div>
