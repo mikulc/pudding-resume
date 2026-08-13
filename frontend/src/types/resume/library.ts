@@ -6,15 +6,8 @@ export type LayoutId = string;
 export interface ThemeLibraryEntry {
   id: string;
   name: string;
-  highlights: string[];
   layoutId: string;
   categories: string[];
-  previewColors: {
-    headerBg: string;
-    accentBar: string;
-    bodyBg: string;
-    sectionBg?: string;
-  };
   previewImage?: string;
   previewVersion?: string;
 }
@@ -22,9 +15,7 @@ export interface ThemeLibraryEntry {
 export interface TemplateLibraryEntry {
   id: string;
   name: string;
-  industry: string;
   categories: string[];
-  highlights: string[];
   content: ResumeData;
   defaultThemeId: string;
   defaultTheme: ThemeLibraryEntry;
@@ -33,7 +24,6 @@ export interface TemplateLibraryEntry {
 export interface TemplateCategoryEntry {
   id: string;
   name: string;
-  code: string;
   sortOrder: number;
 }
 

@@ -76,8 +76,13 @@ func Init(cfg *config.Config) {
 	migrateAIServiceConfigIntoUserPreference(DB)
 	dropUnusedLive2DPreferenceColumns(DB)
 	dropThemeLibraryDescriptionColumn(DB)
+	dropThemeLibraryHighlightsColumn(DB)
+	dropThemeLibraryPreviewColorsColumn(DB)
 	dropThemeLibraryLegacyCategoryColumn(DB)
 	dropTemplateLibraryVersionColumn(DB)
+	dropTemplateLibraryClassificationColumns(DB)
+	dropTemplateCategoryMetadataColumns(DB)
+	dropThemeCategoryMetadataColumns(DB)
 	dropRetiredAdminAuditLogsTable(DB)
 	dropRetiredAIModelPoolSchema(DB)
 	dropRetiredChangelogTable(DB)
@@ -228,6 +233,28 @@ func dropThemeLibraryDescriptionColumn(db *gorm.DB) {
 	}
 	if err := db.Migrator().DropColumn(&models.ThemeLibrary{}, "description"); err != nil {
 		log.Fatalf("Failed to drop theme_library.description: %v", err)
+	}
+}
+
+// dropThemeLibraryHighlightsColumn removes promotional labels that are no
+// longer displayed by the theme picker.
+func dropThemeLibraryHighlightsColumn(db *gorm.DB) {
+	if !db.Migrator().HasColumn(&models.ThemeLibrary{}, "highlights") {
+		return
+	}
+	if err := db.Migrator().DropColumn(&models.ThemeLibrary{}, "highlights"); err != nil {
+		log.Fatalf("Failed to drop theme_library.highlights: %v", err)
+	}
+}
+
+// dropThemeLibraryPreviewColorsColumn removes duplicated colors. Theme previews
+// now use the default color registered for their layout ID.
+func dropThemeLibraryPreviewColorsColumn(db *gorm.DB) {
+	if !db.Migrator().HasColumn(&models.ThemeLibrary{}, "preview_colors") {
+		return
+	}
+	if err := db.Migrator().DropColumn(&models.ThemeLibrary{}, "preview_colors"); err != nil {
+		log.Fatalf("Failed to drop theme_library.preview_colors: %v", err)
 	}
 }
 
@@ -383,15 +410,33 @@ func migrateLibraryCategoryJSON(db *gorm.DB) {
 			category := models.ThemeCategory{Name: name}
 			err := tx.Where("name = ?", name).First(&category).Error
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				categoryType := "style"
-				if name == "图标" {
-					categoryType = "feature"
+				hasCode := tx.Migrator().HasColumn("theme_category", "code")
+				hasType := tx.Migrator().HasColumn("theme_category", "type")
+				if hasCode || hasType {
+					now := time.Now()
+					values := map[string]any{
+						"id": models.NewUUID(), "name": name,
+						"status": "enabled", "sort_order": order,
+						"created_at": now, "updated_at": now,
+					}
+					if hasCode {
+						values["code"] = normalizedCategoryCode("theme", name)
+					}
+					if hasType {
+						categoryType := "style"
+						if name == "图标" {
+							categoryType = "feature"
+						}
+						values["type"] = categoryType
+					}
+					err = tx.Table("theme_category").Create(values).Error
+					if err == nil {
+						err = tx.Where("name = ?", name).First(&category).Error
+					}
+				} else {
+					category = models.ThemeCategory{Name: name, Status: "enabled", SortOrder: order}
+					err = tx.Create(&category).Error
 				}
-				category = models.ThemeCategory{
-					Name: name, Code: normalizedCategoryCode("theme", name),
-					Type: categoryType, Status: "enabled", SortOrder: order,
-				}
-				err = tx.Create(&category).Error
 			}
 			return category.ID, err
 		},
@@ -413,11 +458,31 @@ func migrateLibraryCategoryJSON(db *gorm.DB) {
 			category := models.TemplateCategory{Name: name}
 			err := tx.Where("name = ?", name).First(&category).Error
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				category = models.TemplateCategory{
-					Name: name, Code: normalizedCategoryCode("template", name),
-					Status: "enabled", SortOrder: order,
+				hasCode := tx.Migrator().HasColumn("template_category", "code")
+				hasType := tx.Migrator().HasColumn("template_category", "type")
+				if hasCode || hasType {
+					// Older schemas still enforce the retired columns until the
+					// legacy JSON categories have been migrated into relations.
+					now := time.Now()
+					values := map[string]any{
+						"id": models.NewUUID(), "name": name,
+						"status": "enabled", "sort_order": order,
+						"created_at": now, "updated_at": now,
+					}
+					if hasCode {
+						values["code"] = normalizedCategoryCode("template", name)
+					}
+					if hasType {
+						values["type"] = "position"
+					}
+					err = tx.Table("template_category").Create(values).Error
+					if err == nil {
+						err = tx.Where("name = ?", name).First(&category).Error
+					}
+				} else {
+					category = models.TemplateCategory{Name: name, Status: "enabled", SortOrder: order}
+					err = tx.Create(&category).Error
 				}
-				err = tx.Create(&category).Error
 			}
 			return category.ID, err
 		},
@@ -442,6 +507,45 @@ func dropTemplateLibraryVersionColumn(db *gorm.DB) {
 	}
 	if err := db.Migrator().DropColumn(&models.TemplateLibrary{}, "version"); err != nil {
 		log.Fatalf("Failed to drop template_library.version: %v", err)
+	}
+}
+
+// dropTemplateLibraryClassificationColumns removes metadata now represented by
+// managed template categories. Highlights were never rendered by the client.
+func dropTemplateLibraryClassificationColumns(db *gorm.DB) {
+	for _, column := range []string{"industry", "highlights"} {
+		if !db.Migrator().HasColumn(&models.TemplateLibrary{}, column) {
+			continue
+		}
+		if err := db.Migrator().DropColumn(&models.TemplateLibrary{}, column); err != nil {
+			log.Fatalf("Failed to drop template_library.%s: %v", column, err)
+		}
+	}
+}
+
+// dropTemplateCategoryMetadataColumns removes unused machine-code and type
+// metadata. Template relations use category UUIDs and the UI uses category names.
+func dropTemplateCategoryMetadataColumns(db *gorm.DB) {
+	for _, column := range []string{"code", "type"} {
+		if !db.Migrator().HasColumn(&models.TemplateCategory{}, column) {
+			continue
+		}
+		if err := db.Migrator().DropColumn(&models.TemplateCategory{}, column); err != nil {
+			log.Fatalf("Failed to drop template_category.%s: %v", column, err)
+		}
+	}
+}
+
+// dropThemeCategoryMetadataColumns removes unused code and type metadata.
+// Theme relations use category UUIDs and the client consumes category names.
+func dropThemeCategoryMetadataColumns(db *gorm.DB) {
+	for _, column := range []string{"code", "type"} {
+		if !db.Migrator().HasColumn(&models.ThemeCategory{}, column) {
+			continue
+		}
+		if err := db.Migrator().DropColumn(&models.ThemeCategory{}, column); err != nil {
+			log.Fatalf("Failed to drop theme_category.%s: %v", column, err)
+		}
 	}
 }
 
@@ -531,7 +635,7 @@ func migrateTableComments(db *gorm.DB) {
 		"ai_usage_logs":     "AI 用量调用日志表",
 		"user_resumes":      "用户简历表",
 		"theme_library":     "简历主题库表",
-		"template_library":  "行业简历模板库表",
+		"template_library":  "简历内容模板库表",
 		"theme_category":    "简历主题分类表",
 		"template_category": "简历模板分类表",
 		"user_quota":        "用户配额表",

@@ -9,15 +9,14 @@ import {
 const entry = {
   id: 'frontend',
   name: '前端开发工程师简历',
-  industry: '互联网',
   categories: ['前端开发', '校招'],
 } as TemplateLibraryEntry;
 
 describe('ResumeTemplateLibrary', () => {
   it('returns database categories in their configured order', () => {
     expect(deriveTemplateCategories([
-      { id: 'frontend', name: '前端开发', code: 'frontend', sortOrder: 1 },
-      { id: 'campus', name: '校招', code: 'campus', sortOrder: 2 },
+      { id: 'frontend', name: '前端开发', sortOrder: 1 },
+      { id: 'campus', name: '校招', sortOrder: 2 },
     ])).toEqual([
       ALL_TEMPLATE_CATEGORY,
       '前端开发',
@@ -25,7 +24,7 @@ describe('ResumeTemplateLibrary', () => {
     ]);
   });
 
-  it('filters templates by their industry/position categories', () => {
+  it('filters templates by their managed categories', () => {
     expect(filterResumeTemplates([entry], ALL_TEMPLATE_CATEGORY)).toEqual([entry]);
     expect(filterResumeTemplates([entry], '前端开发')).toEqual([entry]);
     expect(filterResumeTemplates([entry], '后端开发')).toEqual([]);

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"crypto/sha256"
 	"errors"
 	"fmt"
 	"net/http"
@@ -16,8 +15,6 @@ import (
 
 type adminCategoryInput struct {
 	Name      string `json:"name"`
-	Code      string `json:"code"`
-	Type      string `json:"type"`
 	Status    string `json:"status"`
 	SortOrder int    `json:"sort_order"`
 }
@@ -26,20 +23,11 @@ type adminCategorySelection struct {
 	CategoryIDs []string `json:"category_ids"`
 }
 
-func normalizeCategoryInput(input adminCategoryInput, prefix string, withType bool) (adminCategoryInput, error) {
+func normalizeCategoryInput(input adminCategoryInput) (adminCategoryInput, error) {
 	input.Name = strings.TrimSpace(input.Name)
-	input.Code = strings.ToLower(strings.TrimSpace(input.Code))
-	input.Type = strings.TrimSpace(input.Type)
 	input.Status = strings.TrimSpace(input.Status)
 	if input.Name == "" || len([]rune(input.Name)) > 64 {
 		return input, errors.New("分类名称必填且不能超过 64 个字符")
-	}
-	if input.Code == "" {
-		sum := sha256.Sum256([]byte(strings.ToLower(input.Name)))
-		input.Code = fmt.Sprintf("%s-%x", prefix, sum[:8])
-	}
-	if len(input.Code) > 64 {
-		return input, errors.New("分类编码不能超过 64 个字符")
 	}
 	if input.Status == "" {
 		input.Status = "enabled"
@@ -47,15 +35,11 @@ func normalizeCategoryInput(input adminCategoryInput, prefix string, withType bo
 	if input.Status != "enabled" && input.Status != "disabled" {
 		return input, errors.New("分类状态仅支持 enabled 或 disabled")
 	}
-	if withType {
-		if input.Type == "" {
-			input.Type = "style"
-		}
-		if input.Type != "style" && input.Type != "feature" {
-			return input, errors.New("主题分类类型仅支持 style 或 feature")
-		}
-	}
 	return input, nil
+}
+
+func normalizeTemplateCategoryInput(input adminCategoryInput) (adminCategoryInput, error) {
+	return normalizeCategoryInput(input)
 }
 
 func ListAdminTemplateCategories(c *gin.Context) {
@@ -73,14 +57,14 @@ func CreateAdminTemplateCategory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "分类数据格式错误"})
 		return
 	}
-	input, err := normalizeCategoryInput(input, "template", false)
+	input, err := normalizeTemplateCategoryInput(input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	entry := models.TemplateCategory{Name: input.Name, Code: input.Code, Status: input.Status, SortOrder: input.SortOrder}
+	entry := models.TemplateCategory{Name: input.Name, Status: input.Status, SortOrder: input.SortOrder}
 	if err := database.DB.Create(&entry).Error; err != nil {
-		c.JSON(http.StatusConflict, gin.H{"message": "分类名称或编码已存在"})
+		c.JSON(http.StatusConflict, gin.H{"message": "分类名称已存在"})
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{"category": entry})
@@ -97,15 +81,15 @@ func UpdateAdminTemplateCategory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "分类数据格式错误"})
 		return
 	}
-	input, err := normalizeCategoryInput(input, "template", false)
+	input, err := normalizeTemplateCategoryInput(input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	if err := database.DB.Model(&entry).Updates(map[string]any{
-		"name": input.Name, "code": input.Code, "status": input.Status, "sort_order": input.SortOrder,
+		"name": input.Name, "status": input.Status, "sort_order": input.SortOrder,
 	}).Error; err != nil {
-		c.JSON(http.StatusConflict, gin.H{"message": "分类名称或编码已存在"})
+		c.JSON(http.StatusConflict, gin.H{"message": "分类名称已存在"})
 		return
 	}
 	database.DB.First(&entry, "id = ?", entry.ID)
@@ -131,14 +115,14 @@ func CreateAdminThemeCategory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "分类数据格式错误"})
 		return
 	}
-	input, err := normalizeCategoryInput(input, "theme", true)
+	input, err := normalizeCategoryInput(input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	entry := models.ThemeCategory{Name: input.Name, Code: input.Code, Type: input.Type, Status: input.Status, SortOrder: input.SortOrder}
+	entry := models.ThemeCategory{Name: input.Name, Status: input.Status, SortOrder: input.SortOrder}
 	if err := database.DB.Create(&entry).Error; err != nil {
-		c.JSON(http.StatusConflict, gin.H{"message": "分类名称或编码已存在"})
+		c.JSON(http.StatusConflict, gin.H{"message": "分类名称已存在"})
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{"category": entry})
@@ -155,16 +139,15 @@ func UpdateAdminThemeCategory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "分类数据格式错误"})
 		return
 	}
-	input, err := normalizeCategoryInput(input, "theme", true)
+	input, err := normalizeCategoryInput(input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	if err := database.DB.Model(&entry).Updates(map[string]any{
-		"name": input.Name, "code": input.Code, "type": input.Type,
-		"status": input.Status, "sort_order": input.SortOrder,
+		"name": input.Name, "status": input.Status, "sort_order": input.SortOrder,
 	}).Error; err != nil {
-		c.JSON(http.StatusConflict, gin.H{"message": "分类名称或编码已存在"})
+		c.JSON(http.StatusConflict, gin.H{"message": "分类名称已存在"})
 		return
 	}
 	database.DB.First(&entry, "id = ?", entry.ID)

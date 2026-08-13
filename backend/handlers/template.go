@@ -26,7 +26,7 @@ func GetThemeLibraries(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"themes": entries})
 }
 
-// GetTemplateLibraries returns all published industry/position templates.
+// GetTemplateLibraries returns all published categorized resume templates.
 // GET /api/templates
 func GetTemplateLibraries(c *gin.Context) {
 	var entries []models.TemplateLibrary

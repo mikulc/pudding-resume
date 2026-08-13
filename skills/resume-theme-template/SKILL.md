@@ -78,7 +78,7 @@ previewVersion: '1',
 
 ## Backend Seed
 
-In `seedThemeLibraries()`, add one `models.ThemeLibrary` row with `Name`, visual `Categories`, `LayoutID`, `Highlights`, `PreviewColors`, and `SortOrder`. Theme categories describe appearance (for example 简约、商务、双栏); industry and position metadata belongs in `template_library`.
+In `seedThemeLibraries()`, add one `models.ThemeLibrary` row with `Name`, visual `Categories`, `LayoutID`, and `SortOrder`. Theme categories describe appearance (for example 简约、商务、双栏); resume-content classification belongs in the managed template category tables. Preview colors come from the layout registry.
 
 Keep the layout's default color in its frontend `LayoutDefinition.defaultColor`.
 

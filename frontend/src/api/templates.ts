@@ -11,13 +11,6 @@ interface ApiThemeLibrary {
   name: string;
   layout_id: string;
   categories: string[];
-  highlights: string[];
-  preview_colors: {
-    headerBg: string;
-    accentBar: string;
-    bodyBg: string;
-    sectionBg: string;
-  };
   preview_image?: string;
   preview_version?: string;
   sort_order: number;
@@ -26,9 +19,7 @@ interface ApiThemeLibrary {
 interface ApiTemplateLibrary {
   id: string;
   name: string;
-  industry: string;
   categories: string[];
-  highlights: string[];
   content: ResumeData;
   default_theme_id: string;
   default_theme: ApiThemeLibrary;
@@ -37,7 +28,6 @@ interface ApiTemplateLibrary {
 interface ApiTemplateCategory {
   id: string;
   name: string;
-  code: string;
   sort_order: number;
 }
 
@@ -45,10 +35,8 @@ function mapTheme(t: ApiThemeLibrary): ThemeLibraryEntry {
   return {
     id: t.id,
     name: t.name,
-    highlights: t.highlights || [],
     layoutId: t.layout_id,
     categories: t.categories || [],
-    previewColors: t.preview_colors || { headerBg: '#DBEAFE', accentBar: '#3B82F6', bodyBg: '#FFFFFF' },
     previewImage: t.preview_image,
     previewVersion: t.preview_version,
   };
@@ -60,15 +48,13 @@ export async function getThemeLibraries(): Promise<ThemeLibraryEntry[]> {
   return (res.themes || []).map(mapTheme);
 }
 
-/** Get all industry/position resume templates. */
+/** Get all categorized resume content templates. */
 export async function getTemplateLibraries(): Promise<TemplateLibraryEntry[]> {
   const res = await api.get<{ templates: ApiTemplateLibrary[] }>('/api/templates');
   return (res.templates || []).map((template) => ({
     id: template.id,
     name: template.name,
-    industry: template.industry,
     categories: template.categories || [],
-    highlights: template.highlights || [],
     content: template.content,
     defaultThemeId: template.default_theme_id,
     defaultTheme: mapTheme(template.default_theme),
@@ -81,7 +67,6 @@ export async function getTemplateCategories(): Promise<TemplateCategoryEntry[]> 
   return (res.categories || []).map((category) => ({
     id: category.id,
     name: category.name,
-    code: category.code,
     sortOrder: category.sort_order,
   }));
 }

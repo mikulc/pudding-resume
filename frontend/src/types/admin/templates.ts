@@ -3,10 +3,8 @@ import type { ResumeData } from '../resume';
 export interface AdminTemplateItem {
   id: string;
   name: string;
-  industry: string;
   categories: string[];
   category_ids: string[];
-  highlights: string[];
   content: ResumeData;
   default_theme_id: string;
   default_theme?: {
@@ -22,9 +20,7 @@ export interface AdminTemplateItem {
 
 export interface AdminTemplateInput {
   name: string;
-  industry: string;
   category_ids: string[];
-  highlights: string[];
   content: ResumeData;
   default_theme_id: string;
   status: 'published' | 'draft';
@@ -34,20 +30,16 @@ export interface AdminTemplateInput {
 export interface AdminCategory {
   id: string;
   name: string;
-  code: string;
   status: 'enabled' | 'disabled';
   sort_order: number;
-  type?: 'style' | 'feature';
   created_at: string;
   updated_at: string;
 }
 
 export interface AdminCategoryInput {
   name: string;
-  code?: string;
   status?: 'enabled' | 'disabled';
   sort_order?: number;
-  type?: 'style' | 'feature';
 }
 
 export interface AdminTemplateListResponse {

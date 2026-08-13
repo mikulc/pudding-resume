@@ -20,10 +20,8 @@ const maxTemplateImportCount = 100
 
 type adminTemplateInput struct {
 	Name           string          `json:"name"`
-	Industry       string          `json:"industry"`
 	CategoryIDs    []string        `json:"category_ids"`
 	Categories     []string        `json:"categories"` // legacy JSON-import compatibility
-	Highlights     []string        `json:"highlights"`
 	Content        json.RawMessage `json:"content"`
 	DefaultThemeID string          `json:"default_theme_id"`
 	Status         string          `json:"status"`
@@ -62,7 +60,11 @@ func ListAdminTemplates(c *gin.Context) {
 	query := database.DB.Model(&models.TemplateLibrary{})
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
-		query = query.Where("LOWER(name) LIKE ? OR LOWER(industry) LIKE ?", like, like)
+		categoryMatches := database.DB.Model(&models.TemplateCategoryRelation{}).
+			Select("template_category_relation.template_id").
+			Joins("JOIN template_category ON template_category.id = template_category_relation.category_id").
+			Where("LOWER(template_category.name) LIKE ?", like)
+		query = query.Where("LOWER(template_library.name) LIKE ? OR template_library.id IN (?)", like, categoryMatches)
 	}
 	if status == "published" || status == "draft" {
 		query = query.Where("status = ?", status)
@@ -190,8 +192,7 @@ func UpdateAdminTemplate(c *gin.Context) {
 			return err
 		}
 		updates := map[string]any{
-			"name": updated.Name, "industry": updated.Industry,
-			"highlights": updated.Highlights, "content": updated.Content,
+			"name": updated.Name, "content": updated.Content,
 			"default_theme_id": updated.DefaultThemeID,
 			"status":           updated.Status, "sort_order": updated.SortOrder,
 		}
@@ -224,14 +225,10 @@ func DeleteAdminTemplate(c *gin.Context) {
 
 func buildTemplate(input adminTemplateInput) (models.TemplateLibrary, error) {
 	input.Name = strings.TrimSpace(input.Name)
-	input.Industry = strings.TrimSpace(input.Industry)
 	input.DefaultThemeID = strings.TrimSpace(input.DefaultThemeID)
 	input.Status = strings.TrimSpace(input.Status)
 	if input.Name == "" || len([]rune(input.Name)) > 128 {
 		return models.TemplateLibrary{}, errors.New("模板名称必填且不能超过 128 个字符")
-	}
-	if input.Industry == "" || len([]rune(input.Industry)) > 64 {
-		return models.TemplateLibrary{}, errors.New("行业必填且不能超过 64 个字符")
 	}
 	if input.DefaultThemeID == "" {
 		return models.TemplateLibrary{}, errors.New("请选择默认主题")
@@ -263,10 +260,8 @@ func buildTemplate(input adminTemplateInput) (models.TemplateLibrary, error) {
 	if _, ok := contentObject["skills"].(string); !ok {
 		return models.TemplateLibrary{}, errors.New("content 缺少有效的 skills")
 	}
-	highlights, _ := json.Marshal(cleanStringList(input.Highlights))
 	return models.TemplateLibrary{
-		Name: input.Name, Industry: input.Industry,
-		Highlights: datatypes.JSON(highlights), Content: datatypes.JSON(input.Content),
+		Name: input.Name, Content: datatypes.JSON(input.Content),
 		DefaultThemeID: models.UUID(input.DefaultThemeID),
 		Status:         input.Status, SortOrder: input.SortOrder,
 	}, nil

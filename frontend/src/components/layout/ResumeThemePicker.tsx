@@ -5,7 +5,7 @@ import { getThemeLibraries } from '../../api/templates';
 import { ResumeCardPreview } from '../preview/ResumeCardPreview';
 import type { ResumeData, ThemeLibraryEntry, ThemeSettings } from '../../types/resume';
 import { createInitialThemeSettings } from '../../utils/resumeDraft';
-import { resolveLayout } from '../../registry/layouts';
+import { getLayoutDefaultColor, resolveLayout } from '../../registry/layouts';
 
 export const ALL_THEME_CATEGORY = '__all__';
 
@@ -33,7 +33,7 @@ export function filterResumeThemeEntries(
 }
 
 export function buildResumePreviewTheme(entry: ThemeLibraryEntry): ThemeSettings {
-  const theme = createInitialThemeSettings(entry.layoutId, entry.previewColors?.accentBar);
+  const theme = createInitialThemeSettings(entry.layoutId, getLayoutDefaultColor(entry.layoutId));
 
   return {
     ...theme,
@@ -190,7 +190,6 @@ export function ResumeThemeCards({
         const isApplying = applyingLayoutId === entry.layoutId;
         const previewTheme = buildResumePreviewTheme(entry);
         const previewVersion = entry.previewVersion ?? resolveLayout(entry.layoutId).previewVersion;
-        const highlights = compact ? entry.highlights.slice(0, 2) : entry.highlights;
 
         return (
           <button
@@ -242,18 +241,6 @@ export function ResumeThemeCards({
                     {t('themePicker.current')}
                   </span>
                 )}
-              </div>
-              <div className={`mt-2 flex gap-1 ${compact ? 'h-[18px] overflow-hidden' : 'flex-wrap'}`}>
-                {highlights.map((highlight, index) => (
-                  <span
-                    key={index}
-                    className={`theme-color-transition resume-theme-highlight-pill inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-medium ${
-                      isSelected ? 'bg-white text-blue-500' : 'bg-gray-100 text-gray-500'
-                    }`}
-                  >
-                    {highlight}
-                  </span>
-                ))}
               </div>
             </div>
 

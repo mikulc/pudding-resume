@@ -30,7 +30,7 @@ export function useCreateResumeFromTemplate() {
     clearResumeLaunchSession();
 
     const layoutId = entry.defaultTheme.layoutId;
-    const themeColor = entry.defaultTheme.previewColors?.accentBar || getLayoutDefaultColor(layoutId);
+    const themeColor = getLayoutDefaultColor(layoutId);
     const settings = createInitialThemeSettings(layoutId, themeColor);
     const resumeName = t('templatesPage.untitledResume');
 

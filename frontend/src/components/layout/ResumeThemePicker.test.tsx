@@ -25,14 +25,8 @@ vi.stubGlobal('ResizeObserver', class {
 const entry: ThemeLibraryEntry = {
   id: 'classic-horizontal',
   name: '现代极简',
-  highlights: ['清爽通栏'],
   layoutId: 'classic-horizontal',
   categories: ['简约', '商务'],
-  previewColors: {
-    headerBg: '#dbeafe',
-    accentBar: '#3b82f6',
-    bodyBg: '#ffffff',
-  },
 };
 
 describe('ResumeThemeCards', () => {

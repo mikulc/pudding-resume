@@ -36,17 +36,6 @@
   color: #7ee787 !important;
 }
 
-.dark .resume-theme-card .resume-theme-highlight-pill {
-  background-color: var(--bg-card-muted) !important;
-  color: var(--text-secondary) !important;
-}
-
-.dark .resume-theme-card.resume-theme-card-selected .resume-theme-highlight-pill {
-  background-color: rgba(68, 147, 248, 0.14) !important;
-  color: #bfdbfe !important;
-}
-
 .dark button[role="switch"] span.bg-white {
   background-color: #ffffff !important;
 }
-

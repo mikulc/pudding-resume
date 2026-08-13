@@ -21,8 +21,7 @@ import {
   AdminPage, AdminPageHeader, AdminSelect,
 } from './adminStyles';
 
-type TemplateForm = Omit<AdminTemplateInput, 'highlights' | 'content'> & {
-  highlights: string;
+type TemplateForm = Omit<AdminTemplateInput, 'content'> & {
   content: string;
 };
 
@@ -33,14 +32,10 @@ const emptyResume: ResumeData = {
 
 function newForm(themeId = ''): TemplateForm {
   return {
-    name: '', industry: '通用', category_ids: [], highlights: '',
+    name: '', category_ids: [],
     content: JSON.stringify(emptyResume, null, 2), default_theme_id: themeId,
     status: 'published', sort_order: 0,
   };
-}
-
-function splitTags(value: string) {
-  return [...new Set(value.split(/[,，\n]/).map((item) => item.trim()).filter(Boolean))];
 }
 
 function formToPayload(form: TemplateForm): AdminTemplateInput {
@@ -48,16 +43,14 @@ function formToPayload(form: TemplateForm): AdminTemplateInput {
   if (!content || Array.isArray(content) || typeof content !== 'object') throw new Error('content');
   return {
     ...form,
-    name: form.name.trim(), industry: form.industry.trim(),
-    category_ids: form.category_ids, highlights: splitTags(form.highlights),
+    name: form.name.trim(), category_ids: form.category_ids,
     content, sort_order: Number(form.sort_order) || 0,
   };
 }
 
 function itemToForm(item: AdminTemplateItem): TemplateForm {
   return {
-    name: item.name, industry: item.industry,
-    category_ids: item.category_ids ?? [], highlights: item.highlights.join(', '),
+    name: item.name, category_ids: item.category_ids ?? [],
     content: JSON.stringify(item.content, null, 2), default_theme_id: item.default_theme_id,
     status: item.status, sort_order: item.sort_order,
   };
@@ -120,7 +113,7 @@ export default function AdminTemplatesPage() {
   const closeForm = () => { if (!saving) setEditing(undefined); };
 
   const save = async () => {
-    if (!form.name.trim() || !form.industry.trim() || !form.default_theme_id || form.category_ids.length === 0) {
+    if (!form.name.trim() || !form.default_theme_id || form.category_ids.length === 0) {
       showToast(t('templatesAdmin.toast.required'), 'error');
       return;
     }
@@ -205,7 +198,7 @@ export default function AdminTemplatesPage() {
 
   const downloadExample = () => {
     const example: AdminTemplateInput = {
-      name: '示例模板', industry: '互联网', category_ids: categories[0] ? [categories[0].id] : ['CATEGORY_UUID'], highlights: ['结构清晰'],
+      name: '示例模板', category_ids: categories[0] ? [categories[0].id] : ['CATEGORY_UUID'],
       content: emptyResume, default_theme_id: themes[0]?.id || 'THEME_UUID', status: 'draft', sort_order: 0,
     };
     const blob = new Blob([JSON.stringify({ templates: [example] }, null, 2)], { type: 'application/json' });
@@ -267,7 +260,7 @@ export default function AdminTemplatesPage() {
                     <h3 className="truncate font-semibold text-slate-900 dark:text-white">{item.name}</h3>
                     <AdminBadge tone={item.status === 'published' ? 'success' : 'neutral'}>{t(`templatesAdmin.status.${item.status}`)}</AdminBadge>
                   </div>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{item.industry} · {item.default_theme?.name || themeNames.get(item.default_theme_id) || '-'}</p>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{item.default_theme?.name || themeNames.get(item.default_theme_id) || '-'}</p>
                   <div className="mt-3 flex flex-wrap gap-1.5">{item.categories.map((tag) => <AdminBadge key={tag}>{tag}</AdminBadge>)}</div>
                 </div>
                 <div className="flex shrink-0 gap-1">
@@ -308,9 +301,7 @@ function normalizeImportedTemplate(value: unknown, themes: ThemeLibraryEntry[], 
   }
   if (categoryIds.length === 0) throw new Error('模板缺少有效的 category_ids');
   return {
-    name: String(item.name || fallbackName), industry: String(item.industry || '通用'),
-    category_ids: categoryIds,
-    highlights: Array.isArray(item.highlights) ? item.highlights.map(String) : [],
+    name: String(item.name || fallbackName), category_ids: categoryIds,
     content: rawContent as ResumeData, default_theme_id: themeId,
     status: item.status === 'draft' ? 'draft' : 'published', sort_order: Number(item.sort_order) || 0,
   };
@@ -346,7 +337,7 @@ function TemplateFields({ form, themes, categories, onCreateCategory, onChange, 
   };
   return <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
     <Field label={t('templatesAdmin.form.name')}><AdminInput className={fieldClass} value={form.name} onChange={(e) => update('name', e.target.value)} /></Field>
-    <Field label={t('templatesAdmin.form.industry')}><AdminInput className={fieldClass} value={form.industry} onChange={(e) => update('industry', e.target.value)} /></Field>
+    <Field label={t('templatesAdmin.form.theme')}><AdminSelect className="w-full" value={form.default_theme_id} options={themes.map((theme) => ({ value: theme.id, label: theme.name }))} onChange={(value) => update('default_theme_id', value)} /></Field>
     <div className="sm:col-span-2"><Field label={t('templatesAdmin.form.categories')} hint={t('templatesAdmin.form.categoriesHint')}>
       <div className="rounded-[12px] border border-[#E6EAF2] p-3 dark:border-slate-700">
         <div className="flex flex-wrap gap-2">
@@ -372,8 +363,6 @@ function TemplateFields({ form, themes, categories, onCreateCategory, onChange, 
         </div>
       </div>
     </Field></div>
-    <Field label={t('templatesAdmin.form.highlights')} hint={t('templatesAdmin.form.tagsHint')}><AdminInput className={fieldClass} value={form.highlights} onChange={(e) => update('highlights', e.target.value)} /></Field>
-    <Field label={t('templatesAdmin.form.theme')}><AdminSelect className="w-full" value={form.default_theme_id} options={themes.map((theme) => ({ value: theme.id, label: theme.name }))} onChange={(value) => update('default_theme_id', value)} /></Field>
     <div className="grid grid-cols-2 gap-3">
       <Field label={t('templatesAdmin.form.status')}><AdminSelect className="w-full" value={form.status} options={[{ value: 'published', label: t('templatesAdmin.status.published') }, { value: 'draft', label: t('templatesAdmin.status.draft') }]} onChange={(value) => update('status', value as TemplateForm['status'])} /></Field>
       <Field label={t('templatesAdmin.form.sortOrder')}><AdminInput type="number" className={fieldClass} value={form.sort_order} onChange={(e) => update('sort_order', Number(e.target.value))} /></Field>
