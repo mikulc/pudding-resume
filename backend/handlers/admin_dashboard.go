@@ -39,12 +39,20 @@ type DailyTokenItem struct {
 	Tokens int64  `json:"tokens"`
 }
 
+func newDashboardResponse() DashboardResponse {
+	return DashboardResponse{
+		ModelUsage:    make([]ModelUsageItem, 0),
+		DailyNewUsers: make([]DailyCountItem, 0),
+		DailyTokens:   make([]DailyTokenItem, 0),
+	}
+}
+
 func GetDashboard(c *gin.Context) {
 	now := time.Now()
 	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 	days30Ago := now.AddDate(0, 0, -30)
 
-	resp := DashboardResponse{}
+	resp := newDashboardResponse()
 
 	// Total users
 	database.DB.Model(&models.User{}).Count(&resp.TotalUsers)

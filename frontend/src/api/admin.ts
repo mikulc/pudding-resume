@@ -6,8 +6,23 @@ import type {
 } from '../types/admin';
 
 // --- Dashboard ---
+type DashboardPayload = Omit<DashboardData, 'model_usage' | 'daily_new_users' | 'daily_tokens'> & {
+  model_usage?: DashboardData['model_usage'] | null;
+  daily_new_users?: DashboardData['daily_new_users'] | null;
+  daily_tokens?: DashboardData['daily_tokens'] | null;
+};
+
+export function normalizeDashboardData(data: DashboardPayload): DashboardData {
+  return {
+    ...data,
+    model_usage: data.model_usage ?? [],
+    daily_new_users: data.daily_new_users ?? [],
+    daily_tokens: data.daily_tokens ?? [],
+  };
+}
+
 export function fetchDashboard(): Promise<DashboardData> {
-  return api.get('/api/admin/dashboard');
+  return api.get<DashboardPayload>('/api/admin/dashboard').then(normalizeDashboardData);
 }
 
 // --- Users ---
