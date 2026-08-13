@@ -142,7 +142,11 @@
       "contentHint": "填写符合 ResumeData 结构的 JSON 对象",
       "cancel": "取消",
       "save": "保存",
-      "saving": "保存中..."
+      "saving": "保存中...",
+      "categoriesHint": "选择已有分类；需要时可在此快速创建",
+      "noCategories": "暂无分类，请先创建一个分类",
+      "newCategoryPlaceholder": "输入新分类名称",
+      "addCategory": "新增分类"
     },
     "delete": {
       "title": "删除简历模板",
@@ -159,7 +163,10 @@
       "deleted": "模板已删除",
       "deleteFailed": "模板删除失败",
       "imported": "已成功导入 {{count}} 个模板",
-      "invalidFile": "JSON 文件格式或内容不正确"
+      "invalidFile": "JSON 文件格式或内容不正确",
+      "categoryLoadFailed": "模板分类加载失败",
+      "categoryCreated": "模板分类已创建",
+      "categoryCreateFailed": "模板分类创建失败"
     }
   }
 }

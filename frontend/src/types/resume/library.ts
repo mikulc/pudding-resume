@@ -30,6 +30,13 @@ export interface TemplateLibraryEntry {
   defaultTheme: ThemeLibraryEntry;
 }
 
+export interface TemplateCategoryEntry {
+  id: string;
+  name: string;
+  code: string;
+  sortOrder: number;
+}
+
 export type SaveStatusType = 'saved' | 'unsaved' | 'saving' | 'error';
 
 // ==================== Multi-Resume Types ====================

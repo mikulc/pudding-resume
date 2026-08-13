@@ -1,23 +1,11 @@
 import { useEffect, useState } from 'react';
-import { getTemplateLibraries } from '../../api/templates';
-import type { TemplateLibraryEntry } from '../../types/resume';
+import { getTemplateCategories, getTemplateLibraries } from '../../api/templates';
+import type { TemplateCategoryEntry, TemplateLibraryEntry } from '../../types/resume';
 
 export const ALL_TEMPLATE_CATEGORY = '__all__';
 
-export const RESUME_TEMPLATE_CATEGORIES = [
-  '互联网通用',
-  '前端开发',
-  '后端开发',
-  'Golang',
-  'Java',
-  'C++',
-  '校招',
-  '实习',
-  '社招',
-] as const;
-
-export function deriveTemplateCategories(_entries: TemplateLibraryEntry[]): string[] {
-  return [ALL_TEMPLATE_CATEGORY, ...RESUME_TEMPLATE_CATEGORIES];
+export function deriveTemplateCategories(categories: TemplateCategoryEntry[]): string[] {
+  return [ALL_TEMPLATE_CATEGORY, ...categories.map((category) => category.name)];
 }
 
 export function filterResumeTemplates(
@@ -30,30 +18,34 @@ export function filterResumeTemplates(
 
 interface TemplateLibraryCache {
   entries: TemplateLibraryEntry[];
+  categories: TemplateCategoryEntry[];
   cachedAt: number;
 }
 
 const CACHE_TTL_MS = 5 * 60 * 1000;
 let cache: TemplateLibraryCache | null = null;
-let pendingRequest: Promise<TemplateLibraryEntry[]> | null = null;
+type TemplateLibraryData = Pick<TemplateLibraryCache, 'entries' | 'categories'>;
+
+let pendingRequest: Promise<TemplateLibraryData> | null = null;
 
 export function invalidateResumeTemplateLibraryCache() {
   cache = null;
 }
 
-function readCache(): TemplateLibraryEntry[] | null {
+function readCache(): TemplateLibraryData | null {
   if (!cache || Date.now() - cache.cachedAt > CACHE_TTL_MS) return null;
-  return cache.entries;
+  return { entries: cache.entries, categories: cache.categories };
 }
 
-function loadTemplates(): Promise<TemplateLibraryEntry[]> {
+function loadTemplates(): Promise<TemplateLibraryData> {
   const cached = readCache();
   if (cached) return Promise.resolve(cached);
   if (!pendingRequest) {
-    pendingRequest = getTemplateLibraries()
-      .then((entries) => {
-        cache = { entries, cachedAt: Date.now() };
-        return entries;
+    pendingRequest = Promise.all([getTemplateLibraries(), getTemplateCategories()])
+      .then(([entries, categories]) => {
+        const data = { entries, categories };
+        cache = { ...data, cachedAt: Date.now() };
+        return data;
       })
       .finally(() => {
         pendingRequest = null;
@@ -64,14 +56,16 @@ function loadTemplates(): Promise<TemplateLibraryEntry[]> {
 
 export function useResumeTemplateLibrary(enabled: boolean) {
   const cached = readCache();
-  const [entries, setEntries] = useState<TemplateLibraryEntry[]>(cached ?? []);
+  const [entries, setEntries] = useState<TemplateLibraryEntry[]>(cached?.entries ?? []);
+  const [categories, setCategories] = useState<TemplateCategoryEntry[]>(cached?.categories ?? []);
   const [loading, setLoading] = useState(enabled && !cached);
 
   useEffect(() => {
     if (!enabled) return;
     const cachedEntries = readCache();
     if (cachedEntries) {
-      setEntries(cachedEntries);
+      setEntries(cachedEntries.entries);
+      setCategories(cachedEntries.categories);
       setLoading(false);
       return;
     }
@@ -80,7 +74,10 @@ export function useResumeTemplateLibrary(enabled: boolean) {
     setLoading(true);
     loadTemplates()
       .then((loaded) => {
-        if (!cancelled) setEntries(loaded);
+        if (!cancelled) {
+          setEntries(loaded.entries);
+          setCategories(loaded.categories);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -95,5 +92,5 @@ export function useResumeTemplateLibrary(enabled: boolean) {
     return () => window.removeEventListener('pudding:template-library-changed', invalidateResumeTemplateLibraryCache);
   }, []);
 
-  return { entries, loading };
+  return { entries, categories, loading };
 }

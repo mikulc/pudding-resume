@@ -18,8 +18,8 @@ func TestBuildTemplateNormalizesInput(t *testing.T) {
 	if entry.Name != "Go 后端工程师" || entry.Industry != "互联网" {
 		t.Fatalf("text fields were not trimmed: %#v", entry)
 	}
-	if string(entry.Categories) != `["Go"]` {
-		t.Fatalf("categories = %s, want deduplicated list", entry.Categories)
+	if got := cleanStringList([]string{"Go", " Go ", ""}); len(got) != 1 || got[0] != "Go" {
+		t.Fatalf("cleanStringList() = %#v, want [Go]", got)
 	}
 }
 

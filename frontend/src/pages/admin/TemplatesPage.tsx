@@ -5,24 +5,23 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
-  createAdminTemplate, deleteAdminTemplate, fetchAdminTemplates,
+  createAdminTemplate, createAdminTemplateCategory, deleteAdminTemplate, fetchAdminTemplateCategories, fetchAdminTemplates,
   importAdminTemplates, updateAdminTemplate,
 } from '../../api/admin';
 import { getThemeLibraries } from '../../api/templates';
 import { useConfirm } from '../../components/common/ConfirmModal';
 import { useToast } from '../../components/common/Toast';
 import { invalidateResumeTemplateLibraryCache } from '../../components/template/ResumeTemplateLibrary';
-import type { AdminTemplateInput, AdminTemplateItem } from '../../types/admin';
+import type { AdminCategory, AdminTemplateInput, AdminTemplateItem } from '../../types/admin';
 import type { ResumeData, ThemeLibraryEntry } from '../../types/resume';
 import { getErrorMessage } from '../../utils/errors';
 import {
-  AdminBadge, AdminButton, AdminCard, AdminFormModal, AdminFormModalBody,
+  AdminBadge, AdminButton, AdminCard, AdminFormDrawer, AdminFormModalBody,
   AdminFormModalFooter, AdminFormModalHeader, AdminIconButton, AdminInput,
   AdminPage, AdminPageHeader, AdminSelect,
 } from './adminStyles';
 
-type TemplateForm = Omit<AdminTemplateInput, 'categories' | 'highlights' | 'content'> & {
-  categories: string;
+type TemplateForm = Omit<AdminTemplateInput, 'highlights' | 'content'> & {
   highlights: string;
   content: string;
 };
@@ -34,7 +33,7 @@ const emptyResume: ResumeData = {
 
 function newForm(themeId = ''): TemplateForm {
   return {
-    name: '', industry: '通用', categories: '', highlights: '',
+    name: '', industry: '通用', category_ids: [], highlights: '',
     content: JSON.stringify(emptyResume, null, 2), default_theme_id: themeId,
     status: 'published', sort_order: 0,
   };
@@ -50,7 +49,7 @@ function formToPayload(form: TemplateForm): AdminTemplateInput {
   return {
     ...form,
     name: form.name.trim(), industry: form.industry.trim(),
-    categories: splitTags(form.categories), highlights: splitTags(form.highlights),
+    category_ids: form.category_ids, highlights: splitTags(form.highlights),
     content, sort_order: Number(form.sort_order) || 0,
   };
 }
@@ -58,7 +57,7 @@ function formToPayload(form: TemplateForm): AdminTemplateInput {
 function itemToForm(item: AdminTemplateItem): TemplateForm {
   return {
     name: item.name, industry: item.industry,
-    categories: item.categories.join(', '), highlights: item.highlights.join(', '),
+    category_ids: item.category_ids ?? [], highlights: item.highlights.join(', '),
     content: JSON.stringify(item.content, null, 2), default_theme_id: item.default_theme_id,
     status: item.status, sort_order: item.sort_order,
   };
@@ -71,6 +70,7 @@ export default function AdminTemplatesPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [templates, setTemplates] = useState<AdminTemplateItem[]>([]);
   const [themes, setThemes] = useState<ThemeLibraryEntry[]>([]);
+  const [categories, setCategories] = useState<AdminCategory[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
@@ -103,6 +103,11 @@ export default function AdminTemplatesPage() {
         ? current : { ...current, default_theme_id: items[0].id });
     }).catch(() => undefined);
   }, []);
+  useEffect(() => {
+    fetchAdminTemplateCategories()
+      .then(setCategories)
+      .catch((error) => showToast(getErrorMessage(error, t('templatesAdmin.toast.categoryLoadFailed')), 'error'));
+  }, [showToast, t]);
 
   const openCreate = () => {
     setForm(newForm(themes[0]?.id));
@@ -115,7 +120,7 @@ export default function AdminTemplatesPage() {
   const closeForm = () => { if (!saving) setEditing(undefined); };
 
   const save = async () => {
-    if (!form.name.trim() || !form.industry.trim() || !form.default_theme_id || splitTags(form.categories).length === 0) {
+    if (!form.name.trim() || !form.industry.trim() || !form.default_theme_id || form.category_ids.length === 0) {
       showToast(t('templatesAdmin.toast.required'), 'error');
       return;
     }
@@ -138,6 +143,21 @@ export default function AdminTemplatesPage() {
       showToast(getErrorMessage(error, t('templatesAdmin.toast.saveFailed')), 'error');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const addCategory = async (name: string) => {
+    try {
+      const result = await createAdminTemplateCategory({ name, status: 'enabled', sort_order: categories.length });
+      setCategories((current) => [...current, result.category]);
+      setForm((current) => ({
+        ...current,
+        category_ids: [...new Set([...current.category_ids, result.category.id])],
+      }));
+      invalidateResumeTemplateLibraryCache();
+      showToast(t('templatesAdmin.toast.categoryCreated'), 'success');
+    } catch (error) {
+      showToast(getErrorMessage(error, t('templatesAdmin.toast.categoryCreateFailed')), 'error');
     }
   };
 
@@ -170,7 +190,7 @@ export default function AdminTemplatesPage() {
           : [raw];
       if (!Array.isArray(candidates) || candidates.length === 0) throw new Error('empty');
       const fileName = file.name.replace(/\.json$/i, '');
-      const payloads = candidates.map((candidate, index) => normalizeImportedTemplate(candidate, themes, candidates.length === 1 ? fileName : `${fileName}-${index + 1}`));
+      const payloads = candidates.map((candidate, index) => normalizeImportedTemplate(candidate, themes, categories, candidates.length === 1 ? fileName : `${fileName}-${index + 1}`));
       const result = await importAdminTemplates(payloads);
       showToast(t('templatesAdmin.toast.imported', { count: result.count }), 'success');
       invalidateResumeTemplateLibraryCache();
@@ -185,7 +205,7 @@ export default function AdminTemplatesPage() {
 
   const downloadExample = () => {
     const example: AdminTemplateInput = {
-      name: '示例模板', industry: '互联网', categories: ['通用'], highlights: ['结构清晰'],
+      name: '示例模板', industry: '互联网', category_ids: categories[0] ? [categories[0].id] : ['CATEGORY_UUID'], highlights: ['结构清晰'],
       content: emptyResume, default_theme_id: themes[0]?.id || 'THEME_UUID', status: 'draft', sort_order: 0,
     };
     const blob = new Blob([JSON.stringify({ templates: [example] }, null, 2)], { type: 'application/json' });
@@ -266,37 +286,92 @@ export default function AdminTemplatesPage() {
         <AdminIconButton disabled={page >= totalPages} onClick={() => setPage((value) => value + 1)}><ChevronRight size={18} /></AdminIconButton>
       </div>}
 
-      <AdminFormModal open={editing !== undefined} onClose={closeForm} className="max-w-3xl">
+      <AdminFormDrawer open={editing !== undefined} onClose={closeForm}>
         <AdminFormModalHeader title={t(editing ? 'templatesAdmin.form.editTitle' : 'templatesAdmin.form.createTitle')} onClose={closeForm} />
-        <AdminFormModalBody><TemplateFields form={form} themes={themes} onChange={setForm} t={t} /></AdminFormModalBody>
+        <AdminFormModalBody><TemplateFields form={form} themes={themes} categories={categories} onCreateCategory={addCategory} onChange={setForm} t={t} /></AdminFormModalBody>
         <AdminFormModalFooter><div className="flex justify-end gap-3"><AdminButton onClick={closeForm}>{t('templatesAdmin.form.cancel')}</AdminButton><AdminButton variant="primary" disabled={saving} onClick={() => void save()}>{saving ? t('templatesAdmin.form.saving') : t('templatesAdmin.form.save')}</AdminButton></div></AdminFormModalFooter>
-      </AdminFormModal>
+      </AdminFormDrawer>
     </AdminPage>
   );
 }
 
-function normalizeImportedTemplate(value: unknown, themes: ThemeLibraryEntry[], fallbackName: string): AdminTemplateInput {
+function normalizeImportedTemplate(value: unknown, themes: ThemeLibraryEntry[], categories: AdminCategory[], fallbackName: string): AdminTemplateInput {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('JSON 中存在无效模板');
-  const item = value as Partial<AdminTemplateInput> & { defaultThemeId?: string };
+  const item = value as Partial<AdminTemplateInput> & { defaultThemeId?: string; categories?: string[] };
   const rawContent = item.content && typeof item.content === 'object' ? item.content : value;
   const themeId = item.default_theme_id || item.defaultThemeId || themes[0]?.id || '';
   if (!themeId || !rawContent || typeof rawContent !== 'object' || Array.isArray(rawContent)) throw new Error('模板缺少有效的 content 或 default_theme_id');
+  const categoryIds = Array.isArray(item.category_ids) ? item.category_ids.map(String) : [];
+  if (categoryIds.length === 0 && Array.isArray(item.categories)) {
+    const byName = new Map(categories.map((category) => [category.name, category.id]));
+    categoryIds.push(...item.categories.map((name) => byName.get(String(name)) ?? '').filter(Boolean));
+  }
+  if (categoryIds.length === 0) throw new Error('模板缺少有效的 category_ids');
   return {
     name: String(item.name || fallbackName), industry: String(item.industry || '通用'),
-    categories: Array.isArray(item.categories) && item.categories.length > 0 ? item.categories.map(String) : ['通用'],
+    category_ids: categoryIds,
     highlights: Array.isArray(item.highlights) ? item.highlights.map(String) : [],
     content: rawContent as ResumeData, default_theme_id: themeId,
     status: item.status === 'draft' ? 'draft' : 'published', sort_order: Number(item.sort_order) || 0,
   };
 }
 
-function TemplateFields({ form, themes, onChange, t }: { form: TemplateForm; themes: ThemeLibraryEntry[]; onChange: (form: TemplateForm) => void; t: (key: string) => string }) {
+function TemplateFields({ form, themes, categories, onCreateCategory, onChange, t }: {
+  form: TemplateForm;
+  themes: ThemeLibraryEntry[];
+  categories: AdminCategory[];
+  onCreateCategory: (name: string) => Promise<void>;
+  onChange: (form: TemplateForm) => void;
+  t: (key: string) => string;
+}) {
   const update = <K extends keyof TemplateForm>(key: K, value: TemplateForm[K]) => onChange({ ...form, [key]: value });
   const fieldClass = 'w-full';
+  const [categoryName, setCategoryName] = useState('');
+  const [creatingCategory, setCreatingCategory] = useState(false);
+  const createCategory = async () => {
+    const name = categoryName.trim();
+    if (!name || creatingCategory) return;
+    setCreatingCategory(true);
+    try {
+      await onCreateCategory(name);
+      setCategoryName('');
+    } finally {
+      setCreatingCategory(false);
+    }
+  };
+  const toggleCategory = (id: string) => {
+    update('category_ids', form.category_ids.includes(id)
+      ? form.category_ids.filter((categoryId) => categoryId !== id)
+      : [...form.category_ids, id]);
+  };
   return <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
     <Field label={t('templatesAdmin.form.name')}><AdminInput className={fieldClass} value={form.name} onChange={(e) => update('name', e.target.value)} /></Field>
     <Field label={t('templatesAdmin.form.industry')}><AdminInput className={fieldClass} value={form.industry} onChange={(e) => update('industry', e.target.value)} /></Field>
-    <Field label={t('templatesAdmin.form.categories')} hint={t('templatesAdmin.form.tagsHint')}><AdminInput className={fieldClass} value={form.categories} onChange={(e) => update('categories', e.target.value)} /></Field>
+    <div className="sm:col-span-2"><Field label={t('templatesAdmin.form.categories')} hint={t('templatesAdmin.form.categoriesHint')}>
+      <div className="rounded-[12px] border border-[#E6EAF2] p-3 dark:border-slate-700">
+        <div className="flex flex-wrap gap-2">
+          {categories.filter((category) => category.status === 'enabled').map((category) => {
+            const checked = form.category_ids.includes(category.id);
+            return <button key={category.id} type="button" onClick={() => toggleCategory(category.id)} className={`rounded-lg border px-3 py-1.5 text-xs transition ${checked ? 'border-[var(--theme-accent)] bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]' : 'border-slate-200 text-slate-500 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300'}`}>{category.name}</button>;
+          })}
+          {categories.length === 0 && <span className="text-xs text-slate-400">{t('templatesAdmin.form.noCategories')}</span>}
+        </div>
+        <div className="mt-3 flex gap-2">
+          <AdminInput
+            className="min-w-0 flex-1"
+            value={categoryName}
+            onChange={(event) => setCategoryName(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key !== 'Enter' || event.nativeEvent.isComposing) return;
+              event.preventDefault();
+              void createCategory();
+            }}
+            placeholder={t('templatesAdmin.form.newCategoryPlaceholder')}
+          />
+          <AdminButton disabled={!categoryName.trim() || creatingCategory} onClick={() => void createCategory()}>{t('templatesAdmin.form.addCategory')}</AdminButton>
+        </div>
+      </div>
+    </Field></div>
     <Field label={t('templatesAdmin.form.highlights')} hint={t('templatesAdmin.form.tagsHint')}><AdminInput className={fieldClass} value={form.highlights} onChange={(e) => update('highlights', e.target.value)} /></Field>
     <Field label={t('templatesAdmin.form.theme')}><AdminSelect className="w-full" value={form.default_theme_id} options={themes.map((theme) => ({ value: theme.id, label: theme.name }))} onChange={(value) => update('default_theme_id', value)} /></Field>
     <div className="grid grid-cols-2 gap-3">
@@ -308,5 +383,5 @@ function TemplateFields({ form, themes, onChange, t }: { form: TemplateForm; the
 }
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
-  return <label className="block"><span className="mb-1.5 block text-xs font-medium text-slate-600 dark:text-slate-300">{label}</span>{children}{hint && <span className="mt-1 block text-[11px] text-slate-400">{hint}</span>}</label>;
+  return <div className="block"><div className="mb-1.5 text-xs font-medium text-slate-600 dark:text-slate-300">{label}</div>{children}{hint && <div className="mt-1 text-[11px] text-slate-400">{hint}</div>}</div>;
 }

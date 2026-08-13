@@ -27,7 +27,7 @@ const entry: ThemeLibraryEntry = {
   name: '现代极简',
   highlights: ['清爽通栏'],
   layoutId: 'classic-horizontal',
-  categories: ['简约', '商务', '单栏'],
+  categories: ['简约', '商务'],
   previewColors: {
     headerBg: '#dbeafe',
     accentBar: '#3b82f6',

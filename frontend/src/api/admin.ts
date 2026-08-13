@@ -6,6 +6,8 @@ import type {
   AdminTemplateInput,
   AdminTemplateItem,
   AdminTemplateListResponse,
+  AdminCategory,
+  AdminCategoryInput,
 } from '../types/admin';
 
 // --- Dashboard ---
@@ -87,4 +89,26 @@ export function updateAdminTemplate(id: string, data: AdminTemplateInput): Promi
 
 export function deleteAdminTemplate(id: string): Promise<{ message: string }> {
   return api.del(`/api/admin/templates/${id}`);
+}
+
+export function fetchAdminTemplateCategories(): Promise<AdminCategory[]> {
+  return api.get<{ categories: AdminCategory[] }>('/api/admin/template-categories')
+    .then((result) => result.categories ?? []);
+}
+
+export function createAdminTemplateCategory(data: AdminCategoryInput): Promise<{ category: AdminCategory }> {
+  return api.post('/api/admin/template-categories', data);
+}
+
+export function updateAdminTemplateCategory(id: string, data: AdminCategoryInput): Promise<{ category: AdminCategory }> {
+  return api.put(`/api/admin/template-categories/${id}`, data);
+}
+
+export function deleteAdminTemplateCategory(id: string): Promise<{ message: string }> {
+  return api.del(`/api/admin/template-categories/${id}`);
+}
+
+export function fetchAdminThemeCategories(): Promise<AdminCategory[]> {
+  return api.get<{ categories: AdminCategory[] }>('/api/admin/theme-categories')
+    .then((result) => result.categories ?? []);
 }

@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import type { TemplateLibraryEntry } from '../../types/resume';
 import {
   ALL_TEMPLATE_CATEGORY,
-  RESUME_TEMPLATE_CATEGORIES,
   deriveTemplateCategories,
   filterResumeTemplates,
 } from './ResumeTemplateLibrary';
@@ -15,10 +14,14 @@ const entry = {
 } as TemplateLibraryEntry;
 
 describe('ResumeTemplateLibrary', () => {
-  it('returns product categories in their configured order', () => {
-    expect(deriveTemplateCategories([entry])).toEqual([
+  it('returns database categories in their configured order', () => {
+    expect(deriveTemplateCategories([
+      { id: 'frontend', name: '前端开发', code: 'frontend', sortOrder: 1 },
+      { id: 'campus', name: '校招', code: 'campus', sortOrder: 2 },
+    ])).toEqual([
       ALL_TEMPLATE_CATEGORY,
-      ...RESUME_TEMPLATE_CATEGORIES,
+      '前端开发',
+      '校招',
     ]);
   });
 

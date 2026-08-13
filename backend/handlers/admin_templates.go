@@ -21,7 +21,8 @@ const maxTemplateImportCount = 100
 type adminTemplateInput struct {
 	Name           string          `json:"name"`
 	Industry       string          `json:"industry"`
-	Categories     []string        `json:"categories"`
+	CategoryIDs    []string        `json:"category_ids"`
+	Categories     []string        `json:"categories"` // legacy JSON-import compatibility
 	Highlights     []string        `json:"highlights"`
 	Content        json.RawMessage `json:"content"`
 	DefaultThemeID string          `json:"default_theme_id"`
@@ -31,6 +32,18 @@ type adminTemplateInput struct {
 
 type adminTemplateImportRequest struct {
 	Templates []adminTemplateInput `json:"templates" binding:"required"`
+}
+
+func templatePreloads(query *gorm.DB) *gorm.DB {
+	return query.
+		Preload("DefaultTheme").
+		Preload("CategoryEntries", func(db *gorm.DB) *gorm.DB {
+			return db.Order("sort_order ASC, name ASC")
+		})
+}
+
+func hydrateTemplate(entry *models.TemplateLibrary) {
+	entry.HydrateCategories()
 }
 
 // ListAdminTemplates returns drafts and published templates for management.
@@ -61,15 +74,18 @@ func ListAdminTemplates(c *gin.Context) {
 		return
 	}
 	var entries []models.TemplateLibrary
-	if err := query.Preload("DefaultTheme").Order("sort_order ASC, updated_at DESC").
+	if err := templatePreloads(query).Order("sort_order ASC, updated_at DESC").
 		Offset((page - 1) * size).Limit(size).Find(&entries).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "获取模板列表失败"})
 		return
 	}
+	for index := range entries {
+		hydrateTemplate(&entries[index])
+	}
 	c.JSON(http.StatusOK, gin.H{"templates": entries, "total": total, "page": page, "size": size})
 }
 
-// CreateAdminTemplate creates one template from a JSON payload.
+// CreateAdminTemplate creates one template and its category relations atomically.
 func CreateAdminTemplate(c *gin.Context) {
 	var input adminTemplateInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -81,15 +97,25 @@ func CreateAdminTemplate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	if err := ensureThemeExists(entry.DefaultThemeID); err != nil {
+	err = database.DB.Transaction(func(tx *gorm.DB) error {
+		if err := ensureThemeExists(tx, entry.DefaultThemeID); err != nil {
+			return err
+		}
+		categories, err := resolveTemplateCategories(tx, input)
+		if err != nil {
+			return err
+		}
+		if err := tx.Create(&entry).Error; err != nil {
+			return err
+		}
+		return replaceTemplateCategoryRelations(tx, entry.ID, categories)
+	})
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	if err := database.DB.Create(&entry).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "创建模板失败"})
-		return
-	}
-	database.DB.Preload("DefaultTheme").First(&entry, "id = ?", entry.ID)
+	templatePreloads(database.DB).First(&entry, "id = ?", entry.ID)
+	hydrateTemplate(&entry)
 	c.JSON(http.StatusCreated, gin.H{"template": entry})
 }
 
@@ -105,27 +131,36 @@ func ImportAdminTemplates(c *gin.Context) {
 		return
 	}
 
-	entries := make([]models.TemplateLibrary, 0, len(request.Templates))
-	for index, input := range request.Templates {
-		entry, err := buildTemplate(input)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"message": "第 " + strconv.Itoa(index+1) + " 个模板：" + err.Error()})
-			return
+	err := database.DB.Transaction(func(tx *gorm.DB) error {
+		for index, input := range request.Templates {
+			entry, err := buildTemplate(input)
+			if err != nil {
+				return errors.New("第 " + strconv.Itoa(index+1) + " 个模板：" + err.Error())
+			}
+			if err := ensureThemeExists(tx, entry.DefaultThemeID); err != nil {
+				return errors.New("第 " + strconv.Itoa(index+1) + " 个模板：" + err.Error())
+			}
+			categories, err := resolveTemplateCategories(tx, input)
+			if err != nil {
+				return errors.New("第 " + strconv.Itoa(index+1) + " 个模板：" + err.Error())
+			}
+			if err := tx.Create(&entry).Error; err != nil {
+				return err
+			}
+			if err := replaceTemplateCategoryRelations(tx, entry.ID, categories); err != nil {
+				return err
+			}
 		}
-		if err := ensureThemeExists(entry.DefaultThemeID); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"message": "第 " + strconv.Itoa(index+1) + " 个模板：" + err.Error()})
-			return
-		}
-		entries = append(entries, entry)
-	}
-	if err := database.DB.Transaction(func(tx *gorm.DB) error { return tx.Create(&entries).Error }); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "导入模板失败"})
+		return nil
+	})
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"message": "模板导入成功", "count": len(entries)})
+	c.JSON(http.StatusCreated, gin.H{"message": "模板导入成功", "count": len(request.Templates)})
 }
 
-// UpdateAdminTemplate replaces the editable fields.
+// UpdateAdminTemplate replaces editable fields and category relations atomically.
 func UpdateAdminTemplate(c *gin.Context) {
 	var entry models.TemplateLibrary
 	if err := database.DB.First(&entry, "id = ?", c.Param("id")).Error; errors.Is(err, gorm.ErrRecordNotFound) {
@@ -146,21 +181,31 @@ func UpdateAdminTemplate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	if err := ensureThemeExists(updated.DefaultThemeID); err != nil {
+	err = database.DB.Transaction(func(tx *gorm.DB) error {
+		if err := ensureThemeExists(tx, updated.DefaultThemeID); err != nil {
+			return err
+		}
+		categories, err := resolveTemplateCategories(tx, input)
+		if err != nil {
+			return err
+		}
+		updates := map[string]any{
+			"name": updated.Name, "industry": updated.Industry,
+			"highlights": updated.Highlights, "content": updated.Content,
+			"default_theme_id": updated.DefaultThemeID,
+			"status":           updated.Status, "sort_order": updated.SortOrder,
+		}
+		if err := tx.Model(&entry).Updates(updates).Error; err != nil {
+			return err
+		}
+		return replaceTemplateCategoryRelations(tx, entry.ID, categories)
+	})
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	updates := map[string]any{
-		"name": updated.Name, "industry": updated.Industry,
-		"categories": updated.Categories, "highlights": updated.Highlights,
-		"content": updated.Content, "default_theme_id": updated.DefaultThemeID,
-		"status": updated.Status, "sort_order": updated.SortOrder,
-	}
-	if err := database.DB.Model(&entry).Updates(updates).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "更新模板失败"})
-		return
-	}
-	database.DB.Preload("DefaultTheme").First(&entry, "id = ?", entry.ID)
+	templatePreloads(database.DB).First(&entry, "id = ?", entry.ID)
+	hydrateTemplate(&entry)
 	c.JSON(http.StatusOK, gin.H{"template": entry})
 }
 
@@ -197,9 +242,8 @@ func buildTemplate(input adminTemplateInput) (models.TemplateLibrary, error) {
 	if input.Status != "published" && input.Status != "draft" {
 		return models.TemplateLibrary{}, errors.New("状态仅支持 published 或 draft")
 	}
-	cleanedCategories := cleanStringList(input.Categories)
-	if len(cleanedCategories) == 0 {
-		return models.TemplateLibrary{}, errors.New("至少填写一个分类")
+	if len(cleanStringList(input.CategoryIDs)) == 0 && len(cleanStringList(input.Categories)) == 0 {
+		return models.TemplateLibrary{}, errors.New("请至少选择一个分类")
 	}
 	if len(input.Content) == 0 || bytes.Equal(bytes.TrimSpace(input.Content), []byte("null")) || !json.Valid(input.Content) {
 		return models.TemplateLibrary{}, errors.New("content 必须是有效的简历 JSON 对象")
@@ -219,14 +263,65 @@ func buildTemplate(input adminTemplateInput) (models.TemplateLibrary, error) {
 	if _, ok := contentObject["skills"].(string); !ok {
 		return models.TemplateLibrary{}, errors.New("content 缺少有效的 skills")
 	}
-	categories, _ := json.Marshal(cleanedCategories)
 	highlights, _ := json.Marshal(cleanStringList(input.Highlights))
 	return models.TemplateLibrary{
 		Name: input.Name, Industry: input.Industry,
-		Categories: datatypes.JSON(categories), Highlights: datatypes.JSON(highlights),
-		Content: datatypes.JSON(input.Content), DefaultThemeID: models.UUID(input.DefaultThemeID),
-		Status: input.Status, SortOrder: input.SortOrder,
+		Highlights: datatypes.JSON(highlights), Content: datatypes.JSON(input.Content),
+		DefaultThemeID: models.UUID(input.DefaultThemeID),
+		Status:         input.Status, SortOrder: input.SortOrder,
 	}, nil
+}
+
+func resolveTemplateCategories(tx *gorm.DB, input adminTemplateInput) ([]models.TemplateCategory, error) {
+	ids := cleanStringList(input.CategoryIDs)
+	var categories []models.TemplateCategory
+	if len(ids) > 0 {
+		if err := tx.Where("id IN ? AND status = ?", ids, "enabled").Find(&categories).Error; err != nil {
+			return nil, errors.New("校验模板分类失败")
+		}
+		if len(categories) != len(ids) {
+			return nil, errors.New("部分模板分类不存在或已停用")
+		}
+		byID := make(map[string]models.TemplateCategory, len(categories))
+		for _, category := range categories {
+			byID[string(category.ID)] = category
+		}
+		ordered := make([]models.TemplateCategory, 0, len(ids))
+		for _, id := range ids {
+			ordered = append(ordered, byID[id])
+		}
+		return ordered, nil
+	}
+
+	names := cleanStringList(input.Categories)
+	if err := tx.Where("name IN ? AND status = ?", names, "enabled").Find(&categories).Error; err != nil {
+		return nil, errors.New("校验模板分类失败")
+	}
+	if len(categories) != len(names) {
+		return nil, errors.New("导入文件包含尚未创建或已停用的模板分类")
+	}
+	byName := make(map[string]models.TemplateCategory, len(categories))
+	for _, category := range categories {
+		byName[category.Name] = category
+	}
+	ordered := make([]models.TemplateCategory, 0, len(names))
+	for _, name := range names {
+		ordered = append(ordered, byName[name])
+	}
+	return ordered, nil
+}
+
+func replaceTemplateCategoryRelations(tx *gorm.DB, templateID models.UUID, categories []models.TemplateCategory) error {
+	if err := tx.Where("template_id = ?", templateID).Delete(&models.TemplateCategoryRelation{}).Error; err != nil {
+		return err
+	}
+	relations := make([]models.TemplateCategoryRelation, 0, len(categories))
+	for index, category := range categories {
+		relations = append(relations, models.TemplateCategoryRelation{
+			TemplateID: templateID, CategoryID: category.ID, SortOrder: index,
+		})
+	}
+	return tx.Create(&relations).Error
 }
 
 func cleanStringList(values []string) []string {
@@ -246,9 +341,9 @@ func cleanStringList(values []string) []string {
 	return cleaned
 }
 
-func ensureThemeExists(id models.UUID) error {
+func ensureThemeExists(tx *gorm.DB, id models.UUID) error {
 	var count int64
-	if err := database.DB.Model(&models.ThemeLibrary{}).Where("id = ?", id).Count(&count).Error; err != nil {
+	if err := tx.Model(&models.ThemeLibrary{}).Where("id = ?", id).Count(&count).Error; err != nil {
 		return errors.New("校验默认主题失败")
 	}
 	if count == 0 {

@@ -19,6 +19,11 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes adminDrawerIn {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
 /* Keep numeric fields visually consistent with text fields. */
 .admin-input[type="number"] {
   appearance: textfield;

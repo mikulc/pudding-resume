@@ -142,7 +142,11 @@
       "contentHint": "Enter a JSON object matching the ResumeData structure",
       "cancel": "Cancel",
       "save": "Save",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "categoriesHint": "Select existing categories or create one inline",
+      "noCategories": "No categories yet. Create the first category.",
+      "newCategoryPlaceholder": "New category name",
+      "addCategory": "Add category"
     },
     "delete": {
       "title": "Delete Resume Template",
@@ -159,7 +163,10 @@
       "deleted": "Template deleted",
       "deleteFailed": "Failed to delete template",
       "imported": "Successfully imported {{count}} templates",
-      "invalidFile": "The JSON file format or content is invalid"
+      "invalidFile": "The JSON file format or content is invalid",
+      "categoryLoadFailed": "Failed to load template categories",
+      "categoryCreated": "Template category created",
+      "categoryCreateFailed": "Failed to create template category"
     }
   }
 }

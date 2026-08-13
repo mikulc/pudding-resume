@@ -6,41 +6,105 @@ import (
 	"gorm.io/datatypes"
 )
 
-// ThemeLibrary 主题库表 — 排版/视觉风格预设方案
+// ThemeLibrary stores a renderable visual/layout preset.
 type ThemeLibrary struct {
-	ID            UUID           `json:"id" gorm:"type:uuid;primaryKey;comment:样式唯一标识（UUID v4）"`
-	Name          string         `json:"name" gorm:"size:128;not null;comment:样式名称（如 布丁·浅岚、布丁·青蓝）"`
-	LayoutID      string         `json:"layout_id" gorm:"size:32;not null;index;comment:对应的排版布局ID"`
-	Categories    datatypes.JSON `json:"categories" gorm:"not null;comment:视觉样式分类（JSON字符串数组）"`
-	Highlights    datatypes.JSON `json:"highlights" gorm:"comment:样式亮点标签（JSON数组）"`
-	PreviewColors datatypes.JSON `json:"preview_colors" gorm:"comment:预览颜色（JSON对象：headerBg / accentBar / bodyBg）"`
-	SortOrder     int            `json:"sort_order" gorm:"default:0;comment:排序权重，越小越靠前"`
-	CreatedAt     time.Time      `json:"created_at" gorm:"comment:创建时间"`
-	UpdatedAt     time.Time      `json:"updated_at" gorm:"comment:更新时间"`
+	ID              UUID            `json:"id" gorm:"type:uuid;primaryKey"`
+	Name            string          `json:"name" gorm:"size:128;not null"`
+	LayoutID        string          `json:"layout_id" gorm:"size:32;not null;index"`
+	CategoryEntries []ThemeCategory `json:"-" gorm:"many2many:theme_category_relation;foreignKey:ID;joinForeignKey:ThemeID;references:ID;joinReferences:CategoryID"`
+	CategoryIDs     []UUID          `json:"category_ids" gorm:"-"`
+	Categories      []string        `json:"categories" gorm:"-"`
+	Highlights      datatypes.JSON  `json:"highlights"`
+	PreviewColors   datatypes.JSON  `json:"preview_colors"`
+	SortOrder       int             `json:"sort_order" gorm:"default:0"`
+	CreatedAt       time.Time       `json:"created_at"`
+	UpdatedAt       time.Time       `json:"updated_at"`
 }
 
-func (ThemeLibrary) TableName() string {
-	return "theme_library"
-}
+func (ThemeLibrary) TableName() string { return "theme_library" }
 
-// TemplateLibrary 模板库表 — 存放面向行业/岗位的简历内容快照。
-// 模板引用一个默认主题；创建简历后，内容和主题都会保存到用户简历，
-// 后续模板更新不会影响已经创建的简历。
+// TemplateLibrary stores a resume-content snapshot for an industry/position.
 type TemplateLibrary struct {
-	ID             UUID           `json:"id" gorm:"type:uuid;primaryKey;comment:模板唯一标识（UUID v4）"`
-	Name           string         `json:"name" gorm:"size:128;not null;comment:模板名称"`
-	Industry       string         `json:"industry" gorm:"size:64;not null;default:'通用';index;comment:适用行业"`
-	Categories     datatypes.JSON `json:"categories" gorm:"not null;comment:行业与岗位分类"`
-	Highlights     datatypes.JSON `json:"highlights" gorm:"not null;comment:模板亮点"`
-	Content        datatypes.JSON `json:"content" gorm:"not null;comment:ResumeData 内容快照"`
-	DefaultThemeID UUID           `json:"default_theme_id" gorm:"type:uuid;not null;index;comment:默认主题ID"`
-	DefaultTheme   *ThemeLibrary  `json:"default_theme,omitempty" gorm:"foreignKey:DefaultThemeID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT"`
-	Status         string         `json:"status" gorm:"size:16;not null;default:'published';index;comment:发布状态"`
-	SortOrder      int            `json:"sort_order" gorm:"default:0;comment:排序权重，越小越靠前"`
-	CreatedAt      time.Time      `json:"created_at" gorm:"comment:创建时间"`
-	UpdatedAt      time.Time      `json:"updated_at" gorm:"comment:更新时间"`
+	ID              UUID               `json:"id" gorm:"type:uuid;primaryKey"`
+	Name            string             `json:"name" gorm:"size:128;not null"`
+	Industry        string             `json:"industry" gorm:"size:64;not null;default:'通用';index"`
+	CategoryEntries []TemplateCategory `json:"-" gorm:"many2many:template_category_relation;foreignKey:ID;joinForeignKey:TemplateID;references:ID;joinReferences:CategoryID"`
+	CategoryIDs     []UUID             `json:"category_ids" gorm:"-"`
+	Categories      []string           `json:"categories" gorm:"-"`
+	Highlights      datatypes.JSON     `json:"highlights" gorm:"not null"`
+	Content         datatypes.JSON     `json:"content" gorm:"not null"`
+	DefaultThemeID  UUID               `json:"default_theme_id" gorm:"type:uuid;not null;index"`
+	DefaultTheme    *ThemeLibrary      `json:"default_theme,omitempty" gorm:"foreignKey:DefaultThemeID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT"`
+	Status          string             `json:"status" gorm:"size:16;not null;default:'published';index"`
+	SortOrder       int                `json:"sort_order" gorm:"default:0"`
+	CreatedAt       time.Time          `json:"created_at"`
+	UpdatedAt       time.Time          `json:"updated_at"`
 }
 
-func (TemplateLibrary) TableName() string {
-	return "template_library"
+func (TemplateLibrary) TableName() string { return "template_library" }
+
+// TemplateCategory is a managed classification for resume content templates.
+type TemplateCategory struct {
+	ID        UUID      `json:"id" gorm:"type:uuid;primaryKey"`
+	Name      string    `json:"name" gorm:"size:64;not null;uniqueIndex"`
+	Code      string    `json:"code" gorm:"size:64;not null;uniqueIndex"`
+	Status    string    `json:"status" gorm:"size:16;not null;default:'enabled';index"`
+	SortOrder int       `json:"sort_order" gorm:"not null;default:0"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func (TemplateCategory) TableName() string { return "template_category" }
+
+// ThemeCategory is a managed visual-style or feature classification.
+// Structural layout properties remain represented by ThemeLibrary.LayoutID.
+type ThemeCategory struct {
+	ID        UUID      `json:"id" gorm:"type:uuid;primaryKey"`
+	Name      string    `json:"name" gorm:"size:64;not null;uniqueIndex"`
+	Code      string    `json:"code" gorm:"size:64;not null;uniqueIndex"`
+	Type      string    `json:"type" gorm:"size:16;not null;default:'style';index"`
+	Status    string    `json:"status" gorm:"size:16;not null;default:'enabled';index"`
+	SortOrder int       `json:"sort_order" gorm:"not null;default:0"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func (ThemeCategory) TableName() string { return "theme_category" }
+
+type TemplateCategoryRelation struct {
+	TemplateID UUID             `json:"template_id" gorm:"type:uuid;primaryKey"`
+	CategoryID UUID             `json:"category_id" gorm:"type:uuid;primaryKey"`
+	SortOrder  int              `json:"sort_order" gorm:"not null;default:0"`
+	Template   TemplateLibrary  `json:"-" gorm:"foreignKey:TemplateID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Category   TemplateCategory `json:"-" gorm:"foreignKey:CategoryID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT"`
+}
+
+func (TemplateCategoryRelation) TableName() string { return "template_category_relation" }
+
+type ThemeCategoryRelation struct {
+	ThemeID    UUID          `json:"theme_id" gorm:"type:uuid;primaryKey"`
+	CategoryID UUID          `json:"category_id" gorm:"type:uuid;primaryKey"`
+	SortOrder  int           `json:"sort_order" gorm:"not null;default:0"`
+	Theme      ThemeLibrary  `json:"-" gorm:"foreignKey:ThemeID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Category   ThemeCategory `json:"-" gorm:"foreignKey:CategoryID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT"`
+}
+
+func (ThemeCategoryRelation) TableName() string { return "theme_category_relation" }
+
+func (entry *TemplateLibrary) HydrateCategories() {
+	entry.CategoryIDs = make([]UUID, 0, len(entry.CategoryEntries))
+	entry.Categories = make([]string, 0, len(entry.CategoryEntries))
+	for _, category := range entry.CategoryEntries {
+		entry.CategoryIDs = append(entry.CategoryIDs, category.ID)
+		entry.Categories = append(entry.Categories, category.Name)
+	}
+}
+
+func (entry *ThemeLibrary) HydrateCategories() {
+	entry.CategoryIDs = make([]UUID, 0, len(entry.CategoryEntries))
+	entry.Categories = make([]string, 0, len(entry.CategoryEntries))
+	for _, category := range entry.CategoryEntries {
+		entry.CategoryIDs = append(entry.CategoryIDs, category.ID)
+		entry.Categories = append(entry.Categories, category.Name)
+	}
 }

@@ -150,6 +150,68 @@ export function AdminFormModal({
   );
 }
 
+// Right-side drawer for long admin forms. Header/footer remain fixed while the
+// form body scrolls independently, leaving the underlying list as context.
+export function AdminFormDrawer({
+  open,
+  onClose,
+  children,
+  className,
+}: {
+  open: boolean;
+  onClose: () => void;
+  children: ReactNode;
+  className?: string;
+}) {
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex justify-end" onClick={onClose}>
+      <div
+        className="absolute inset-0 animate-[adminFadeIn_180ms_ease-out]"
+        style={{
+          background: 'rgba(15, 23, 42, 0.26)',
+          backdropFilter: 'blur(3px)',
+          WebkitBackdropFilter: 'blur(3px)',
+        }}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        className={cn(
+          'relative z-10 flex h-full w-full flex-col overflow-hidden bg-white',
+          'border-l border-[rgba(31,45,61,0.08)] shadow-[-20px_0_60px_rgba(15,23,42,0.14)]',
+          'animate-[adminDrawerIn_260ms_cubic-bezier(0.22,1,0.36,1)]',
+          'dark:border-slate-800 dark:bg-slate-900',
+          'sm:max-w-[680px]',
+          className,
+        )}
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        onClick={(event) => event.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 
 export function AdminFormModalHeader({
   title,

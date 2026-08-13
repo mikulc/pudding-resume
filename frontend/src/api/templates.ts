@@ -2,7 +2,7 @@
  * Public API client for the separate template and theme libraries.
  * All endpoints are public (no auth required).
  */
-import type { ResumeData, TemplateLibraryEntry, ThemeLibraryEntry } from '../types/resume';
+import type { ResumeData, TemplateCategoryEntry, TemplateLibraryEntry, ThemeLibraryEntry } from '../types/resume';
 import { api } from '../utils/api';
 
 /** Backend JSON format for theme library entries */
@@ -32,6 +32,13 @@ interface ApiTemplateLibrary {
   content: ResumeData;
   default_theme_id: string;
   default_theme: ApiThemeLibrary;
+}
+
+interface ApiTemplateCategory {
+  id: string;
+  name: string;
+  code: string;
+  sort_order: number;
 }
 
 function mapTheme(t: ApiThemeLibrary): ThemeLibraryEntry {
@@ -65,5 +72,16 @@ export async function getTemplateLibraries(): Promise<TemplateLibraryEntry[]> {
     content: template.content,
     defaultThemeId: template.default_theme_id,
     defaultTheme: mapTheme(template.default_theme),
+  }));
+}
+
+/** Get enabled template categories in the order configured by administrators. */
+export async function getTemplateCategories(): Promise<TemplateCategoryEntry[]> {
+  const res = await api.get<{ categories: ApiTemplateCategory[] }>('/api/template-categories');
+  return (res.categories || []).map((category) => ({
+    id: category.id,
+    name: category.name,
+    code: category.code,
+    sortOrder: category.sort_order,
   }));
 }

@@ -26,9 +26,9 @@ export default function TemplatesPage() {
   const { creatingLayoutId, createFromTemplate } = useCreateResumeFromTemplate();
   const [activeCategory, setActiveCategory] = useState(ALL_TEMPLATE_CATEGORY);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const { entries, loading } = useResumeTemplateLibrary(!creatingLayoutId);
+  const { entries, categories: categoryEntries, loading } = useResumeTemplateLibrary(!creatingLayoutId);
 
-  const categories = useMemo(() => deriveTemplateCategories(entries), [entries]);
+  const categories = useMemo(() => deriveTemplateCategories(categoryEntries), [categoryEntries]);
   const filteredEntries = useMemo(
     () => filterResumeTemplates(entries, activeCategory),
     [entries, activeCategory],
@@ -36,6 +36,9 @@ export default function TemplatesPage() {
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
   }, []);
+  useEffect(() => {
+    if (!categories.includes(activeCategory)) setActiveCategory(ALL_TEMPLATE_CATEGORY);
+  }, [activeCategory, categories]);
 
   return (
     <div className="min-h-screen bg-[var(--bg-page)] text-gray-900 flex flex-col theme-color-transition">

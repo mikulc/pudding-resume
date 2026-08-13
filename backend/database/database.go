@@ -1,7 +1,9 @@
 package database
 
 import (
+	"crypto/sha256"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -61,11 +63,14 @@ func Init(cfg *config.Config) {
 		&models.User{}, &models.UserPreference{},
 		&models.AIUsageLog{},
 		&models.Resume{}, &models.ResumeShare{},
+		&models.ThemeCategory{}, &models.TemplateCategory{},
 		&models.ThemeLibrary{}, &models.TemplateLibrary{},
+		&models.ThemeCategoryRelation{}, &models.TemplateCategoryRelation{},
 		&models.UserQuota{}, &models.UserStats{}, &models.UserDailyStats{},
 	); err != nil {
 		log.Fatalf("Failed to auto-migrate database: %v", err)
 	}
+	migrateLibraryCategoryJSON(DB)
 
 	migrateActiveUserEmailUniqueIndex(DB)
 	migrateAIServiceConfigIntoUserPreference(DB)
@@ -311,6 +316,125 @@ func dropThemeLibraryLegacyCategoryColumn(db *gorm.DB) {
 	}
 }
 
+// migrateLibraryCategoryJSON normalizes the former JSON category arrays into
+// managed category and relation tables. It is idempotent and drops the legacy
+// columns only after all rows have been migrated successfully.
+func migrateLibraryCategoryJSON(db *gorm.DB) {
+	type legacyCategoryRow struct {
+		ID         models.UUID
+		Categories datatypes.JSON
+	}
+
+	migrate := func(
+		table string,
+		categoryModel any,
+		createCategory func(*gorm.DB, string, int) (models.UUID, error),
+		createRelation func(*gorm.DB, models.UUID, models.UUID, int) error,
+	) error {
+		if !db.Migrator().HasColumn(table, "categories") {
+			return nil
+		}
+		var rows []legacyCategoryRow
+		if err := db.Table(table).Select("id", "categories").Scan(&rows).Error; err != nil {
+			return err
+		}
+		if err := db.Transaction(func(tx *gorm.DB) error {
+			for _, row := range rows {
+				var names []string
+				if len(row.Categories) == 0 || string(row.Categories) == "null" {
+					continue
+				}
+				if err := json.Unmarshal(row.Categories, &names); err != nil {
+					return fmt.Errorf("decode %s categories for %s: %w", table, row.ID, err)
+				}
+				seen := map[string]struct{}{}
+				for index, name := range names {
+					name = strings.TrimSpace(name)
+					if name == "" {
+						continue
+					}
+					if _, exists := seen[name]; exists {
+						continue
+					}
+					seen[name] = struct{}{}
+					categoryID, err := createCategory(tx, name, index)
+					if err != nil {
+						return err
+					}
+					if err := createRelation(tx, row.ID, categoryID, index); err != nil {
+						return err
+					}
+				}
+			}
+			return nil
+		}); err != nil {
+			return err
+		}
+		return db.Migrator().DropColumn(categoryModel, "categories")
+	}
+
+	if err := migrate(
+		"theme_library",
+		&models.ThemeLibrary{},
+		func(tx *gorm.DB, name string, order int) (models.UUID, error) {
+			if name == "单栏" || name == "双栏" {
+				return "", nil
+			}
+			category := models.ThemeCategory{Name: name}
+			err := tx.Where("name = ?", name).First(&category).Error
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				categoryType := "style"
+				if name == "图标" {
+					categoryType = "feature"
+				}
+				category = models.ThemeCategory{
+					Name: name, Code: normalizedCategoryCode("theme", name),
+					Type: categoryType, Status: "enabled", SortOrder: order,
+				}
+				err = tx.Create(&category).Error
+			}
+			return category.ID, err
+		},
+		func(tx *gorm.DB, ownerID, categoryID models.UUID, order int) error {
+			if categoryID == "" {
+				return nil
+			}
+			relation := models.ThemeCategoryRelation{ThemeID: ownerID, CategoryID: categoryID, SortOrder: order}
+			return tx.Where("theme_id = ? AND category_id = ?", ownerID, categoryID).FirstOrCreate(&relation).Error
+		},
+	); err != nil {
+		log.Fatalf("Failed to migrate theme categories: %v", err)
+	}
+
+	if err := migrate(
+		"template_library",
+		&models.TemplateLibrary{},
+		func(tx *gorm.DB, name string, order int) (models.UUID, error) {
+			category := models.TemplateCategory{Name: name}
+			err := tx.Where("name = ?", name).First(&category).Error
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				category = models.TemplateCategory{
+					Name: name, Code: normalizedCategoryCode("template", name),
+					Status: "enabled", SortOrder: order,
+				}
+				err = tx.Create(&category).Error
+			}
+			return category.ID, err
+		},
+		func(tx *gorm.DB, ownerID, categoryID models.UUID, order int) error {
+			relation := models.TemplateCategoryRelation{TemplateID: ownerID, CategoryID: categoryID, SortOrder: order}
+			return tx.Where("template_id = ? AND category_id = ?", ownerID, categoryID).FirstOrCreate(&relation).Error
+		},
+	); err != nil {
+		log.Fatalf("Failed to migrate template categories: %v", err)
+	}
+}
+
+func normalizedCategoryCode(prefix, name string) string {
+	sum := sha256.Sum256([]byte(strings.ToLower(strings.TrimSpace(name))))
+	return fmt.Sprintf("%s-%x", prefix, sum[:8])
+}
+
 // dropTemplateLibraryVersionColumn removes the retired template version field.
 func dropTemplateLibraryVersionColumn(db *gorm.DB) {
 	if !db.Migrator().HasColumn(&models.TemplateLibrary{}, "version") {
@@ -392,6 +516,7 @@ func dropRetiredDocSettingsTable(db *gorm.DB) {
 
 // seedAll runs all table seeders. Each seeder is a no-op when the table already has data.
 func seedAll() {
+	seedTemplateCategories()
 	seedThemeLibraries()
 	migrateBundledAvatarURLs()
 }
@@ -401,16 +526,18 @@ func seedAll() {
 // table comment rather than appending to it.
 func migrateTableComments(db *gorm.DB) {
 	comments := map[string]string{
-		"user_info":        "用户表",
-		"user_preference":  "用户偏好设置表",
-		"ai_usage_logs":    "AI 用量调用日志表",
-		"user_resumes":     "用户简历表",
-		"theme_library":    "简历主题库表",
-		"template_library": "行业简历模板库表",
-		"user_quota":       "用户配额表",
-		"user_stats":       "用户统计表",
-		"user_daily_stats": "每日统计表",
-		"resume_shares":    "简历分享配置表",
+		"user_info":         "用户表",
+		"user_preference":   "用户偏好设置表",
+		"ai_usage_logs":     "AI 用量调用日志表",
+		"user_resumes":      "用户简历表",
+		"theme_library":     "简历主题库表",
+		"template_library":  "行业简历模板库表",
+		"theme_category":    "简历主题分类表",
+		"template_category": "简历模板分类表",
+		"user_quota":        "用户配额表",
+		"user_stats":        "用户统计表",
+		"user_daily_stats":  "每日统计表",
+		"resume_shares":     "简历分享配置表",
 	}
 
 	for table, comment := range comments {

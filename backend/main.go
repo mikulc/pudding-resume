@@ -277,6 +277,7 @@ func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDepende
 
 		// Theme and template routes (public, no auth required)
 		api.GET("/themes", handlers.GetThemeLibraries)
+		api.GET("/template-categories", handlers.GetTemplateCategories)
 		templates := api.Group("/templates")
 		{
 			templates.GET("", handlers.GetTemplateLibraries)
@@ -304,6 +305,18 @@ func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDepende
 			admin.POST("/templates/import", handlers.ImportAdminTemplates)
 			admin.PUT("/templates/:id", handlers.UpdateAdminTemplate)
 			admin.DELETE("/templates/:id", handlers.DeleteAdminTemplate)
+
+			admin.GET("/template-categories", handlers.ListAdminTemplateCategories)
+			admin.POST("/template-categories", handlers.CreateAdminTemplateCategory)
+			admin.PUT("/template-categories/:id", handlers.UpdateAdminTemplateCategory)
+			admin.DELETE("/template-categories/:id", handlers.DeleteAdminTemplateCategory)
+
+			admin.GET("/theme-categories", handlers.ListAdminThemeCategories)
+			admin.POST("/theme-categories", handlers.CreateAdminThemeCategory)
+			admin.PUT("/theme-categories/:id", handlers.UpdateAdminThemeCategory)
+			admin.DELETE("/theme-categories/:id", handlers.DeleteAdminThemeCategory)
+			admin.GET("/themes", handlers.ListAdminThemes)
+			admin.PUT("/themes/:id/categories", handlers.UpdateAdminThemeCategories)
 
 		}
 

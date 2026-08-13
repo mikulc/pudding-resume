@@ -13,6 +13,9 @@ const THEME_CATEGORY_ORDER = ['简约', '商务', '现代', '单栏', '双栏', 
 
 export function deriveThemeCategories(entries: ThemeLibraryEntry[]): string[] {
   const available = new Set(entries.flatMap((entry) => entry.categories));
+  entries.forEach((entry) => {
+    available.add(resolveLayout(entry.layoutId).signature.layout === 'double-column' ? '双栏' : '单栏');
+  });
   const ordered = THEME_CATEGORY_ORDER.filter((category) => available.delete(category));
   return [ALL_THEME_CATEGORY, ...ordered, ...Array.from(available).sort()];
 }
@@ -22,6 +25,10 @@ export function filterResumeThemeEntries(
   activeCategory: string,
 ): ThemeLibraryEntry[] {
   if (activeCategory === ALL_THEME_CATEGORY) return entries;
+  if (activeCategory === '单栏' || activeCategory === '双栏') {
+    const expected = activeCategory === '双栏' ? 'double-column' : 'single-column';
+    return entries.filter((entry) => resolveLayout(entry.layoutId).signature.layout === expected);
+  }
   return entries.filter((entry) => entry.categories.includes(activeCategory));
 }
 
