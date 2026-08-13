@@ -67,7 +67,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={{ showToast }}>
       {children}
       {createPortal(
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center gap-2 pointer-events-none">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[10100] flex flex-col items-center gap-2 pointer-events-none">
           {toasts.map((toast) => {
             const meta = typeMeta[toast.type];
             return (

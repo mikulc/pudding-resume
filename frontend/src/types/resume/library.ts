@@ -28,7 +28,6 @@ export interface TemplateLibraryEntry {
   content: ResumeData;
   defaultThemeId: string;
   defaultTheme: ThemeLibraryEntry;
-  version: number;
 }
 
 export type SaveStatusType = 'saved' | 'unsaved' | 'saving' | 'error';

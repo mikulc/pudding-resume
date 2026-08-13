@@ -7,7 +7,8 @@
   },
   "nav": {
     "dashboard": "仪表盘",
-    "users": "用户管理"
+    "users": "用户管理",
+    "templates": "简历模板"
   },
   "dashboard": {
     "title": "仪表盘",
@@ -108,6 +109,57 @@
       "delete": "停用",
       "restore": "恢复",
       "permanentDelete": "永久删除"
+    }
+  },
+  "templatesAdmin": {
+    "title": "简历模板管理",
+    "subtitle": "导入、编辑、发布和维护简历内容模板",
+    "count": "{{count}} 个模板",
+    "search": "搜索模板名称或行业...",
+    "loading": "正在加载模板...",
+    "empty": "暂无简历模板",
+    "create": "新建模板",
+    "import": "导入 JSON",
+    "example": "下载示例",
+    "edit": "编辑模板",
+    "status": {
+      "all": "全部状态",
+      "published": "已发布",
+      "draft": "草稿"
+    },
+    "form": {
+      "createTitle": "新建简历模板",
+      "editTitle": "编辑简历模板",
+      "name": "模板名称",
+      "industry": "适用行业",
+      "categories": "分类",
+      "highlights": "模板亮点",
+      "tagsHint": "多个内容使用逗号分隔",
+      "theme": "默认主题",
+      "status": "发布状态",
+      "sortOrder": "排序权重",
+      "content": "简历内容 JSON",
+      "contentHint": "填写符合 ResumeData 结构的 JSON 对象",
+      "cancel": "取消",
+      "save": "保存",
+      "saving": "保存中..."
+    },
+    "delete": {
+      "title": "删除简历模板",
+      "message": "确定删除模板“{{name}}”吗？删除后前台将不再展示。",
+      "confirm": "删除"
+    },
+    "toast": {
+      "loadFailed": "模板加载失败",
+      "required": "请完整填写名称、行业、分类和默认主题",
+      "invalidContent": "简历内容不是有效的 JSON 对象",
+      "created": "模板已创建",
+      "updated": "模板已更新",
+      "saveFailed": "模板保存失败",
+      "deleted": "模板已删除",
+      "deleteFailed": "模板删除失败",
+      "imported": "已成功导入 {{count}} 个模板",
+      "invalidFile": "JSON 文件格式或内容不正确"
     }
   }
 }

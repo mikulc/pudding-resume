@@ -36,7 +36,6 @@ type TemplateLibrary struct {
 	DefaultThemeID UUID           `json:"default_theme_id" gorm:"type:uuid;not null;index;comment:默认主题ID"`
 	DefaultTheme   *ThemeLibrary  `json:"default_theme,omitempty" gorm:"foreignKey:DefaultThemeID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT"`
 	Status         string         `json:"status" gorm:"size:16;not null;default:'published';index;comment:发布状态"`
-	Version        int            `json:"version" gorm:"not null;default:1;comment:模板版本"`
 	SortOrder      int            `json:"sort_order" gorm:"default:0;comment:排序权重，越小越靠前"`
 	CreatedAt      time.Time      `json:"created_at" gorm:"comment:创建时间"`
 	UpdatedAt      time.Time      `json:"updated_at" gorm:"comment:更新时间"`

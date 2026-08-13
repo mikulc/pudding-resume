@@ -72,6 +72,7 @@ func Init(cfg *config.Config) {
 	dropUnusedLive2DPreferenceColumns(DB)
 	dropThemeLibraryDescriptionColumn(DB)
 	dropThemeLibraryLegacyCategoryColumn(DB)
+	dropTemplateLibraryVersionColumn(DB)
 	dropRetiredAdminAuditLogsTable(DB)
 	dropRetiredAIModelPoolSchema(DB)
 	dropRetiredChangelogTable(DB)
@@ -307,6 +308,16 @@ func dropThemeLibraryLegacyCategoryColumn(db *gorm.DB) {
 	}
 	if err := db.Migrator().DropColumn(&models.ThemeLibrary{}, "category"); err != nil {
 		log.Fatalf("Failed to drop theme_library.category: %v", err)
+	}
+}
+
+// dropTemplateLibraryVersionColumn removes the retired template version field.
+func dropTemplateLibraryVersionColumn(db *gorm.DB) {
+	if !db.Migrator().HasColumn(&models.TemplateLibrary{}, "version") {
+		return
+	}
+	if err := db.Migrator().DropColumn(&models.TemplateLibrary{}, "version"); err != nil {
+		log.Fatalf("Failed to drop template_library.version: %v", err)
 	}
 }
 

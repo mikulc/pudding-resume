@@ -37,6 +37,10 @@ const CACHE_TTL_MS = 5 * 60 * 1000;
 let cache: TemplateLibraryCache | null = null;
 let pendingRequest: Promise<TemplateLibraryEntry[]> | null = null;
 
+export function invalidateResumeTemplateLibraryCache() {
+  cache = null;
+}
+
 function readCache(): TemplateLibraryEntry[] | null {
   if (!cache || Date.now() - cache.cachedAt > CACHE_TTL_MS) return null;
   return cache.entries;
@@ -85,6 +89,11 @@ export function useResumeTemplateLibrary(enabled: boolean) {
       cancelled = true;
     };
   }, [enabled]);
+
+  useEffect(() => {
+    window.addEventListener('pudding:template-library-changed', invalidateResumeTemplateLibraryCache);
+    return () => window.removeEventListener('pudding:template-library-changed', invalidateResumeTemplateLibraryCache);
+  }, []);
 
   return { entries, loading };
 }

@@ -32,7 +32,6 @@ interface ApiTemplateLibrary {
   content: ResumeData;
   default_theme_id: string;
   default_theme: ApiThemeLibrary;
-  version: number;
 }
 
 function mapTheme(t: ApiThemeLibrary): ThemeLibraryEntry {
@@ -66,6 +65,5 @@ export async function getTemplateLibraries(): Promise<TemplateLibraryEntry[]> {
     content: template.content,
     defaultThemeId: template.default_theme_id,
     defaultTheme: mapTheme(template.default_theme),
-    version: template.version,
   }));
 }

@@ -7,7 +7,8 @@
   },
   "nav": {
     "dashboard": "Dashboard",
-    "users": "Users"
+    "users": "Users",
+    "templates": "Resume Templates"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -108,6 +109,57 @@
       "delete": "Deactivate",
       "restore": "Restore",
       "permanentDelete": "Delete Permanently"
+    }
+  },
+  "templatesAdmin": {
+    "title": "Resume Template Management",
+    "subtitle": "Import, edit, publish, and maintain resume content templates",
+    "count": "{{count}} templates",
+    "search": "Search by template name or industry...",
+    "loading": "Loading templates...",
+    "empty": "No resume templates yet",
+    "create": "New Template",
+    "import": "Import JSON",
+    "example": "Download Example",
+    "edit": "Edit template",
+    "status": {
+      "all": "All statuses",
+      "published": "Published",
+      "draft": "Draft"
+    },
+    "form": {
+      "createTitle": "New Resume Template",
+      "editTitle": "Edit Resume Template",
+      "name": "Template Name",
+      "industry": "Industry",
+      "categories": "Categories",
+      "highlights": "Highlights",
+      "tagsHint": "Separate multiple items with commas",
+      "theme": "Default Theme",
+      "status": "Status",
+      "sortOrder": "Sort Order",
+      "content": "Resume Content JSON",
+      "contentHint": "Enter a JSON object matching the ResumeData structure",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "delete": {
+      "title": "Delete Resume Template",
+      "message": "Delete template ?{{name}}?? It will no longer appear in the template gallery.",
+      "confirm": "Delete"
+    },
+    "toast": {
+      "loadFailed": "Failed to load templates",
+      "required": "Complete the name, industry, categories, and default theme",
+      "invalidContent": "Resume content must be a valid JSON object",
+      "created": "Template created",
+      "updated": "Template updated",
+      "saveFailed": "Failed to save template",
+      "deleted": "Template deleted",
+      "deleteFailed": "Failed to delete template",
+      "imported": "Successfully imported {{count}} templates",
+      "invalidFile": "The JSON file format or content is invalid"
     }
   }
 }

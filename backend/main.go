@@ -298,6 +298,13 @@ func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDepende
 			admin.DELETE("/users/:id/permanent", handlers.PermanentlyDeleteUser(cfg))
 			admin.POST("/users/batch-delete", handlers.BatchDeleteUsers)
 
+			// Resume template management
+			admin.GET("/templates", handlers.ListAdminTemplates)
+			admin.POST("/templates", handlers.CreateAdminTemplate)
+			admin.POST("/templates/import", handlers.ImportAdminTemplates)
+			admin.PUT("/templates/:id", handlers.UpdateAdminTemplate)
+			admin.DELETE("/templates/:id", handlers.DeleteAdminTemplate)
+
 		}
 
 	}

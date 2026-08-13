@@ -3,6 +3,9 @@ import type {
   DashboardData,
   AdminUserListResponse,
   UpdateUserQuotaRequest,
+  AdminTemplateInput,
+  AdminTemplateItem,
+  AdminTemplateListResponse,
 } from '../types/admin';
 
 // --- Dashboard ---
@@ -55,4 +58,33 @@ export function restoreUser(id: string): Promise<{ message: string }> {
 
 export function permanentlyDeleteUser(id: string): Promise<{ message: string }> {
   return api.del(`/api/admin/users/${id}/permanent`);
+}
+
+// --- Resume templates ---
+export function fetchAdminTemplates(params: {
+  page?: number; size?: number; search?: string; status?: string;
+}): Promise<AdminTemplateListResponse> {
+  const sp = new URLSearchParams();
+  if (params.page) sp.set('page', String(params.page));
+  if (params.size) sp.set('size', String(params.size));
+  if (params.search) sp.set('search', params.search);
+  if (params.status) sp.set('status', params.status);
+  const qs = sp.toString();
+  return api.get(`/api/admin/templates${qs ? `?${qs}` : ''}`);
+}
+
+export function createAdminTemplate(data: AdminTemplateInput): Promise<{ template: AdminTemplateItem }> {
+  return api.post('/api/admin/templates', data);
+}
+
+export function importAdminTemplates(templates: AdminTemplateInput[]): Promise<{ message: string; count: number }> {
+  return api.post('/api/admin/templates/import', { templates });
+}
+
+export function updateAdminTemplate(id: string, data: AdminTemplateInput): Promise<{ template: AdminTemplateItem }> {
+  return api.put(`/api/admin/templates/${id}`, data);
+}
+
+export function deleteAdminTemplate(id: string): Promise<{ message: string }> {
+  return api.del(`/api/admin/templates/${id}`);
 }
