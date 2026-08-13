@@ -55,7 +55,6 @@ export interface UserProfile {
   language?: string;               // UI language: "zh-CN" | "en-US"
   ai_service_api_url: string;     // user configured AI model API URL
   ai_service_model: string;       // user configured AI model name
-  ai_service_prompt: string;      // user customized AI prompt template
   // Live2D preferences
   live2d_enabled: boolean;     // whether Live2D mascot is enabled
   live2d_position: string;     // mascot position: "left" | "right" | "bottom" | "right-bottom"

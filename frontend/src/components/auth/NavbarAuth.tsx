@@ -2,12 +2,13 @@ import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react
 import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BarChart3, FileText, LayoutDashboard, LayoutTemplate, Settings, User, ArrowRight, Shield } from 'lucide-react';
+import { BarChart3, FileText, LayoutDashboard, LayoutTemplate, Settings, User, Shield } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getLocaleFromPath } from '../../utils/localePath';
 import { normalizeLanguage } from '../../utils/localSettings';
 import { buildAuthPath } from '../../utils/authNavigation';
 import { useOutsideClick } from '../../hooks/useOutsideClick';
+import { useToast } from '../common/Toast';
 
 interface NavbarSettingsShortcut {
   label: string;
@@ -19,9 +20,9 @@ interface NavbarAuthProps {
 }
 
 /**
- * Reusable navbar auth section:
- * - When logged out: shows "登录" (secondary) + "注册" (primary) buttons
- * - When logged in: shows a profile shortcut, account shortcuts, and a navigation console
+ * Reusable navbar account section:
+ * - Always renders the icon-based navigation
+ * - Opens login from the profile icon for signed-out visitors
  */
 function ProfileAvatarButton({
   username,
@@ -196,6 +197,7 @@ function ControlCenterMenu({
 export function NavbarAuth({ settingsShortcut }: NavbarAuthProps) {
   const { isLoggedIn, username, role, sessionLoading } = useAuth();
   const { t, i18n } = useTranslation('auth');
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -207,82 +209,65 @@ export function NavbarAuth({ settingsShortcut }: NavbarAuthProps) {
     navigate(buildAuthPath(authLocale, 'login'), { state: { returnTo: currentPath } });
   };
 
-  const openRegister = () => {
-    navigate(buildAuthPath(authLocale, 'register'), { state: { returnTo: currentPath } });
+  const openUsage = () => {
+    if (!isLoggedIn) {
+      showToast(t('notLoggedIn'), 'info');
+      openLogin();
+      return;
+    }
+    navigate('/ai-usage');
   };
 
   if (sessionLoading) {
     return null;
   }
 
-  // Logged-in state
-  if (isLoggedIn) {
-    const usageLabel = t('usageInfo', { defaultValue: '用量信息' });
-    const adminLabel = t('admin:layout.title');
-    const isProfileActive = location.pathname.startsWith('/profile');
-    const isUsageActive = location.pathname.startsWith('/ai-usage');
-    const isAdminActive = location.pathname.startsWith('/admin');
+  const usageLabel = t('usageInfo', { defaultValue: '用量信息' });
+  const adminLabel = t('admin:layout.title');
+  const isProfileActive = isLoggedIn && location.pathname.startsWith('/profile');
+  const isUsageActive = location.pathname.startsWith('/ai-usage');
+  const isAdminActive = location.pathname.startsWith('/admin');
 
-    return (
-      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-        <ProfileAvatarButton
-          username={username}
-          onClick={() => navigate('/profile')}
-          active={isProfileActive}
-        />
+  return (
+    <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+      <ProfileAvatarButton
+        username={username || t('login.title')}
+        onClick={isLoggedIn ? () => navigate('/profile') : openLogin}
+        active={isProfileActive}
+      />
+      <button
+        type="button"
+        onClick={openUsage}
+        aria-label={usageLabel}
+        aria-current={isUsageActive ? 'page' : undefined}
+        style={isUsageActive ? {
+          backgroundColor: 'var(--theme-accent)',
+          color: 'var(--theme-accent-foreground)',
+        } : undefined}
+        className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] ${
+          isUsageActive ? '' : 'text-gray-600 dark:text-slate-300'
+        }`}
+      >
+        <BarChart3 className="h-[18px] w-[18px]" strokeWidth={3.2} />
+      </button>
+      {isLoggedIn && role === 'admin' && (
         <button
           type="button"
-          onClick={() => navigate('/ai-usage')}
-          aria-label={usageLabel}
-          aria-current={isUsageActive ? 'page' : undefined}
-          style={isUsageActive ? {
+          onClick={() => navigate('/admin')}
+          aria-label={adminLabel}
+          aria-current={isAdminActive ? 'page' : undefined}
+          style={isAdminActive ? {
             backgroundColor: 'var(--theme-accent)',
             color: 'var(--theme-accent-foreground)',
           } : undefined}
-          className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] ${
-            isUsageActive ? '' : 'text-gray-600 dark:text-slate-300'
+          className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] ${
+            isAdminActive ? '' : 'text-gray-600 dark:text-slate-300'
           }`}
         >
-          <BarChart3 className="h-[18px] w-[18px]" strokeWidth={3.2} />
+          <Shield className="h-[18px] w-[18px]" strokeWidth={3.2} />
         </button>
-        {role === 'admin' && (
-          <button
-            type="button"
-            onClick={() => navigate('/admin')}
-            aria-label={adminLabel}
-            aria-current={isAdminActive ? 'page' : undefined}
-            style={isAdminActive ? {
-              backgroundColor: 'var(--theme-accent)',
-              color: 'var(--theme-accent-foreground)',
-            } : undefined}
-            className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] ${
-              isAdminActive ? '' : 'text-gray-600 dark:text-slate-300'
-            }`}
-          >
-            <Shield className="h-[18px] w-[18px]" strokeWidth={3.2} />
-          </button>
-        )}
-        <ControlCenterMenu settingsShortcut={settingsShortcut} />
-      </div>
-    );
-  }
-
-  // Logged-out state
-  return (
-      <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
-        <button
-          onClick={openLogin}
-          className="inline-flex h-8 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-gray-200 px-3 text-sm font-medium text-gray-600 transition-all hover:border-gray-300 hover:bg-gray-50 dark:border-white/10 dark:text-slate-300 dark:hover:border-white/[0.16] dark:hover:bg-white/[0.06] sm:h-9 sm:rounded-xl sm:px-4"
-        >
-          {t('login.title')}
-        </button>
-        <button
-          onClick={openRegister}
-          className="navbar-register-btn inline-flex h-8 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-gray-900 px-3 text-sm font-medium text-white transition-all hover:bg-gray-800 sm:h-9 sm:rounded-xl sm:px-4"
-        >
-          {t('register.title')}
-          <ArrowRight className="hidden h-3.5 w-3.5 sm:block" />
-        </button>
-      </div>
+      )}
+      <ControlCenterMenu settingsShortcut={settingsShortcut} />
+    </div>
   );
 }

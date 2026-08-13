@@ -72,7 +72,6 @@ func permanentlyDeleteUser(tx *gorm.DB, userID string) error {
 		&models.UserDailyStats{},
 		&models.UserStats{},
 		&models.UserQuota{},
-		&models.AIServiceConfig{},
 		&models.UserPreference{},
 	}
 	for _, model := range deleteByUserID {

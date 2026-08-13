@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
-	"pudding-resume-backend/database"
-	"pudding-resume-backend/middleware"
-	"pudding-resume-backend/models"
 	"strings"
 )
 
@@ -77,20 +74,7 @@ func validateCustomAIConfig(apiUrl, apiKey, model string, requireModel bool) err
 	return nil
 }
 
-func getSystemPromptForUser(userID string) string {
-	if userID == "" {
-		return defaultSystemPrompt
-	}
-
-	var aifc models.AIServiceConfig
-	if err := database.DB.Where("user_id = ?", userID).First(&aifc).Error; err == nil && strings.TrimSpace(aifc.Prompt) != "" {
-		return aifc.Prompt
-	}
-	return defaultSystemPrompt
-}
-
-func extractAIConfig(c *gin.Context, reqApiUrl, reqApiKey, reqModel string) (resolvedAIConfig, error) {
-	userID := middleware.GetUserID(c)
+func extractAIConfig(_ *gin.Context, reqApiUrl, reqApiKey, reqModel string) (resolvedAIConfig, error) {
 	reqApiUrl = strings.TrimSpace(reqApiUrl)
 	reqApiKey = strings.TrimSpace(reqApiKey)
 	reqModel = strings.TrimSpace(reqModel)
@@ -105,7 +89,7 @@ func extractAIConfig(c *gin.Context, reqApiUrl, reqApiKey, reqModel string) (res
 			ApiURL:       reqApiUrl,
 			ApiKey:       reqApiKey,
 			Model:        reqModel,
-			SystemPrompt: getSystemPromptForUser(userID),
+			SystemPrompt: defaultSystemPrompt,
 			Provider:     detectAIProvider(reqApiUrl, reqModel),
 		}, nil
 	}

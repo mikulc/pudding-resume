@@ -32,6 +32,8 @@ type UserPreference struct {
 	UserID           UUID   `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
 	AutoSaveInterval int    `json:"auto_save_interval" gorm:"default:120;not null;comment:自动保存间隔（秒），0 表示关闭"`
 	AiPolishEnabled  bool   `json:"ai_polish_enabled" gorm:"default:false;not null;comment:是否启用 AI 润色"`
+	AiServiceApiUrl  string `json:"ai_service_api_url" gorm:"size:512;default:'';comment:AI 模型 API 地址"`
+	AiServiceModel   string `json:"ai_service_model" gorm:"size:128;default:'';comment:AI 模型名称"`
 	ThemeMode        string `json:"theme_mode" gorm:"size:16;default:system;not null;comment:UI 主题模式：light / dark / system"`
 	Language         string `json:"language" gorm:"size:16;default:zh-CN;not null;comment:界面语言：zh-CN / en-US"`
 	// Live2D 看板娘偏好
@@ -53,21 +55,6 @@ type UserPreference struct {
 
 func (UserPreference) TableName() string {
 	return "user_preference"
-}
-
-// AIServiceConfig AI 服务商配置表 — 存储用户配置的 AI 模型连接参数
-type AIServiceConfig struct {
-	ID        UUID      `json:"id" gorm:"type:uuid;primaryKey;comment:配置记录唯一标识（UUID v4）"`
-	UserID    UUID      `json:"user_id" gorm:"type:uuid;uniqueIndex;not null;comment:关联的用户ID"`
-	ApiUrl    string    `json:"api_url" gorm:"size:512;default:'';comment:AI 模型 API 地址"`
-	Model     string    `json:"model" gorm:"size:128;default:'';comment:AI 模型名称"`
-	Prompt    string    `json:"prompt" gorm:"type:text;comment:自定义提示词模板（已弃用）"`
-	CreatedAt time.Time `json:"created_at" gorm:"comment:创建时间"`
-	UpdatedAt time.Time `json:"updated_at" gorm:"comment:更新时间"`
-}
-
-func (AIServiceConfig) TableName() string {
-	return "ai_service_config"
 }
 
 // UserQuota 用户配额表 — 记录用户的最大简历数、导出次数等配额

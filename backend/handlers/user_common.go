@@ -27,7 +27,6 @@ type UserProfileResponse struct {
 	Language           string `json:"language"`
 	AiServiceApiUrl    string `json:"ai_service_api_url"`
 	AiServiceModel     string `json:"ai_service_model"`
-	AiServicePrompt    string `json:"ai_service_prompt"`
 	// Live2D preferences
 	Live2dEnabled                        bool   `json:"live2d_enabled"`
 	Live2dPosition                       string `json:"live2d_position"`
@@ -52,7 +51,6 @@ type UpdatePreferencesRequest struct {
 	Language         *string `json:"language"`
 	AiServiceApiUrl  *string `json:"ai_service_api_url"`
 	AiServiceModel   *string `json:"ai_service_model"`
-	AiServicePrompt  *string `json:"ai_service_prompt"`
 	// Live2D preferences (pointer for partial update)
 	Live2dEnabled                        *bool   `json:"live2d_enabled"`
 	Live2dPosition                       *string `json:"live2d_position"`
@@ -120,10 +118,6 @@ func formatUserProfile(user *models.User) UserProfileResponse {
 	var pref models.UserPreference
 	database.DB.Where("user_id = ?", user.ID).First(&pref)
 
-	// Fetch AI fill config
-	var aifc models.AIServiceConfig
-	database.DB.Where("user_id = ?", user.ID).First(&aifc)
-
 	return UserProfileResponse{
 		ID:                                   string(user.ID),
 		Username:                             user.Username,
@@ -139,9 +133,8 @@ func formatUserProfile(user *models.User) UserProfileResponse {
 		AiPolishEnabled:                      pref.AiPolishEnabled,
 		ThemeMode:                            normalizeThemeMode(pref.ThemeMode),
 		Language:                             normalizeLanguage(pref.Language),
-		AiServiceApiUrl:                      aifc.ApiUrl,
-		AiServiceModel:                       aifc.Model,
-		AiServicePrompt:                      aifc.Prompt,
+		AiServiceApiUrl:                      pref.AiServiceApiUrl,
+		AiServiceModel:                       pref.AiServiceModel,
 		Live2dEnabled:                        pref.Live2dEnabled,
 		Live2dPosition:                       pref.Live2dPosition,
 		Live2dShowEditor:                     pref.Live2dShowEditor,

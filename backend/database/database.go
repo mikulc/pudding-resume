@@ -59,7 +59,6 @@ func Init(cfg *config.Config) {
 	// Note: the database itself must be created manually beforehand.
 	if err := DB.AutoMigrate(
 		&models.User{}, &models.UserPreference{},
-		&models.AIServiceConfig{},
 		&models.AIUsageLog{},
 		&models.Resume{}, &models.ResumeShare{},
 		&models.ThemeLibrary{}, &models.TemplateLibrary{},
@@ -69,7 +68,7 @@ func Init(cfg *config.Config) {
 	}
 
 	migrateActiveUserEmailUniqueIndex(DB)
-	dropAIServiceConfigAPIKeyColumn(DB)
+	migrateAIServiceConfigIntoUserPreference(DB)
 	dropUnusedLive2DPreferenceColumns(DB)
 	dropThemeLibraryDescriptionColumn(DB)
 	dropThemeLibraryLegacyCategoryColumn(DB)
@@ -226,14 +225,51 @@ func dropThemeLibraryDescriptionColumn(db *gorm.DB) {
 	}
 }
 
-// dropAIServiceConfigAPIKeyColumn removes credentials persisted by older
-// versions. API keys are now supplied per request from browser-local storage.
-func dropAIServiceConfigAPIKeyColumn(db *gorm.DB) {
-	if !db.Migrator().HasColumn(&models.AIServiceConfig{}, "api_key") {
+// migrateAIServiceConfigIntoUserPreference moves the active AI settings from
+// the retired one-to-one table, then removes the table and its legacy prompt.
+func migrateAIServiceConfigIntoUserPreference(db *gorm.DB) {
+	const legacyTable = "ai_service_config"
+	if !db.Migrator().HasTable(legacyTable) {
 		return
 	}
-	if err := db.Migrator().DropColumn(&models.AIServiceConfig{}, "api_key"); err != nil {
-		log.Fatalf("Failed to drop ai_service_config.api_key: %v", err)
+
+	type legacyAIServiceConfig struct {
+		UserID models.UUID
+		ApiURL string `gorm:"column:api_url"`
+		Model  string
+	}
+	var configs []legacyAIServiceConfig
+	if err := db.Table(legacyTable).Select("user_id", "api_url", "model").Scan(&configs).Error; err != nil {
+		log.Fatalf("Failed to read legacy AI service configuration: %v", err)
+	}
+
+	if err := db.Transaction(func(tx *gorm.DB) error {
+		for _, config := range configs {
+			result := tx.Model(&models.UserPreference{}).
+				Where("user_id = ?", config.UserID).
+				Updates(map[string]any{
+					"ai_service_api_url": config.ApiURL,
+					"ai_service_model":   config.Model,
+				})
+			if result.Error != nil {
+				return result.Error
+			}
+			if result.RowsAffected == 0 {
+				if err := tx.Create(&models.UserPreference{
+					UserID:          config.UserID,
+					AiServiceApiUrl: config.ApiURL,
+					AiServiceModel:  config.Model,
+				}).Error; err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	}); err != nil {
+		log.Fatalf("Failed to migrate ai_service_config into user_preference: %v", err)
+	}
+	if err := db.Migrator().DropTable(legacyTable); err != nil {
+		log.Fatalf("Failed to drop migrated ai_service_config table: %v", err)
 	}
 }
 
@@ -291,8 +327,6 @@ func dropRetiredAIModelPoolSchema(db *gorm.DB) {
 		model  any
 		column string
 	}{
-		{&models.AIServiceConfig{}, "public_model_id"},
-		{&models.AIServiceConfig{}, "model_source"},
 		{&models.AIUsageLog{}, "public_model_id"},
 		{&models.AIUsageLog{}, "model_source"},
 	}
@@ -356,17 +390,16 @@ func seedAll() {
 // table comment rather than appending to it.
 func migrateTableComments(db *gorm.DB) {
 	comments := map[string]string{
-		"user_info":         "用户表",
-		"user_preference":   "用户偏好设置表",
-		"ai_service_config": "AI 服务商配置表",
-		"ai_usage_logs":     "AI 用量调用日志表",
-		"user_resumes":      "用户简历表",
-		"theme_library":     "简历主题库表",
-		"template_library":  "行业简历模板库表",
-		"user_quota":        "用户配额表",
-		"user_stats":        "用户统计表",
-		"user_daily_stats":  "每日统计表",
-		"resume_shares":     "简历分享配置表",
+		"user_info":        "用户表",
+		"user_preference":  "用户偏好设置表",
+		"ai_usage_logs":    "AI 用量调用日志表",
+		"user_resumes":     "用户简历表",
+		"theme_library":    "简历主题库表",
+		"template_library": "行业简历模板库表",
+		"user_quota":       "用户配额表",
+		"user_stats":       "用户统计表",
+		"user_daily_stats": "每日统计表",
+		"resume_shares":    "简历分享配置表",
 	}
 
 	for table, comment := range comments {

@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"net/http"
 	"pudding-resume-backend/database"
 	"pudding-resume-backend/middleware"
@@ -24,18 +22,13 @@ func GetPreferences(c *gin.Context) {
 		return
 	}
 
-	// Fetch AI fill config
-	var aifc models.AIServiceConfig
-	database.DB.Where("user_id = ?", userID).First(&aifc)
-
 	c.JSON(http.StatusOK, gin.H{
 		"auto_save_interval": pref.AutoSaveInterval,
 		"ai_polish_enabled":  pref.AiPolishEnabled,
 		"theme_mode":         normalizeThemeMode(pref.ThemeMode),
 		"language":           normalizeLanguage(pref.Language),
-		"ai_service_api_url": aifc.ApiUrl,
-		"ai_service_model":   aifc.Model,
-		"ai_service_prompt":  aifc.Prompt,
+		"ai_service_api_url": pref.AiServiceApiUrl,
+		"ai_service_model":   pref.AiServiceModel,
 		"live2d_enabled":     pref.Live2dEnabled,
 		"live2d_position":    pref.Live2dPosition,
 		"live2d_show_editor": pref.Live2dShowEditor,
@@ -64,7 +57,6 @@ func UpdatePreferences(c *gin.Context) {
 	}
 
 	updates := map[string]any{}
-	aiUpdates := map[string]any{} // AI fill fields go to ai_service_config table
 
 	if req.AutoSaveInterval != nil {
 		// Validate: only allow specific values
@@ -107,15 +99,11 @@ func UpdatePreferences(c *gin.Context) {
 				return
 			}
 		}
-		aiUpdates["api_url"] = *req.AiServiceApiUrl
+		updates["ai_service_api_url"] = *req.AiServiceApiUrl
 	}
 
 	if req.AiServiceModel != nil {
-		aiUpdates["model"] = *req.AiServiceModel
-	}
-
-	if req.AiServicePrompt != nil {
-		aiUpdates["prompt"] = *req.AiServicePrompt
+		updates["ai_service_model"] = *req.AiServiceModel
 	}
 
 	if req.Live2dEnabled != nil {
@@ -166,68 +154,26 @@ func UpdatePreferences(c *gin.Context) {
 		updates["export_json_with_settings"] = *req.ExportJsonWithSettings
 	}
 
-	if len(updates) == 0 && len(aiUpdates) == 0 {
+	if len(updates) == 0 {
 		respondError(c, http.StatusBadRequest, "请至少提供一项偏好设置")
 		return
 	}
 
-	// Update user_preference table (non-AI fields)
-	if len(updates) > 0 {
-		if err := database.DB.Model(&models.UserPreference{}).Where("user_id = ?", userID).Updates(updates).Error; err != nil {
-			respondError(c, http.StatusInternalServerError, "偏好设置更新失败，请稍后重试")
-			return
-		}
-	}
-
-	// Update ai_service_config table (AI fill fields)
-	if len(aiUpdates) > 0 {
-		// Upsert: create if not exists, update if exists
-		var aifc models.AIServiceConfig
-		result := database.DB.Where("user_id = ?", userID).First(&aifc)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				// Create new record
-				aifc = models.AIServiceConfig{UserID: models.UUID(userID)}
-				for k, v := range aiUpdates {
-					switch k {
-					case "api_url":
-						aifc.ApiUrl = v.(string)
-					case "model":
-						aifc.Model = v.(string)
-					case "prompt":
-						aifc.Prompt = v.(string)
-					}
-				}
-				if err := database.DB.Create(&aifc).Error; err != nil {
-					respondError(c, http.StatusInternalServerError, "AI 配置保存失败，请稍后重试")
-					return
-				}
-			} else {
-				respondError(c, http.StatusInternalServerError, "服务器内部错误")
-				return
-			}
-		} else {
-			if err := database.DB.Model(&models.AIServiceConfig{}).Where("user_id = ?", userID).Updates(aiUpdates).Error; err != nil {
-				respondError(c, http.StatusInternalServerError, "AI 配置更新失败，请稍后重试")
-				return
-			}
-		}
+	if err := database.DB.Model(&models.UserPreference{}).Where("user_id = ?", userID).Updates(updates).Error; err != nil {
+		respondError(c, http.StatusInternalServerError, "偏好设置更新失败，请稍后重试")
+		return
 	}
 
 	// Return updated preferences
 	var pref models.UserPreference
 	database.DB.Where("user_id = ?", userID).First(&pref)
-	var aifc models.AIServiceConfig
-	database.DB.Where("user_id = ?", userID).First(&aifc)
-
 	c.JSON(http.StatusOK, gin.H{
 		"auto_save_interval": pref.AutoSaveInterval,
 		"ai_polish_enabled":  pref.AiPolishEnabled,
 		"theme_mode":         normalizeThemeMode(pref.ThemeMode),
 		"language":           normalizeLanguage(pref.Language),
-		"ai_service_api_url": aifc.ApiUrl,
-		"ai_service_model":   aifc.Model,
-		"ai_service_prompt":  aifc.Prompt,
+		"ai_service_api_url": pref.AiServiceApiUrl,
+		"ai_service_model":   pref.AiServiceModel,
 		"live2d_enabled":     pref.Live2dEnabled,
 		"live2d_position":    pref.Live2dPosition,
 		"live2d_show_editor": pref.Live2dShowEditor,
