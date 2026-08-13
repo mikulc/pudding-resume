@@ -27,14 +27,6 @@ import { RegisterModal } from './RegisterModal';
 import { LoginModal } from './LoginModal';
 import { ApiError } from '../../utils/api';
 
-function completeArtworkEntrance() {
-  document.querySelectorAll('.pudding-login-character').forEach((character) => {
-    const animationEnd = new Event('animationend', { bubbles: true });
-    Object.defineProperty(animationEnd, 'animationName', { value: 'pudding-character-in' });
-    fireEvent(character, animationEnd);
-  });
-}
-
 describe('RegisterModal email verification', () => {
   afterEach(() => cleanup());
 
@@ -57,56 +49,11 @@ describe('RegisterModal email verification', () => {
     expect(usernameInput?.getAttribute('autocomplete')).toBe('off');
   });
 
-  it('replays the character entrance whenever an auth modal opens', () => {
-    const firstRender = render(<RegisterModal open onClose={vi.fn()} onSwitchToLogin={vi.fn()} />);
-    firstRender.unmount();
-
+  it('renders the registration form in the centered auth shell', () => {
     render(<RegisterModal open onClose={vi.fn()} onSwitchToLogin={vi.fn()} />);
 
-    expect(document.querySelector('.pudding-login-artwork')?.classList.contains('is-entry-settled')).toBe(false);
-  });
-
-  it('makes the characters look around instead of squinting at a password', () => {
-    render(<RegisterModal open onClose={vi.fn()} onSwitchToLogin={vi.fn()} />);
-    completeArtworkEntrance();
-
-    fireEvent.focus(document.querySelector('#register-password')!);
-
-    const characters = [...document.querySelectorAll('.pudding-login-character')];
-    expect(characters).toHaveLength(4);
-    expect(characters.every((character) => character.classList.contains('is-looking-around'))).toBe(true);
-    expect(characters.some((character) => character.classList.contains('is-shy'))).toBe(false);
-    expect(document.querySelectorAll('.pudding-login-pupil--tracking')).toHaveLength(8);
-    expect(document.querySelectorAll('.pudding-login-pupil--wandering')).toHaveLength(8);
-  });
-
-  it('waits for the entrance to finish before applying an input reaction', () => {
-    render(<RegisterModal open onClose={vi.fn()} onSwitchToLogin={vi.fn()} />);
-
-    fireEvent.focus(document.querySelector('#register-email')!);
-
-    const characters = [...document.querySelectorAll('.pudding-login-character')];
-    expect(characters.some((character) => character.classList.contains('is-curious'))).toBe(false);
-
-    completeArtworkEntrance();
-
-    expect(characters.every((character) => character.classList.contains('is-curious'))).toBe(true);
-  });
-
-  it('keeps the character timeline running while validation shakes the faces', () => {
-    render(<RegisterModal open onClose={vi.fn()} onSwitchToLogin={vi.fn()} />);
-
-    const character = document.querySelector<HTMLElement>('.pudding-login-character')!;
-    const body = character.querySelector<HTMLElement>('.pudding-login-character-body')!;
-    const face = character.querySelector<HTMLElement>('.pudding-login-face')!;
-    fireEvent.submit(document.querySelector('form')!);
-
-    expect(character.classList.contains('is-shaking')).toBe(false);
-    expect(body.classList.contains('is-shaking')).toBe(true);
-    expect(face.classList.contains('is-shaking')).toBe(false);
-    expect(document.querySelector('#register-username-error')?.textContent?.trim()).not.toBe('');
-    expect(document.querySelector('#register-username')?.getAttribute('aria-invalid')).toBe('true');
-    expect(document.querySelector('.pudding-login-error')?.classList.contains('is-visible')).toBe(false);
+    expect(document.querySelector('.pudding-login-shell')).not.toBeNull();
+    expect(document.querySelector('.pudding-register-panel form')).not.toBeNull();
   });
 
   it('places login validation below the corresponding input', () => {

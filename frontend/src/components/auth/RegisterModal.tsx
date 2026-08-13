@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { Loader2, LockKeyhole, Mail, ShieldCheck, User, X } from 'lucide-react';
+import { Loader2, LockKeyhole, Mail, ShieldCheck, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../common/Toast';
 import { lockModalScroll } from '../../utils/modalScrollLock';
 import { ApiError } from '../../utils/api';
-import { AuthArtwork } from './LoginModal';
+import logo from '../../assets/logo.svg';
+import { AuthThemeToggle } from './AuthThemeToggle';
 import './login-experience.css';
 
 interface Props {
@@ -15,8 +16,7 @@ interface Props {
   onSwitchToLogin: () => void;
 }
 
-type RegisterField = 'username' | 'email' | 'password' | 'confirmPassword' | 'code' | null;
-type RegisterInputField = Exclude<RegisterField, null>;
+type RegisterInputField = 'username' | 'email' | 'password' | 'confirmPassword' | 'code';
 
 export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
   const {
@@ -38,8 +38,6 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
   const [countdown, setCountdown] = useState(0);
   const [registrationTicket, setRegistrationTicket] = useState('');
   const [ticketEmail, setTicketEmail] = useState('');
-  const [focusedField, setFocusedField] = useState<RegisterField>(null);
-  const [reaction, setReaction] = useState<'idle' | 'success' | 'error'>('idle');
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<RegisterInputField, string>>>({});
   const [globalError, setGlobalError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -54,8 +52,6 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
     setCountdown(0);
     setRegistrationTicket('');
     setTicketEmail('');
-    setFocusedField(null);
-    setReaction('idle');
     setFieldErrors({});
     setGlobalError('');
     setLoading(false);
@@ -94,8 +90,6 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
     } else {
       setGlobalError(message);
     }
-    setReaction('error');
-    window.setTimeout(() => setReaction('idle'), 560);
   }, []);
 
   const handleSendCode = useCallback(async () => {
@@ -173,8 +167,6 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
         password,
         ...(registrationEmailCodeEnabled ? { registration_ticket: ticket } : {}),
       });
-      setFocusedField(null);
-      setReaction('success');
       showToast(t('register.registerSuccess'), 'success');
       reset();
       onClose();
@@ -192,29 +184,13 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
 
   if (!open) return null;
 
-  const artworkFocus = focusedField === 'password' || focusedField === 'confirmPassword'
-    ? 'password'
-    : focusedField
-      ? 'email'
-      : null;
-
-  const focusHandlers = (field: RegisterField) => ({
-    onFocus: () => setFocusedField(field),
-    onBlur: () => setFocusedField(null),
-  });
-
   return createPortal(
-    <div className="pudding-login-shell" role="dialog" aria-modal="true" aria-labelledby="pudding-register-title">
-      <button className="pudding-login-close" type="button" onClick={handleClose} aria-label={t('common:button.close')}>
-        <X />
-      </button>
-
-      <AuthArtwork focusedField={artworkFocus} reaction={reaction} />
-
+    <div className="pudding-login-shell" role="dialog" aria-modal="true" aria-label={t('register.title')}>
       <section className="pudding-login-panel pudding-register-panel">
         <div className="pudding-login-form-wrap pudding-register-form-wrap">
+          <AuthThemeToggle />
           <header className="pudding-login-header pudding-login-header--centered pudding-register-header">
-            <h1 id="pudding-register-title">{t('register.welcomeTitle')}</h1>
+            <img className="pudding-login-logo" src={logo} alt="Pudding Resume" />
             <p>{t('register.welcomeDescription')}</p>
           </header>
 
@@ -237,7 +213,6 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
                     autoComplete="off"
                     aria-invalid={Boolean(fieldErrors.username)}
                     aria-describedby="register-username-error"
-                    {...focusHandlers('username')}
                   />
                 </div>
                 <div id="register-username-error" className="pudding-field-error">
@@ -265,7 +240,6 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
                     autoComplete="email"
                     aria-invalid={Boolean(fieldErrors.email)}
                     aria-describedby="register-email-error"
-                    {...focusHandlers('email')}
                   />
                 </div>
                 <div id="register-email-error" className="pudding-field-error">
@@ -296,7 +270,6 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
                       autoComplete="one-time-code"
                       aria-invalid={Boolean(fieldErrors.code)}
                       aria-describedby="register-code-error"
-                      {...focusHandlers('code')}
                     />
                   </div>
                   <button
@@ -335,7 +308,6 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
                     autoComplete="new-password"
                     aria-invalid={Boolean(fieldErrors.password)}
                     aria-describedby="register-password-error"
-                    {...focusHandlers('password')}
                   />
                 </div>
                 <div id="register-password-error" className="pudding-field-error">
@@ -359,7 +331,6 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
                     autoComplete="new-password"
                     aria-invalid={Boolean(fieldErrors.confirmPassword)}
                     aria-describedby="register-confirm-password-error"
-                    {...focusHandlers('confirmPassword')}
                   />
                 </div>
                 <div id="register-confirm-password-error" className="pudding-field-error">
@@ -383,8 +354,6 @@ export function RegisterModal({ open, onClose, onSwitchToLogin }: Props) {
               className="pudding-login-submit pudding-login-submit--login"
               type="submit"
               disabled={loading || registrationConfigStatus === 'loading' || registrationConfigStatus === 'error'}
-              onMouseEnter={() => setReaction('success')}
-              onMouseLeave={() => setReaction('idle')}
             >
               <span>{loading ? t('register.loading') : t('register.submit')}</span>
               {loading && <Loader2 className="pudding-login-spinner" />}
