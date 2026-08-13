@@ -219,12 +219,10 @@ export default function Footer() {
                   target={isExternal(social.href) ? '_blank' : undefined}
                   rel={isExternal(social.href) ? 'noreferrer' : undefined}
                   aria-label={social.label}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full
+                   className="footer-social-link inline-flex h-9 w-9 items-center justify-center rounded-full
                              border border-gray-200 bg-white text-gray-500
-                             hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600
                              dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-400
-                             dark:hover:border-[#fbbf24]/40 dark:hover:bg-[#fbbf24] dark:hover:text-[#17191d]
-                             transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                             transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-accent)]"
                 >
                   {social.icon}
                 </a>

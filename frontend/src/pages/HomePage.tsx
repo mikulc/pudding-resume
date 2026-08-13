@@ -37,7 +37,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen [overflow-x:clip] bg-[var(--bg-page)] text-gray-950 transition-colors duration-300 dark:text-slate-50">
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-gray-200/40 bg-[#f7f9fe] transition-colors duration-300 dark:border-white/5 dark:bg-[#17191d]">
+      <header className="fixed inset-x-0 top-0 z-50 bg-[#f7f9fe] transition-colors duration-300 dark:bg-[#17191d]">
         <div className="relative mx-auto flex h-[60px] w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
           <LogoIcon asBrand onClick={() => navigate(getDefaultLocalePath(currentLocale))} />
           <div className="flex items-center gap-2">

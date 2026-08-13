@@ -186,7 +186,7 @@ export default function SettingsPage() {
       {/* ================================================================
           Top Navbar — identical style to HomePage
           ================================================================ */}
-      <header className="fixed top-0 inset-x-0 z-50 bg-[var(--bg-header)] backdrop-blur-xl border-b border-gray-100">
+      <header className="fixed top-0 inset-x-0 z-50 bg-[var(--bg-header)] backdrop-blur-xl">
         <div className="relative mx-auto flex h-[60px] w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
           <LogoIcon asBrand onClick={() => navigate('/')} />
           <div className="flex items-center gap-2">

@@ -559,8 +559,8 @@ html.theme-changing .pudding-login-character--yellow {
 }
 
 .pudding-login-password-toggle:hover {
-  color: #5b3bff;
-  background: #f3f1ff;
+  color: rgb(66, 90, 239);
+  background: rgba(66, 90, 239, 0.1);
 }
 
 .pudding-login-password-toggle svg {
@@ -863,8 +863,8 @@ html.theme-changing .pudding-login-character--yellow {
 }
 
 .dark .pudding-login-password-toggle:hover {
-  color: var(--primary);
-  background: rgb(68 147 248 / 10%);
+  color: rgb(255, 200, 72);
+  background: rgba(255, 200, 72, 0.12);
 }
 
 .dark .pudding-login-submit--login {

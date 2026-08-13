@@ -388,9 +388,9 @@ function SharedResumeViewInner({ data }: SharedResumeViewProps) {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-gray-900 flex flex-col">
       {/* Top bar */}
-      <header className="relative z-10 h-[60px] flex-shrink-0 bg-white after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-gray-200 after:content-[''] dark:bg-gray-800 dark:after:bg-gray-700">
-        <div className="mx-auto flex h-full w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:px-6">
-          <div className="flex items-center gap-3 min-w-0">
+      <header className="relative z-10 h-[60px] flex-shrink-0 bg-[#f7f9fe] transition-colors duration-300 dark:bg-[#17191d]">
+        <div className="relative mx-auto flex h-[60px] w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
+          <div className="-ml-1 flex min-w-0 items-center gap-3">
             <LogoIcon asBrand onClick={() => navigate('/')} />
             <span className="text-sm text-gray-400 dark:text-gray-500 shrink-0">|</span>
             <h1 className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">

@@ -44,7 +44,7 @@ function ProfileAvatarButton({
         color: 'var(--theme-accent-foreground)',
       } : undefined}
       className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] ${
-        active ? '' : 'text-gray-600 dark:text-slate-300'
+        active ? '' : 'text-gray-600 dark:!text-white'
       }`}
     >
       <User className="h-[18px] w-[18px]" strokeWidth={3.2} />
@@ -165,7 +165,7 @@ function ControlCenterMenu({
           ref={portalRef}
           role="menu"
           aria-label={label}
-          className="navbar-avatar-dropdown min-w-[210px] overflow-hidden rounded-[18px] border border-white/55 bg-white/75 p-1.5 shadow-[0_18px_60px_rgba(15,23,42,0.16)] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/10 dark:bg-[#202329]/90 md:hidden"
+          className="navbar-avatar-dropdown min-w-[210px] overflow-hidden rounded-[18px] border border-white/55 bg-white p-1.5 shadow-[0_18px_60px_rgba(15,23,42,0.16)] dark:border-white/10 dark:bg-[#202329] md:hidden"
           style={{ ...menuStyle, animation: exiting ? 'avatar-dropdown-exit 0.16s ease-in forwards' : 'avatar-dropdown-appear 0.18s ease-out' }}
         >
           {items.map(({ path, label: itemLabel, icon: Icon }) => {
@@ -176,10 +176,10 @@ function ControlCenterMenu({
                 type="button"
                 role="menuitem"
                 onClick={() => openItem(path)}
-                className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:!bg-[rgba(66,90,239,0.10)] hover:!text-[rgb(66,90,239)] dark:hover:!bg-[rgba(255,200,72,0.12)] dark:hover:!text-[rgb(255,200,72)] ${
                   active
-                    ? 'bg-blue-500/10 text-blue-600 dark:text-blue-300'
-                    : 'text-gray-700 hover:bg-blue-500/10 hover:text-blue-600 dark:text-white/88 dark:hover:text-blue-300'
+                    ? 'bg-[rgba(66,90,239,0.10)] text-[rgb(66,90,239)] dark:bg-[rgba(255,200,72,0.12)] dark:text-[rgb(255,200,72)]'
+                    : 'text-gray-700 dark:text-white/88'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -245,7 +245,7 @@ export function NavbarAuth({ settingsShortcut }: NavbarAuthProps) {
           color: 'var(--theme-accent-foreground)',
         } : undefined}
         className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] ${
-          isUsageActive ? '' : 'text-gray-600 dark:text-slate-300'
+          isUsageActive ? '' : 'text-gray-600 dark:!text-white'
         }`}
       >
         <BarChart3 className="h-[18px] w-[18px]" strokeWidth={3.2} />

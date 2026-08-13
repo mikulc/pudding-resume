@@ -65,7 +65,7 @@ export function ResumeCard({
                                 {resume.name}
                               </h3>
                               {resume.settings?.layoutId && (
-                                <span className="flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 text-[11px] font-medium text-slate-500 border border-slate-200/60">
+                                <span className="inline-flex flex-shrink-0 items-center rounded-full bg-[rgba(66,90,239,0.10)] px-2 py-0.5 text-[11px] font-medium text-[rgb(66,90,239)] dark:bg-[rgba(255,200,72,0.12)] dark:text-[rgb(255,200,72)]">
                                   {getLayoutName(resume.settings.layoutId)}
                                 </span>
                               )}

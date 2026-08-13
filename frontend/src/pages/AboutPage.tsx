@@ -22,7 +22,7 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-page)] text-gray-950 transition-colors duration-300 dark:text-slate-50">
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-gray-100 bg-[var(--bg-header)] backdrop-blur-xl transition-colors duration-300 dark:border-white/5">
+      <header className="fixed inset-x-0 top-0 z-50 bg-[var(--bg-header)] backdrop-blur-xl transition-colors duration-300">
         <div className="relative mx-auto flex h-[60px] w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]">
           <LogoIcon asBrand onClick={() => navigate(getDefaultLocalePath(currentLocale))} />
           <div className="flex items-center gap-2">

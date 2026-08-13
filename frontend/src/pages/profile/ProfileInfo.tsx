@@ -67,7 +67,7 @@ export function ProfileInfo({
       </div>
 
       <div className="border-t border-[#EEF1F5] p-3 dark:border-white/[0.08]">
-        <button onClick={onChangePassword} className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-[#475569] transition hover:bg-blue-50 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:text-slate-300 dark:hover:bg-white/[0.06]">
+        <button onClick={onChangePassword} className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-[#475569] transition hover:bg-[rgba(66,90,239,0.10)] hover:text-[rgb(66,90,239)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(66,90,239)] dark:text-slate-300 dark:hover:bg-[rgba(255,200,72,0.12)] dark:hover:text-[rgb(255,200,72)] dark:focus-visible:ring-[rgb(255,200,72)]">
           <LockKeyhole className="h-[18px] w-[18px]" />
           {t('profile.changePassword')}
         </button>

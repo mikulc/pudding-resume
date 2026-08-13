@@ -46,3 +46,16 @@
   color: #17191d;
   box-shadow: 0 6px 14px rgba(251, 191, 36, 0.25);
 }
+
+.footer-social-link:hover {
+  transform: translateY(-0.125rem);
+  border-color: rgb(66, 90, 239) !important;
+  background-color: rgb(66, 90, 239) !important;
+  color: #fff !important;
+}
+
+.dark .footer-social-link:hover {
+  border-color: rgb(255, 200, 72) !important;
+  background-color: rgb(255, 200, 72) !important;
+  color: #17191d !important;
+}
