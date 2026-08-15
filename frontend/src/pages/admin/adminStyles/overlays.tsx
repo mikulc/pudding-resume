@@ -155,11 +155,13 @@ export function AdminFormModal({
 export function AdminFormDrawer({
   open,
   onClose,
+  closeOnBackdrop = true,
   children,
   className,
 }: {
   open: boolean;
   onClose: () => void;
+  closeOnBackdrop?: boolean;
   children: ReactNode;
   className?: string;
 }) {
@@ -182,7 +184,10 @@ export function AdminFormDrawer({
   if (!open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex justify-end" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[9999] flex justify-end"
+      onClick={closeOnBackdrop ? onClose : undefined}
+    >
       <div
         className="absolute inset-0 animate-[adminFadeIn_180ms_ease-out]"
         style={{

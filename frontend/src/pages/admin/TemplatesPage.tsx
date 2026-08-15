@@ -279,7 +279,7 @@ export default function AdminTemplatesPage() {
         <AdminIconButton disabled={page >= totalPages} onClick={() => setPage((value) => value + 1)}><ChevronRight size={18} /></AdminIconButton>
       </div>}
 
-      <AdminFormDrawer open={editing !== undefined} onClose={closeForm}>
+      <AdminFormDrawer open={editing !== undefined} onClose={closeForm} closeOnBackdrop={false}>
         <AdminFormModalHeader title={t(editing ? 'templatesAdmin.form.editTitle' : 'templatesAdmin.form.createTitle')} onClose={closeForm} />
         <AdminFormModalBody><TemplateFields form={form} themes={themes} categories={categories} onCreateCategory={addCategory} onChange={setForm} t={t} /></AdminFormModalBody>
         <AdminFormModalFooter><div className="flex justify-end gap-3"><AdminButton onClick={closeForm}>{t('templatesAdmin.form.cancel')}</AdminButton><AdminButton variant="primary" disabled={saving} onClick={() => void save()}>{saving ? t('templatesAdmin.form.saving') : t('templatesAdmin.form.save')}</AdminButton></div></AdminFormModalFooter>

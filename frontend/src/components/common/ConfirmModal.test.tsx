@@ -32,6 +32,7 @@ afterEach(() => {
   document.body.style.paddingRight = '';
   document.documentElement.style.overscrollBehavior = '';
   document.documentElement.style.removeProperty('--modal-scrollbar-width');
+  document.documentElement.style.removeProperty('--modal-scroll-gutter-background');
 });
 
 describe('ConfirmProvider', () => {
@@ -114,7 +115,7 @@ describe('ConfirmProvider', () => {
     expect(document.body.style.paddingRight).toBe('17px');
   });
 
-  it('leaves compensation to a stable scrollbar gutter when supported', () => {
+  it('keeps the stable gutter without moving the background layout', () => {
     vi.stubGlobal('CSS', { supports: () => true });
     vi.spyOn(window, 'innerWidth', 'get').mockReturnValue(1000);
     vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(983);
@@ -129,5 +130,9 @@ describe('ConfirmProvider', () => {
 
     expect(document.documentElement.style.getPropertyValue('--modal-scrollbar-width')).toBe('0px');
     expect(document.body.style.paddingRight).toBe('');
+    expect(document.documentElement.style.getPropertyValue('--modal-scroll-gutter-background')).toContain('color-mix');
+
+    fireEvent.click(document.querySelector('[data-confirm-modal]')!);
+    expect(document.documentElement.style.getPropertyValue('--modal-scroll-gutter-background')).toBe('');
   });
 });

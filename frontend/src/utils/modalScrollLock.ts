@@ -1,4 +1,7 @@
-export function lockModalScroll() {
+const DEFAULT_GUTTER_BACKGROUND =
+  'color-mix(in srgb, var(--bg-page) 65%, rgb(2 6 23) 35%)';
+
+export function lockModalScroll(gutterBackground = DEFAULT_GUTTER_BACKGROUND) {
   const root = document.documentElement;
   const body = document.body;
   const previousBodyOverflow = body.style.overflow;
@@ -6,24 +9,24 @@ export function lockModalScroll() {
   const previousBodyPaddingRight = body.style.paddingRight;
   const previousRootOverscroll = root.style.overscrollBehavior;
   const previousScrollbarWidth = root.style.getPropertyValue('--modal-scrollbar-width');
+  const previousGutterBackground = root.style.getPropertyValue('--modal-scroll-gutter-background');
   const alreadyLocked = root.classList.contains('modal-scroll-lock');
   const documentScrollAlreadyLocked =
     root.classList.contains('admin-route-fullscreen') ||
     root.classList.contains('resume-route-fullscreen') ||
     body.classList.contains('admin-route-fullscreen') ||
     body.classList.contains('resume-route-fullscreen');
-  // Modern browsers keep the existing gutter through `scrollbar-gutter: stable`,
-  // so adding body padding would double-compensate it. In particular, an
-  // off-screen scroll box can report a desktop scrollbar on mobile emulation
-  // even though the viewport itself uses overlay scrollbars.
   const hasStableScrollbarGutter =
     typeof CSS !== 'undefined' && CSS.supports('scrollbar-gutter: stable');
+  // Keep the stable gutter so the background layout does not move. The root
+  // background paints the reserved scrollbar area in the modal overlay color.
   const viewportScrollbarWidth = Math.max(0, window.innerWidth - root.clientWidth);
   const scrollbarWidth = documentScrollAlreadyLocked || hasStableScrollbarGutter
     ? 0
     : viewportScrollbarWidth;
 
   root.style.setProperty('--modal-scrollbar-width', `${scrollbarWidth}px`);
+  root.style.setProperty('--modal-scroll-gutter-background', gutterBackground);
   root.classList.add('modal-scroll-lock');
   body.style.overflow = 'hidden';
   body.style.overscrollBehavior = 'none';
@@ -44,6 +47,12 @@ export function lockModalScroll() {
       root.style.setProperty('--modal-scrollbar-width', previousScrollbarWidth);
     } else {
       root.style.removeProperty('--modal-scrollbar-width');
+    }
+
+    if (previousGutterBackground) {
+      root.style.setProperty('--modal-scroll-gutter-background', previousGutterBackground);
+    } else {
+      root.style.removeProperty('--modal-scroll-gutter-background');
     }
   };
 }

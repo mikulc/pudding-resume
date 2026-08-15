@@ -261,6 +261,7 @@
   }
 
   html.modal-scroll-lock {
+    background-color: var(--modal-scroll-gutter-background, var(--bg-page));
     scrollbar-gutter: stable;
     overflow: hidden;
   }
