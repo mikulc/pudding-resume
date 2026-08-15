@@ -119,8 +119,7 @@
     "loading": "Loading templates...",
     "empty": "No resume templates yet",
     "create": "New Template",
-    "import": "Import JSON",
-    "example": "Download Example",
+    "import": "Batch Import JSON",
     "edit": "Edit template",
     "status": {
       "all": "All statuses",

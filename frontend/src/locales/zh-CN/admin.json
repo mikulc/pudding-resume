@@ -119,8 +119,7 @@
     "loading": "正在加载模板...",
     "empty": "暂无简历模板",
     "create": "新建模板",
-    "import": "导入 JSON",
-    "example": "下载示例",
+    "import": "批量导入 JSON",
     "edit": "编辑模板",
     "status": {
       "all": "全部状态",

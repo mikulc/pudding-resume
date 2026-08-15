@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ChevronLeft, ChevronRight, Download, FileJson, Pencil, Plus, Search,
+  ChevronLeft, ChevronRight, FileJson, Pencil, Plus, Search,
   Trash2, Upload, X,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -172,18 +172,25 @@ export default function AdminTemplatesPage() {
     }
   };
 
-  const handleImport = async (file?: File) => {
-    if (!file) return;
+  const handleImport = async (files?: FileList | null) => {
+    if (!files?.length) return;
     try {
-      const raw = JSON.parse(await file.text()) as unknown;
-      const candidates = Array.isArray(raw)
-        ? raw
-        : raw && typeof raw === 'object' && 'templates' in raw
-          ? (raw as { templates: unknown }).templates
-          : [raw];
-      if (!Array.isArray(candidates) || candidates.length === 0) throw new Error('empty');
-      const fileName = file.name.replace(/\.json$/i, '');
-      const payloads = candidates.map((candidate, index) => normalizeImportedTemplate(candidate, themes, categories, candidates.length === 1 ? fileName : `${fileName}-${index + 1}`));
+      const payloads = (await Promise.all(Array.from(files).map(async (file) => {
+        const raw = JSON.parse(await file.text()) as unknown;
+        const candidates = Array.isArray(raw)
+          ? raw
+          : raw && typeof raw === 'object' && 'templates' in raw
+            ? (raw as { templates: unknown }).templates
+            : [raw];
+        if (!Array.isArray(candidates) || candidates.length === 0) throw new Error('empty');
+        const fileName = file.name.replace(/\.json$/i, '');
+        return candidates.map((candidate, index) => normalizeImportedTemplate(
+          candidate,
+          themes,
+          categories,
+          candidates.length === 1 ? fileName : `${fileName}-${index + 1}`,
+        ));
+      }))).flat();
       const result = await importAdminTemplates(payloads);
       showToast(t('templatesAdmin.toast.imported', { count: result.count }), 'success');
       invalidateResumeTemplateLibraryCache();
@@ -196,18 +203,6 @@ export default function AdminTemplatesPage() {
     }
   };
 
-  const downloadExample = () => {
-    const example: AdminTemplateInput = {
-      name: '示例模板', category_ids: categories[0] ? [categories[0].id] : ['CATEGORY_UUID'],
-      content: emptyResume, default_theme_id: themes[0]?.id || 'THEME_UUID', status: 'draft', sort_order: 0,
-    };
-    const blob = new Blob([JSON.stringify({ templates: [example] }, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url; anchor.download = 'resume-template-example.json'; anchor.click();
-    URL.revokeObjectURL(url);
-  };
-
   const themeNames = useMemo(() => new Map(themes.map((theme) => [theme.id, theme.name])), [themes]);
 
   return (
@@ -217,8 +212,7 @@ export default function AdminTemplatesPage() {
         description={t('templatesAdmin.subtitle')}
         meta={<AdminBadge tone="brand">{t('templatesAdmin.count', { count: total })}</AdminBadge>}
         actions={<>
-          <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={(event) => void handleImport(event.target.files?.[0])} />
-          <AdminButton onClick={downloadExample} className="hidden sm:inline-flex"><Download size={16} />{t('templatesAdmin.example')}</AdminButton>
+          <input ref={fileRef} type="file" accept="application/json,.json" multiple className="hidden" onChange={(event) => void handleImport(event.target.files)} />
           <AdminButton onClick={() => fileRef.current?.click()}><Upload size={16} />{t('templatesAdmin.import')}</AdminButton>
           <AdminButton variant="primary" onClick={openCreate}><Plus size={16} />{t('templatesAdmin.create')}</AdminButton>
         </>}
