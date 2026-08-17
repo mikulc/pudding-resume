@@ -17,7 +17,7 @@ export interface SelectionState {
   /** 选中的纯文本 */
   text: string;
   /** 数据来源 section */
-  section: 'personal' | 'education' | 'work' | 'projects' | 'summary' | 'portfolio' | 'skills';
+  section: 'personal' | 'education' | 'work' | 'projects' | 'summary' | 'skills';
   /** 条目 ID */
   entryId: string;
   /** 字段名 */
@@ -225,11 +225,6 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
         sourceText = data.summary || '';
         break;
       }
-      case 'portfolio': {
-        const portfolio = (data.portfolio || []).find((p) => p.id === entryId);
-        if (portfolio) sourceText = portfolio.description || '';
-        break;
-      }
       case 'skills': {
         sourceText = data.skills || '';
         break;
@@ -256,11 +251,6 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       case 'summary':
         dispatch({ type: 'SET_SUMMARY', payload: newText });
         break;
-      case 'portfolio': {
-        const portfolio = (data.portfolio || []).find((p) => p.id === entryId);
-        if (portfolio) dispatch({ type: 'UPDATE_PORTFOLIO', payload: { ...portfolio, description: newText } });
-        break;
-      }
       case 'skills':
         dispatch({ type: 'SET_SKILLS', payload: newText });
         break;
@@ -298,11 +288,6 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
         sourceText = data.summary || '';
         break;
       }
-      case 'portfolio': {
-        const portfolio = (data.portfolio || []).find((p) => p.id === entryId);
-        if (portfolio) sourceText = portfolio.description || '';
-        break;
-      }
       case 'skills': {
         sourceText = data.skills || '';
         break;
@@ -329,11 +314,6 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       case 'summary':
         dispatch({ type: 'SET_SUMMARY', payload: newText });
         break;
-      case 'portfolio': {
-        const portfolio = (data.portfolio || []).find((p) => p.id === entryId);
-        if (portfolio) dispatch({ type: 'UPDATE_PORTFOLIO', payload: { ...portfolio, description: newText } });
-        break;
-      }
       case 'skills':
         dispatch({ type: 'SET_SKILLS', payload: newText });
         break;
@@ -371,11 +351,6 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
         sourceText = data.summary || '';
         break;
       }
-      case 'portfolio': {
-        const portfolio = (data.portfolio || []).find((p) => p.id === entryId);
-        if (portfolio) sourceText = portfolio.description || '';
-        break;
-      }
       case 'skills': {
         sourceText = data.skills || '';
         break;
@@ -402,11 +377,6 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       case 'summary':
         dispatch({ type: 'SET_SUMMARY', payload: newText });
         break;
-      case 'portfolio': {
-        const portfolio = (data.portfolio || []).find((p) => p.id === entryId);
-        if (portfolio) dispatch({ type: 'UPDATE_PORTFOLIO', payload: { ...portfolio, description: newText } });
-        break;
-      }
       case 'skills':
         dispatch({ type: 'SET_SKILLS', payload: newText });
         break;
@@ -444,11 +414,6 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
         sourceText = data.summary || '';
         break;
       }
-      case 'portfolio': {
-        const portfolio = (data.portfolio || []).find((p) => p.id === entryId);
-        if (portfolio) sourceText = portfolio.description || '';
-        break;
-      }
       case 'skills': {
         sourceText = data.skills || '';
         break;
@@ -475,11 +440,6 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       case 'summary':
         dispatch({ type: 'SET_SUMMARY', payload: newText });
         break;
-      case 'portfolio': {
-        const portfolio = (data.portfolio || []).find((p) => p.id === entryId);
-        if (portfolio) dispatch({ type: 'UPDATE_PORTFOLIO', payload: { ...portfolio, description: newText } });
-        break;
-      }
       case 'skills':
         dispatch({ type: 'SET_SKILLS', payload: newText });
         break;
@@ -517,11 +477,6 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
         sourceText = data.summary || '';
         break;
       }
-      case 'portfolio': {
-        const portfolio = (data.portfolio || []).find((p) => p.id === entryId);
-        if (portfolio) sourceText = portfolio.description || '';
-        break;
-      }
       case 'skills': {
         sourceText = data.skills || '';
         break;
@@ -548,11 +503,6 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       case 'summary':
         dispatch({ type: 'SET_SUMMARY', payload: newText });
         break;
-      case 'portfolio': {
-        const portfolio = (data.portfolio || []).find((p) => p.id === entryId);
-        if (portfolio) dispatch({ type: 'UPDATE_PORTFOLIO', payload: { ...portfolio, description: newText } });
-        break;
-      }
       case 'skills':
         dispatch({ type: 'SET_SKILLS', payload: newText });
         break;
@@ -590,11 +540,6 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
         sourceText = data.summary || '';
         break;
       }
-      case 'portfolio': {
-        const portfolio = (data.portfolio || []).find((p) => p.id === entryId);
-        if (portfolio) sourceText = portfolio.description || '';
-        break;
-      }
       case 'skills': {
         sourceText = data.skills || '';
         break;
@@ -621,11 +566,6 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       case 'summary':
         dispatch({ type: 'SET_SUMMARY', payload: newText });
         break;
-      case 'portfolio': {
-        const portfolio = (data.portfolio || []).find((p) => p.id === entryId);
-        if (portfolio) dispatch({ type: 'UPDATE_PORTFOLIO', payload: { ...portfolio, description: newText } });
-        break;
-      }
       case 'skills':
         dispatch({ type: 'SET_SKILLS', payload: newText });
         break;

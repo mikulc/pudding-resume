@@ -26,7 +26,7 @@ export function SkillsPreview() {
   if (hasNumberedLines || hasBulletedLines) {
     return (
       <ActiveSectionWrapper sectionKey="skills" className="mb-5">
-        <SectionHeader title={data.sectionTitles?.skills ?? moduleTitles.skills} sectionKey="skills" />
+        <SectionHeader title={data.sectionConfig.titleOverrides.skills ?? moduleTitles.skills} sectionKey="skills" />
         <ul data-section="skills" data-field="skills" className="list-none space-y-1">
           {lines.map((line, i) => {
             if (!line) return <li key={i} className="h-0 overflow-hidden" aria-hidden="true" />;
@@ -62,7 +62,7 @@ export function SkillsPreview() {
   // 鏃犲垪琛ㄦ爣璁帮細娓叉煋涓虹函鏂囨湰娈佃惤
   return (
     <ActiveSectionWrapper sectionKey="skills" className="mb-5">
-      <SectionHeader title={data.sectionTitles?.skills ?? moduleTitles.skills} sectionKey="skills" />
+      <SectionHeader title={data.sectionConfig.titleOverrides.skills ?? moduleTitles.skills} sectionKey="skills" />
       <div data-section="skills" data-field="skills" className="space-y-1">
         {lines.map((line, i) => {
           if (!line) return <p key={i} className="h-0 overflow-hidden" aria-hidden="true" />;

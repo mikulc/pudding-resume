@@ -50,17 +50,4 @@ export const ICONS: Partial<Record<SectionKey, React.ReactNode>> = {
       <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
     </svg>
   ),
-  certifications: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 20h9" />
-      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-    </svg>
-  ),
-  portfolio: (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-      <circle cx="8.5" cy="8.5" r="1.5" />
-      <polyline points="21 15 16 10 5 21" />
-    </svg>
-  ),
 };

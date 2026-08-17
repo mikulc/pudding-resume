@@ -3,11 +3,11 @@ import { useRef,useState } from 'react';
 import type { SliderRange } from '../../../config/defaults';
 import { useOutsideClick } from '../../../hooks/useOutsideClick';
 import { resolveLayout } from '../../../registry/layouts';
-import { DEFAULT_CUSTOM_COLORS,ThemeSettings } from '../../../types/resume';
+import { ThemeSettings } from '../../../types/resume';
 
 
 export function ThemeSignature({ theme }: { theme: ThemeSettings }) {
-  const accent = (theme.customColors || DEFAULT_CUSTOM_COLORS).border;
+  const accent = theme.themeColor;
   const signature = resolveLayout(theme.layoutId).signature;
   const isDoubleColumn = signature.layout === 'double-column';
 

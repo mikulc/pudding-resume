@@ -12,7 +12,7 @@ export function HonorPreview() {
 
   return (
     <ActiveSectionWrapper sectionKey="honors" className="mb-6">
-      <SectionHeader title={data.sectionTitles?.honors ?? moduleTitles.honors} sectionKey="honors" />
+      <SectionHeader title={data.sectionConfig.titleOverrides.honors ?? moduleTitles.honors} sectionKey="honors" />
       {data.honors.map((honor, i) => (
         <div key={honor.id} className="flex items-baseline justify-between gap-2 mb-2.5" data-section="honors" data-entry-index={i} data-page-entry>
           <span className="entity-title min-w-0">{honor.name || t('field.honorName')}</span>

@@ -13,7 +13,7 @@ import { useConfirm } from '../../components/common/ConfirmModal';
 import { useToast } from '../../components/common/Toast';
 import { invalidateResumeTemplateLibraryCache } from '../../components/template/ResumeTemplateLibrary';
 import type { AdminCategory, AdminTemplateInput, AdminTemplateItem } from '../../types/admin';
-import type { ResumeData, ThemeLibraryEntry } from '../../types/resume';
+import { DEFAULT_SECTION_ORDER, normalizePersonalInfo, type ResumeData, type ThemeLibraryEntry } from '../../types/resume';
 import { getErrorMessage } from '../../utils/errors';
 import {
   AdminBadge, AdminButton, AdminCard, AdminFormDrawer, AdminFormModalBody,
@@ -26,8 +26,10 @@ type TemplateForm = Omit<AdminTemplateInput, 'content'> & {
 };
 
 const emptyResume: ResumeData = {
-  personalInfo: { fullName: '', phone: '', email: '', photoUrl: '' },
-  education: [], workExperience: [], projects: [], skills: '',
+  personalInfo: normalizePersonalInfo(),
+  summary: '',
+  education: [], workExperience: [], projects: [], skills: '', honors: [], customSections: [],
+  sectionConfig: { order: [...DEFAULT_SECTION_ORDER], titleOverrides: {}, hidden: [] },
 };
 
 function newForm(themeId = ''): TemplateForm {

@@ -97,7 +97,7 @@ export function useExportPDF() {
       await waitForFontsReady();
       setProgress(14, t('editor:export.progressFontsReady'), 'fonts');
 
-      const fontCSS = generateExportFontCSS(ui.theme.fontFamily);
+      const fontCSS = generateExportFontCSS(ui.theme.typography.fontFamily);
       const { snapshot, dispose } = createExportSnapshot(container);
       setProgress(18, t('editor:export.progressClone'), 'clone');
 

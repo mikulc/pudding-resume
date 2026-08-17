@@ -1,31 +1,22 @@
-import { DEFAULT_THEME, DEFAULT_SECTION_ORDER, deriveCustomColors } from '../types/resume';
+import { DEFAULT_THEME, DEFAULT_SECTION_ORDER, normalizePersonalInfo } from '../types/resume';
 import type { ResumeData, ThemeSettings } from '../types/resume';
 import { getLayoutDefaultColor, getLayoutDefaultPageMargin } from '../registry/layouts';
 
 export function createEmptyResumeData(): ResumeData {
   return {
-    personalInfo: {
-      fullName: '',
-      phone: '',
-      email: '',
-      photoUrl: '',
-      jobStatus: '',
-      jobTarget: '',
-      location: '',
-      fieldLabels: {},
-    },
+    personalInfo: normalizePersonalInfo(),
     summary: '',
     education: [],
     workExperience: [],
     projects: [],
     skills: '',
     honors: [],
-    certifications: [],
-    portfolio: [],
     customSections: [],
-    sectionOrder: [...DEFAULT_SECTION_ORDER],
-    sectionTitles: {},
-    hiddenSections: [],
+    sectionConfig: {
+      order: [...DEFAULT_SECTION_ORDER],
+      titleOverrides: {},
+      hidden: [],
+    },
   };
 }
 
@@ -35,13 +26,12 @@ export function createInitialThemeSettings(layoutId: string, themeColor?: string
   const settings: ThemeSettings = {
     ...DEFAULT_THEME,
     layoutId,
+    themeColor: accentColor,
     pageMargin: defaultPageMargin ?? DEFAULT_THEME.pageMargin,
-    customColors: DEFAULT_THEME.customColors ? { ...DEFAULT_THEME.customColors } : undefined,
+    typography: { ...DEFAULT_THEME.typography },
     watermark: { ...DEFAULT_THEME.watermark },
+    personalHeader: { ...DEFAULT_THEME.personalHeader },
   };
-
-  settings.colorTheme = 'custom';
-  settings.customColors = deriveCustomColors(accentColor);
 
   return settings;
 }

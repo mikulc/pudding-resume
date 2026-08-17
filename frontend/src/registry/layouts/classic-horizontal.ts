@@ -145,7 +145,7 @@ export const classicHorizontalLayout: LayoutDefinition = {
       border: 1px solid var(--theme-border) !important;
       border-radius: 2px !important;
       background: transparent !important;
-      color: var(--theme-tag-text) !important;
+      color: var(--theme-border) !important;
     }
   `,
   defaultColor: '#000000',

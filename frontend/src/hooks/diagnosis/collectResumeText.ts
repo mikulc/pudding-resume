@@ -62,23 +62,6 @@ export function collectResumeText(data: ResumeData, language = i18nInstance.lang
     });
   }
 
-  // 资质证书
-  if (data.certifications?.length) {
-    parts.push(`[${promptText('certifications')}]`);
-    data.certifications.forEach((c) => {
-      parts.push(`- ${c.name}${c.date ? ` (${c.date})` : ''}`);
-    });
-  }
-
-  // 作品展示
-  if (data.portfolio?.length) {
-    parts.push(`[${promptText('portfolio')}]`);
-    data.portfolio.forEach((p) => {
-      parts.push(`- ${p.name}`);
-      if (p.description?.trim()) parts.push(`  ${p.description}`);
-    });
-  }
-
   // 自定义模块
   if (data.customSections?.length) {
     data.customSections.forEach((cs) => {

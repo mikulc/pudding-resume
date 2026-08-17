@@ -7,7 +7,7 @@
  * 3. 避免编辑页/分享页/导出页三处分别维护 @font-face 声明
  */
 
-import { FONT_OPTIONS, type FontOption } from '../fonts';
+import { getFontOption } from '../fonts';
 
 const API_BASE = import.meta.env.VITE_API_BASE || '';
 const BACKEND_FONT_URL = `${API_BASE}/api/font-files`.replace(/\/+$/, '');
@@ -144,7 +144,7 @@ export function extractPrimaryFamily(cssValue: string): string {
  * 根据字体选项 ID 查找对应的字体族名
  */
 export function getPrimaryFamilyById(fontId: string): string | null {
-  const option: FontOption | undefined = FONT_OPTIONS.find((f) => f.id === fontId);
+  const option = getFontOption(fontId);
   if (!option) return null;
   return extractPrimaryFamily(option.cssValue);
 }
@@ -183,7 +183,7 @@ function generateFontFaceCSSForFamily(family: string): string {
 /**
  * 根据字体 ID 生成导出用的 @font-face CSS
  *
- * @param fontId - 字体选项 ID（如 'misans', 'system'）
+ * @param fontId - 字体选项 ID（如 'misans', 'noto-sans-sc'）
  * @returns @font-face CSS 字符串，如果字体为系统字体或未找到则返回空
  */
 export function generateExportFontCSS(fontId: string): string {
@@ -221,7 +221,7 @@ export async function registerAllFontFaces(): Promise<void> {
  *
  * 先探测后端可用性，再注入单源 URL 的 @font-face 声明。
  *
- * @param fontId - 字体选项 ID（如 'misans'、'system'），对应 fonts.ts 中的 FontOption.id
+ * @param fontId - 字体选项 ID（如 'misans'、'noto-sans-sc'），对应 fonts.ts 中的 FontOption.id
  * 所有字体（包括"系统默认"）都会加载对应的 woff2 文件，确保编辑器和导出效果一致。
  */
 export async function registerFontFamily(fontId: string): Promise<void> {

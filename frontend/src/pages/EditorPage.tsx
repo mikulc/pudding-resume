@@ -129,7 +129,7 @@ function EditorContent({ resumeId }: { resumeId?: string }) {
 
   return (
     <div id="editor-root" className="theme-transition-target h-screen flex flex-col overflow-hidden">
-      <FontPreloader fontFamilyId={ui.theme.fontFamily} />
+      <FontPreloader fontFamilyId={ui.theme.typography.fontFamily} />
 
 
 

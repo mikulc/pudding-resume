@@ -8,10 +8,12 @@ import { useAppUI,useResume } from '../../../context/ResumeContext';
 import { useDismissibleLayer } from '../../../hooks/useDismissibleLayer';
 import { getLayoutDefaultPhotoStyle,resolvePhotoStyle } from '../../../registry/layouts';
 import {
-BUILTIN_PERSONAL_FIELDS,
+createCustomPersonalFieldId,
 DEFAULT_PERSONAL_FIELD_ORDER,
 getPersonalFieldLabels,
-PersonalPhotoStyle
+isBuiltinPersonalFieldId,
+type BuiltinPersonalFieldId,
+type PersonalPhotoStyle,
 } from '../../../types/resume';
 import { useToast } from '../../common/Toast';
 import { FieldCard } from '../FieldCard';
@@ -36,7 +38,7 @@ import { StyledComboInput } from '../StyledInputs';
 export function PersonalInfoEditor() {
   const { t } = useTranslation(['editor', 'resume', 'common']);
   const { data, dispatch } = useResume();
-  const { ui } = useAppUI();
+  const { ui, uiDispatch } = useAppUI();
   const { showToast } = useToast();
   const { personalInfo } = data;
   const defaultPhotoStyle = useMemo(
@@ -45,9 +47,9 @@ export function PersonalInfoEditor() {
   );
   const photoStyle = useMemo(() => normalizePhotoStyle(resolvePhotoStyle(
     ui.theme.layoutId,
-    personalInfo.photoStyle,
-    personalInfo.photoStyleCustomized,
-  )), [personalInfo.photoStyle, personalInfo.photoStyleCustomized, ui.theme.layoutId]);
+    ui.theme.personalHeader.photoStyle,
+    ui.theme.personalHeader.photoStyleCustomized,
+  )), [ui.theme.layoutId, ui.theme.personalHeader.photoStyle, ui.theme.personalHeader.photoStyleCustomized]);
   const [photoStyleOpen, setPhotoStyleOpen] = useState(false);
   const [originalPhotoRatio, setOriginalPhotoRatio] = useState<number | null>(null);
   const [selectedPhotoAspect, setSelectedPhotoAspect] = useState<PhotoAspectKey>('custom');
@@ -101,14 +103,14 @@ export function PersonalInfoEditor() {
   }, [photoStyle.height]);
 
   const applyPhotoStyle = useCallback((nextStyle: Partial<PersonalPhotoStyle>) => {
-    dispatch({
-      type: 'SET_PERSONAL_INFO',
+    uiDispatch({
+      type: 'SET_PERSONAL_HEADER',
       payload: {
         photoStyle: normalizePhotoStyle({ ...photoStyle, ...nextStyle }),
         photoStyleCustomized: true,
       },
     });
-  }, [dispatch, photoStyle]);
+  }, [photoStyle, uiDispatch]);
 
   useDismissibleLayer({
     open: photoStyleOpen,
@@ -145,7 +147,7 @@ export function PersonalInfoEditor() {
     image.src = personalInfo.photoUrl;
   }, [personalInfo.photoUrl]);
 
-  const updateField = (field: string, value: string) => {
+  const updateField = (field: BuiltinPersonalFieldId, value: string) => {
     dispatch({ type: 'SET_PERSONAL_INFO', payload: { [field]: value } });
   };
 
@@ -222,34 +224,40 @@ export function PersonalInfoEditor() {
   const resetPhotoStyle = () => {
     setSelectedPhotoAspect('custom');
     setSelectedPhotoRadius('custom');
-    dispatch({
-      type: 'SET_PERSONAL_INFO',
+    uiDispatch({
+      type: 'SET_PERSONAL_HEADER',
       payload: { photoStyle: defaultPhotoStyle, photoStyleCustomized: false },
     });
   };
 
-  const isPhotoStyleDefault = !personalInfo.photoStyleCustomized
+  const isPhotoStyleDefault = !ui.theme.personalHeader.photoStyleCustomized
     && photoStyle.width === defaultPhotoStyle.width
     && photoStyle.height === defaultPhotoStyle.height
     && photoStyle.borderRadius === defaultPhotoStyle.borderRadius;
 
-  const hiddenFields = personalInfo.hiddenFields || [];
+  const { fieldConfig } = personalInfo;
+  const hiddenFields = fieldConfig.hidden;
+
+  const updateFieldConfig = (partial: Partial<typeof fieldConfig>) => {
+    dispatch({ type: 'SET_PERSONAL_INFO', payload: { fieldConfig: { ...fieldConfig, ...partial } } });
+  };
 
   const toggleHidden = (field: string) => {
     const next = hiddenFields.includes(field)
       ? hiddenFields.filter((f) => f !== field)
       : [...hiddenFields, field];
-    dispatch({ type: 'SET_PERSONAL_INFO', payload: { hiddenFields: next } });
+    updateFieldConfig({ hidden: next });
   };
 
-  const fieldOrder = normalizePersonalFieldOrder(personalInfo.fieldOrder || DEFAULT_PERSONAL_FIELD_ORDER);
-  const fieldLabels = personalInfo.fieldLabels || {};
+  const fieldOrder = normalizePersonalFieldOrder(fieldConfig.order || DEFAULT_PERSONAL_FIELD_ORDER);
+  const fieldLabels = fieldConfig.labelOverrides;
   const defaultFieldLabels = getPersonalFieldLabels();
-  const isBuiltinPersonalField = (field: string) => BUILTIN_PERSONAL_FIELDS.includes(field);
+  const customFields = personalInfo.customFields;
+  const customFieldById = new Map(customFields.map((field) => [field.id, field]));
   const getFieldDisplayLabel = (field: string) => (
-    isBuiltinPersonalField(field)
+    isBuiltinPersonalFieldId(field)
       ? (fieldLabels[field]?.trim() || defaultFieldLabels[field] || field)
-      : field
+      : (customFieldById.get(field)?.label || field)
   );
 
   const sensors = useSensors(
@@ -269,22 +277,21 @@ export function PersonalInfoEditor() {
       if (newIndex === 0) return;
 
       const newOrder = normalizePersonalFieldOrder(arrayMove(fieldOrder, oldIndex, newIndex));
-      dispatch({ type: 'SET_PERSONAL_INFO', payload: { fieldOrder: newOrder } });
+      updateFieldConfig({ order: newOrder });
     },
     [fieldOrder, dispatch],
   );
 
   // 根据 fieldOrder 查找字段数据
-  const customFields = personalInfo.customFields || {};
   const getFieldValue = (field: string): string => {
     switch (field) {
       case 'fullName': return personalInfo.fullName || '';
       case 'phone': return personalInfo.phone;
       case 'email': return personalInfo.email;
-      case 'jobStatus': return personalInfo.jobStatus || '';
-      case 'jobTarget': return personalInfo.jobTarget || '';
-      case 'location': return personalInfo.location || '';
-      default: return customFields[field] || '';
+      case 'jobSearchStatus': return personalInfo.jobSearchStatus;
+      case 'targetRole': return personalInfo.targetRole;
+      case 'preferredLocation': return personalInfo.preferredLocation;
+      default: return customFieldById.get(field)?.value || '';
     }
   };
 
@@ -292,31 +299,32 @@ export function PersonalInfoEditor() {
   const handleAddCustomField = () => {
     let index = fieldOrder.length + 1;
     let name = t('resume:field.customFieldName', { index });
-    while (fieldOrder.includes(name)) {
+    while (customFields.some((field) => field.label === name)) {
       index++;
       name = t('resume:field.customFieldName', { index });
     }
+    const id = createCustomPersonalFieldId();
     dispatch({
       type: 'SET_PERSONAL_INFO',
       payload: {
-        fieldOrder: [...fieldOrder, name],
-        customFields: { ...customFields, [name]: '' },
+        customFields: [...customFields, { id, label: name, value: '' }],
+        fieldConfig: { ...fieldConfig, order: [...fieldOrder, id] },
       },
     });
   };
 
   // 更换字段图标
-  const iconMap = personalInfo.iconMap || {};
+  const iconMap = fieldConfig.iconOverrides;
   const handleChangeIcon = (field: string, iconKey: string) => {
     const next = { ...iconMap, [field]: iconKey };
-    dispatch({ type: 'SET_PERSONAL_INFO', payload: { iconMap: next } });
+    updateFieldConfig({ iconOverrides: next });
   };
 
   const handleResetFieldLabel = (field: string) => {
-    if (!isBuiltinPersonalField(field) || !fieldLabels[field]) return;
+    if (!isBuiltinPersonalFieldId(field) || !fieldLabels[field]) return;
     const nextLabels = { ...fieldLabels };
     delete nextLabels[field];
-    dispatch({ type: 'SET_PERSONAL_INFO', payload: { fieldLabels: nextLabels } });
+    updateFieldConfig({ labelOverrides: nextLabels });
   };
 
   // 重命名字段：内置字段只改显示标签，自定义字段仍改字段 key。
@@ -327,7 +335,7 @@ export function PersonalInfoEditor() {
     ));
     if (duplicated) return t('fieldCard.rename.duplicate');
 
-    if (isBuiltinPersonalField(oldName)) {
+    if (isBuiltinPersonalFieldId(oldName)) {
       const defaultLabel = defaultFieldLabels[oldName] || oldName;
       const nextLabels = { ...fieldLabels };
       if (nextName === defaultLabel) {
@@ -335,31 +343,19 @@ export function PersonalInfoEditor() {
       } else {
         nextLabels[oldName] = nextName;
       }
-      dispatch({ type: 'SET_PERSONAL_INFO', payload: { fieldLabels: nextLabels } });
+      updateFieldConfig({ labelOverrides: nextLabels });
       return;
     }
 
-    if (oldName === nextName) return;
-    if (fieldOrder.includes(nextName) || isBuiltinPersonalField(nextName)) {
-      return t('fieldCard.rename.duplicate');
-    }
-    const nextOrder = fieldOrder.map((f) => (f === oldName ? nextName : f));
-    const nextCustom = { ...customFields };
-    if (nextCustom[oldName] !== undefined) {
-      nextCustom[nextName] = nextCustom[oldName];
-      delete nextCustom[oldName];
-    }
-    const nextHidden = hiddenFields.includes(oldName)
-      ? hiddenFields.map((f) => (f === oldName ? nextName : f))
-      : hiddenFields;
-    const nextIconMap = { ...iconMap };
-    if (nextIconMap[oldName] !== undefined) {
-      nextIconMap[nextName] = nextIconMap[oldName];
-      delete nextIconMap[oldName];
-    }
+    const customField = customFieldById.get(oldName);
+    if (!customField || customField.label === nextName) return;
     dispatch({
       type: 'SET_PERSONAL_INFO',
-      payload: { fieldOrder: nextOrder, customFields: nextCustom, hiddenFields: nextHidden, iconMap: nextIconMap },
+      payload: {
+        customFields: customFields.map((field) => (
+          field.id === oldName ? { ...field, label: nextName } : field
+        )),
+      },
     });
   };
 
@@ -625,7 +621,7 @@ export function PersonalInfoEditor() {
           >
             <div className="divide-y divide-gray-50 -mx-3">
               {fieldOrder.map((field) => {
-                const isCustom = !isBuiltinPersonalField(field);
+                const isCustom = !isBuiltinPersonalFieldId(field);
                 return (
                   <FieldCard
                     key={field}
@@ -636,7 +632,11 @@ export function PersonalInfoEditor() {
                       if (isCustom) {
                         dispatch({
                           type: 'SET_PERSONAL_INFO',
-                          payload: { customFields: { ...customFields, [field]: v } },
+                          payload: {
+                            customFields: customFields.map((item) => (
+                              item.id === field ? { ...item, value: v } : item
+                            )),
+                          },
                         });
                       } else {
                         updateField(field, v);
@@ -647,9 +647,18 @@ export function PersonalInfoEditor() {
                       const nextHidden = hiddenFields.filter((f) => f !== field);
                       const nextIconMap = { ...iconMap };
                       delete nextIconMap[field];
-                      const nextCustom = { ...customFields };
-                      delete nextCustom[field];
-                      dispatch({ type: 'SET_PERSONAL_INFO', payload: { fieldOrder: nextOrder, customFields: nextCustom, hiddenFields: nextHidden, iconMap: nextIconMap } });
+                      dispatch({
+                        type: 'SET_PERSONAL_INFO',
+                        payload: {
+                          customFields: customFields.filter((item) => item.id !== field),
+                          fieldConfig: {
+                            ...fieldConfig,
+                            order: nextOrder,
+                            hidden: nextHidden,
+                            iconOverrides: nextIconMap,
+                          },
+                        },
+                      });
                     }) : undefined}
                     onRename={handleRenameField}
                     onResetLabel={!isCustom ? () => handleResetFieldLabel(field) : undefined}
@@ -661,11 +670,11 @@ export function PersonalInfoEditor() {
                     onToggleHidden={toggleHidden}
                     noCard
                   >
-                    {field === 'jobStatus' && !isCustom ? (
+                    {field === 'jobSearchStatus' && !isCustom ? (
                       <StyledComboInput
                         label=""
-                        value={personalInfo.jobStatus || ''}
-                        onChange={(v) => updateField('jobStatus', v)}
+                        value={personalInfo.jobSearchStatus}
+                        onChange={(v) => updateField('jobSearchStatus', v)}
                         options={[t('resume:status.available'), t('resume:status.employed'), t('resume:status.newGraduate')]}
                         placeholder={t('resume:placeholder.jobStatus')}
                         size="md"

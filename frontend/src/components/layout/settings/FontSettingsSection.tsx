@@ -1,12 +1,10 @@
 ﻿import { AlertCircle,CheckCircle2,ChevronDown,Loader2 } from 'lucide-react';
 import { FONT_OPTIONS } from '../../../config/fonts';
-import { ThemeSettings } from '../../../types/resume';
-
 import { SettingDropdown } from './SettingsControls';
 import type { SettingsPanelModel } from './useSettingsPanelModel';
 
 export function FontSettingsSection({ model }: { model: SettingsPanelModel }) {
-  const { t, theme, fontLoadStatus, fontDropdownOpen, setFontDropdownOpen, fontAbove, setFontAbove, fontDropdownRef, fontButtonRef, updateTheme, fontSizeRange, sectionTitleFontSizeRange, entryTitleFontSizeRange } = model;
+  const { t, theme, fontLoadStatus, fontDropdownOpen, setFontDropdownOpen, fontAbove, setFontAbove, fontDropdownRef, fontButtonRef, updateTypography, lineSpacingRange, fontSizeRange, sectionTitleFontSizeRange, entryTitleFontSizeRange } = model;
   return (
     <>
         {/* Font Settings */}
@@ -29,7 +27,7 @@ export function FontSettingsSection({ model }: { model: SettingsPanelModel }) {
                     <span className="truncate">{t('document.font.loadFailedInline')}</span>
                   </span>
                 )}
-                {fontLoadStatus !== 'loading' && fontLoadStatus !== 'error' && theme.fontFamily === 'misans' && (
+                {fontLoadStatus !== 'loading' && fontLoadStatus !== 'error' && theme.typography.fontFamily === 'misans' && (
                   <span
                     className="min-w-0 truncate text-[11px] leading-none text-orange-600"
                     title={t('document.font.misansCopyright')}
@@ -57,7 +55,7 @@ export function FontSettingsSection({ model }: { model: SettingsPanelModel }) {
                 >
                   <span className="truncate">
                     {(() => {
-                      const currentFont = FONT_OPTIONS.find((f) => f.id === theme.fontFamily);
+                      const currentFont = FONT_OPTIONS.find((f) => f.id === theme.typography.fontFamily);
                       return currentFont ? t(currentFont.nameKey) : t('document.font.systemDefault');
                     })()}
                   </span>
@@ -71,13 +69,13 @@ export function FontSettingsSection({ model }: { model: SettingsPanelModel }) {
                     style={{ animation: 'fade-in 0.15s ease-out, zoom-in-95 0.15s ease-out' }}
                   >
                     {FONT_OPTIONS.map((font) => {
-                      const isActive = theme.fontFamily === font.id;
+                      const isActive = theme.typography.fontFamily === font.id;
                       return (
                         <button
                           key={font.id}
                           type="button"
                           onClick={() => {
-                            updateTheme({ fontFamily: font.id });
+                            updateTypography({ fontFamily: font.id });
                             setFontDropdownOpen(false);
                           }}
                           className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm transition-colors ${
@@ -102,31 +100,40 @@ export function FontSettingsSection({ model }: { model: SettingsPanelModel }) {
             {/* 基础字号下拉框 */}
             <SettingDropdown
               label={t('document.font.baseSize')}
-              value={theme.fontSize}
+              value={theme.typography.bodyFontSize}
               range={fontSizeRange}
               values={[12, 14, 16, 18, 20, 24]}
               formatValue={(v) => `${v}${fontSizeRange.unit}`}
-              onChange={(v) => updateTheme({ fontSize: v } as Partial<ThemeSettings>)}
+              onChange={(v) => updateTypography({ bodyFontSize: v })}
             />
 
             {/* 标题字号下拉框 */}
             <SettingDropdown
               label={t('document.font.sectionTitleSize')}
-              value={theme.sectionTitleFontSize}
+              value={theme.typography.sectionTitleFontSize}
               range={sectionTitleFontSizeRange}
               values={[12, 14, 16, 18, 20, 24]}
               formatValue={(v) => `${v}${sectionTitleFontSizeRange.unit}`}
-              onChange={(v) => updateTheme({ sectionTitleFontSize: v } as Partial<ThemeSettings>)}
+              onChange={(v) => updateTypography({ sectionTitleFontSize: v })}
             />
 
             {/* 条目标题行下拉框 */}
             <SettingDropdown
               label={t('document.font.entryTitleSize')}
-              value={theme.entryTitleFontSize}
+              value={theme.typography.entryTitleFontSize}
               range={entryTitleFontSizeRange}
               values={[14, 16, 18, 20, 22, 24]}
               formatValue={(v) => `${v}${entryTitleFontSizeRange.unit}`}
-              onChange={(v) => updateTheme({ entryTitleFontSize: v } as Partial<ThemeSettings>)}
+              onChange={(v) => updateTypography({ entryTitleFontSize: v })}
+            />
+
+            <SettingDropdown
+              label={t('document.page.lineSpacing')}
+              value={theme.typography.lineSpacing}
+              range={lineSpacingRange}
+              values={[1.2, 1.3, 1.4, 1.5, 1.6, 2.0]}
+              formatValue={(v) => v.toFixed(1)}
+              onChange={(v) => updateTypography({ lineSpacing: v })}
             />
           </div>
         </div>

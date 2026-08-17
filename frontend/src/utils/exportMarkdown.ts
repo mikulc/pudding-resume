@@ -22,7 +22,7 @@ function formatPersonalInfo(data: ResumeData): string {
   const { personalInfo } = data;
   if (!personalInfo.fullName && !personalInfo.phone && !personalInfo.email) return '';
 
-  const hiddenFields = personalInfo.hiddenFields || [];
+  const hiddenFields = personalInfo.fieldConfig.hidden;
   const isHidden = (field: string) => hiddenFields.includes(field);
 
   const lines: string[] = [];
@@ -34,9 +34,9 @@ function formatPersonalInfo(data: ResumeData): string {
   const contacts: string[] = [];
   if (personalInfo.phone && !isHidden('phone')) contacts.push(`- 📞 ${personalInfo.phone}`);
   if (personalInfo.email && !isHidden('email')) contacts.push(`- 📧 ${personalInfo.email}`);
-  if (personalInfo.location && !isHidden('location')) contacts.push(`- 📍 ${personalInfo.location}`);
-  if (personalInfo.jobTarget && !isHidden('jobTarget')) contacts.push(`- 🎯 ${personalInfo.jobTarget}`);
-  if (personalInfo.jobStatus && !isHidden('jobStatus')) contacts.push(`- 💼 ${personalInfo.jobStatus}`);
+  if (personalInfo.preferredLocation && !isHidden('preferredLocation')) contacts.push(`- 📍 ${personalInfo.preferredLocation}`);
+  if (personalInfo.targetRole && !isHidden('targetRole')) contacts.push(`- 🎯 ${personalInfo.targetRole}`);
+  if (personalInfo.jobSearchStatus && !isHidden('jobSearchStatus')) contacts.push(`- 💼 ${personalInfo.jobSearchStatus}`);
   if (contacts.length > 0) {
     lines.push(...contacts);
     lines.push('');
@@ -200,61 +200,14 @@ function formatHonors(data: ResumeData, sectionTitles?: Record<string, string>):
   return lines.join('\n');
 }
 
-/** 格式化资质证书 */
-function formatCertifications(data: ResumeData, sectionTitles?: Record<string, string>): string {
-  const entries = data.certifications ?? [];
-  if (entries.length === 0) return '';
-
-  const title = getTitle('certifications', sectionTitles);
-  const lines: string[] = [];
-  lines.push(`## ${title}`);
-  lines.push('');
-
-  for (const cert of entries) {
-    if (!cert.name) continue;
-    if (cert.date) {
-      lines.push(`- ${cert.name} (${cert.date})`);
-    } else {
-      lines.push(`- ${cert.name}`);
-    }
-  }
-  lines.push('');
-
-  return lines.join('\n');
-}
-
-/** 格式化作品展示 */
-function formatPortfolio(data: ResumeData, sectionTitles?: Record<string, string>): string {
-  const entries = data.portfolio ?? [];
-  if (entries.length === 0) return '';
-
-  const title = getTitle('portfolio', sectionTitles);
-  const lines: string[] = [];
-  lines.push(`## ${title}`);
-  lines.push('');
-
-  for (const item of entries) {
-    if (!item.name && !item.link) continue;
-    if (item.link) {
-      const desc = item.description ? ` — ${item.description}` : '';
-      lines.push(`- [${item.name || item.link}](${item.link})${desc}`);
-    } else {
-      lines.push(`- ${item.name}`);
-    }
-  }
-  lines.push('');
-
-  return lines.join('\n');
-}
-
 /**
  * 将 ResumeData 转换为 Markdown 字符串。
- * 按 sectionOrder 顺序输出，跳过 hiddenSections 中的模块和空内容模块。
+ * 按 sectionConfig.order 顺序输出，跳过隐藏模块和空内容模块。
  */
 export function generateMarkdown(data: ResumeData): string {
-  const order = data.sectionOrder ?? [];
-  const hidden = new Set(data.hiddenSections ?? []);
-  const sectionTitles = data.sectionTitles;
+  const order = data.sectionConfig.order;
+  const hidden = new Set(data.sectionConfig.hidden);
+  const sectionTitles = data.sectionConfig.titleOverrides;
 
   // Section key → format function mapping
   const formatters: Record<string, (data: ResumeData, sectionTitles?: Record<string, string>) => string> = {
@@ -264,8 +217,6 @@ export function generateMarkdown(data: ResumeData): string {
     work: formatWorkExperience,
     projects: formatProjects,
     honors: formatHonors,
-    certifications: formatCertifications,
-    portfolio: formatPortfolio,
     summary: formatSummary,
   };
 
@@ -275,7 +226,7 @@ export function generateMarkdown(data: ResumeData): string {
     if (hidden.has(key)) continue;
     const formatter = formatters[key];
     if (!formatter) {
-      // 自定义模块：key 格式为 custom-{timestamp}
+      // 自定义模块：key 格式为 custom-{UUID}
       if (key.startsWith('custom-')) {
         const customSection = (data.customSections ?? []).find(s => s.id === key);
         if (customSection && (customSection.name || customSection.content?.trim())) {

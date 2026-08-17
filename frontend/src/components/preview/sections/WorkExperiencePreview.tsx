@@ -11,7 +11,7 @@ export function WorkExperiencePreview() {
   const { ui } = useAppUI();
   const { items: diagnoses } = useDiagnosisContext();
   const moduleTitles = useResumeModuleTitles();
-  const titleLayout = ui.theme.titleLayout ?? 'compact';
+  const entryTitleLayout = ui.theme.entryTitleLayout ?? 'compact';
 
   if (!data.workExperience?.length) return null;
 
@@ -20,7 +20,7 @@ export function WorkExperiencePreview() {
 
   return (
     <ActiveSectionWrapper sectionKey="work" className="mb-5">
-      <SectionHeader title={data.sectionTitles?.work ?? moduleTitles.work} sectionKey="work" />
+      <SectionHeader title={data.sectionConfig.titleOverrides.work ?? moduleTitles.work} sectionKey="work" />
       {data.workExperience.map((work, i) => {
         const lines = (work.highlights ?? '').split('\n');
         const nonEmptyHighlights = lines.filter((line) => line !== '');
@@ -33,13 +33,13 @@ export function WorkExperiencePreview() {
 
         return (
           <div key={work.id} className="mb-4" data-section="work" data-entry-index={i} data-page-entry>
-            {titleLayout === 'three-column' ? (
+            {entryTitleLayout === 'three-column' ? (
               <div className="entry-title-row grid grid-cols-3 gap-2 mb-1">
                 <span className="entity-title truncate">{work.company || t('placeholder.companyName')}</span>
                 <span className="text-gray-500 text-sm text-center truncate">{subtitle}</span>
                 <span className="text-sm text-gray-500 text-right whitespace-nowrap">{timeStr}</span>
               </div>
-            ) : titleLayout === 'stacked' ? (
+            ) : entryTitleLayout === 'stacked' ? (
               <div className="mb-1">
                 <div className="entry-title-row flex justify-between gap-2">
                   <span className="entity-title">{work.company || t('placeholder.companyName')}</span>

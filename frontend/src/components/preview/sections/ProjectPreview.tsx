@@ -11,7 +11,7 @@ export function ProjectPreview() {
   const { ui } = useAppUI();
   const { items: diagnoses } = useDiagnosisContext();
   const moduleTitles = useResumeModuleTitles();
-  const titleLayout = ui.theme.titleLayout ?? 'compact';
+  const entryTitleLayout = ui.theme.entryTitleLayout ?? 'compact';
 
   if (!data.projects?.length) return null;
 
@@ -20,7 +20,7 @@ export function ProjectPreview() {
 
   return (
     <ActiveSectionWrapper sectionKey="projects" className="mb-5">
-      <SectionHeader title={data.sectionTitles?.projects ?? moduleTitles.projects} sectionKey="projects" />
+      <SectionHeader title={data.sectionConfig.titleOverrides.projects ?? moduleTitles.projects} sectionKey="projects" />
       {data.projects.map((proj, i) => {
         const lines = (proj.highlights ?? '').split('\n');
         const nonEmptyProjHighlights = lines.filter((line) => line !== '');
@@ -39,7 +39,7 @@ export function ProjectPreview() {
 
         return (
           <div key={proj.id} className="mb-4" data-section="projects" data-entry-index={i} data-page-entry>
-            {titleLayout === 'three-column' ? (
+            {entryTitleLayout === 'three-column' ? (
               <div className="entry-title-row grid grid-cols-3 gap-2 mb-1">
                 <span className="entity-title truncate">{proj.name || t('field.projectName')}</span>
                 <span className="text-gray-500 text-sm text-center truncate">{proj.role}</span>
@@ -50,7 +50,7 @@ export function ProjectPreview() {
                   )}
                 </div>
               </div>
-            ) : titleLayout === 'stacked' ? (
+            ) : entryTitleLayout === 'stacked' ? (
               <div className="mb-1">
                 <div className="entry-title-row flex justify-between gap-2">
                   <span className="entity-title">{proj.name || t('field.projectName')}</span>

@@ -92,7 +92,7 @@ export function useExportPNG(previewRef: React.RefObject<HTMLDivElement>) {
       await waitForFontsReady();
       setProgress(12, t('editor:export.progressFontsReady'), 'fonts');
 
-      const fontCSS = generateExportFontCSS(ui.theme.fontFamily);
+      const fontCSS = generateExportFontCSS(ui.theme.typography.fontFamily);
       const { snapshot, dispose } = createExportSnapshot(container);
       setProgress(18, t('editor:export.progressClone'), 'clone');
 

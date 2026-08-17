@@ -1,5 +1,5 @@
 import type { AppUIAction, AppUIState } from '../../../types/resume';
-import { DEFAULT_THEME, deriveCustomColors } from '../../../types/resume';
+import { DEFAULT_THEME, normalizeThemeSettings } from '../../../types/resume';
 import { getLayoutDefaultColor } from '../../../registry/layouts';
 import i18n from '../../../utils/i18n';
 import { MAX_PREVIEW_ZOOM, MIN_PREVIEW_ZOOM } from '../../../utils/previewZoom';
@@ -22,7 +22,17 @@ export function appUIReducer(state: AppUIState, action: AppUIAction): AppUIState
     case 'SET_EDITOR_OPEN':
       return { ...state, editorOpen: action.payload };
     case 'SET_THEME':
-      return { ...state, theme: { ...state.theme, ...action.payload } };
+      return { ...state, theme: normalizeThemeSettings(action.payload, undefined, state.theme) };
+    case 'SET_PERSONAL_HEADER':
+      return {
+        ...state,
+        theme: normalizeThemeSettings({ personalHeader: action.payload }, undefined, state.theme),
+      };
+    case 'SET_TYPOGRAPHY':
+      return {
+        ...state,
+        theme: normalizeThemeSettings({ typography: action.payload }, undefined, state.theme),
+      };
     case 'SET_WATERMARK':
       return {
         ...state,
@@ -38,8 +48,7 @@ export function appUIReducer(state: AppUIState, action: AppUIAction): AppUIState
         theme: {
           ...DEFAULT_THEME,
           layoutId: state.theme.layoutId,
-          colorTheme: 'custom',
-          customColors: deriveCustomColors(defaultColor),
+          themeColor: defaultColor,
           watermark: {
             ...DEFAULT_THEME.watermark,
             content: i18n.t('watermark.defaultContent', { ns: 'resume' }),

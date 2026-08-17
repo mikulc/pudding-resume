@@ -1,5 +1,5 @@
 import i18n from '../i18n';
-import type { ThemeSettings } from '../../types/resume';
+import { normalizeThemeSettings, type ThemeSettings } from '../../types/resume';
 import type { ImportResult } from './types';
 import { ensureDefaults, validateResumeData } from './validation';
 
@@ -45,14 +45,32 @@ export async function importFromJSON(file: File): Promise<ImportResult> {
     throw new Error(i18n.t('import.error.jsonMissingRequiredFields', { ns: 'resume' }));
   }
 
-  // 提取页面/字体设置（若存在）
+  const rawResumeData = data as unknown as Record<string, unknown>;
+  const rawPersonalInfo = rawResumeData.personalInfo;
+  const resumeData = ensureDefaults(data);
+
+  // 提取页面/字体设置，并把旧 personalInfo 中的展示字段迁移到 settings.personalHeader。
   let settings: ThemeSettings | null = null;
   if (obj.settings && typeof obj.settings === 'object') {
-    settings = obj.settings as ThemeSettings;
+    settings = normalizeThemeSettings(obj.settings, rawPersonalInfo);
+  } else {
+    const legacyPersonalInfo = rawPersonalInfo && typeof rawPersonalInfo === 'object'
+      ? rawPersonalInfo as Record<string, unknown>
+      : {};
+    const hasLegacyHeaderSettings = [
+      'displayMode',
+      'photoLayout',
+      'photoLayoutCustomized',
+      'photoStyle',
+      'photoStyleCustomized',
+    ].some((key) => key in legacyPersonalInfo);
+    if (hasLegacyHeaderSettings) {
+      settings = normalizeThemeSettings(undefined, legacyPersonalInfo);
+    }
   }
 
   return {
-    resumeData: ensureDefaults(data),
+    resumeData,
     resumeName,
     sourceUuid,
     settings,

@@ -4,7 +4,8 @@ import { useAppUI,useResume } from '../../../context/ResumeContext';
 import { resolveLayout,resolvePhotoLayout,resolvePhotoStyle } from '../../../registry/layouts';
 import {
 DEFAULT_PERSONAL_FIELD_ORDER,
-getPersonalFieldLabels
+getPersonalFieldLabels,
+isBuiltinPersonalFieldId
 } from '../../../types/resume';
 import {
 AtSign,
@@ -80,7 +81,7 @@ export function PersonalInfoPreview() {
   const contactIconClass = layout.personalInfoClass || 'text-gray-400';
 
   // 闅愯棌瀛楁
-  const hiddenFields = personalInfo.hiddenFields || [];
+  const hiddenFields = personalInfo.fieldConfig.hidden;
   const isHidden = (field: string) => hiddenFields.includes(field);
 
   // 鏍规嵁甯冨眬鍐冲畾濮撳悕灞曠ず鏍峰紡
@@ -103,18 +104,18 @@ export function PersonalInfoPreview() {
     setPhotoError(false);
   }, [personalInfo.photoUrl]);
 
-  const displayMode = personalInfo.displayMode || 'icon';
+  const displayMode = ui.theme.personalHeader.fieldDisplayMode;
   const isTextMode = displayMode === 'text';
   const isNoneMode = displayMode === 'none';
   const photoLayout = resolvePhotoLayout(
     layout.id,
-    personalInfo.photoLayout,
-    personalInfo.photoLayoutCustomized,
+    ui.theme.personalHeader.photoLayout,
+    ui.theme.personalHeader.photoLayoutCustomized,
   );
   const photoStyle = resolvePersonalPhotoStyle(resolvePhotoStyle(
     layout.id,
-    personalInfo.photoStyle,
-    personalInfo.photoStyleCustomized,
+    ui.theme.personalHeader.photoStyle,
+    ui.theme.personalHeader.photoStyleCustomized,
   ));
 
   const hasPhoto = !!personalInfo.photoUrl;
@@ -140,9 +141,10 @@ export function PersonalInfoPreview() {
 
   // 淇℃伅鍖哄煙
   const isPhotoLeft = photoLayout === 'left';
-  const customFields = personalInfo.customFields || {};
-  const configuredFieldOrder = personalInfo.fieldOrder || DEFAULT_PERSONAL_FIELD_ORDER;
-  const customFieldKeys = Object.keys(customFields);
+  const customFields = personalInfo.customFields;
+  const customFieldById = new Map(customFields.map((field) => [field.id, field]));
+  const configuredFieldOrder = personalInfo.fieldConfig.order || DEFAULT_PERSONAL_FIELD_ORDER;
+  const customFieldKeys = customFields.map((field) => field.id);
   const fieldOrder = [
     ...configuredFieldOrder,
     ...customFieldKeys.filter((field) => !configuredFieldOrder.includes(field)),
@@ -151,9 +153,14 @@ export function PersonalInfoPreview() {
     && fieldOrder.includes('fullName')
     && !!personalInfo.fullName.trim();
 
-  const iconMap = personalInfo.iconMap || {};
-  const fieldLabels = personalInfo.fieldLabels || {};
-  const getFieldLabel = (field: string) => fieldLabels[field]?.trim() || defaultFieldLabels[field] || field;
+  const iconMap = personalInfo.fieldConfig.iconOverrides;
+  const fieldLabels = personalInfo.fieldConfig.labelOverrides;
+  const getFieldLabel = (field: string) => (
+    (isBuiltinPersonalFieldId(field) ? fieldLabels[field]?.trim() : undefined)
+    || defaultFieldLabels[field]
+    || customFieldById.get(field)?.label
+    || field
+  );
 
   // 鍥炬爣搴擄紙涓庣紪杈戝櫒 ICON_LIBRARY 閿悕涓€鑷达級
   const contactIconSize = 'w-4 h-4 shrink-0';
@@ -237,20 +244,20 @@ export function PersonalInfoPreview() {
       icon: <Mail className={iconClass} />,
       textLabel: getFieldLabel('email'),
     },
-    jobStatus: {
-      value: personalInfo.jobStatus || '',
+    jobSearchStatus: {
+      value: personalInfo.jobSearchStatus,
       icon: <Briefcase className={iconClass} />,
-      textLabel: getFieldLabel('jobStatus'),
+      textLabel: getFieldLabel('jobSearchStatus'),
     },
-    jobTarget: {
-      value: personalInfo.jobTarget || '',
+    targetRole: {
+      value: personalInfo.targetRole,
       icon: <Target className={iconClass} />,
-      textLabel: getFieldLabel('jobTarget'),
+      textLabel: getFieldLabel('targetRole'),
     },
-    location: {
-      value: personalInfo.location || '',
+    preferredLocation: {
+      value: personalInfo.preferredLocation,
       icon: <MapPin className={iconClass} />,
-      textLabel: getFieldLabel('location'),
+      textLabel: getFieldLabel('preferredLocation'),
     },
   };
 
@@ -260,7 +267,7 @@ export function PersonalInfoPreview() {
     const builtin = fieldConfig[f];
     if (builtin) return !!builtin.value;
     // 鑷畾涔夊瓧娈碉細鍙 key 瀛樺湪灏辩畻鍙锛堝厑璁哥┖鍊硷級
-    return f in customFields;
+    return customFieldById.has(f);
   });
   // Keep two primary fields on the first row; wrap the rest to avoid truncating custom fields.
   const topFields = visibleFields.slice(0, 2);
@@ -282,25 +289,25 @@ export function PersonalInfoPreview() {
       );
     }
     // Custom field.
-    const customValue = customFields[field];
-    if (!customValue) return null;
+    const customField = customFieldById.get(field);
+    if (!customField?.value) return null;
     const defaultCustomIcon = iconMap[field]
       ? (previewIconLib[iconMap[field]] || previewIconLib.tag)
       : previewIconLib.tag;
     return isTextMode ? (
       <span key={field} className="break-all whitespace-nowrap" data-export-nowrap="true">
-        <span className="text-gray-500">{field}: </span>{customValue}
+        <span className="text-gray-500">{customField.label}: </span>{customField.value}
       </span>
     ) : (
       <div key={field} className="flex items-center gap-2 min-w-0">
         {getFieldIcon(field, defaultCustomIcon)}
-        <span className="break-all" data-export-nowrap="true">{customValue}</span>
+        <span className="break-all" data-export-nowrap="true">{customField.value}</span>
       </div>
     );
   };
 
   const renderValueOnlyField = (field: string, className: string) => {
-    const value = fieldConfig[field]?.value ?? customFields[field];
+    const value = fieldConfig[field]?.value ?? customFieldById.get(field)?.value;
     if (!value) return null;
     return (
       <span key={field} className={`${className} break-all`} data-export-nowrap="true">
@@ -324,9 +331,10 @@ export function PersonalInfoPreview() {
 
   const renderLeftSidebarTwoColumnField = (field: string) => {
     const cfg = fieldConfig[field];
-    const value = cfg ? cfg.value : customFields[field];
+    const customField = customFieldById.get(field);
+    const value = cfg ? cfg.value : customField?.value;
     if (!value) return null;
-    const label = cfg?.textLabel ?? field;
+    const label = cfg?.textLabel ?? customField?.label ?? field;
     const defaultCustomIcon = iconMap[field]
       ? (previewIconLib[iconMap[field]] || previewIconLib.tag)
       : previewIconLib.tag;
@@ -355,9 +363,10 @@ export function PersonalInfoPreview() {
 
   const renderAzureSidebarField = (field: string, extraClassName = '') => {
     const cfg = fieldConfig[field];
-    const value = cfg ? cfg.value : customFields[field];
+    const customField = customFieldById.get(field);
+    const value = cfg ? cfg.value : customField?.value;
     if (!value) return null;
-    const label = cfg?.textLabel ?? field;
+    const label = cfg?.textLabel ?? customField?.label ?? field;
     const defaultCustomIcon = iconMap[field]
       ? (previewIconLib[iconMap[field]] || previewIconLib.tag)
       : previewIconLib.tag;
@@ -386,7 +395,7 @@ export function PersonalInfoPreview() {
 
   if (isAzureSidebar) {
     const contactFields = visibleFields.filter((field) => (
-      field !== 'fullName' && field !== 'jobTarget' && field !== 'jobStatus'
+      field !== 'fullName' && field !== 'targetRole' && field !== 'jobSearchStatus'
     ));
     const isZh = i18n.language.toLowerCase().startsWith('zh');
     const contactTitle = isZh ? '联系方式' : 'Contact';
@@ -408,14 +417,14 @@ export function PersonalInfoPreview() {
             </div>
           </div>
         )}
-        {(personalInfo.jobTarget || personalInfo.jobStatus) && (
+        {(personalInfo.targetRole || personalInfo.jobSearchStatus) && (
           <div className="azure-sidebar-block">
             <h2 className="azure-sidebar-block-title">{objectiveTitle}</h2>
-            {personalInfo.jobTarget && !isHidden('jobTarget') && (
-              renderAzureSidebarField('jobTarget', 'azure-sidebar-objective')
+            {personalInfo.targetRole && !isHidden('targetRole') && (
+              renderAzureSidebarField('targetRole', 'azure-sidebar-objective')
             )}
-            {personalInfo.jobStatus && !isHidden('jobStatus') && (
-              renderAzureSidebarField('jobStatus', 'azure-sidebar-objective')
+            {personalInfo.jobSearchStatus && !isHidden('jobSearchStatus') && (
+              renderAzureSidebarField('jobSearchStatus', 'azure-sidebar-objective')
             )}
           </div>
         )}
@@ -425,9 +434,9 @@ export function PersonalInfoPreview() {
 
   if (isLeftSidebarTwoColumn) {
     const contactFields = visibleFields.filter((field) => (
-      field !== 'fullName' && field !== 'jobTarget' && field !== 'jobStatus'
+      field !== 'fullName' && field !== 'targetRole' && field !== 'jobSearchStatus'
     ));
-    const objectiveFields = ['jobTarget', 'jobStatus'].filter((field) => visibleFields.includes(field));
+    const objectiveFields = ['targetRole', 'jobSearchStatus'].filter((field) => visibleFields.includes(field));
     const isZh = i18n.language.toLowerCase().startsWith('zh');
     const contactTitle = isZh ? '联系方式' : 'Contact';
     const objectiveTitle = isZh ? '求职意向' : 'Objective';

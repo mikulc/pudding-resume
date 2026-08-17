@@ -3,7 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { useResume, useAppUI } from '../context/ResumeContext';
 import { useToast } from '../components/common/Toast';
 import { isExportJsonWithSettingsEnabled } from '../context/AuthContext';
-import type { ResumeData, SectionKey } from '../types/resume';
+import { normalizeFontFamilyId } from '../config/fonts';
+import {
+  normalizePersonalInfo,
+  normalizeResumeEntryIds,
+  normalizeSectionConfig,
+  normalizeThemeSettings,
+  resolveThemeColor,
+  type ResumeData,
+  type SectionKey,
+  type ThemeSettings,
+} from '../types/resume';
 
 const SECTION_CONTENT_KEYS: Partial<Record<SectionKey, keyof ResumeData>> = {
   personal: 'personalInfo',
@@ -12,17 +22,28 @@ const SECTION_CONTENT_KEYS: Partial<Record<SectionKey, keyof ResumeData>> = {
   projects: 'projects',
   skills: 'skills',
   honors: 'honors',
-  certifications: 'certifications',
-  portfolio: 'portfolio',
   summary: 'summary',
 };
 
-function createOrderedResumeContent(data: ResumeData): Record<string, unknown> {
+function createExportContentValue(data: ResumeData, key: keyof ResumeData): unknown {
+  if (key !== 'personalInfo') return data[key];
+  return normalizePersonalInfo(data.personalInfo);
+}
+
+export function createOrderedResumeContent(data: ResumeData): Record<string, unknown> {
+  const legacyData = data as unknown as Record<string, unknown>;
+  data = normalizeResumeEntryIds({
+    ...data,
+    summary: typeof data.summary === 'string' ? data.summary : '',
+    honors: Array.isArray(data.honors) ? data.honors : [],
+    customSections: Array.isArray(data.customSections) ? data.customSections : [],
+    sectionConfig: normalizeSectionConfig(data.sectionConfig, legacyData),
+  });
   const ordered: Record<string, unknown> = {};
   const written = new Set<keyof ResumeData>();
   let customSectionsWritten = false;
 
-  for (const section of data.sectionOrder ?? []) {
+  for (const section of data.sectionConfig.order) {
     if (section === 'custom') {
       ordered.customSections = data.customSections ?? [];
       customSectionsWritten = true;
@@ -42,7 +63,7 @@ function createOrderedResumeContent(data: ResumeData): Record<string, unknown> {
     const key = SECTION_CONTENT_KEYS[section];
     if (!key || written.has(key)) continue;
 
-    ordered[key] = data[key];
+    ordered[key] = createExportContentValue(data, key);
     written.add(key);
   }
 
@@ -53,24 +74,55 @@ function createOrderedResumeContent(data: ResumeData): Record<string, unknown> {
     'projects',
     'skills',
     'honors',
-    'certifications',
-    'portfolio',
     'summary',
     'customSections',
   ];
 
   for (const key of fallbackKeys) {
     if (!written.has(key) && key in data) {
-      ordered[key] = data[key];
+      ordered[key] = createExportContentValue(data, key);
       written.add(key);
     }
   }
 
-  ordered.sectionOrder = data.sectionOrder;
-  ordered.sectionTitles = data.sectionTitles;
-  ordered.hiddenSections = data.hiddenSections;
+  ordered.sectionConfig = {
+    order: [...data.sectionConfig.order],
+    titleOverrides: { ...data.sectionConfig.titleOverrides },
+    hidden: [...data.sectionConfig.hidden],
+  };
 
   return ordered;
+}
+
+export interface ExportThemeSettings {
+  appearance: Pick<ThemeSettings, 'layoutId' | 'themeColor'>;
+  typography: ThemeSettings['typography'];
+  pageLayout: Pick<ThemeSettings, 'pageMargin' | 'entryTitleLayout'>;
+  personalInfoLayout: ThemeSettings['personalHeader'];
+  watermark: ThemeSettings['watermark'] | Pick<ThemeSettings['watermark'], 'enabled'>;
+}
+
+export function createExportThemeSettings(theme: ThemeSettings): ExportThemeSettings {
+  const normalizedTheme = normalizeThemeSettings(theme);
+  const settings = {
+    appearance: {
+      layoutId: normalizedTheme.layoutId,
+      themeColor: resolveThemeColor(normalizedTheme),
+    },
+    typography: {
+      ...normalizedTheme.typography,
+      fontFamily: normalizeFontFamilyId(normalizedTheme.typography.fontFamily),
+    },
+    pageLayout: {
+      pageMargin: normalizedTheme.pageMargin,
+      entryTitleLayout: normalizedTheme.entryTitleLayout,
+    },
+    personalInfoLayout: { ...normalizedTheme.personalHeader },
+    watermark: normalizedTheme.watermark.enabled
+      ? { ...normalizedTheme.watermark }
+      : { enabled: false },
+  } satisfies ExportThemeSettings;
+  return settings;
 }
 
 export function useExportJSON() {
@@ -95,7 +147,7 @@ export function useExportJSON() {
       };
       // 根据用户偏好决定是否携带 settings 字段
       if (isExportJsonWithSettingsEnabled()) {
-        exportPayload.settings = ui.theme;
+        exportPayload.settings = createExportThemeSettings(ui.theme);
       }
       const json = JSON.stringify(exportPayload, null, 2);
 

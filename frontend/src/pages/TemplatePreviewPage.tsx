@@ -74,7 +74,7 @@ function TemplatePreviewCanvas({ entry, onBack, onUse }: TemplatePreviewCanvasPr
 
   return (
     <ResumeCardPreviewProvider content={entry.content} theme={theme} suppressWatermark>
-      <FontPreloader fontFamilyId={theme.fontFamily ?? 'system'} />
+      <FontPreloader fontFamilyId={theme.typography.fontFamily ?? 'noto-sans-sc'} />
       <div className="flex h-screen min-h-0 flex-col bg-slate-50 dark:bg-gray-900">
         <header className="relative z-10 h-[60px] flex-shrink-0 bg-white after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-gray-200 after:content-[''] dark:bg-gray-800 dark:after:bg-transparent">
           <div className="mx-auto flex h-full w-full max-w-[1360px] items-center justify-between gap-3 px-3 sm:px-6">

@@ -16,7 +16,7 @@ type FontLoadStatus,
 import { useAppUI,useResume } from '../../../context/ResumeContext';
 import { useOutsideClick } from '../../../hooks/useOutsideClick';
 import { getLayoutDefaultColor,getLayoutDefaultPageMargin } from '../../../registry/layouts';
-import { deriveCustomColors,ThemeSettings } from '../../../types/resume';
+import { ThemeSettings } from '../../../types/resume';
 import { useConfirm } from '../../common/ConfirmModal';
 import { useToast } from '../../common/Toast';
 import { useResumeThemeLibrary } from '../ResumeThemePicker';
@@ -31,7 +31,7 @@ export function useSettingsPanelModel() {
   const { theme } = ui;
 
   const [fontLoadStatus, setFontLoadStatus] = useState<FontLoadStatus>(() => (
-    getFontLoadStatus(theme.fontFamily)
+    getFontLoadStatus(theme.typography.fontFamily)
   ));
 
   // Font dropdown state
@@ -55,19 +55,23 @@ export function useSettingsPanelModel() {
 
   useEffect(() => {
     const syncFontLoadStatus = () => {
-      setFontLoadStatus(getFontLoadStatus(theme.fontFamily));
+      setFontLoadStatus(getFontLoadStatus(theme.typography.fontFamily));
     };
 
     syncFontLoadStatus();
     return subscribeFontLoadStatus(syncFontLoadStatus);
-  }, [theme.fontFamily]);
+  }, [theme.typography.fontFamily]);
 
   const updateTheme = (partial: Partial<ThemeSettings>) => {
     uiDispatch({ type: 'SET_THEME', payload: partial });
   };
 
+  const updateTypography = (partial: Partial<ThemeSettings['typography']>) => {
+    uiDispatch({ type: 'SET_TYPOGRAPHY', payload: partial });
+  };
+
   const handlePrimaryColorChange = (color: string) => {
-    updateTheme({ colorTheme: 'custom', customColors: deriveCustomColors(color) });
+    updateTheme({ themeColor: color });
   };
 
   const handleApplyTheme = async (layoutId: string, options?: { silent?: boolean }): Promise<void> => {
@@ -82,8 +86,7 @@ export function useSettingsPanelModel() {
       const defaultPageMargin = getLayoutDefaultPageMargin(layoutId);
       updateTheme({
         layoutId,
-        colorTheme: 'custom',
-        customColors: deriveCustomColors(defaultColor),
+        themeColor: defaultColor,
         ...(defaultPageMargin !== undefined ? { pageMargin: defaultPageMargin } : {}),
       });
       if (!options?.silent) {
@@ -163,7 +166,7 @@ export function useSettingsPanelModel() {
   return {
     uiDispatch, data, resumeDispatch, t, theme, fontLoadStatus,
     fontDropdownOpen, setFontDropdownOpen, fontAbove, setFontAbove, fontDropdownRef, fontButtonRef,
-    themeDrawerOpen, setThemeDrawerOpen, randomizing, themeEntries, updateTheme,
+    themeDrawerOpen, setThemeDrawerOpen, randomizing, themeEntries, updateTheme, updateTypography,
     handlePrimaryColorChange, handleApplyTheme, handleRandomTheme, handleResetStyle,
     presetColors, watermarkColors, densityOptions, optionLabel,
     pageMarginRange, lineSpacingRange, fontSizeRange, sectionTitleFontSizeRange,

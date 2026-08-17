@@ -4,7 +4,7 @@ import { SettingDropdown } from './SettingsControls';
 import type { SettingsPanelModel } from './useSettingsPanelModel';
 
 export function PageSettingsSection({ model }: { model: SettingsPanelModel }) {
-  const { t, theme, updateTheme, pageMarginRange, lineSpacingRange } = model;
+  const { t, theme, updateTheme, pageMarginRange } = model;
   return (
     <>
         {/* Page Settings */}
@@ -19,14 +19,28 @@ export function PageSettingsSection({ model }: { model: SettingsPanelModel }) {
               formatValue={(v) => `${v}${pageMarginRange.unit}`}
               onChange={(v) => updateTheme({ pageMargin: v } as Partial<ThemeSettings>)}
             />
-            <SettingDropdown
-              label={t('document.page.lineSpacing')}
-              value={theme.lineSpacing}
-              range={lineSpacingRange}
-              values={[1.2, 1.3, 1.4, 1.5, 1.6, 2.0]}
-              formatValue={(v) => v.toFixed(1)}
-              onChange={(v) => updateTheme({ lineSpacing: v } as Partial<ThemeSettings>)}
-            />
+            <div>
+              <span className="text-xs text-gray-500 font-medium mb-1.5 block">{t('document.layout.entryTitleLayout')}</span>
+              <div className="flex rounded-lg border border-gray-200 bg-gray-50 p-0.5">
+                {[
+                  { key: 'compact' as const, label: t('document.layout.compact') },
+                  { key: 'three-column' as const, label: t('document.layout.threeColumn') },
+                  { key: 'stacked' as const, label: t('document.layout.stacked') },
+                ].map(({ key, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => updateTheme({ entryTitleLayout: key })}
+                    className={`theme-color-transition flex-1 flex items-center justify-center px-2 py-1.5 rounded-md text-xs font-medium ${
+                      theme.entryTitleLayout === key
+                        ? 'bg-white text-gray-800 shadow-sm hover:!text-[var(--theme-accent)]'
+                        : 'text-gray-500 hover:text-[var(--theme-accent)] dark:hover:!text-[var(--theme-accent)]'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 

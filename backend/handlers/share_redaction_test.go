@@ -12,11 +12,13 @@ func TestRedactResumeContentMasksPersonalInfo(t *testing.T) {
 			"phone": "13888888888",
 			"email": "pudding@example.com",
 			"photoUrl": "/images/avatar.jpg",
-			"location": "Shenzhen",
-			"jobTarget": "Golang Developer",
-			"customFields": {
-				"WeChat": "pudding123"
-			}
+			"preferredLocation": "Shenzhen",
+			"targetRole": "Golang Developer",
+			"customFields": [{
+				"id": "custom-wechat",
+				"label": "WeChat",
+				"value": "pudding123"
+			}]
 		},
 		"skills": "Go, React"
 	}`)
@@ -39,8 +41,33 @@ func TestRedactResumeContentMasksPersonalInfo(t *testing.T) {
 	if personalInfo["photoUrl"] != "" {
 		t.Fatalf("expected empty photoUrl, got %q", personalInfo["photoUrl"])
 	}
-	if personalInfo["jobTarget"] != "Golang Developer" {
-		t.Fatalf("expected non-sensitive field to remain unchanged, got %q", personalInfo["jobTarget"])
+	if personalInfo["targetRole"] != "Golang Developer" {
+		t.Fatalf("expected non-sensitive field to remain unchanged, got %q", personalInfo["targetRole"])
+	}
+	if personalInfo["preferredLocation"] != "S******n" {
+		t.Fatalf("expected preferredLocation to be masked, got %q", personalInfo["preferredLocation"])
+	}
+	customFields := personalInfo["customFields"].([]any)
+	customField := customFields[0].(map[string]any)
+	if customField["value"] != "p********3" {
+		t.Fatalf("expected custom field value to be masked, got %q", customField["value"])
+	}
+}
+
+func TestRedactResumeContentSupportsLegacyPersonalInfo(t *testing.T) {
+	source := []byte(`{"personalInfo":{"location":"Shenzhen","customFields":{"WeChat":"pudding123"}}}`)
+
+	var result map[string]any
+	if err := json.Unmarshal(redactResumeContent(source), &result); err != nil {
+		t.Fatalf("redacted content should be valid JSON: %v", err)
+	}
+	personalInfo := result["personalInfo"].(map[string]any)
+	if personalInfo["location"] != "S******n" {
+		t.Fatalf("expected legacy location to be masked, got %q", personalInfo["location"])
+	}
+	customFields := personalInfo["customFields"].(map[string]any)
+	if customFields["WeChat"] != "p********3" {
+		t.Fatalf("expected legacy custom field to be masked, got %q", customFields["WeChat"])
 	}
 }
 

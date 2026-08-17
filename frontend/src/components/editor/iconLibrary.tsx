@@ -65,9 +65,9 @@ export const FIELD_ICONS: Record<string, React.ReactNode> = {
   fullName: <User className="w-3.5 h-3.5" />,
   phone: <Phone className="w-3.5 h-3.5" />,
   email: <Mail className="w-3.5 h-3.5" />,
-  jobStatus: <Briefcase className="w-3.5 h-3.5" />,
-  location: <MapPin className="w-3.5 h-3.5" />,
-  jobTarget: <Target className="w-3.5 h-3.5" />,
+  jobSearchStatus: <Briefcase className="w-3.5 h-3.5" />,
+  preferredLocation: <MapPin className="w-3.5 h-3.5" />,
+  targetRole: <Target className="w-3.5 h-3.5" />,
   _custom: <Tag className="w-3.5 h-3.5" />,
 };
 
@@ -76,9 +76,9 @@ export const DEFAULT_FIELD_ICON_KEYS: Record<string, string> = {
   fullName: 'user',
   phone: 'phone',
   email: 'mail',
-  jobStatus: 'briefcase',
-  location: 'mapPin',
-  jobTarget: 'target',
+  jobSearchStatus: 'briefcase',
+  preferredLocation: 'mapPin',
+  targetRole: 'target',
   _custom: 'tag',
 };
 
@@ -124,7 +124,7 @@ export const ICON_LIBRARY: IconDef[] = [
   { key: 'graduationCap', category: 'career', keywords: ['degree', 'education'], icon: <GraduationCap className="w-4 h-4" /> },
   { key: 'school', category: 'career', keywords: ['school', 'campus'], icon: <School className="w-4 h-4" /> },
   { key: 'award', category: 'career', keywords: ['award', 'honor'], icon: <Award className="w-4 h-4" /> },
-  { key: 'checkCircle', category: 'career', keywords: ['certification', 'status', 'check'], icon: <CheckCircle className="w-4 h-4" /> },
+  { key: 'checkCircle', category: 'career', keywords: ['verified', 'status', 'check'], icon: <CheckCircle className="w-4 h-4" /> },
 
   { key: 'share2', category: 'social', keywords: ['share', 'social'], icon: <Share2 className="w-4 h-4" /> },
   { key: 'globe', category: 'social', keywords: ['website', 'web', 'homepage'], icon: <Globe className="w-4 h-4" /> },

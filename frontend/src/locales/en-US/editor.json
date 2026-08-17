@@ -86,7 +86,6 @@
     "workExperience": "Work Experience",
     "skills": "Skills",
     "projects": "Projects",
-    "certificates": "Certificates",
     "languages": "Languages",
     "customModule": "Custom Module"
   },
@@ -209,7 +208,7 @@
       "award": "Award",
       "trophy": "Trophy",
       "medal": "Medal",
-      "checkCircle": "Certification",
+      "checkCircle": "Verified",
       "star": "Star",
       "zap": "Highlight",
       "thumbsUp": "Like",
@@ -272,15 +271,12 @@
     "addEducation": "Add education",
     "addWork": "Add work experience",
     "addProject": "Add project",
-    "addHonor": "Add honor or award",
-    "addCertification": "Add certification",
-    "addPortfolio": "Add portfolio item"
+    "addHonor": "Add honor or award"
   },
   "longText": {
     "skillsTitle": "Edit skills description",
     "workTitle": "Edit work highlights",
     "projectTitle": "Edit project highlights",
-    "portfolioTitle": "Edit portfolio description",
     "summaryTitle": "Edit profile summary"
   },
   "longTextEntry": {
@@ -487,10 +483,6 @@
       "title": "Project results lack metrics",
       "description": "Add measurable outcomes to project descriptions to make them more convincing."
     },
-    "missingHonorOrCert": {
-      "title": "Consider adding honors or certifications",
-      "description": "Awards or professional certifications can strengthen the resume when relevant."
-    },
     "duplicateWord": {
       "title": "Frequent term \"{{word}}\" appears {{count}} times",
       "description": "It appears repeatedly in {{sections}}. Consider synonyms or tighter wording."
@@ -504,8 +496,6 @@
     "workExperience": "Work Experience",
     "projects": "Projects",
     "honors": "Honors and Awards",
-    "certifications": "Certifications",
-    "portfolio": "Portfolio",
     "customSection": "Custom Section"
   },
   "diagnosisError": {
@@ -534,9 +524,6 @@
     },
     "color": {
       "title": "Theme Color",
-      "titleBackground": "Title background",
-      "tagBackground": "Tag background",
-      "tagText": "Tag text",
       "more": "More colors"
     },
     "colors": {
@@ -558,12 +545,12 @@
       "lavenderBlue": "Lavender Blue"
     },
     "page": {
-      "title": "Page Settings",
+      "title": "Page Layout",
       "pageMargin": "Page margin",
       "lineSpacing": "Line spacing"
     },
     "font": {
-      "title": "Font Settings",
+      "title": "Typography",
       "family": "Font family",
       "loading": "Loading font files. The preview will update automatically.",
       "loadingInline": "Loading font...",
@@ -583,7 +570,7 @@
       }
     },
     "layout": {
-      "title": "Layout",
+      "title": "Personal Information Display",
       "fieldLabel": "Field labels",
       "iconMode": "Icon mode",
       "textMode": "Text mode",
@@ -592,7 +579,7 @@
       "photoLayoutFixed": "This theme uses a fixed centered portrait",
       "photoRight": "Photo right",
       "photoLeft": "Photo left",
-      "titleLayout": "Title layout",
+      "entryTitleLayout": "Entry title layout",
       "compact": "Compact row",
       "threeColumn": "Three columns",
       "stacked": "Stacked"

@@ -1,6 +1,6 @@
 import type { SectionKey } from './core';
 import type { SaveStatusType } from './library';
-import type { ThemeSettings, WatermarkSettings } from './theme';
+import type { PersonalHeaderSettings, ThemeSettings, TypographySettings, WatermarkSettings } from './theme';
 
 export interface ResumeMeta {
   id: string | null;
@@ -34,6 +34,8 @@ export type AppUIAction =
   | { type: 'TOGGLE_EDITOR' }
   | { type: 'SET_EDITOR_OPEN'; payload: boolean }
   | { type: 'SET_THEME'; payload: Partial<ThemeSettings> }
+  | { type: 'SET_TYPOGRAPHY'; payload: Partial<TypographySettings> }
+  | { type: 'SET_PERSONAL_HEADER'; payload: Partial<PersonalHeaderSettings> }
   | { type: 'SET_WATERMARK'; payload: Partial<WatermarkSettings> }
   | { type: 'RESET_STYLE' }
   | { type: 'SET_SAVE_STATUS'; payload: SaveStatusType }

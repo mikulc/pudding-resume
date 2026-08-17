@@ -4,6 +4,4 @@ export { SkillsEditor } from './editors/SkillsEditor';
 export { WorkExperienceEditor } from './editors/WorkExperienceEditor';
 export { ProjectEditor } from './editors/ProjectEditor';
 export { HonorEditor } from './editors/HonorEditor';
-export { CertificationEditor } from './editors/CertificationEditor';
-export { PortfolioEditor } from './editors/PortfolioEditor';
 export { SummaryEditor } from './editors/SummaryEditor';

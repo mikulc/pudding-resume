@@ -58,7 +58,7 @@ export function StyledDateInput({
   label,
   value,
   onChange,
-  placeholder = 'yyyy.MM',
+  placeholder = 'yyyy-MM',
   className = '',
   size = 'sm',
 }: {

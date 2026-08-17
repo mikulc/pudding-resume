@@ -6,7 +6,7 @@ import { ResumePreview } from '../preview/PreviewComponents';
 import { ResumeCardPreviewProvider } from '../preview/ResumeCardPreviewProvider';
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import type { SharedResumeResponse } from '../../api/share';
-import type { ThemeSettings } from '../../types/resume';
+import { normalizeThemeSettings, type ThemeSettings } from '../../types/resume';
 import { useExportPDF } from '../../hooks/useExportPDF';
 import { useExportPNG } from '../../hooks/useExportPNG';
 import { useExportMarkdown } from '../../hooks/useExportMarkdown';
@@ -41,7 +41,10 @@ interface CanvasPanStart {
  * 保证内部使用的 export hooks 处于正确的 Provider 树中。
  */
 export function SharedResumeView({ data }: SharedResumeViewProps) {
-  const settings: ThemeSettings | undefined = data.resume.settings;
+  const settings: ThemeSettings = normalizeThemeSettings(
+    data.resume.settings,
+    data.resume.content.personalInfo,
+  );
 
   return (
     <ResumeCardPreviewProvider
@@ -49,7 +52,7 @@ export function SharedResumeView({ data }: SharedResumeViewProps) {
       theme={settings}
       suppressWatermark={false}
     >
-      <FontPreloader fontFamilyId={settings?.fontFamily ?? 'system'} />
+      <FontPreloader fontFamilyId={settings.typography.fontFamily} />
       <SharedResumeViewInner data={data} />
     </ResumeCardPreviewProvider>
   );

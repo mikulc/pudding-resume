@@ -1,6 +1,6 @@
 import React,{ createContext,useCallback,useContext,useEffect,useReducer,useState } from 'react';
 import { getResumeById } from '../../api/resumes';
-import { ResumeAction,ResumeData,ThemeSettings } from '../../types/resume';
+import { normalizeThemeSettings,ResumeAction,ResumeData,ThemeSettings } from '../../types/resume';
 import { getAuthToken } from '../../utils/api';
 import { loadLocalResumes } from '../../utils/localStorage';
 import { getPreviewCache } from '../../utils/previewCache';
@@ -36,6 +36,24 @@ export function ResumeProvider({ children, resumeId }: { children: React.ReactNo
   const [dataReady, setDataReady] = useState(false);
   const [initialSettings, setInitialSettings] = useState<ThemeSettings | null>(null);
 
+  const loadDocument = useCallback((content: ResumeData, settings?: unknown) => {
+    const legacyPersonalInfo = content.personalInfo as unknown as Record<string, unknown>;
+    const hasLegacyPersonalHeader = [
+      'displayMode',
+      'photoLayout',
+      'photoLayoutCustomized',
+      'photoStyle',
+      'photoStyleCustomized',
+    ].some((key) => key in legacyPersonalInfo);
+
+    rawDispatch({ type: 'LOAD_DATA', payload: content });
+    setInitialSettings(
+      settings || hasLegacyPersonalHeader
+        ? normalizeThemeSettings(settings, legacyPersonalInfo)
+        : null,
+    );
+  }, []);
+
   // Async: load resume from backend if logged in (database is the only persistence)
   // Skip loading when coming from blank template creation — start fresh instead.
   //
@@ -48,16 +66,13 @@ export function ResumeProvider({ children, resumeId }: { children: React.ReactNo
     // Template data (if any) is loaded from sessionStorage below.
     const draftLaunch = readDraftResumeLaunch();
     if (draftLaunch) {
-      if (draftLaunch.data) {
-        rawDispatch({ type: 'LOAD_DATA', payload: draftLaunch.data });
-      }
+      const draftSettings = draftLaunch.settings
+        ?? (draftLaunch.layoutId
+          ? createInitialThemeSettings(draftLaunch.layoutId, draftLaunch.themeColor)
+          : null);
+      if (draftLaunch.data) loadDocument(draftLaunch.data, draftSettings);
+      else setInitialSettings(draftSettings ? normalizeThemeSettings(draftSettings) : null);
       setDataReady(true);
-      setInitialSettings(
-        draftLaunch.settings
-          ?? (draftLaunch.layoutId
-            ? createInitialThemeSettings(draftLaunch.layoutId, draftLaunch.themeColor)
-            : null),
-      );
 
       // Defer removal so StrictMode re-run still sees the flags.
       setTimeout(clearDraftResumeLaunch, 0);
@@ -75,18 +90,14 @@ export function ResumeProvider({ children, resumeId }: { children: React.ReactNo
           let loaded = false;
           const cached = getPreviewCache(resumeId);
           if (cached) {
-            rawDispatch({ type: 'LOAD_DATA', payload: cached.content });
-            if (cached.theme) {
-              setInitialSettings(cached.theme);
-            }
+            loadDocument(cached.content, cached.theme);
             loaded = true;
           }
 
           if (!loaded) {
             const stagedLocalResume = readLocalResumeLaunch();
             if (stagedLocalResume?.id === resumeId) {
-              rawDispatch({ type: 'LOAD_DATA', payload: stagedLocalResume.data });
-              if (stagedLocalResume.settings) setInitialSettings(stagedLocalResume.settings);
+              loadDocument(stagedLocalResume.data, stagedLocalResume.settings);
               loaded = true;
             }
           }
@@ -96,10 +107,7 @@ export function ResumeProvider({ children, resumeId }: { children: React.ReactNo
             if (cancelled) return;
             const localResume = localResumes.find((item) => item.id === resumeId);
             if (localResume) {
-              rawDispatch({ type: 'LOAD_DATA', payload: localResume.content });
-              if (localResume.settings) {
-                setInitialSettings(localResume.settings);
-              }
+              loadDocument(localResume.content, localResume.settings);
             }
           }
 
@@ -115,10 +123,7 @@ export function ResumeProvider({ children, resumeId }: { children: React.ReactNo
           const remote = await getResumeById(resumeId);
           if (cancelled) return;
           if (remote) {
-            rawDispatch({ type: 'LOAD_DATA', payload: remote.content });
-            if (remote.settings) {
-              setInitialSettings(remote.settings);
-            }
+            loadDocument(remote.content, remote.settings);
           }
         } catch {
           // API unavailable — keep empty data
@@ -131,8 +136,7 @@ export function ResumeProvider({ children, resumeId }: { children: React.ReactNo
 
     const stagedLocalResume = readLocalResumeLaunch();
     if (stagedLocalResume) {
-      rawDispatch({ type: 'LOAD_DATA', payload: stagedLocalResume.data });
-      if (stagedLocalResume.settings) setInitialSettings(stagedLocalResume.settings);
+      loadDocument(stagedLocalResume.data, stagedLocalResume.settings);
       setDataReady(true);
       setTimeout(clearLocalResumeLaunch, 0);
       return;
@@ -146,14 +150,14 @@ export function ResumeProvider({ children, resumeId }: { children: React.ReactNo
         if (localDataStr) {
           try {
             const localData = JSON.parse(localDataStr);
-            rawDispatch({ type: 'LOAD_DATA', payload: localData });
+            let localSettings: unknown;
             const localSettingsStr = sessionStorage.getItem('local_resume_settings');
             if (localSettingsStr) {
               try {
-                const localSettings = JSON.parse(localSettingsStr);
-                setInitialSettings(localSettings);
+                localSettings = JSON.parse(localSettingsStr);
               } catch { /* ignore */ }
             }
+            loadDocument(localData, localSettings);
           } catch {
             // Data parse error — keep empty data
           }
@@ -182,14 +186,14 @@ export function ResumeProvider({ children, resumeId }: { children: React.ReactNo
         if (localDataStr) {
           try {
             const localData = JSON.parse(localDataStr);
-            rawDispatch({ type: 'LOAD_DATA', payload: localData });
+            let localSettings: unknown;
             const localSettingsStr = sessionStorage.getItem('local_resume_settings');
             if (localSettingsStr) {
               try {
-                const localSettings = JSON.parse(localSettingsStr);
-                setInitialSettings(localSettings);
+                localSettings = JSON.parse(localSettingsStr);
               } catch { /* ignore settings parse error */ }
             }
+            loadDocument(localData, localSettings);
           } catch {
             // Data parse error — keep empty data
           }
@@ -212,10 +216,7 @@ export function ResumeProvider({ children, resumeId }: { children: React.ReactNo
           const remote = await getResumeById(id);
           if (cancelled) return;
           if (remote) {
-            rawDispatch({ type: 'LOAD_DATA', payload: remote.content });
-            if (remote.settings) {
-              setInitialSettings(remote.settings);
-            }
+            loadDocument(remote.content, remote.settings);
           }
         } catch {
           // API unavailable — keep empty data already set as initial state
@@ -237,7 +238,7 @@ export function ResumeProvider({ children, resumeId }: { children: React.ReactNo
     setInitialSettings(null);
     setDataReady(true);
     return;
-  }, [resumeId]);
+  }, [loadDocument, resumeId]);
 
   // Document history is managed by HistoryProvider after data and settings are ready.
   const dispatch = useCallback(

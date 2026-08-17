@@ -8,7 +8,7 @@
  */
 
 export interface FontOption {
-  /** 唯一标识，存入 ThemeSettings.fontFamily */
+  /** 唯一标识，存入 ThemeSettings.typography.fontFamily */
   id: string;
   /** i18n key for display name */
   nameKey: string;
@@ -20,7 +20,7 @@ export interface FontOption {
 
 export const FONT_OPTIONS: FontOption[] = [
   {
-    id: 'system',
+    id: 'noto-sans-sc',
     nameKey: 'document.font.options.systemDefault',
     cssValue: "'Noto Sans SC','PingFang SC','Microsoft YaHei','Helvetica Neue',Helvetica,Arial,sans-serif",
     categoryKey: 'system',
@@ -51,17 +51,22 @@ export const FONT_OPTIONS: FontOption[] = [
   },
 ];
 
+/** 将旧版默认字体 ID 迁移为明确的 Noto Sans SC ID。 */
+export function normalizeFontFamilyId(id: unknown): string {
+  return typeof id === 'string' && id !== 'system' ? id : 'noto-sans-sc';
+}
+
 /**
  * 根据字体 ID 获取 CSS font-family 值
  * 未找到时返回系统默认字体
  */
 export function getFontStack(id: string): string {
-  return FONT_OPTIONS.find((f) => f.id === id)?.cssValue ?? FONT_OPTIONS[0].cssValue;
+  return FONT_OPTIONS.find((f) => f.id === normalizeFontFamilyId(id))?.cssValue ?? FONT_OPTIONS[0].cssValue;
 }
 
 /**
  * 根据字体 ID 获取 FontOption 对象
  */
 export function getFontOption(id: string): FontOption | undefined {
-  return FONT_OPTIONS.find((f) => f.id === id);
+  return FONT_OPTIONS.find((f) => f.id === normalizeFontFamilyId(id));
 }

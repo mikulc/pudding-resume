@@ -31,6 +31,16 @@ describe('PersonalInfoPreview', () => {
     mockedResume.theme = DEFAULT_THEME;
   });
 
+  const setFieldDisplayMode = (fieldDisplayMode: 'icon' | 'text' | 'none') => {
+    mockedResume.theme = {
+      ...(mockedResume.theme as typeof DEFAULT_THEME),
+      personalHeader: {
+        ...(mockedResume.theme as typeof DEFAULT_THEME).personalHeader,
+        fieldDisplayMode,
+      },
+    };
+  };
+
   it('does not render placeholder name or photo for an empty resume', () => {
     const { container } = render(<PersonalInfoPreview />);
     const placeholder = container.querySelector('[data-photo-placeholder="true"]');
@@ -77,15 +87,15 @@ describe('PersonalInfoPreview', () => {
 
   it('renders values separated by pipes in none mode', () => {
     const data = createEmptyResumeData();
+    setFieldDisplayMode('none');
     mockedResume.data = {
       ...data,
       personalInfo: {
         ...data.personalInfo,
-        displayMode: 'none',
         phone: '13888888888',
         email: 'pudding@example.com',
-        jobStatus: '随时到岗',
-        jobTarget: '前端工程师',
+        jobSearchStatus: '随时到岗',
+        targetRole: '前端工程师',
       },
     };
 
@@ -101,14 +111,14 @@ describe('PersonalInfoPreview', () => {
     (layoutId) => {
       const data = createEmptyResumeData();
       mockedResume.theme = { ...DEFAULT_THEME, layoutId };
+      setFieldDisplayMode('none');
       mockedResume.data = {
         ...data,
         personalInfo: {
           ...data.personalInfo,
-          displayMode: 'none',
           phone: '13888888888',
           email: 'pudding@example.com',
-          location: '深圳',
+          preferredLocation: '深圳',
         },
       };
 
@@ -129,11 +139,11 @@ describe('PersonalInfoPreview', () => {
   ])('renders field icons in icon mode for the %s layout', (layoutId) => {
     const data = createEmptyResumeData();
     mockedResume.theme = { ...DEFAULT_THEME, layoutId };
+    setFieldDisplayMode('icon');
     mockedResume.data = {
       ...data,
       personalInfo: {
         ...data.personalInfo,
-        displayMode: 'icon',
         phone: '13888888888',
       },
     };
@@ -146,13 +156,13 @@ describe('PersonalInfoPreview', () => {
   it('renders job target and status icons in the azure sidebar objective block', () => {
     const data = createEmptyResumeData();
     mockedResume.theme = { ...DEFAULT_THEME, layoutId: 'azure-sidebar' };
+    setFieldDisplayMode('icon');
     mockedResume.data = {
       ...data,
       personalInfo: {
         ...data.personalInfo,
-        displayMode: 'icon',
-        jobTarget: '前端工程师',
-        jobStatus: '随时到岗',
+        targetRole: '前端工程师',
+        jobSearchStatus: '随时到岗',
       },
     };
 
@@ -164,16 +174,16 @@ describe('PersonalInfoPreview', () => {
   it('groups shallow-sidebar contact details and objective like the azure sidebar', () => {
     const data = createEmptyResumeData();
     mockedResume.theme = { ...DEFAULT_THEME, layoutId: 'left-sidebar-two-column' };
+    setFieldDisplayMode('icon');
     mockedResume.data = {
       ...data,
       personalInfo: {
         ...data.personalInfo,
         fullName: '布丁',
-        displayMode: 'icon',
         phone: '13888888888',
         email: 'pudding@example.com',
-        jobTarget: '前端工程师',
-        jobStatus: '随时到岗',
+        targetRole: '前端工程师',
+        jobSearchStatus: '随时到岗',
       },
     };
 
@@ -197,11 +207,11 @@ describe('PersonalInfoPreview', () => {
   ])('renders field labels in text mode for the %s layout', (layoutId) => {
     const data = createEmptyResumeData();
     mockedResume.theme = { ...DEFAULT_THEME, layoutId };
+    setFieldDisplayMode('text');
     mockedResume.data = {
       ...data,
       personalInfo: {
         ...data.personalInfo,
-        displayMode: 'text',
         phone: '13888888888',
       },
     };
@@ -216,11 +226,11 @@ describe('PersonalInfoPreview', () => {
   it('marks none-mode rows for comfortable separator spacing', () => {
     const data = createEmptyResumeData();
     mockedResume.theme = { ...DEFAULT_THEME, layoutId: 'classic-horizontal' };
+    setFieldDisplayMode('none');
     mockedResume.data = {
       ...data,
       personalInfo: {
         ...data.personalInfo,
-        displayMode: 'none',
         phone: '13888888888',
         email: 'pudding@example.com',
       },

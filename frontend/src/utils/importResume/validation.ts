@@ -1,27 +1,23 @@
-import type { ResumeData } from '../../types/resume';
+import {
+  normalizePersonalInfo,
+  normalizeResumeEntryIds,
+  normalizeSectionConfig,
+  type ResumeData,
+} from '../../types/resume';
 
 export function ensureDefaults(data: unknown): ResumeData {
   const d = data as Record<string, unknown>;
-  return {
-    personalInfo: (d.personalInfo as ResumeData['personalInfo']) || {
-      fullName: '',
-      phone: '',
-      email: '',
-      photoUrl: '',
-    },
-    summary: (typeof d.summary === 'string' ? d.summary : undefined) as string | undefined,
+  return normalizeResumeEntryIds({
+    personalInfo: normalizePersonalInfo(d.personalInfo),
+    summary: typeof d.summary === 'string' ? d.summary : '',
     education: Array.isArray(d.education) ? d.education as ResumeData['education'] : [],
     workExperience: Array.isArray(d.workExperience) ? d.workExperience as ResumeData['workExperience'] : [],
     projects: Array.isArray(d.projects) ? d.projects as ResumeData['projects'] : [],
     skills: typeof d.skills === 'string' ? d.skills : '',
-    honors: Array.isArray(d.honors) ? d.honors as ResumeData['honors'] : undefined,
-    certifications: Array.isArray(d.certifications) ? d.certifications as ResumeData['certifications'] : undefined,
-    portfolio: Array.isArray(d.portfolio) ? d.portfolio as ResumeData['portfolio'] : undefined,
-    customSections: Array.isArray(d.customSections) ? d.customSections as ResumeData['customSections'] : undefined,
-    sectionOrder: Array.isArray(d.sectionOrder) ? d.sectionOrder as ResumeData['sectionOrder'] : undefined,
-    sectionTitles: (d.sectionTitles as ResumeData['sectionTitles']) || undefined,
-    hiddenSections: Array.isArray(d.hiddenSections) ? d.hiddenSections as ResumeData['hiddenSections'] : undefined,
-  };
+    honors: Array.isArray(d.honors) ? d.honors as ResumeData['honors'] : [],
+    customSections: Array.isArray(d.customSections) ? d.customSections as ResumeData['customSections'] : [],
+    sectionConfig: normalizeSectionConfig(d.sectionConfig, d),
+  });
 }
 
 /**

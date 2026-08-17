@@ -15,8 +15,8 @@ export function SettingsPanel() {
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 hide-scrollbar mobile-scroll-dock-space">
         <ThemeSettingsSection model={model} />
         <ColorSettingsSection model={model} />
-        <PageSettingsSection model={model} />
         <FontSettingsSection model={model} />
+        <PageSettingsSection model={model} />
         <LayoutSettingsSection model={model} />
         <WatermarkSettingsSection model={model} />
         <ResetSettingsSection model={model} />

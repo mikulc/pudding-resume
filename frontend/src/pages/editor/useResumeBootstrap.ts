@@ -1,10 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppUI, useResume } from '../../context/ResumeContext';
+import { normalizeThemeSettings } from '../../types/resume';
 
 export function useResumeBootstrap(resumeId?: string) {
-  const { dataReady, initialSettings } = useResume();
+  const { data, dataReady, initialSettings } = useResume();
   const { uiDispatch } = useAppUI();
+  const personalInfoRef = useRef(data.personalInfo);
+  personalInfoRef.current = data.personalInfo;
   const { t } = useTranslation('editor');
   // Track fade-in trigger — start invisible, animate in once dataReady becomes true
   const [fadeIn, setFadeIn] = useState(false);
@@ -16,7 +19,7 @@ export function useResumeBootstrap(resumeId?: string) {
       if (!raw) return;
       const settings = JSON.parse(raw);
       if (settings && typeof settings === 'object') {
-        uiDispatch({ type: 'SET_THEME', payload: settings });
+        uiDispatch({ type: 'SET_THEME', payload: normalizeThemeSettings(settings, personalInfoRef.current) });
         localStorage.removeItem('pudding_imported_theme');
       }
     } catch {
@@ -104,7 +107,7 @@ export function useResumeBootstrap(resumeId?: string) {
   useEffect(() => {
     if (dataReady) {
       if (initialSettings) {
-        uiDispatch({ type: 'SET_THEME', payload: initialSettings });
+        uiDispatch({ type: 'SET_THEME', payload: normalizeThemeSettings(initialSettings, personalInfoRef.current) });
       }
       // Mark settings as applied so preview can render with the correct font
       // from the very first paint, avoiding a font-flash flicker.

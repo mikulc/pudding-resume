@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createEmptyResumeData } from '../../../utils/resumeDraft';
+import { createCustomSectionId } from '../../../types/resume';
 import { resumeReducer } from './resumeReducer';
 
 describe('resumeReducer', () => {
@@ -12,6 +13,7 @@ describe('resumeReducer', () => {
       degree: 'Bachelor',
       startDate: '2020-09',
       endDate: '2024-06',
+      courses: '',
     };
 
     const added = resumeReducer(initial, { type: 'ADD_EDUCATION', payload: education });
@@ -57,24 +59,51 @@ describe('resumeReducer', () => {
     );
   });
 
+  it('removes legacy presentation settings from personal content while loading', () => {
+    const initial = createEmptyResumeData();
+    const legacyPersonalInfo = {
+      ...initial.personalInfo,
+      displayMode: 'text',
+      photoLayout: 'right',
+      photoLayoutCustomized: true,
+      photoStyle: { width: 90, height: 120, borderRadius: 8 },
+      photoStyleCustomized: true,
+    };
+    const loaded = resumeReducer(initial, {
+      type: 'LOAD_DATA',
+      payload: {
+        ...initial,
+        personalInfo: legacyPersonalInfo,
+      } as typeof initial,
+    });
+
+    const personalInfo = loaded.personalInfo as typeof loaded.personalInfo & Record<string, unknown>;
+    expect(personalInfo.displayMode).toBeUndefined();
+    expect(personalInfo.photoLayout).toBeUndefined();
+    expect(personalInfo.photoLayoutCustomized).toBeUndefined();
+    expect(personalInfo.photoStyle).toBeUndefined();
+    expect(personalInfo.photoStyleCustomized).toBeUndefined();
+  });
+
   it('keeps custom section order and visibility consistent', () => {
     const initial = createEmptyResumeData();
+    const customSectionId = createCustomSectionId();
     const added = resumeReducer(initial, {
       type: 'ADD_CUSTOM_SECTION',
-      payload: { id: 'custom-1', name: 'Open source' },
+      payload: { id: customSectionId, name: 'Open source' },
     });
     const hidden = resumeReducer(added, {
       type: 'TOGGLE_SECTION_VISIBILITY',
-      payload: 'custom-1',
+      payload: customSectionId,
     });
     const removed = resumeReducer(hidden, {
       type: 'DELETE_CUSTOM_SECTION',
-      payload: 'custom-1',
+      payload: customSectionId,
     });
 
-    expect(added.sectionOrder).toContain('custom-1');
-    expect(hidden.hiddenSections).toContain('custom-1');
+    expect(added.sectionConfig.order).toContain(customSectionId);
+    expect(hidden.sectionConfig.hidden).toContain(customSectionId);
     expect(removed.customSections).toEqual([]);
-    expect(removed.sectionOrder).not.toContain('custom-1');
+    expect(removed.sectionConfig.order).not.toContain(customSectionId);
   });
 });

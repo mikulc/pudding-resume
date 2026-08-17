@@ -1,10 +1,10 @@
 ﻿import { useCallback,useEffect,useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { v4 as uuidv4 } from 'uuid';
 import { useFloatingEditor } from '../../../context/FloatingEditorContext';
 import { useLongTextEditor } from '../../../context/LongTextEditorContext';
 import { useResume } from '../../../context/ResumeContext';
 import {
+createResumeEntryId,
 ProjectEntry
 } from '../../../types/resume';
 import { AddEntryButton,EntryCardHeader } from '../EditorCommon';
@@ -24,7 +24,7 @@ export function ProjectEditor() {
 
   const addProject = () => {
     const entry: ProjectEntry = {
-      id: uuidv4(),
+      id: createResumeEntryId(),
       name: '',
       role: '',
       startDate: '',
@@ -104,8 +104,8 @@ export function ProjectEditor() {
           <StyledInput label={t('resume:field.projectName')} value={proj.name} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, name: v } })} placeholder={t('resume:placeholder.projectNameExample')} size="md" />
           <StyledInput label={t('resume:field.projectRole')} value={proj.role} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, role: v } })} placeholder={t('resume:placeholder.projectRoleExample')} size="md" />
           <div className="grid grid-cols-2 gap-1">
-            <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.startDate')} value={proj.startDate} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, startDate: v } })} placeholder="2022.03" size="md" />
-            <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.endDate')} value={proj.endDate} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, endDate: v } })} placeholder="2022.12" size="md" />
+            <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.startDate')} value={proj.startDate} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, startDate: v } })} placeholder="2022-03" size="md" />
+            <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.endDate')} value={proj.endDate} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, endDate: v } })} placeholder="2022-12" size="md" />
           </div>
           <StyledInput label={`${t('resume:field.projectLink')} (${t('common:optional')})`} value={proj.link} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, link: v } })} placeholder="https://github.com/example" size="md" />
           <LongTextFieldEntry

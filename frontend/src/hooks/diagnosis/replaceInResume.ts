@@ -62,14 +62,6 @@ export function replaceInResume(
       }
     }
 
-    for (const p of data.portfolio ?? []) {
-      const nextDescription = replaceText(p.description);
-      if (nextDescription !== null) {
-        dispatch({ type: 'UPDATE_PORTFOLIO', payload: { ...p, description: nextDescription } });
-        return true;
-      }
-    }
-
     for (const cs of data.customSections ?? []) {
       const nextContent = replaceText(cs.content);
       if (nextContent !== null) {
@@ -135,15 +127,6 @@ export function replaceInResume(
         const nextName = replaceText(h.name);
         if (nextName !== null) {
           dispatch({ type: 'UPDATE_HONOR', payload: { ...h, name: nextName } });
-          return true;
-        }
-      }
-      break;
-    case 'portfolio':
-      for (const p of data.portfolio ?? []) {
-        const nextDescription = replaceText(p.description);
-        if (nextDescription !== null) {
-          dispatch({ type: 'UPDATE_PORTFOLIO', payload: { ...p, description: nextDescription } });
           return true;
         }
       }

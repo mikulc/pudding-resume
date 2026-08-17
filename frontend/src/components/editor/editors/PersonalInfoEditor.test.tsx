@@ -1,12 +1,15 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { DEFAULT_THEME } from '../../../types/resume';
 import { createEmptyResumeData } from '../../../utils/resumeDraft';
 import { PersonalInfoEditor } from './PersonalInfoEditor';
 
 const mockedResume = vi.hoisted(() => ({
   data: null as unknown,
   dispatch: vi.fn(),
+  uiDispatch: vi.fn(),
   layoutId: 'skyveil',
+  personalHeader: null as unknown,
 }));
 
 vi.mock('react-i18next', async (importOriginal) => ({
@@ -19,7 +22,15 @@ vi.mock('react-i18next', async (importOriginal) => ({
 
 vi.mock('../../../context/ResumeContext', () => ({
   useResume: () => mockedResume,
-  useAppUI: () => ({ ui: { theme: { layoutId: mockedResume.layoutId } } }),
+  useAppUI: () => ({
+    ui: {
+      theme: {
+        layoutId: mockedResume.layoutId,
+        personalHeader: mockedResume.personalHeader,
+      },
+    },
+    uiDispatch: mockedResume.uiDispatch,
+  }),
 }));
 
 vi.mock('../../common/Toast', () => ({
@@ -39,7 +50,9 @@ describe('PersonalInfoEditor photo settings', () => {
       },
     };
     mockedResume.dispatch.mockClear();
+    mockedResume.uiDispatch.mockClear();
     mockedResume.layoutId = 'skyveil';
+    mockedResume.personalHeader = DEFAULT_THEME.personalHeader;
   });
 
   it('uses the active theme portrait style in the popover until customized', () => {
@@ -77,12 +90,12 @@ describe('PersonalInfoEditor photo settings', () => {
     fireEvent.change(widthInput, { target: { value: '' } });
 
     expect(widthInput.value).toBe('');
-    expect(mockedResume.dispatch).not.toHaveBeenCalled();
+    expect(mockedResume.uiDispatch).not.toHaveBeenCalled();
 
     fireEvent.change(widthInput, { target: { value: '120' } });
     expect(widthInput.value).toBe('120');
-    expect(mockedResume.dispatch).toHaveBeenLastCalledWith({
-      type: 'SET_PERSONAL_INFO',
+    expect(mockedResume.uiDispatch).toHaveBeenLastCalledWith({
+      type: 'SET_PERSONAL_HEADER',
       payload: {
         photoStyle: {
           width: 120,
@@ -99,8 +112,8 @@ describe('PersonalInfoEditor photo settings', () => {
     fireEvent.click(screen.getByRole('button', { name: 'photo.adjust' }));
     fireEvent.click(screen.getByRole('button', { name: 'photo.radius.circle' }));
 
-    expect(mockedResume.dispatch).toHaveBeenLastCalledWith({
-      type: 'SET_PERSONAL_INFO',
+    expect(mockedResume.uiDispatch).toHaveBeenLastCalledWith({
+      type: 'SET_PERSONAL_HEADER',
       payload: {
         photoStyle: {
           width: 100,
@@ -113,13 +126,10 @@ describe('PersonalInfoEditor photo settings', () => {
   });
 
   it('keeps reset in the header and removes the footer completion action', () => {
-    const data = mockedResume.data as ReturnType<typeof createEmptyResumeData>;
-    mockedResume.data = {
-      ...data,
-      personalInfo: {
-        ...data.personalInfo,
-        photoStyle: { width: 100, height: 100, borderRadius: 999 },
-      },
+    mockedResume.personalHeader = {
+      ...DEFAULT_THEME.personalHeader,
+      photoStyle: { width: 100, height: 100, borderRadius: 999 },
+      photoStyleCustomized: true,
     };
     render(<PersonalInfoEditor />);
     fireEvent.click(screen.getByRole('button', { name: 'photo.adjust' }));
@@ -130,8 +140,8 @@ describe('PersonalInfoEditor photo settings', () => {
 
     fireEvent.click(resetButton);
 
-    expect(mockedResume.dispatch).toHaveBeenLastCalledWith({
-      type: 'SET_PERSONAL_INFO',
+    expect(mockedResume.uiDispatch).toHaveBeenLastCalledWith({
+      type: 'SET_PERSONAL_HEADER',
       payload: {
         photoStyle: { width: 100, height: 133, borderRadius: 6 },
         photoStyleCustomized: false,

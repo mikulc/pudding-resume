@@ -1,10 +1,10 @@
 ﻿import { useCallback,useEffect,useRef,useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { v4 as uuidv4 } from 'uuid';
 import { useFloatingEditor } from '../../../context/FloatingEditorContext';
 import { useLongTextEditor } from '../../../context/LongTextEditorContext';
 import { useResume } from '../../../context/ResumeContext';
 import {
+createResumeEntryId,
 WorkEntry
 } from '../../../types/resume';
 import { AddEntryButton,EntryCardHeader } from '../EditorCommon';
@@ -25,7 +25,7 @@ export function WorkExperienceEditor() {
 
   const addWork = () => {
     const entry: WorkEntry = {
-      id: uuidv4(),
+      id: createResumeEntryId(),
       company: '',
       position: '',
       location: '',
@@ -109,8 +109,8 @@ export function WorkExperienceEditor() {
           <StyledInput label={t('resume:field.position')} value={work.position} onChange={(v) => dispatch({ type: 'UPDATE_WORK_EXPERIENCE', payload: { ...work, position: v } })} placeholder={t('resume:placeholder.positionExample')} size="md" />
           <StyledInput label={t('resume:field.location')} value={work.location} onChange={(v) => dispatch({ type: 'UPDATE_WORK_EXPERIENCE', payload: { ...work, location: v } })} placeholder={t('resume:placeholder.workLocationExample')} size="md" />
           <div className="grid grid-cols-2 gap-1">
-            <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.startDate')} value={work.startDate} onChange={(v) => dispatch({ type: 'UPDATE_WORK_EXPERIENCE', payload: { ...work, startDate: v } })} placeholder="2020.09" size="md" />
-            <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.endDate')} value={work.endDate} onChange={(v) => dispatch({ type: 'UPDATE_WORK_EXPERIENCE', payload: { ...work, endDate: v } })} placeholder="2023.06" size="md" />
+            <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.startDate')} value={work.startDate} onChange={(v) => dispatch({ type: 'UPDATE_WORK_EXPERIENCE', payload: { ...work, startDate: v } })} placeholder="2020-09" size="md" />
+            <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.endDate')} value={work.endDate} onChange={(v) => dispatch({ type: 'UPDATE_WORK_EXPERIENCE', payload: { ...work, endDate: v } })} placeholder="2023-06" size="md" />
           </div>
           <LongTextFieldEntry
             label={t('resume:field.workHighlights')}

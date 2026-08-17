@@ -1,6 +1,6 @@
 /**
  * 编辑器区块底部的"添加条目"按钮。
- * 统一了 Education / Work / Project / Honor / Certification / Portfolio 等编辑器的添加按钮样式。
+ * 统一了 Education / Work / Project / Honor 等编辑器的添加按钮样式。
  */
 export function AddEntryButton({ onClick, label }: { onClick: () => void; label: string }) {
   return (
@@ -18,7 +18,7 @@ export function AddEntryButton({ onClick, label }: { onClick: () => void; label:
 
 /**
  * 编辑器条目卡片头部：序号 + 删除按钮。
- * 统一了 Education / Work / Project / Honor / Certification / Portfolio 等条目的卡片头部。
+ * 统一了 Education / Work / Project / Honor 等条目的卡片头部。
  */
 export function EntryCardHeader({ index, onDelete }: { index: number; onDelete: () => void }) {
   return (

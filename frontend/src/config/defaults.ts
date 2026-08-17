@@ -57,14 +57,9 @@ export const DENSITY_OPTIONS = [
   { value: 'high', labelKey: 'document.watermark.density.high' },
 ] as const satisfies readonly DensityOption[];
 
-// ======================== 自定义颜色默认值 ========================
+// ======================== 主题默认颜色 ========================
 
-export const CUSTOM_COLOR_DEFAULTS = {
-  bg: '#DBEAFE',
-  border: '#3B82F6',
-  tag_bg: '#EFF6FF',
-  tag_text: '#2563EB',
-} as const;
+export const DEFAULT_THEME_COLOR = '#3B82F6';
 
 // ======================== 主题默认值 ========================
 
@@ -109,5 +104,5 @@ export const WATERMARK_DEFAULTS = {
 // ======================== 主题初始默认值 ========================
 
 export const DEFAULT_LAYOUT_ID = 'skyveil';
-export const DEFAULT_FONT_FAMILY = 'system';
-export const DEFAULT_TITLE_LAYOUT = 'compact' as const;
+export const DEFAULT_FONT_FAMILY = 'noto-sans-sc';
+export const DEFAULT_ENTRY_TITLE_LAYOUT = 'compact' as const;

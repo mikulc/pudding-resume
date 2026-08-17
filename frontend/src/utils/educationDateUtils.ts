@@ -148,10 +148,10 @@ function parseDateString(dateStr: string): ParsedDate | null {
 }
 
 /**
- * 格式化日期为 YYYY.MM
+ * 格式化日期为 YYYY-MM
  */
 function formatDateString(year: number, month: number): string {
-  return `${year}.${String(month).padStart(2, '0')}`;
+  return `${year}-${String(month).padStart(2, '0')}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -163,7 +163,7 @@ const DEFAULT_END_MONTH = 6;    // 默认毕业月份
 
 /**
  * 根据开始时间 + 学制年限 → 推算结束时间
- * @param startDate 开始时间字符串（如 "2018.09"）
+ * @param startDate 开始时间字符串（如 "2018-09"）
  * @param durationYears 学制年限
  * @returns 推算的结束时间，无法推算则返回 null
  */
@@ -176,7 +176,7 @@ export function calculateEndDate(startDate: string, durationYears: number): stri
 
 /**
  * 根据结束时间 + 学制年限 → 反推开始时间
- * @param endDate 结束时间字符串（如 "2022.06"）
+ * @param endDate 结束时间字符串（如 "2022-06"）
  * @param durationYears 学制年限
  * @returns 推算的开始时间，无法推算则返回 null
  */

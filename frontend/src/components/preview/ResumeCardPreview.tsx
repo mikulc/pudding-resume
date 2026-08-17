@@ -135,8 +135,6 @@ export function ResumeCardPreview({ content, theme }: ResumeCardPreviewProps) {
     !content.skills?.trim() &&
     !content.summary?.trim() &&
     !content.honors?.length &&
-    !content.certifications?.length &&
-    !content.portfolio?.length &&
     !content.customSections?.some((cs) => cs.content?.trim());
 
   return (

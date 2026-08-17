@@ -1,5 +1,4 @@
 import React from 'react';
-import { ThemeSettings, CustomThemeColors, DEFAULT_CUSTOM_COLORS } from '../../../types/resume';
 
 
 // 主题色映射：根据 colorTheme 返回编辑器面板的 accent 样式（className + style 双路径）
@@ -23,7 +22,7 @@ export interface AccentResult {
   };
 }
 
-export function getAccentClasses(colorTheme: ThemeSettings['colorTheme'], customColors?: CustomThemeColors): AccentResult {
+export function getAccentClasses(colorTheme: 'blue' | 'gray' | 'black'): AccentResult {
   const presetMap: Record<string, AccentResult['className']> = {
     blue: {
       activeBorder: 'border-blue-400/60',
@@ -57,29 +56,6 @@ export function getAccentClasses(colorTheme: ThemeSettings['colorTheme'], custom
     },
   };
 
-  if (colorTheme === 'custom') {
-    const cc = customColors || DEFAULT_CUSTOM_COLORS;
-    return {
-      className: {
-        activeBorder: '',
-        activeRing: '',
-        activeShadow: '',
-        badgeBg: '',
-        badgeText: '',
-        accentBar: '',
-        accentBarShadow: '',
-        activeTitle: '',
-      },
-      style: {
-        activeBorder: { borderColor: cc.border + '99' },
-        badgeBg: { backgroundColor: cc.tagBg },
-        badgeText: { color: cc.tagText },
-        accentBar: { backgroundColor: cc.border },
-        activeTitle: { color: cc.border },
-      },
-    };
-  }
-
-  const className = presetMap[colorTheme] || presetMap.blue;
+  const className = presetMap[colorTheme];
   return { className, style: {} };
 }

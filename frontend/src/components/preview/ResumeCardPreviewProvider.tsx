@@ -16,7 +16,12 @@ import {
 } from '../../context/ResumeContext';
 import { DiagnosisContext } from '../../context/DiagnosisContext';
 import type { ResumeData, ThemeSettings, DiagnosisItem } from '../../types/resume';
-import { DEFAULT_SECTION_ORDER, DEFAULT_THEME } from '../../types/resume';
+import {
+  normalizePersonalInfo,
+  normalizeResumeEntryIds,
+  normalizeSectionConfig,
+  normalizeThemeSettings,
+} from '../../types/resume';
 import type { AppUIState, ResumeAction, AppUIAction } from '../../types/resume';
 
 /**
@@ -64,20 +69,18 @@ function normalizeResumeData(content: ResumeData): ResumeData {
   );
   const normalizeHighlights = (
     entry: unknown,
-    prefix: string,
-    index: number,
   ): Record<string, unknown> & { id: string; highlights: string } => {
     const record = asRecord(entry);
     return {
       ...record,
-      id: stringify(record.id) || `${prefix}-${index + 1}`,
+      id: stringify(record.id),
       highlights: Array.isArray(record.highlights)
         ? record.highlights.map((item, itemIndex) => `${itemIndex + 1}. ${stringify(item)}`).join('\n')
         : stringify(record.highlights),
     };
   };
-  const normalizeWorkEntry = (entry: unknown, index: number) => {
-    const normalized = normalizeHighlights(entry, 'work', index);
+  const normalizeWorkEntry = (entry: unknown) => {
+    const normalized = normalizeHighlights(entry);
     return {
       ...normalized,
       company: stringify(normalized['company']),
@@ -87,8 +90,8 @@ function normalizeResumeData(content: ResumeData): ResumeData {
       endDate: stringify(normalized['endDate']),
     };
   };
-  const normalizeProjectEntry = (entry: unknown, index: number) => {
-    const normalized = normalizeHighlights(entry, 'project', index);
+  const normalizeProjectEntry = (entry: unknown) => {
+    const normalized = normalizeHighlights(entry);
     return {
       ...normalized,
       name: stringify(normalized['name']),
@@ -98,39 +101,21 @@ function normalizeResumeData(content: ResumeData): ResumeData {
       link: stringify(normalized['link']) || stringify(normalized['url']),
     };
   };
-  const normalizeNamedDateEntry = (entry: unknown, prefix: string, index: number) => {
+  const normalizeNamedDateEntry = (entry: unknown) => {
     if (typeof entry === 'string') {
-      return { id: `${prefix}-${index + 1}`, name: entry, date: '' };
+      return { id: '', name: entry, date: '' };
     }
     const record = asRecord(entry);
     return {
       ...record,
-      id: stringify(record.id) || `${prefix}-${index + 1}`,
+      id: stringify(record.id),
       name: stringify(record.name),
       date: stringify(record.date),
     };
   };
 
-  return {
-    personalInfo: {
-      fullName: personalInfo.fullName ?? '',
-      phone: personalInfo.phone ?? '',
-      email: personalInfo.email ?? '',
-      photoUrl: personalInfo.photoUrl ?? '',
-      photoStyle: personalInfo.photoStyle,
-      photoStyleCustomized: personalInfo.photoStyleCustomized,
-      jobStatus: personalInfo.jobStatus ?? '',
-      jobTarget: personalInfo.jobTarget ?? '',
-      location: personalInfo.location ?? '',
-      displayMode: personalInfo.displayMode ?? 'icon',
-      photoLayout: personalInfo.photoLayout,
-      photoLayoutCustomized: personalInfo.photoLayoutCustomized,
-      hiddenFields: personalInfo.hiddenFields ?? [],
-      fieldOrder: personalInfo.fieldOrder ?? undefined,
-      customFields: personalInfo.customFields ?? {},
-      iconMap: personalInfo.iconMap ?? {},
-      fieldLabels: personalInfo.fieldLabels ?? {},
-    },
+  return normalizeResumeEntryIds({
+    personalInfo: normalizePersonalInfo(personalInfo),
     summary: source.summary ?? '',
     education: source.education ?? [],
     skills: Array.isArray(source.skills)
@@ -138,45 +123,24 @@ function normalizeResumeData(content: ResumeData): ResumeData {
       : (source.skills ?? ''),
     workExperience: (source.workExperience ?? []).map(normalizeWorkEntry) as ResumeData['workExperience'],
     projects: (source.projects ?? []).map(normalizeProjectEntry) as ResumeData['projects'],
-    honors: (source.honors ?? []).map((entry, index) => normalizeNamedDateEntry(entry, 'honor', index)) as ResumeData['honors'],
-    certifications: (source.certifications ?? []).map((entry, index) => normalizeNamedDateEntry(entry, 'certification', index)) as ResumeData['certifications'],
-    portfolio: source.portfolio ?? [],
+    honors: (source.honors ?? []).map(normalizeNamedDateEntry) as ResumeData['honors'],
     customSections: source.customSections ?? [],
-    sectionOrder: source.sectionOrder ?? DEFAULT_SECTION_ORDER,
-    sectionTitles: source.sectionTitles ?? {},
-    hiddenSections: source.hiddenSections ?? [],
-  };
+    sectionConfig: normalizeSectionConfig(
+      source.sectionConfig,
+      source as unknown as Record<string, unknown>,
+    ),
+  });
 }
 
-function normalizeThemeSettings(theme?: ThemeSettings, suppressWatermark = true): ThemeSettings {
-  const raw = (theme ?? {}) as ThemeSettings & Record<string, unknown>;
-  const rawWatermark = (raw.watermark ?? {}) as Partial<ThemeSettings['watermark']>;
-  const watermark = {
-    ...DEFAULT_THEME.watermark,
-    ...rawWatermark,
-  };
-
-  return {
-    layoutId: (raw.layoutId ?? raw.layout_id ?? DEFAULT_THEME.layoutId) as string,
-    colorTheme: (raw.colorTheme ?? raw.color_theme ?? DEFAULT_THEME.colorTheme) as ThemeSettings['colorTheme'],
-    customColors: (raw.customColors ?? raw.custom_colors ?? DEFAULT_THEME.customColors) as ThemeSettings['customColors'],
-    fontFamily: (raw.fontFamily ?? raw.font_family ?? DEFAULT_THEME.fontFamily) as string,
-    pageMargin: (raw.pageMargin ?? raw.page_margin ?? DEFAULT_THEME.pageMargin) as number,
-    lineSpacing: (raw.lineSpacing ?? raw.line_spacing ?? DEFAULT_THEME.lineSpacing) as number,
-    fontSize: (raw.fontSize ?? raw.font_size ?? DEFAULT_THEME.fontSize) as number,
-    sectionTitleFontSize: (raw.sectionTitleFontSize ?? raw.section_title_font_size ?? DEFAULT_THEME.sectionTitleFontSize) as number,
-    entryTitleFontSize: (raw.entryTitleFontSize ?? raw.entry_title_font_size ?? DEFAULT_THEME.entryTitleFontSize) as number,
-    titleLayout: (raw.titleLayout ?? raw.title_layout ?? DEFAULT_THEME.titleLayout) as ThemeSettings['titleLayout'],
-    watermark: suppressWatermark ? { ...watermark, enabled: false } : watermark,
-  };
-}
-
-function buildDefaultUI(theme?: ThemeSettings, suppressWatermark = true): AppUIState {
+function buildDefaultUI(theme?: ThemeSettings, suppressWatermark = true, legacyPersonalInfo?: unknown): AppUIState {
   // 默认用于卡片预览时禁用水印（缩放后无法看清且干扰视觉）。
   // 分享页复用此 Provider，但需要保留真实水印配置。
-  // 以 DEFAULT_THEME 为基础合并，确保 titleLayout 等缺失属性有正确的默认值
+  // 以 DEFAULT_THEME 为基础合并，确保 entryTitleLayout 等缺失属性有正确的默认值
   // 这解决了当缓存/API 返回的旧版数据缺少新增字段时，卡片预览回退到意外默认布局的问题
-  const cardTheme = normalizeThemeSettings(theme, suppressWatermark);
+  const normalizedTheme = normalizeThemeSettings(theme, legacyPersonalInfo);
+  const cardTheme = suppressWatermark
+    ? { ...normalizedTheme, watermark: { ...normalizedTheme.watermark, enabled: false } }
+    : normalizedTheme;
   return {
     activeSection: 'personal',
     zoom: 1,
@@ -221,10 +185,10 @@ export function ResumeCardPreviewProvider({ content, theme, suppressWatermark = 
 
   const uiValue = React.useMemo(
     () => ({
-      ui: buildDefaultUI(theme, suppressWatermark),
+      ui: buildDefaultUI(theme, suppressWatermark, content.personalInfo),
       uiDispatch: noopUIDispatch,
     }),
-    [theme, suppressWatermark],
+    [content.personalInfo, theme, suppressWatermark],
   );
 
   const reactScopeId = React.useId();

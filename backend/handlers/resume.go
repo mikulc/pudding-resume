@@ -209,7 +209,7 @@ func CreateResume(c *gin.Context) {
 		content = datatypes.JSON(body.Content)
 	} else {
 		// Default empty resume structure
-		content = datatypes.JSON(json.RawMessage(`{"personalInfo":{"fullName":"","phone":"","email":"","photoUrl":""},"education":[],"skills":"","workExperience":[],"projects":[]}`))
+		content = datatypes.JSON(json.RawMessage(`{"personalInfo":{"fullName":"","phone":"","email":"","photoUrl":"","jobSearchStatus":"","targetRole":"","preferredLocation":"","customFields":[],"fieldConfig":{"order":["fullName","phone","email","jobSearchStatus","targetRole","preferredLocation"],"hidden":[],"labelOverrides":{},"iconOverrides":{}}},"education":[],"skills":"","workExperience":[],"projects":[]}`))
 	}
 
 	// Validate resume photo size (base64)

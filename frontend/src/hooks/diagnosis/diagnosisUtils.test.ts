@@ -1,20 +1,19 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { ResumeAction, ResumeData } from '../../types/resume';
+import { normalizePersonalInfo, type ResumeAction, type ResumeData } from '../../types/resume';
+import { createEmptyResumeData } from '../../utils/resumeDraft';
 import { collectResumeText, normalizeDiagnosisLanguage } from './collectResumeText';
 import { hashContent } from './cache';
 import { replaceInResume } from './replaceInResume';
 
 const resume = {
-  personalInfo: {
+  ...createEmptyResumeData(),
+  personalInfo: normalizePersonalInfo({
     fullName: 'Test User',
     phone: '',
     email: '',
     photoUrl: '',
-  },
+  }),
   summary: 'Focused frontend engineer',
-  education: [],
-  workExperience: [],
-  projects: [],
   skills: 'TypeScript',
 } satisfies ResumeData;
 

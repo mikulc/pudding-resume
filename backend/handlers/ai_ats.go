@@ -49,8 +49,8 @@ Return only valid JSON with exactly this shape:
   "summary": "",
   "matched_keywords": [],
   "missing_keywords": [],
-  "format_issues": [{"severity":"high|medium|low","title":"","description":"","target_section":"personal|summary|education|skills|work|projects|honors|certifications|portfolio|custom"}],
-  "content_suggestions": [{"severity":"high|medium|low","title":"","description":"","target_section":"personal|summary|education|skills|work|projects|honors|certifications|portfolio|custom","rewrite_hint":""}],
+  "format_issues": [{"severity":"high|medium|low","title":"","description":"","target_section":"personal|summary|education|skills|work|projects|honors|custom"}],
+  "content_suggestions": [{"severity":"high|medium|low","title":"","description":"","target_section":"personal|summary|education|skills|work|projects|honors|custom","rewrite_hint":""}],
   "recommended_layouts": []
 }
 
@@ -61,7 +61,7 @@ Scoring guidance:
 - 80-100: strong match and ATS-friendly.
 
 Rules:
-- Do not invent skills, experience, employers, education, metrics, or certifications.
+- Do not invent skills, experience, employers, education, or metrics.
 - Missing keywords must come from the job description and be relevant to the resume target.
 - Use compact JSON. Do not pretty-print.
 - Keep summary under 35 words.
@@ -80,8 +80,8 @@ Return only valid JSON with exactly this shape:
   "summary": "",
   "matched_keywords": [],
   "missing_keywords": [],
-  "format_issues": [{"severity":"high|medium|low","title":"","description":"","target_section":"personal|summary|education|skills|work|projects|honors|certifications|portfolio|custom"}],
-  "content_suggestions": [{"severity":"high|medium|low","title":"","description":"","target_section":"personal|summary|education|skills|work|projects|honors|certifications|portfolio|custom","rewrite_hint":""}],
+  "format_issues": [{"severity":"high|medium|low","title":"","description":"","target_section":"personal|summary|education|skills|work|projects|honors|custom"}],
+  "content_suggestions": [{"severity":"high|medium|low","title":"","description":"","target_section":"personal|summary|education|skills|work|projects|honors|custom","rewrite_hint":""}],
   "recommended_layouts": []
 }
 
@@ -92,7 +92,7 @@ Scoring guidance:
 - 80-100: 匹配度较高，且整体较适合 ATS 解析。
 
 Rules:
-- 不要编造技能、经历、公司、学历、指标或证书。
+- 不要编造技能、经历、公司、学历或指标。
 - missing_keywords 必须来自岗位 JD，且与求职目标相关。
 - 使用紧凑 JSON，不要格式化缩进。
 - summary 控制在 60 个汉字以内。

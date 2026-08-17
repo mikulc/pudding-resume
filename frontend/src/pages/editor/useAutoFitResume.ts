@@ -18,7 +18,7 @@ export function useAutoFitResume() {
   type AutoFitPhase = 'idle' | 'pagemargin' | 'linespacing' | 'fontsize';
   interface AutoFitState {
     phase: AutoFitPhase;
-    originalSettings: { pageMargin: number; lineSpacing: number; fontSize: number } | null;
+    originalSettings: { pageMargin: number; lineSpacing: number; bodyFontSize: number } | null;
   }
   const autoFitRef = useRef<AutoFitState>({ phase: 'idle', originalSettings: null });
   const pageCountRef = useRef(0);
@@ -72,13 +72,13 @@ export function useAutoFitResume() {
     }
 
     if (autoFitRef.current.phase === 'linespacing') {
-      if (theme.lineSpacing > AUTO_FIT_MIN_LINE_SPACING) {
+      if (theme.typography.lineSpacing > AUTO_FIT_MIN_LINE_SPACING) {
         uiDispatch({
-          type: 'SET_THEME',
+          type: 'SET_TYPOGRAPHY',
           payload: {
             lineSpacing: Math.max(
               AUTO_FIT_MIN_LINE_SPACING,
-              +(theme.lineSpacing - AUTO_FIT_LINE_SPACING_STEP).toFixed(1),
+              +(theme.typography.lineSpacing - AUTO_FIT_LINE_SPACING_STEP).toFixed(1),
             ),
           },
         });
@@ -88,10 +88,10 @@ export function useAutoFitResume() {
     }
 
     if (autoFitRef.current.phase === 'fontsize') {
-      if (theme.fontSize > AUTO_FIT_MIN_FONT_SIZE) {
+      if (theme.typography.bodyFontSize > AUTO_FIT_MIN_FONT_SIZE) {
         uiDispatch({
-          type: 'SET_THEME',
-          payload: { fontSize: Math.max(AUTO_FIT_MIN_FONT_SIZE, theme.fontSize - AUTO_FIT_FONT_SIZE_STEP) },
+          type: 'SET_TYPOGRAPHY',
+          payload: { bodyFontSize: Math.max(AUTO_FIT_MIN_FONT_SIZE, theme.typography.bodyFontSize - AUTO_FIT_FONT_SIZE_STEP) },
         });
         return;
       }
@@ -129,7 +129,11 @@ export function useAutoFitResume() {
       // 关闭：还原原始设置
       const orig = autoFitRef.current.originalSettings;
       if (orig) {
-        uiDispatch({ type: 'SET_THEME', payload: orig });
+        uiDispatch({ type: 'SET_THEME', payload: { pageMargin: orig.pageMargin } });
+        uiDispatch({
+          type: 'SET_TYPOGRAPHY',
+          payload: { lineSpacing: orig.lineSpacing, bodyFontSize: orig.bodyFontSize },
+        });
       }
       autoFitRef.current = { phase: 'idle', originalSettings: null };
       setIsAutoFitting(false);
@@ -148,8 +152,8 @@ export function useAutoFitResume() {
     const { theme } = ui;
     const orig = {
       pageMargin: theme.pageMargin,
-      lineSpacing: theme.lineSpacing,
-      fontSize: theme.fontSize,
+      lineSpacing: theme.typography.lineSpacing,
+      bodyFontSize: theme.typography.bodyFontSize,
     };
 
     autoFitRef.current = {
@@ -165,22 +169,22 @@ export function useAutoFitResume() {
         type: 'SET_THEME',
         payload: { pageMargin: Math.max(AUTO_FIT_MIN_PAGE_MARGIN, theme.pageMargin - AUTO_FIT_PAGE_MARGIN_STEP) },
       });
-    } else if (theme.lineSpacing > AUTO_FIT_MIN_LINE_SPACING) {
+    } else if (theme.typography.lineSpacing > AUTO_FIT_MIN_LINE_SPACING) {
       autoFitRef.current.phase = 'linespacing';
       uiDispatch({
-        type: 'SET_THEME',
+        type: 'SET_TYPOGRAPHY',
         payload: {
           lineSpacing: Math.max(
             AUTO_FIT_MIN_LINE_SPACING,
-            +(theme.lineSpacing - AUTO_FIT_LINE_SPACING_STEP).toFixed(1),
+            +(theme.typography.lineSpacing - AUTO_FIT_LINE_SPACING_STEP).toFixed(1),
           ),
         },
       });
-    } else if (theme.fontSize > AUTO_FIT_MIN_FONT_SIZE) {
+    } else if (theme.typography.bodyFontSize > AUTO_FIT_MIN_FONT_SIZE) {
       autoFitRef.current.phase = 'fontsize';
       uiDispatch({
-        type: 'SET_THEME',
-        payload: { fontSize: Math.max(AUTO_FIT_MIN_FONT_SIZE, theme.fontSize - AUTO_FIT_FONT_SIZE_STEP) },
+        type: 'SET_TYPOGRAPHY',
+        payload: { bodyFontSize: Math.max(AUTO_FIT_MIN_FONT_SIZE, theme.typography.bodyFontSize - AUTO_FIT_FONT_SIZE_STEP) },
       });
     } else {
         // 页面设置已为最小值，无法自动调整为一页

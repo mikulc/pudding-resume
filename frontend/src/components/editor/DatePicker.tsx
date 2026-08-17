@@ -18,7 +18,7 @@ interface DatePickerProps {
 
 // ── Constants ──
 
-const INPUT_FORMATS = ['yyyy.MM', 'yyyy-MM', 'yyyy/MM', 'yyyyMM'];
+const INPUT_FORMATS = ['yyyy-MM', 'yyyy.MM', 'yyyy/MM', 'yyyyMM'];
 const MONTHS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
 const YEAR_RANGE = { min: 1990, max: 2030 };
 const YEARS_PER_PAGE = 12;
@@ -59,7 +59,7 @@ function getYearPageStart(year: number) {
 
 // ── Component ──
 
-export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled = false, mode = 'month' }: DatePickerProps) {
+export function DatePicker({ value, onChange, placeholder = 'yyyy-MM', disabled = false, mode = 'month' }: DatePickerProps) {
   const id = useId();
   const { t } = useTranslation('common');
   const [open, setOpen] = useState(false);
@@ -180,7 +180,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
   const handleConfirm = useCallback((month = pickMonth) => {
     const formatted = mode === 'date'
       ? `${pickYear}-${MONTHS[month - 1]}-${String(pickDay).padStart(2, '0')}`
-      : `${pickYear}.${MONTHS[month - 1]}`;
+      : `${pickYear}-${MONTHS[month - 1]}`;
     onChange(formatted);
     setInputValue(formatted);
     setOpen(false);
@@ -191,7 +191,7 @@ export function DatePicker({ value, onChange, placeholder = 'yyyy.MM', disabled 
     if (p) {
       const formatted = mode === 'date'
         ? `${p.year}-${MONTHS[p.month - 1]}-${String(p.day).padStart(2, '0')}`
-        : `${p.year}.${MONTHS[p.month - 1]}`;
+        : `${p.year}-${MONTHS[p.month - 1]}`;
       onChange(formatted);
       setInputValue(formatted);
     } else {

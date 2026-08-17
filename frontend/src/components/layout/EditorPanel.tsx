@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { PanelLeft } from 'lucide-react';
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
-import { PersonalInfoEditor, EducationEditor, SkillsEditor, WorkExperienceEditor, ProjectEditor, HonorEditor, CertificationEditor, PortfolioEditor, SummaryEditor } from '../editor/EditorComponents';
+import { PersonalInfoEditor, EducationEditor, SkillsEditor, WorkExperienceEditor, ProjectEditor, HonorEditor, SummaryEditor } from '../editor/EditorComponents';
 import { CustomModuleEditor } from '../editor/CustomModuleEditor';
 import { FloatingContentEditor } from '../editor/FloatingContentEditor';
 import { useResume, useAppUI } from '../../context/ResumeContext';
-import { SectionKey, DEFAULT_SECTION_ORDER, getSystemModuleDefaultTitles } from '../../types/resume';
+import { createCustomSectionId, DEFAULT_SECTION_ORDER, SectionKey, getSystemModuleDefaultTitles } from '../../types/resume';
 import { useToast } from '../common/Toast';
 
 import { SortableSection } from './editor-panel/SortableSection';
@@ -21,8 +21,6 @@ const EDITOR_MAP: Record<SectionKey, { Editor: React.ComponentType }> = {
   work: { Editor: WorkExperienceEditor },
   projects: { Editor: ProjectEditor },
   honors: { Editor: HonorEditor },
-  certifications: { Editor: CertificationEditor },
-  portfolio: { Editor: PortfolioEditor },
 };
 
 const LAST_EXPANDED_SECTION_STORAGE_KEY = 'resume_editor_last_expanded_section';
@@ -58,10 +56,13 @@ export function EditorPanel({ isMobile = false }: EditorPanelProps) {
     }),
   );
 
-  const sectionOrder = data.sectionOrder ?? DEFAULT_SECTION_ORDER;
-  const customSections = useMemo(() => data.customSections ?? [], [data.customSections]);
-  const sectionTitles = useMemo(() => data.sectionTitles ?? {}, [data.sectionTitles]);
-  const hiddenSections = data.hiddenSections ?? [];
+  const sectionOrder = data.sectionConfig.order;
+  const customSections = useMemo(() => data.customSections, [data.customSections]);
+  const sectionTitles = useMemo(
+    () => data.sectionConfig.titleOverrides,
+    [data.sectionConfig.titleOverrides],
+  );
+  const hiddenSections = data.sectionConfig.hidden;
   const defaultModuleTitles = getSystemModuleDefaultTitles();
 
   // 新增自定义模块后自动滚动到底部
@@ -241,7 +242,7 @@ export function EditorPanel({ isMobile = false }: EditorPanelProps) {
             {/* 添加自定义模块按钮 */}
             <button
               onClick={() => {
-                const id = `custom-${Date.now()}`;
+                const id = createCustomSectionId();
                 dispatch({ type: 'ADD_CUSTOM_SECTION', payload: { id, name: t('customModule.defaultName') } });
                 uiDispatch({ type: 'SET_ACTIVE_SECTION', payload: id });
                 setExpandedSection(id);

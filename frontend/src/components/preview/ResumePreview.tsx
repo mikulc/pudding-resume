@@ -4,7 +4,8 @@ import { getFontStack } from '../../config/fonts';
 import { useAppUI,useResume } from '../../context/ResumeContext';
 import { getLayoutCSS,resolveLayout,resolvePhotoLayout,resolvePhotoStyle } from '../../registry/layouts';
 import {
-DEFAULT_SECTION_ORDER,
+deriveThemeColors,
+resolveThemeColor,
 SectionKey,
 WatermarkSettings
 } from '../../types/resume';
@@ -20,11 +21,9 @@ PAGE_GAP_PX,
 } from './pagination';
 
 import { ActiveSectionWrapper,resolvePersonalPhotoStyle,SectionHeader } from './PreviewShared';
-import { CertificationPreview } from './sections/CertificationPreview';
 import { EducationPreview } from './sections/EducationPreview';
 import { HonorPreview } from './sections/HonorPreview';
 import { PersonalInfoPreview } from './sections/PersonalInfoPreview';
-import { PortfolioPreview } from './sections/PortfolioPreview';
 import { ProjectPreview } from './sections/ProjectPreview';
 import { SkillsPreview } from './sections/SkillsPreview';
 import { SummaryPreview } from './sections/SummaryPreview';
@@ -39,16 +38,12 @@ const PREVIEW_MAP: Record<SectionKey, React.ComponentType> = {
   work: WorkExperiencePreview,
   projects: ProjectPreview,
   honors: HonorPreview,
-  certifications: CertificationPreview,
-  portfolio: PortfolioPreview,
 };
 
 const SIDEBAR_LAYOUT_SECTION_KEYS = new Set<SectionKey>([
   'personal',
   'skills',
   'summary',
-  'certifications',
-  'portfolio',
 ]);
 
 function CustomSectionPreview({ sectionKey }: { sectionKey: string }) {
@@ -211,7 +206,7 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
   const { ui } = useAppUI();
   const { data } = useResume();
   const { theme } = ui;
-  const hiddenSections = data.hiddenSections ?? [];
+  const hiddenSections = data.sectionConfig.hidden;
   const scopeClass = useCardPreviewScope();
 
   const [needsMeasure, setNeedsMeasure] = useState(true);
@@ -222,28 +217,22 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
   const supportsMovableSidebar = theme.layoutId === 'azure-sidebar' || theme.layoutId === 'left-sidebar-two-column';
   const effectivePhotoLayout = resolvePhotoLayout(
     theme.layoutId,
-    data.personalInfo.photoLayout,
-    data.personalInfo.photoLayoutCustomized,
+    theme.personalHeader.photoLayout,
+    theme.personalHeader.photoLayoutCustomized,
   );
   const sidebarOnRight = supportsMovableSidebar && effectivePhotoLayout === 'right';
 
-  // Use a measurement copy without hiddenSections so hide/show changes do not
+  // Use a measurement copy without hidden sections so hide/show changes do not
   // force remounting and break CSS transitions.
   // The measured DOM should stay mounted across visibility changes.
   const measureData = useMemo(() => {
-    const { hiddenSections: _, ...rest } = data;
-    return rest;
+    return {
+      ...data,
+      sectionConfig: { ...data.sectionConfig, hidden: [] },
+    };
   }, [data]);
 
-  const colorMap: Record<string, { bg: string; border: string; tagBg: string; tagText: string }> = {
-    blue: { bg: '#DBEAFE', border: '#3B82F6', tagBg: '#EFF6FF', tagText: '#2563EB' },
-    gray: { bg: '#F3F4F6', border: '#6B7280', tagBg: '#F9FAFB', tagText: '#4B5563' },
-    black: { bg: '#E5E7EB', border: '#374151', tagBg: '#F3F4F6', tagText: '#1F2937' },
-  };
-
-  const colors = theme.colorTheme === 'custom'
-    ? (theme.customColors || colorMap.blue)
-    : (colorMap[theme.colorTheme] || colorMap.blue);
+  const colors = deriveThemeColors(resolveThemeColor(theme));
 
   // Mark for re-measurement when data or theme changes; keep old offsets to avoid flicker.
   const prevDepKey = useRef('');
@@ -253,12 +242,12 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
       setNeedsMeasure(false);
       return;
     }
-    const depKey = JSON.stringify(measureData) + '|' + theme.pageMargin + '|' + theme.lineSpacing + '|' + theme.fontSize + '|' + theme.layoutId + '|' + theme.fontFamily + '|' + theme.titleLayout + '|' + theme.entryTitleFontSize + '|' + theme.sectionTitleFontSize;
+    const depKey = JSON.stringify(measureData) + '|' + theme.pageMargin + '|' + JSON.stringify(theme.typography) + '|' + theme.layoutId + '|' + theme.entryTitleLayout + '|' + JSON.stringify(theme.personalHeader);
     if (depKey !== prevDepKey.current) {
       prevDepKey.current = depKey;
       setNeedsMeasure(true);
     }
-  }, [disablePagination, measureData, theme.pageMargin, theme.lineSpacing, theme.fontSize, theme.layoutId, theme.fontFamily, theme.titleLayout, theme.entryTitleFontSize, theme.sectionTitleFontSize]);
+  }, [disablePagination, measureData, theme.pageMargin, theme.typography, theme.layoutId, theme.entryTitleLayout, theme.personalHeader]);
 
   const pageContentHeight = (A4_HEIGHT_MM - theme.pageMargin * 2) * MM_TO_PX;
 
@@ -303,8 +292,8 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
 
   // Build preview section list from sectionOrder, including built-in and custom sections.
   const sectionInfos = useMemo(() => {
-    const order = data.sectionOrder ?? DEFAULT_SECTION_ORDER;
-    const customSections = data.customSections ?? [];
+    const order = data.sectionConfig.order;
+    const customSections = data.customSections;
     return order
       .filter((key) => PREVIEW_MAP[key] || customSections.some((cs) => cs.id === key))
       .map((key) => {
@@ -312,7 +301,7 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
         if (Comp) return { key, component: <Comp /> };
         return { key, component: <CustomSectionPreview sectionKey={key} /> };
       });
-  }, [data.sectionOrder, data.customSections]);
+  }, [data.sectionConfig.order, data.customSections]);
 
   const renderSectionFlow = (
     sections: typeof sectionInfos,
@@ -363,28 +352,25 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
     '--personal-photo-height': string;
   } = {
     padding: isSidebarLayout ? 0 : `${theme.pageMargin}mm`,
-    fontSize: `${theme.fontSize}px`,
-    lineHeight: theme.lineSpacing,
-    fontFamily: getFontStack(theme.fontFamily),
+    fontSize: `${theme.typography.bodyFontSize}px`,
+    lineHeight: theme.typography.lineSpacing,
+    fontFamily: getFontStack(theme.typography.fontFamily),
     boxSizing: 'border-box',
     '--resume-content-height': `${pageContentHeight}px`,
     '--resume-page-margin': `${theme.pageMargin}mm`,
-    '--resume-line-spacing': theme.lineSpacing,
-    '--personal-photo-width': `${resolvePersonalPhotoStyle(resolvePhotoStyle(theme.layoutId, data.personalInfo.photoStyle, data.personalInfo.photoStyleCustomized)).width}px`,
-    '--personal-photo-height': `${resolvePersonalPhotoStyle(resolvePhotoStyle(theme.layoutId, data.personalInfo.photoStyle, data.personalInfo.photoStyleCustomized)).height}px`,
+    '--resume-line-spacing': theme.typography.lineSpacing,
+    '--personal-photo-width': `${resolvePersonalPhotoStyle(resolvePhotoStyle(theme.layoutId, theme.personalHeader.photoStyle, theme.personalHeader.photoStyleCustomized)).width}px`,
+    '--personal-photo-height': `${resolvePersonalPhotoStyle(resolvePhotoStyle(theme.layoutId, theme.personalHeader.photoStyle, theme.personalHeader.photoStyleCustomized)).height}px`,
   };
 
   const colorStyle = `
     .resume-paper {
       --theme-bg: ${colors.bg};
       --theme-border: ${colors.border};
-      --theme-tag-bg: ${colors.tagBg};
-      --theme-tag-text: ${colors.tagText};
       --layout-accent: ${colors.border};
-      --layout-tag-border: ${colors.tagText};
-      --section-title-size: ${theme.sectionTitleFontSize}px;
-      --entry-title-size: ${theme.entryTitleFontSize}px;
-      font-family: ${getFontStack(theme.fontFamily)} !important;
+      --section-title-size: ${theme.typography.sectionTitleFontSize}px;
+      --entry-title-size: ${theme.typography.entryTitleFontSize}px;
+      font-family: ${getFontStack(theme.typography.fontFamily)} !important;
       line-height: var(--resume-line-spacing) !important;
     }
     .resume-paper [data-page-section] :where(p, li, div, span) {
@@ -397,10 +383,6 @@ export function ResumePreview({ viewportWidth = 0, zoom = 1, onPageCountChange, 
     }
     .resume-paper .section-header-bar {
       background-color: var(--theme-border) !important;
-    }
-    .resume-paper .tag-badge {
-      background-color: var(--theme-tag-bg) !important;
-      color: var(--theme-tag-text) !important;
     }
   `;
 

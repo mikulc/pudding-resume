@@ -1,9 +1,9 @@
 ﻿import { useCallback,useEffect,useRef,useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { v4 as uuidv4 } from 'uuid';
 import { useResume } from '../../../context/ResumeContext';
 import {
-EducationEntry
+  createResumeEntryId,
+  EducationEntry
 } from '../../../types/resume';
 import {
 applyAutoFillSafely,
@@ -64,12 +64,13 @@ export function EducationEditor() {
 
   const addEducation = () => {
     const entry: EducationEntry = {
-      id: uuidv4(),
+      id: createResumeEntryId(),
       school: '',
       major: '',
       degree: '',
       startDate: '',
       endDate: '',
+      courses: '',
     };
     fieldSourcesRef.current[entry.id] = { startDate: 'auto', endDate: 'auto' };
     dispatch({ type: 'ADD_EDUCATION', payload: entry });
@@ -183,8 +184,8 @@ export function EducationEditor() {
               size="md"
             />
             <div className="grid grid-cols-2 gap-1">
-              <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.startDate')} value={edu.startDate} onChange={(v) => handleStartDateChange(edu, v)} placeholder="2020.09" size="md" />
-              <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.endDate')} value={edu.endDate} onChange={(v) => handleEndDateChange(edu, v)} placeholder="2024.06" size="md" />
+              <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.startDate')} value={edu.startDate} onChange={(v) => handleStartDateChange(edu, v)} placeholder="2020-09" size="md" />
+              <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.endDate')} value={edu.endDate} onChange={(v) => handleEndDateChange(edu, v)} placeholder="2024-06" size="md" />
             </div>
             {hint && (
               <div className="flex items-start gap-1.5 px-0.5">

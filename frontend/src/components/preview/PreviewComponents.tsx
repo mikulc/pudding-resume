@@ -5,7 +5,5 @@ export { SkillsPreview } from './sections/SkillsPreview';
 export { WorkExperiencePreview } from './sections/WorkExperiencePreview';
 export { ProjectPreview } from './sections/ProjectPreview';
 export { HonorPreview } from './sections/HonorPreview';
-export { CertificationPreview } from './sections/CertificationPreview';
 export { SummaryPreview } from './sections/SummaryPreview';
-export { PortfolioPreview } from './sections/PortfolioPreview';
 export { ResumePreview } from './ResumePreview';

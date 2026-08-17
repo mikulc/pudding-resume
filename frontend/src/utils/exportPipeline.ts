@@ -1,10 +1,4 @@
-import type { ThemeSettings } from '../types/resume';
-
-const THEME_COLORS = {
-  blue: { bg: '#DBEAFE', border: '#3B82F6', tagBg: '#EFF6FF', tagText: '#2563EB' },
-  gray: { bg: '#F3F4F6', border: '#6B7280', tagBg: '#F9FAFB', tagText: '#4B5563' },
-  black: { bg: '#E5E7EB', border: '#374151', tagBg: '#F3F4F6', tagText: '#1F2937' },
-} as const;
+import { deriveThemeColors, resolveThemeColor, type ThemeSettings } from '../types/resume';
 
 export async function waitForPaginationReady(container: HTMLElement): Promise<void> {
   for (let attempt = 0; attempt < 12; attempt += 1) {
@@ -14,18 +8,13 @@ export async function waitForPaginationReady(container: HTMLElement): Promise<vo
 }
 
 export function buildExportThemeCSS(theme: ThemeSettings): string {
-  const colors = theme.colorTheme === 'custom'
-    ? (theme.customColors || THEME_COLORS.blue)
-    : THEME_COLORS[theme.colorTheme];
+  const colors = deriveThemeColors(resolveThemeColor(theme));
 
   return `
     .resume-paper {
       --theme-bg: ${colors.bg};
       --theme-border: ${colors.border};
-      --theme-tag-bg: ${colors.tagBg};
-      --theme-tag-text: ${colors.tagText};
       --layout-accent: ${colors.border};
-      --layout-tag-border: ${colors.tagText};
     }
     .resume-paper .section-header {
       background-color: ${colors.bg} !important;
@@ -34,10 +23,6 @@ export function buildExportThemeCSS(theme: ThemeSettings): string {
     }
     .resume-paper .section-header-bar {
       background-color: ${colors.border} !important;
-    }
-    .resume-paper .tag-badge {
-      background-color: ${colors.tagBg} !important;
-      color: ${colors.tagText} !important;
     }
   `;
 }

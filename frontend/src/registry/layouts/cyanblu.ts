@@ -50,9 +50,9 @@ export const cyanbluLayout: LayoutDefinition = {
     .resume-paper .tag-badge {
       border-radius: 9999px !important;
       padding: 2px 12px !important;
-      border: 1px solid var(--theme-tag-text) !important;
+      border: 1px solid var(--theme-border) !important;
       background-color: transparent !important;
-      color: var(--theme-tag-text) !important;
+      color: var(--theme-border) !important;
     }
 
     /* ---- Education / work: name row + right-aligned date ---- */

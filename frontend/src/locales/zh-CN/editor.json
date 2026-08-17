@@ -86,7 +86,6 @@
     "workExperience": "工作经历",
     "projects": "项目经验",
     "skills": "专业技能",
-    "certificates": "证书资质",
     "languages": "语言能力",
     "customModule": "自定义模块"
   },
@@ -272,15 +271,12 @@
     "addEducation": "添加教育经历",
     "addWork": "添加工作经历",
     "addProject": "添加项目经历",
-    "addHonor": "添加荣誉奖项",
-    "addCertification": "添加资质证书",
-    "addPortfolio": "添加作品展示"
+    "addHonor": "添加荣誉奖项"
   },
   "longText": {
     "skillsTitle": "编辑技能描述",
     "workTitle": "编辑工作要点",
     "projectTitle": "编辑项目要点",
-    "portfolioTitle": "编辑作品介绍",
     "summaryTitle": "编辑个人简介"
   },
   "longTextEntry": {
@@ -487,10 +483,6 @@
       "title": "项目成果缺少量化指标",
       "description": "建议在项目描述中补充量化数据以增强说服力"
     },
-    "missingHonorOrCert": {
-      "title": "可补充荣誉或证书",
-      "description": "如有获奖经历或专业证书（如四六级、职业资格证），可增加竞争力"
-    },
     "duplicateWord": {
       "title": "高频词「{{word}}」出现 {{count}} 次",
       "description": "在 {{sections}} 中反复出现，建议使用同义替换或精简表达"
@@ -504,8 +496,6 @@
     "workExperience": "工作经历",
     "projects": "项目经历",
     "honors": "荣誉奖项",
-    "certifications": "资质证书",
-    "portfolio": "作品展示",
     "customSection": "自定义模块"
   },
   "diagnosisError": {
@@ -534,9 +524,6 @@
     },
     "color": {
       "title": "主题颜色",
-      "titleBackground": "标题背景",
-      "tagBackground": "标签背景",
-      "tagText": "标签文字",
       "more": "更多颜色"
     },
     "colors": {
@@ -558,12 +545,12 @@
       "lavenderBlue": "薰衣草蓝"
     },
     "page": {
-      "title": "页面设置",
+      "title": "版面布局",
       "pageMargin": "页边距",
       "lineSpacing": "行间距"
     },
     "font": {
-      "title": "字体设置",
+      "title": "文字排版",
       "family": "字体样式",
       "loading": "字体正在加载，完成后预览会自动更新",
       "loadingInline": "字体加载中...",
@@ -583,7 +570,7 @@
       }
     },
     "layout": {
-      "title": "布局",
+      "title": "个人信息显示",
       "fieldLabel": "字段标签",
       "iconMode": "图标模式",
       "textMode": "文字模式",
@@ -592,7 +579,7 @@
       "photoLayoutFixed": "当前主题的头像固定居中",
       "photoRight": "头像在右",
       "photoLeft": "头像在左",
-      "titleLayout": "标题布局",
+      "entryTitleLayout": "条目标题布局",
       "compact": "紧凑横排",
       "threeColumn": "三栏对齐",
       "stacked": "上下分层"

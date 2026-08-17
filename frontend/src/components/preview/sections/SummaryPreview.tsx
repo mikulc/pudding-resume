@@ -21,7 +21,7 @@ export function SummaryPreview() {
 
   return (
     <ActiveSectionWrapper sectionKey="summary" className="mb-6">
-      <SectionHeader title={data.sectionTitles?.summary ?? moduleTitles.summary} sectionKey="summary" />
+      <SectionHeader title={data.sectionConfig.titleOverrides.summary ?? moduleTitles.summary} sectionKey="summary" />
       {nonEmptySummaryLines.length > 0 && (
         <ul
           data-section="summary"

@@ -29,10 +29,23 @@ func redactResumeContent(content []byte) json.RawMessage {
 	if _, ok := personalInfo["photoUrl"]; ok {
 		personalInfo["photoUrl"] = ""
 	}
-	if value, ok := personalInfo["location"].(string); ok {
-		personalInfo["location"] = maskGeneric(value)
+	for _, key := range []string{"preferredLocation", "location"} {
+		if value, ok := personalInfo[key].(string); ok {
+			personalInfo[key] = maskGeneric(value)
+		}
 	}
-	if customFields, ok := personalInfo["customFields"].(map[string]any); ok {
+	if customFields, ok := personalInfo["customFields"].([]any); ok {
+		for _, rawField := range customFields {
+			field, ok := rawField.(map[string]any)
+			if !ok {
+				continue
+			}
+			if value, ok := field["value"].(string); ok {
+				field["value"] = maskGeneric(value)
+			}
+		}
+	} else if customFields, ok := personalInfo["customFields"].(map[string]any); ok {
+		// 兼容旧版以显示名称为 key 的自定义字段对象。
 		for key, rawValue := range customFields {
 			if value, ok := rawValue.(string); ok {
 				customFields[key] = maskGeneric(value)
