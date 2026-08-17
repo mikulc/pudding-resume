@@ -68,17 +68,35 @@ export function normalizeResumeEntryIds(data: ResumeData): ResumeData {
     return id === currentId ? section : { ...section, id };
   });
   const mapSectionId = (id: string) => customIdMap.get(id) ?? id;
-  const education = (normalizeEntries(data.education) ?? []).map((entry) => ({
-    ...entry,
-    startDate: normalizeResumeDate(entry.startDate),
-    endDate: normalizeResumeDate(entry.endDate),
-    courses: entry.courses ?? '',
-  }));
-  const workExperience = (normalizeEntries(data.workExperience) ?? []).map((entry) => ({
-    ...entry,
-    startDate: normalizeResumeDate(entry.startDate),
-    endDate: normalizeResumeDate(entry.endDate),
-  }));
+  const education = (normalizeEntries(data.education) ?? []).map((entry) => {
+    // `courses` was the legacy name for this free-form field. Read it once during
+    // normalization, then omit it so newly saved/exported JSON only uses `details`.
+    const legacyEntry = entry as typeof entry & { courses?: unknown };
+    const { courses, ...currentEntry } = legacyEntry;
+    return {
+      ...currentEntry,
+      startDate: normalizeResumeDate(entry.startDate),
+      endDate: normalizeResumeDate(entry.endDate),
+      details: typeof entry.details === 'string'
+        ? entry.details
+        : typeof courses === 'string' ? courses : '',
+    };
+  });
+  const workExperience = (normalizeEntries(data.workExperience) ?? []).map((entry) => {
+    const legacyEntry = entry as typeof entry & { highlights?: unknown };
+    return {
+      // Keep this explicit order: it is also the property order used by JSON export.
+      id: entry.id,
+      company: entry.company ?? '',
+      location: entry.location ?? '',
+      position: entry.position ?? '',
+      startDate: normalizeResumeDate(entry.startDate),
+      endDate: normalizeResumeDate(entry.endDate),
+      description: typeof entry.description === 'string'
+        ? entry.description
+        : typeof legacyEntry.highlights === 'string' ? legacyEntry.highlights : '',
+    };
+  });
   const projects = (normalizeEntries(data.projects) ?? []).map((entry) => ({
     ...entry,
     startDate: normalizeResumeDate(entry.startDate),

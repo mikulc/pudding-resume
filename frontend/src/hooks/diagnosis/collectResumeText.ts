@@ -28,7 +28,7 @@ export function collectResumeText(data: ResumeData, language = i18nInstance.lang
     parts.push(`[${promptText('education')}]`);
     data.education.forEach((edu) => {
       parts.push(`- ${[edu.school, edu.major, edu.degree].filter(Boolean).join(' · ')}`);
-      if (edu.courses?.trim()) parts.push(`  ${promptText('courses')}: ${edu.courses}`);
+      if (edu.details?.trim()) parts.push(`  ${promptText('details')}: ${edu.details}`);
     });
   }
 
@@ -37,8 +37,8 @@ export function collectResumeText(data: ResumeData, language = i18nInstance.lang
     parts.push(`[${promptText('workExperience')}]`);
     data.workExperience.forEach((work) => {
       parts.push(`- ${[work.company, work.position].filter(Boolean).join(' - ')}`);
-      if (work.highlights?.trim()) {
-        parts.push(`  ${work.highlights}`);
+      if (work.description?.trim()) {
+        parts.push(`  ${work.description}`);
       }
     });
   }

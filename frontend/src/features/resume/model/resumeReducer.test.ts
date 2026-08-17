@@ -13,7 +13,7 @@ describe('resumeReducer', () => {
       degree: 'Bachelor',
       startDate: '2020-09',
       endDate: '2024-06',
-      courses: '',
+      details: '',
     };
 
     const added = resumeReducer(initial, { type: 'ADD_EDUCATION', payload: education });
@@ -49,12 +49,12 @@ describe('resumeReducer', () => {
             endDate: '',
             highlights: ['Built features', 'Improved quality'] as unknown as string,
           },
-        ],
+        ] as unknown as typeof initial.workExperience,
       },
     });
 
     expect(loaded.skills).toBe('1. TypeScript\n2. Go');
-    expect(loaded.workExperience[0].highlights).toBe(
+    expect(loaded.workExperience[0].description).toBe(
       '1. Built features\n2. Improved quality',
     );
   });

@@ -275,7 +275,8 @@
   },
   "longText": {
     "skillsTitle": "Edit skills description",
-    "workTitle": "Edit work highlights",
+    "educationTitle": "Edit education details",
+    "workTitle": "Edit work description",
     "projectTitle": "Edit project highlights",
     "summaryTitle": "Edit profile summary"
   },
@@ -492,7 +493,7 @@
     "summary": "Profile Summary",
     "skills": "Professional Skills",
     "education": "Education",
-    "courses": "Courses",
+    "details": "Education Details",
     "workExperience": "Work Experience",
     "projects": "Projects",
     "honors": "Honors and Awards",

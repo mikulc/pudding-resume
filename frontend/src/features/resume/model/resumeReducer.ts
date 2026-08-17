@@ -48,12 +48,12 @@ export function resumeReducer(state: ResumeData, action: ResumeAction): ResumeDa
         workExperience: (state.workExperience ?? []).filter((w) => w.id !== action.payload),
       };
 
-    case 'SET_WORK_HIGHLIGHTS':
+    case 'SET_WORK_DESCRIPTION':
       return {
         ...state,
         workExperience: (state.workExperience ?? []).map((w) =>
           w.id === action.payload.workId
-            ? { ...w, highlights: action.payload.highlights }
+            ? { ...w, description: action.payload.description }
             : w
         ),
       };

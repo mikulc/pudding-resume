@@ -1,5 +1,7 @@
 ﻿import { useCallback,useEffect,useRef,useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFloatingEditor } from '../../../context/FloatingEditorContext';
+import { useLongTextEditor } from '../../../context/LongTextEditorContext';
 import { useResume } from '../../../context/ResumeContext';
 import {
   createResumeEntryId,
@@ -13,6 +15,7 @@ computeAutoFill,
 getDegreeDuration,
 } from '../../../utils/educationDateUtils';
 import { AddEntryButton,EntryCardHeader } from '../EditorCommon';
+import { LongTextFieldEntry } from '../LongTextFieldEntry';
 import { StyledComboInput,StyledDateInput,StyledInput } from '../StyledInputs';
 
 
@@ -20,6 +23,11 @@ import { StyledComboInput,StyledDateInput,StyledInput } from '../StyledInputs';
 export function EducationEditor() {
   const { t } = useTranslation(['editor', 'resume']);
   const { data, dispatch } = useResume();
+  const { activeEditorKey, requestOpenEditor } = useLongTextEditor();
+  const floatingEditor = useFloatingEditor();
+
+  // 浮层状态：保存打开前的文本，以便取消编辑时恢复。
+  const [drawerStates, setDrawerStates] = useState<Record<string, { isOpen: boolean; originalText: string }>>({});
 
   // 追踪每条教育经历各时间字段的来源（auto / manual）
   // key: education.id, value: { startDate, endDate }
@@ -70,7 +78,7 @@ export function EducationEditor() {
       degree: '',
       startDate: '',
       endDate: '',
-      courses: '',
+      details: '',
     };
     fieldSourcesRef.current[entry.id] = { startDate: 'auto', endDate: 'auto' };
     dispatch({ type: 'ADD_EDUCATION', payload: entry });
@@ -85,6 +93,74 @@ export function EducationEditor() {
     setHints((prev) => { const next = { ...prev }; delete next[id]; return next; });
     dispatch({ type: 'DELETE_EDUCATION', payload: id });
   };
+
+  const handleDrawerTextChange = useCallback((educationId: string, text: string) => {
+    const education = data.education.find((entry) => entry.id === educationId);
+    if (education) updateEducation({ ...education, details: text });
+  }, [data.education, updateEducation]);
+
+  const handleDrawerSave = useCallback((educationId: string, savedText: string) => {
+    setDrawerStates((prev) => ({
+      ...prev,
+      [educationId]: { ...prev[educationId], originalText: savedText, isOpen: false },
+    }));
+  }, []);
+
+  const handleDrawerSaveOnly = useCallback((educationId: string, savedText: string) => {
+    setDrawerStates((prev) => ({
+      ...prev,
+      [educationId]: { ...prev[educationId], originalText: savedText },
+    }));
+  }, []);
+
+  const handleDrawerCancel = useCallback((educationId: string) => {
+    const drawerState = drawerStates[educationId];
+    const education = data.education.find((entry) => entry.id === educationId);
+    if (drawerState && education) {
+      updateEducation({ ...education, details: drawerState.originalText });
+    }
+    setDrawerStates((prev) => ({
+      ...prev,
+      [educationId]: { ...prev[educationId], isOpen: false },
+    }));
+  }, [data.education, drawerStates, updateEducation]);
+
+  const handleOpenDrawer = useCallback(async (educationId: string, triggerRect: DOMRect) => {
+    if (drawerStates[educationId]?.isOpen) return;
+    const editorKey = `education:${educationId}:details`;
+    const canOpen = await requestOpenEditor(editorKey);
+    if (!canOpen) return;
+
+    const education = data.education.find((entry) => entry.id === educationId);
+    const text = education?.details ?? '';
+    setDrawerStates((prev) => ({
+      ...prev,
+      [educationId]: { isOpen: true, originalText: text },
+    }));
+    floatingEditor.open({
+      editorKey,
+      title: t('editor:longText.educationTitle'),
+      text,
+      highlightIndex: 1,
+      totalCount: 1,
+      anchorRect: triggerRect,
+      onTextChange: (nextText) => handleDrawerTextChange(educationId, nextText),
+      onSave: (savedText) => handleDrawerSave(educationId, savedText),
+      onSaveWithoutClose: (savedText) => handleDrawerSaveOnly(educationId, savedText),
+      onCancel: () => handleDrawerCancel(educationId),
+    });
+  }, [data.education, drawerStates, floatingEditor, handleDrawerCancel, handleDrawerSave, handleDrawerSaveOnly, handleDrawerTextChange, requestOpenEditor, t]);
+
+  useEffect(() => {
+    const openEducationId = Object.keys(drawerStates).find((id) => drawerStates[id]?.isOpen);
+    if (!openEducationId) return;
+    floatingEditor.updateCallbacks({
+      onTextChange: (text) => handleDrawerTextChange(openEducationId, text),
+      onSave: (text) => handleDrawerSave(openEducationId, text),
+      onSaveWithoutClose: (text) => handleDrawerSaveOnly(openEducationId, text),
+      onCancel: () => handleDrawerCancel(openEducationId),
+    });
+  }, [drawerStates, floatingEditor, handleDrawerCancel, handleDrawerSave, handleDrawerSaveOnly, handleDrawerTextChange]);
 
   /**
    * 尝试对某条教育经历执行自动推算
@@ -195,6 +271,13 @@ export function EducationEditor() {
                 <span className="text-xs text-blue-500/80 leading-relaxed">{hint}</span>
               </div>
             )}
+            <LongTextFieldEntry
+              label={t('resume:field.educationDetails')}
+              value={edu.details ?? ''}
+              isActive={activeEditorKey === `education:${edu.id}:details`}
+              onOpen={(rect) => void handleOpenDrawer(edu.id, rect)}
+              anchorKey={`education:${edu.id}:details`}
+            />
           </div>
         );
       })}

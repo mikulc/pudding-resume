@@ -275,6 +275,7 @@
   },
   "longText": {
     "skillsTitle": "编辑技能描述",
+    "educationTitle": "编辑教育经历详情",
     "workTitle": "编辑工作要点",
     "projectTitle": "编辑项目要点",
     "summaryTitle": "编辑个人简介"
@@ -492,7 +493,7 @@
     "summary": "个人简介",
     "skills": "专业技能",
     "education": "教育经历",
-    "courses": "课程",
+    "details": "教育经历详情",
     "workExperience": "工作经历",
     "projects": "项目经历",
     "honors": "荣誉奖项",

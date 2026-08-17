@@ -206,17 +206,17 @@ export interface EducationEntry {
   degree: string;
   startDate: string;
   endDate: string;
-  courses: string;
+  details: string;
 }
 
 export interface WorkEntry {
   id: string;
   company: string;
-  position: string;
   location: string;
+  position: string;
   startDate: string;
   endDate: string;
-  highlights: string;
+  description: string;
 }
 
 export interface ProjectEntry {
@@ -352,7 +352,7 @@ export type ResumeAction =
   | { type: 'ADD_WORK_EXPERIENCE'; payload: WorkEntry }
   | { type: 'UPDATE_WORK_EXPERIENCE'; payload: WorkEntry }
   | { type: 'DELETE_WORK_EXPERIENCE'; payload: string }
-  | { type: 'SET_WORK_HIGHLIGHTS'; payload: { workId: string; highlights: string } }
+  | { type: 'SET_WORK_DESCRIPTION'; payload: { workId: string; description: string } }
   | { type: 'ADD_PROJECT'; payload: ProjectEntry }
   | { type: 'UPDATE_PROJECT'; payload: ProjectEntry }
   | { type: 'DELETE_PROJECT'; payload: string }

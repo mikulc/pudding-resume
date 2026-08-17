@@ -487,7 +487,7 @@ export function FloatingContentEditor() {
       showToast(t('longTextEditor.toast.textTooShort'), 'info');
       return;
     }
-    // 从 editorKey（如 work:xxx:highlights）解析模块类型，为 AI 提供上下文
+    // 从 editorKey（如 work:xxx:description）解析模块类型，为 AI 提供上下文
     const sectionModule = editorKey.split(':')[0] || '';
     const requestId = optimizeRequestIdRef.current + 1;
     optimizeRequestIdRef.current = requestId;

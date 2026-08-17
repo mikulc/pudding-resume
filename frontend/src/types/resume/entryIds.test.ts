@@ -20,7 +20,7 @@ describe('resume entry IDs', () => {
         degree: '',
         startDate: '',
         endDate: '',
-        courses: '',
+        details: '',
       }],
       workExperience: [{
         id: 'work-1',
@@ -29,7 +29,7 @@ describe('resume entry IDs', () => {
         location: '',
         startDate: '',
         endDate: '',
-        highlights: '',
+        description: '',
       }],
       projects: [{
         id: '',
@@ -59,7 +59,7 @@ describe('resume entry IDs', () => {
         degree: '',
         startDate: '',
         endDate: '',
-        courses: '',
+        details: '',
       }],
       honors: [{ id: duplicateId, name: '', date: '' }],
     });
@@ -75,6 +75,48 @@ describe('resume entry IDs', () => {
     expect(normalizeResumeDate('202406')).toBe('2024-06');
     expect(normalizeResumeDate('至今')).toBe('present');
     expect(normalizeResumeDate('2024-13')).toBe('2024-13');
+  });
+
+  it('migrates legacy education courses to details and removes the old field', () => {
+    const data = createEmptyResumeData();
+    const normalized = normalizeResumeEntryIds({
+      ...data,
+      education: [{
+        id: 'education-1',
+        school: 'Example University',
+        major: 'Computer Science',
+        degree: 'Bachelor',
+        startDate: '2020-09',
+        endDate: '2024-06',
+        courses: 'Legacy education content',
+      }] as unknown as typeof data.education,
+    });
+
+    expect(normalized.education[0].details).toBe('Legacy education content');
+    expect(normalized.education[0]).not.toHaveProperty('courses');
+  });
+
+  it('migrates work highlights to description in canonical JSON field order', () => {
+    const data = createEmptyResumeData();
+    const normalized = normalizeResumeEntryIds({
+      ...data,
+      workExperience: [{
+        id: 'work-1',
+        company: 'Example Inc.',
+        position: 'Engineer',
+        location: 'Shenzhen',
+        startDate: '2022-01',
+        endDate: '2024-06',
+        highlights: 'Legacy work content',
+      }] as unknown as typeof data.workExperience,
+    });
+
+    const work = normalized.workExperience[0];
+    expect(work.description).toBe('Legacy work content');
+    expect(work).not.toHaveProperty('highlights');
+    expect(Object.keys(work)).toEqual([
+      'id', 'company', 'location', 'position', 'startDate', 'endDate', 'description',
+    ]);
   });
 
   it('migrates custom section IDs and every sectionConfig reference together', () => {

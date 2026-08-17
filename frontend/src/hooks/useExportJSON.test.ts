@@ -225,7 +225,7 @@ describe('createOrderedResumeContent', () => {
         degree: '',
         startDate: '',
         endDate: '',
-        courses: '',
+        details: '',
       }],
       workExperience: [{
         id: 'work-1',
@@ -234,7 +234,7 @@ describe('createOrderedResumeContent', () => {
         location: '',
         startDate: '',
         endDate: '',
-        highlights: '',
+        description: '',
       }],
       projects: [{
         id: 'project-1',

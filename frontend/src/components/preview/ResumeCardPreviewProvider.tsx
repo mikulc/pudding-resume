@@ -80,14 +80,20 @@ function normalizeResumeData(content: ResumeData): ResumeData {
     };
   };
   const normalizeWorkEntry = (entry: unknown) => {
-    const normalized = normalizeHighlights(entry);
+    const record = asRecord(entry);
+    const rawDescription = record.description ?? record.highlights;
+    const description = Array.isArray(rawDescription)
+      ? rawDescription.map((item, itemIndex) => `${itemIndex + 1}. ${stringify(item)}`).join('\n')
+      : stringify(rawDescription);
     return {
-      ...normalized,
-      company: stringify(normalized['company']),
-      position: stringify(normalized['position']) || stringify(normalized['title']),
-      location: stringify(normalized['location']),
-      startDate: stringify(normalized['startDate']),
-      endDate: stringify(normalized['endDate']),
+      ...record,
+      id: stringify(record.id),
+      company: stringify(record.company),
+      position: stringify(record.position) || stringify(record.title),
+      location: stringify(record.location),
+      startDate: stringify(record.startDate),
+      endDate: stringify(record.endDate),
+      description,
     };
   };
   const normalizeProjectEntry = (entry: unknown) => {

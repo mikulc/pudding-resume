@@ -9,7 +9,7 @@ describe('findEditableAncestor', () => {
       <div class="entry-title-row">
         <span class="entity-title">布丁科技有限公司</span>
       </div>
-      <ul data-section="work" data-entry-id="work-1" data-field="highlights">
+      <ul data-section="work" data-entry-id="work-1" data-field="description">
         <li>负责正文内容</li>
       </ul>
     `;
@@ -21,7 +21,7 @@ describe('findEditableAncestor', () => {
     expect(findEditableAncestor(body)).toMatchObject({
       section: 'work',
       entryId: 'work-1',
-      field: 'highlights',
+      field: 'description',
     });
   });
 });

@@ -30,8 +30,8 @@ vi.mock('../../context/LongTextEditorContext', () => ({
 vi.mock('../../context/FloatingEditorContext', () => ({
   useFloatingEditor: () => ({
     config: {
-      editorKey: 'work:fixture:highlights',
-      title: 'Edit highlights',
+      editorKey: 'work:fixture:description',
+      title: 'Edit description',
       text: 'Content long enough for optimization.',
       highlightIndex: 0,
       totalCount: 1,

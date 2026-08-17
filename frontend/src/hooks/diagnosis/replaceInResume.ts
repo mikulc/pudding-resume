@@ -31,9 +31,9 @@ export function replaceInResume(
     }
 
     for (const w of data.workExperience ?? []) {
-      const nextHighlights = replaceText(w.highlights);
-      if (nextHighlights !== null) {
-        dispatch({ type: 'SET_WORK_HIGHLIGHTS', payload: { workId: w.id, highlights: nextHighlights } });
+      const nextDescription = replaceText(w.description);
+      if (nextDescription !== null) {
+        dispatch({ type: 'SET_WORK_DESCRIPTION', payload: { workId: w.id, description: nextDescription } });
         return true;
       }
     }
@@ -47,9 +47,9 @@ export function replaceInResume(
     }
 
     for (const e of data.education ?? []) {
-      const nextCourses = replaceText(e.courses);
-      if (nextCourses !== null) {
-        dispatch({ type: 'UPDATE_EDUCATION', payload: { ...e, courses: nextCourses } });
+      const nextDetails = replaceText(e.details);
+      if (nextDetails !== null) {
+        dispatch({ type: 'UPDATE_EDUCATION', payload: { ...e, details: nextDetails } });
         return true;
       }
     }
@@ -97,9 +97,9 @@ export function replaceInResume(
       break;
     case 'work':
       for (const w of data.workExperience ?? []) {
-        const nextHighlights = replaceText(w.highlights);
-        if (nextHighlights !== null) {
-          dispatch({ type: 'SET_WORK_HIGHLIGHTS', payload: { workId: w.id, highlights: nextHighlights } });
+        const nextDescription = replaceText(w.description);
+        if (nextDescription !== null) {
+          dispatch({ type: 'SET_WORK_DESCRIPTION', payload: { workId: w.id, description: nextDescription } });
           return true;
         }
       }
@@ -115,9 +115,9 @@ export function replaceInResume(
       break;
     case 'education':
       for (const e of data.education ?? []) {
-        const nextCourses = replaceText(e.courses);
-        if (nextCourses !== null) {
-          dispatch({ type: 'UPDATE_EDUCATION', payload: { ...e, courses: nextCourses } });
+        const nextDetails = replaceText(e.details);
+        if (nextDetails !== null) {
+          dispatch({ type: 'UPDATE_EDUCATION', payload: { ...e, details: nextDetails } });
           return true;
         }
       }

@@ -27,18 +27,18 @@ export function WorkExperienceEditor() {
     const entry: WorkEntry = {
       id: createResumeEntryId(),
       company: '',
-      position: '',
       location: '',
+      position: '',
       startDate: '',
       endDate: '',
-      highlights: '',
+      description: '',
     };
     dispatch({ type: 'ADD_WORK_EXPERIENCE', payload: entry });
   };
 
   const handleDrawerTextChange = useCallback(
     (workId: string, text: string) => {
-      dispatch({ type: 'SET_WORK_HIGHLIGHTS', payload: { workId, highlights: text } });
+      dispatch({ type: 'SET_WORK_DESCRIPTION', payload: { workId, description: text } });
     },
     [dispatch],
   );
@@ -54,7 +54,7 @@ export function WorkExperienceEditor() {
   const handleDrawerCancel = useCallback((workId: string) => {
     const ds = drawerStates[workId];
     if (ds) {
-      dispatch({ type: 'SET_WORK_HIGHLIGHTS', payload: { workId, highlights: ds.originalText } });
+      dispatch({ type: 'SET_WORK_DESCRIPTION', payload: { workId, description: ds.originalText } });
     }
     setDrawerStates((prev) => ({ ...prev, [workId]: { ...prev[workId], isOpen: false } }));
   }, [dispatch, drawerStates]);
@@ -62,15 +62,15 @@ export function WorkExperienceEditor() {
   // 打开
   const handleOpenDrawer = useCallback(async (workId: string, triggerRect: DOMRect) => {
     if (drawerStates[workId]?.isOpen) return;
-    const editorKey = `work:${workId}:highlights`;
+    const editorKey = `work:${workId}:description`;
     const canOpen = await requestOpenEditor(editorKey);
     if (!canOpen) return;
     const work = data.workExperience.find((w) => w.id === workId);
-    setDrawerStates((prev) => ({ ...prev, [workId]: { isOpen: true, originalText: work?.highlights ?? '' } }));
+    setDrawerStates((prev) => ({ ...prev, [workId]: { isOpen: true, originalText: work?.description ?? '' } }));
     floatingEditor.open({
       editorKey,
       title: t('longText.workTitle'),
-      text: work?.highlights ?? '',
+      text: work?.description ?? '',
       highlightIndex: 1,
       totalCount: 1,
       anchorRect: triggerRect,
@@ -100,21 +100,21 @@ export function WorkExperienceEditor() {
       {data.workExperience.map((work, i) => (
         <div key={work.id} className="bg-white rounded-[22px] shadow-sm border border-gray-100 p-3 space-y-3">
           {(() => {
-            const editorKey = `work:${work.id}:highlights`;
+            const editorKey = `work:${work.id}:description`;
             const isEditorActive = activeEditorKey === editorKey;
             return (
               <>
               <EntryCardHeader index={i} onDelete={() => dispatch({ type: 'DELETE_WORK_EXPERIENCE', payload: work.id })} />
           <StyledInput label={t('resume:field.company')} value={work.company} onChange={(v) => dispatch({ type: 'UPDATE_WORK_EXPERIENCE', payload: { ...work, company: v } })} placeholder={t('resume:placeholder.companyExample')} size="md" />
           <StyledInput label={t('resume:field.position')} value={work.position} onChange={(v) => dispatch({ type: 'UPDATE_WORK_EXPERIENCE', payload: { ...work, position: v } })} placeholder={t('resume:placeholder.positionExample')} size="md" />
-          <StyledInput label={t('resume:field.location')} value={work.location} onChange={(v) => dispatch({ type: 'UPDATE_WORK_EXPERIENCE', payload: { ...work, location: v } })} placeholder={t('resume:placeholder.workLocationExample')} size="md" />
+          <StyledInput label={t('resume:field.workLocation')} value={work.location} onChange={(v) => dispatch({ type: 'UPDATE_WORK_EXPERIENCE', payload: { ...work, location: v } })} placeholder={t('resume:placeholder.workLocationExample')} size="md" />
           <div className="grid grid-cols-2 gap-1">
             <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.startDate')} value={work.startDate} onChange={(v) => dispatch({ type: 'UPDATE_WORK_EXPERIENCE', payload: { ...work, startDate: v } })} placeholder="2020-09" size="md" />
             <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.endDate')} value={work.endDate} onChange={(v) => dispatch({ type: 'UPDATE_WORK_EXPERIENCE', payload: { ...work, endDate: v } })} placeholder="2023-06" size="md" />
           </div>
           <LongTextFieldEntry
             label={t('resume:field.workHighlights')}
-            value={work.highlights}
+            value={work.description}
             isActive={isEditorActive}
             onOpen={(rect) => void handleOpenDrawer(work.id, rect)}
             anchorKey={editorKey}

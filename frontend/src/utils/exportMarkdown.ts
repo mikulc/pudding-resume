@@ -68,9 +68,9 @@ function formatEducation(data: ResumeData, sectionTitles?: Record<string, string
       lines.push('');
       lines.push(date);
     }
-    if (edu.courses) {
+    if (edu.details) {
       lines.push('');
-      lines.push(`*${edu.courses}*`);
+      lines.push(`*${edu.details}*`);
     }
     lines.push('');
   }
@@ -131,9 +131,9 @@ function formatWorkExperience(data: ResumeData, sectionTitles?: Record<string, s
       lines.push(meta.join(' | '));
     }
 
-    if (work.highlights?.trim()) {
+    if (work.description?.trim()) {
       lines.push('');
-      lines.push(work.highlights.trim());
+      lines.push(work.description.trim());
     }
     lines.push('');
   }

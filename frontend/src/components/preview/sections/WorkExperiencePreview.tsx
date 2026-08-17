@@ -22,7 +22,7 @@ export function WorkExperiencePreview() {
     <ActiveSectionWrapper sectionKey="work" className="mb-5">
       <SectionHeader title={data.sectionConfig.titleOverrides.work ?? moduleTitles.work} sectionKey="work" />
       {data.workExperience.map((work, i) => {
-        const lines = (work.highlights ?? '').split('\n');
+        const lines = (work.description ?? '').split('\n');
         const nonEmptyHighlights = lines.filter((line) => line !== '');
         const hasNumberedLines = lines.some((line) => NUMBERED_RE.test(line));
         const hasBulletedLines = lines.some((line) => BULLET_RE.test(line));
@@ -63,7 +63,7 @@ export function WorkExperiencePreview() {
               <ul
                 data-section="work"
                 data-entry-id={work.id}
-                data-field="highlights"
+                data-field="description"
                 className="list-none space-y-1"
               >
                 {lines.map((line, i) => {
