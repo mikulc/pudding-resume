@@ -213,7 +213,7 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       }
       case 'projects': {
         const proj = data.projects.find((p) => p.id === entryId);
-        if (proj) sourceText = proj.highlights || '';
+        if (proj) sourceText = proj.description || '';
         break;
       }
       case 'education': {
@@ -241,7 +241,7 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
         dispatch({ type: 'SET_WORK_DESCRIPTION', payload: { workId: entryId, description: newText } });
         break;
       case 'projects':
-        dispatch({ type: 'SET_PROJECT_HIGHLIGHTS', payload: { projectId: entryId, highlights: newText } });
+        dispatch({ type: 'SET_PROJECT_DESCRIPTION', payload: { projectId: entryId, description: newText } });
         break;
       case 'education': {
         const edu = data.education.find((e) => e.id === entryId);
@@ -276,7 +276,7 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       }
       case 'projects': {
         const proj = data.projects.find((p) => p.id === entryId);
-        if (proj) sourceText = proj.highlights || '';
+        if (proj) sourceText = proj.description || '';
         break;
       }
       case 'education': {
@@ -304,7 +304,7 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
         dispatch({ type: 'SET_WORK_DESCRIPTION', payload: { workId: entryId, description: newText } });
         break;
       case 'projects':
-        dispatch({ type: 'SET_PROJECT_HIGHLIGHTS', payload: { projectId: entryId, highlights: newText } });
+        dispatch({ type: 'SET_PROJECT_DESCRIPTION', payload: { projectId: entryId, description: newText } });
         break;
       case 'education': {
         const edu = data.education.find((e) => e.id === entryId);
@@ -339,7 +339,7 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       }
       case 'projects': {
         const proj = data.projects.find((p) => p.id === entryId);
-        if (proj) sourceText = proj.highlights || '';
+        if (proj) sourceText = proj.description || '';
         break;
       }
       case 'education': {
@@ -367,7 +367,7 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
         dispatch({ type: 'SET_WORK_DESCRIPTION', payload: { workId: entryId, description: newText } });
         break;
       case 'projects':
-        dispatch({ type: 'SET_PROJECT_HIGHLIGHTS', payload: { projectId: entryId, highlights: newText } });
+        dispatch({ type: 'SET_PROJECT_DESCRIPTION', payload: { projectId: entryId, description: newText } });
         break;
       case 'education': {
         const edu = data.education.find((e) => e.id === entryId);
@@ -402,7 +402,7 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       }
       case 'projects': {
         const proj = data.projects.find((p) => p.id === entryId);
-        if (proj) sourceText = proj.highlights || '';
+        if (proj) sourceText = proj.description || '';
         break;
       }
       case 'education': {
@@ -430,7 +430,7 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
         dispatch({ type: 'SET_WORK_DESCRIPTION', payload: { workId: entryId, description: newText } });
         break;
       case 'projects':
-        dispatch({ type: 'SET_PROJECT_HIGHLIGHTS', payload: { projectId: entryId, highlights: newText } });
+        dispatch({ type: 'SET_PROJECT_DESCRIPTION', payload: { projectId: entryId, description: newText } });
         break;
       case 'education': {
         const edu = data.education.find((e) => e.id === entryId);
@@ -465,7 +465,7 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       }
       case 'projects': {
         const proj = data.projects.find((p) => p.id === entryId);
-        if (proj) sourceText = proj.highlights || '';
+        if (proj) sourceText = proj.description || '';
         break;
       }
       case 'education': {
@@ -493,7 +493,7 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
         dispatch({ type: 'SET_WORK_DESCRIPTION', payload: { workId: entryId, description: newText } });
         break;
       case 'projects':
-        dispatch({ type: 'SET_PROJECT_HIGHLIGHTS', payload: { projectId: entryId, highlights: newText } });
+        dispatch({ type: 'SET_PROJECT_DESCRIPTION', payload: { projectId: entryId, description: newText } });
         break;
       case 'education': {
         const edu = data.education.find((e) => e.id === entryId);
@@ -528,7 +528,7 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
       }
       case 'projects': {
         const proj = data.projects.find((p) => p.id === entryId);
-        if (proj) sourceText = proj.highlights || '';
+        if (proj) sourceText = proj.description || '';
         break;
       }
       case 'education': {
@@ -556,7 +556,7 @@ export function useTextSelection(containerRef: React.RefObject<HTMLElement | nul
         dispatch({ type: 'SET_WORK_DESCRIPTION', payload: { workId: entryId, description: newText } });
         break;
       case 'projects':
-        dispatch({ type: 'SET_PROJECT_HIGHLIGHTS', payload: { projectId: entryId, highlights: newText } });
+        dispatch({ type: 'SET_PROJECT_DESCRIPTION', payload: { projectId: entryId, description: newText } });
         break;
       case 'education': {
         const edu = data.education.find((e) => e.id === entryId);

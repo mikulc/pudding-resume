@@ -35,7 +35,7 @@
     "projectName": "Project Name",
     "projectRole": "Role",
     "projectLink": "Project Link",
-    "projectHighlights": "Project Highlights and Contributions",
+    "projectDescription": "Project Description and Contributions",
     "honorName": "Award Name",
     "awardDate": "Award Date",
     "languageName": "Language",
@@ -68,7 +68,7 @@
     "projectRoleExample": "Frontend Lead",
     "projectStartDateExample": "2023-01",
     "projectEndDateExample": "2023-06",
-    "projectHighlightsExample": "Rebuilt with React and TypeScript, improving performance by 40%...",
+    "projectDescriptionExample": "Rebuilt with React and TypeScript, improving performance by 40%...",
     "honorNameExample": "First Prize, National Mathematical Modeling Contest",
     "skillsExample": "React, TypeScript, Node.js, Tailwind CSS...",
     "summaryExample": "Frontend engineer with 5 years of experience specializing in the React ecosystem...",
@@ -130,7 +130,7 @@
       "aiParseFailed": "AI parsing failed",
       "smartParseFailed": "Smart parsing failed: {{message}}"
     },
-    "aiParsePrompt": "Extract the following resume text into structured JSON resume data.\n\nRequirements:\n1. Extract personal information (name, phone, email, job-search status, target role, preferred location, etc.)\n2. Extract education history (school, major, degree, dates, details, and achievements)\n3. Extract work experience (company, position, location, dates, and description)\n4. Extract project experience (project name, role, dates, description)\n5. Extract skills into the skills string\n6. Extract honors when available\n7. Extract the professional summary or self-evaluation into the summary field\n8. Use \"YYYY-MM\" or \"YYYY-MM-DD\" for all dates\n9. If a field is missing from the source text, return an empty string or empty array for that field\n\nResume text:\n{{text}}\n\nReturn only a valid JSON object. Do not include markdown code fences or explanatory text. The JSON structure is:\n{\n  \"personalInfo\": { \"fullName\": \"\", \"phone\": \"\", \"email\": \"\", \"photoUrl\": \"\", \"jobSearchStatus\": \"\", \"targetRole\": \"\", \"preferredLocation\": \"\", \"customFields\": [], \"fieldConfig\": { \"order\": [], \"hidden\": [], \"labelOverrides\": {}, \"iconOverrides\": {} } },\n  \"summary\": \"\",\n  \"education\": [{ \"id\": \"\", \"school\": \"\", \"major\": \"\", \"degree\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"details\": \"\" }],\n  \"skills\": \"\",\n  \"workExperience\": [{ \"id\": \"\", \"company\": \"\", \"location\": \"\", \"position\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"description\": \"\" }],\n  \"projects\": [{ \"id\": \"\", \"name\": \"\", \"role\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"highlights\": \"\" }],\n  \"honors\": []\n}"
+    "aiParsePrompt": "Extract the following resume text into structured JSON resume data.\n\nRequirements:\n1. Extract personal information (name, phone, email, job-search status, target role, preferred location, etc.)\n2. Extract education history (school, major, degree, dates, details, and achievements)\n3. Extract work experience (company, position, location, dates, and description)\n4. Extract project experience (project name, role, dates, link, and description)\n5. Extract skills into the skills string\n6. Extract honors when available\n7. Extract the professional summary or self-evaluation into the summary field\n8. Use \"YYYY-MM\" or \"YYYY-MM-DD\" for all dates\n9. If a field is missing from the source text, return an empty string or empty array for that field\n\nResume text:\n{{text}}\n\nReturn only a valid JSON object. Do not include markdown code fences or explanatory text. The JSON structure is:\n{\n  \"personalInfo\": { \"fullName\": \"\", \"phone\": \"\", \"email\": \"\", \"photoUrl\": \"\", \"jobSearchStatus\": \"\", \"targetRole\": \"\", \"preferredLocation\": \"\", \"customFields\": [], \"fieldConfig\": { \"order\": [], \"hidden\": [], \"labelOverrides\": {}, \"iconOverrides\": {} } },\n  \"summary\": \"\",\n  \"education\": [{ \"id\": \"\", \"school\": \"\", \"major\": \"\", \"degree\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"details\": \"\" }],\n  \"skills\": \"\",\n  \"workExperience\": [{ \"id\": \"\", \"company\": \"\", \"location\": \"\", \"position\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"description\": \"\" }],\n  \"projects\": [{ \"id\": \"\", \"name\": \"\", \"role\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"link\": \"\", \"description\": \"\" }],\n  \"honors\": []\n}"
   },
   "export": {
     "defaultFileName": "Resume",

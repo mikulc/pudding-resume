@@ -97,11 +97,20 @@ export function normalizeResumeEntryIds(data: ResumeData): ResumeData {
         : typeof legacyEntry.highlights === 'string' ? legacyEntry.highlights : '',
     };
   });
-  const projects = (normalizeEntries(data.projects) ?? []).map((entry) => ({
-    ...entry,
-    startDate: normalizeResumeDate(entry.startDate),
-    endDate: normalizeResumeDate(entry.endDate),
-  }));
+  const projects = (normalizeEntries(data.projects) ?? []).map((entry) => {
+    const legacyEntry = entry as typeof entry & { highlights?: unknown };
+    return {
+      id: entry.id,
+      name: entry.name ?? '',
+      role: entry.role ?? '',
+      startDate: normalizeResumeDate(entry.startDate),
+      endDate: normalizeResumeDate(entry.endDate),
+      link: entry.link ?? '',
+      description: typeof entry.description === 'string'
+        ? entry.description
+        : typeof legacyEntry.highlights === 'string' ? legacyEntry.highlights : '',
+    };
+  });
   const honors = (normalizeEntries(data.honors) ?? []).map((entry) => ({
     ...entry,
     date: normalizeResumeDate(entry.date),

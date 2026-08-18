@@ -27,7 +27,7 @@ export async function parseTextWithAI(text: string): Promise<ResumeData> {
 
   const formattingHint = [
     'Formatting preservation rules:',
-    '1. Preserve meaningful source line breaks in multi-line fields such as skills, project highlights, work descriptions, summary, and custom descriptions.',
+    '1. Preserve meaningful source line breaks in multi-line fields such as skills, project descriptions, work descriptions, summary, and custom descriptions.',
     '2. When the source contains numbered or bulleted lines, keep each item on its own line in the target string field.',
     '3. Do not merge separate source lines into one long paragraph unless they are clearly the same sentence wrapped by page width.',
   ].join('\n');

@@ -243,7 +243,7 @@ describe('createOrderedResumeContent', () => {
         startDate: '',
         endDate: '',
         link: '',
-        highlights: '',
+        description: '',
       }],
       honors: [{ id: 'honor-1', name: '', date: '' }],
     };

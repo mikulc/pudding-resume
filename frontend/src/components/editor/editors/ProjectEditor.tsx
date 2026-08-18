@@ -30,14 +30,14 @@ export function ProjectEditor() {
       startDate: '',
       endDate: '',
       link: '',
-      highlights: '',
+      description: '',
     };
     dispatch({ type: 'ADD_PROJECT', payload: entry });
   };
 
   const handleDrawerTextChange = useCallback(
     (projectId: string, text: string) => {
-      dispatch({ type: 'SET_PROJECT_HIGHLIGHTS', payload: { projectId, highlights: text } });
+      dispatch({ type: 'SET_PROJECT_DESCRIPTION', payload: { projectId, description: text } });
     },
     [dispatch],
   );
@@ -53,22 +53,22 @@ export function ProjectEditor() {
   const handleDrawerCancel = useCallback((projectId: string) => {
     const ds = drawerStates[projectId];
     if (ds) {
-      dispatch({ type: 'SET_PROJECT_HIGHLIGHTS', payload: { projectId, highlights: ds.originalText } });
+      dispatch({ type: 'SET_PROJECT_DESCRIPTION', payload: { projectId, description: ds.originalText } });
     }
     setDrawerStates((prev) => ({ ...prev, [projectId]: { ...prev[projectId], isOpen: false } }));
   }, [dispatch, drawerStates]);
 
   const handleOpenDrawer = useCallback(async (projectId: string, triggerRect: DOMRect) => {
     if (drawerStates[projectId]?.isOpen) return;
-    const editorKey = `project:${projectId}:highlights`;
+    const editorKey = `project:${projectId}:description`;
     const canOpen = await requestOpenEditor(editorKey);
     if (!canOpen) return;
     const project = data.projects.find((p) => p.id === projectId);
-    setDrawerStates((prev) => ({ ...prev, [projectId]: { isOpen: true, originalText: project?.highlights ?? '' } }));
+    setDrawerStates((prev) => ({ ...prev, [projectId]: { isOpen: true, originalText: project?.description ?? '' } }));
     floatingEditor.open({
       editorKey,
       title: t('longText.projectTitle'),
-      text: project?.highlights ?? '',
+      text: project?.description ?? '',
       highlightIndex: 1,
       totalCount: 1,
       anchorRect: triggerRect,
@@ -96,7 +96,7 @@ export function ProjectEditor() {
       {data.projects.map((proj, i) => (
         <div key={proj.id} className="bg-white rounded-[22px] shadow-sm border border-gray-100 p-3 space-y-3">
           {(() => {
-            const editorKey = `project:${proj.id}:highlights`;
+            const editorKey = `project:${proj.id}:description`;
             const isEditorActive = activeEditorKey === editorKey;
             return (
               <>
@@ -109,8 +109,8 @@ export function ProjectEditor() {
           </div>
           <StyledInput label={`${t('resume:field.projectLink')} (${t('common:optional')})`} value={proj.link} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, link: v } })} placeholder="https://github.com/example" size="md" />
           <LongTextFieldEntry
-            label={t('resume:field.projectHighlights')}
-            value={proj.highlights}
+            label={t('resume:field.projectDescription')}
+            value={proj.description}
             isActive={isEditorActive}
             onOpen={(rect) => void handleOpenDrawer(proj.id, rect)}
             anchorKey={editorKey}

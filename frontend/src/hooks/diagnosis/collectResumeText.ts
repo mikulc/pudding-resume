@@ -48,8 +48,8 @@ export function collectResumeText(data: ResumeData, language = i18nInstance.lang
     parts.push(`[${promptText('projects')}]`);
     data.projects.forEach((proj) => {
       parts.push(`- ${[proj.name, proj.role].filter(Boolean).join(' - ')}`);
-      if (proj.highlights?.trim()) {
-        parts.push(`  ${proj.highlights}`);
+      if (proj.description?.trim()) {
+        parts.push(`  ${proj.description}`);
       }
     });
   }

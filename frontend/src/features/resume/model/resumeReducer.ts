@@ -75,12 +75,12 @@ export function resumeReducer(state: ResumeData, action: ResumeAction): ResumeDa
         projects: (state.projects ?? []).filter((p) => p.id !== action.payload),
       };
 
-    case 'SET_PROJECT_HIGHLIGHTS':
+    case 'SET_PROJECT_DESCRIPTION':
       return {
         ...state,
         projects: (state.projects ?? []).map((p) =>
           p.id === action.payload.projectId
-            ? { ...p, highlights: action.payload.highlights }
+            ? { ...p, description: action.payload.description }
             : p
         ),
       };

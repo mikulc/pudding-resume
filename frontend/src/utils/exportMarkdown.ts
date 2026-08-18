@@ -167,9 +167,9 @@ function formatProjects(data: ResumeData, sectionTitles?: Record<string, string>
       lines.push('');
       lines.push(`🔗 ${proj.link}`);
     }
-    if (proj.highlights?.trim()) {
+    if (proj.description?.trim()) {
       lines.push('');
-      lines.push(proj.highlights.trim());
+      lines.push(proj.description.trim());
     }
     lines.push('');
   }

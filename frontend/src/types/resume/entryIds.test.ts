@@ -38,7 +38,7 @@ describe('resume entry IDs', () => {
         startDate: '',
         endDate: '',
         link: '',
-        highlights: '',
+        description: '',
       }],
     });
 
@@ -116,6 +116,29 @@ describe('resume entry IDs', () => {
     expect(work).not.toHaveProperty('highlights');
     expect(Object.keys(work)).toEqual([
       'id', 'company', 'location', 'position', 'startDate', 'endDate', 'description',
+    ]);
+  });
+
+  it('migrates project highlights to description in canonical JSON field order', () => {
+    const data = createEmptyResumeData();
+    const normalized = normalizeResumeEntryIds({
+      ...data,
+      projects: [{
+        id: 'project-1',
+        name: 'Resume Editor',
+        role: 'Developer',
+        startDate: '2023-01',
+        endDate: '2023-06',
+        link: 'https://example.com',
+        highlights: 'Legacy project content',
+      }] as unknown as typeof data.projects,
+    });
+
+    const project = normalized.projects[0];
+    expect(project.description).toBe('Legacy project content');
+    expect(project).not.toHaveProperty('highlights');
+    expect(Object.keys(project)).toEqual([
+      'id', 'name', 'role', 'startDate', 'endDate', 'link', 'description',
     ]);
   });
 

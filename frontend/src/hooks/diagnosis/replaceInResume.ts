@@ -39,9 +39,9 @@ export function replaceInResume(
     }
 
     for (const p of data.projects ?? []) {
-      const nextHighlights = replaceText(p.highlights);
-      if (nextHighlights !== null) {
-        dispatch({ type: 'SET_PROJECT_HIGHLIGHTS', payload: { projectId: p.id, highlights: nextHighlights } });
+      const nextDescription = replaceText(p.description);
+      if (nextDescription !== null) {
+        dispatch({ type: 'SET_PROJECT_DESCRIPTION', payload: { projectId: p.id, description: nextDescription } });
         return true;
       }
     }
@@ -106,9 +106,9 @@ export function replaceInResume(
       break;
     case 'projects':
       for (const p of data.projects ?? []) {
-        const nextHighlights = replaceText(p.highlights);
-        if (nextHighlights !== null) {
-          dispatch({ type: 'SET_PROJECT_HIGHLIGHTS', payload: { projectId: p.id, highlights: nextHighlights } });
+        const nextDescription = replaceText(p.description);
+        if (nextDescription !== null) {
+          dispatch({ type: 'SET_PROJECT_DESCRIPTION', payload: { projectId: p.id, description: nextDescription } });
           return true;
         }
       }

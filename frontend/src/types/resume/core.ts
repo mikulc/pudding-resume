@@ -226,7 +226,7 @@ export interface ProjectEntry {
   startDate: string;
   endDate: string;
   link: string;
-  highlights: string;
+  description: string;
 }
 
 export interface HonorEntry {
@@ -356,7 +356,7 @@ export type ResumeAction =
   | { type: 'ADD_PROJECT'; payload: ProjectEntry }
   | { type: 'UPDATE_PROJECT'; payload: ProjectEntry }
   | { type: 'DELETE_PROJECT'; payload: string }
-  | { type: 'SET_PROJECT_HIGHLIGHTS'; payload: { projectId: string; highlights: string } }
+  | { type: 'SET_PROJECT_DESCRIPTION'; payload: { projectId: string; description: string } }
   | { type: 'ADD_HONOR'; payload: HonorEntry }
   | { type: 'UPDATE_HONOR'; payload: HonorEntry }
   | { type: 'DELETE_HONOR'; payload: string }

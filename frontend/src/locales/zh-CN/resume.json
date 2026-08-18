@@ -35,7 +35,7 @@
     "projectName": "项目名称",
     "projectRole": "担任角色",
     "projectLink": "项目链接",
-    "projectHighlights": "项目亮点与贡献",
+    "projectDescription": "项目描述与贡献",
     "honorName": "奖项名称",
     "awardDate": "获奖年月",
     "languageName": "语言",
@@ -68,7 +68,7 @@
     "projectRoleExample": "前端负责人",
     "projectStartDateExample": "2023-01",
     "projectEndDateExample": "2023-06",
-    "projectHighlightsExample": "使用 React+TypeScript 重构，性能提升 40%...",
+    "projectDescriptionExample": "使用 React+TypeScript 重构，性能提升 40%...",
     "honorNameExample": "全国数学建模大赛一等奖",
     "skillsExample": "React、TypeScript、Node.js、Tailwind CSS...",
     "summaryExample": "5年前端开发经验，擅长 React 生态...",
@@ -130,7 +130,7 @@
       "aiParseFailed": "AI 解析失败",
       "smartParseFailed": "智能解析失败：{{message}}"
     },
-    "aiParsePrompt": "请根据以下简历文本，提取并填充为一份结构化的 JSON 简历数据。\n\n要求：\n1. 提取个人信息（姓名、电话、邮箱、求职状态、目标岗位、期望地点等）\n2. 提取教育经历（学校、专业、学位、起止时间、详细经历与成果）\n3. 提取工作经历（公司、职位、地点、时间、职责描述）\n4. 提取项目经历（项目名称、角色、时间、描述）\n5. 提取技能（汇总为 skills 字符串）\n6. 提取荣誉奖项（如有）\n7. 提取个人简介/自我评价（放入 summary 字段）\n8. 所有时间格式使用 \"YYYY-MM\" 或 \"YYYY-MM-DD\"\n9. 如果某项信息在原文本中不存在，对应字段留空字符串或空数组\n\n简历文本内容：\n{{text}}\n\n请直接返回一个合法的 JSON 对象，不要包含 markdown 代码块标记或其他说明文字。JSON 的结构如下：\n{\n  \"personalInfo\": { \"fullName\": \"\", \"phone\": \"\", \"email\": \"\", \"photoUrl\": \"\", \"jobSearchStatus\": \"\", \"targetRole\": \"\", \"preferredLocation\": \"\", \"customFields\": [], \"fieldConfig\": { \"order\": [], \"hidden\": [], \"labelOverrides\": {}, \"iconOverrides\": {} } },\n  \"summary\": \"\",\n  \"education\": [{ \"id\": \"\", \"school\": \"\", \"major\": \"\", \"degree\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"details\": \"\" }],\n  \"workExperience\": [{ \"id\": \"\", \"company\": \"\", \"location\": \"\", \"position\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"description\": \"\" }],\n  \"projects\": [{ \"id\": \"\", \"name\": \"\", \"role\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"highlights\": \"\" }],\n  \"skills\": \"\",\n  \"honors\": []\n}"
+    "aiParsePrompt": "请根据以下简历文本，提取并填充为一份结构化的 JSON 简历数据。\n\n要求：\n1. 提取个人信息（姓名、电话、邮箱、求职状态、目标岗位、期望地点等）\n2. 提取教育经历（学校、专业、学位、起止时间、详细经历与成果）\n3. 提取工作经历（公司、职位、地点、时间、职责描述）\n4. 提取项目经历（项目名称、角色、时间、描述）\n5. 提取技能（汇总为 skills 字符串）\n6. 提取荣誉奖项（如有）\n7. 提取个人简介/自我评价（放入 summary 字段）\n8. 所有时间格式使用 \"YYYY-MM\" 或 \"YYYY-MM-DD\"\n9. 如果某项信息在原文本中不存在，对应字段留空字符串或空数组\n\n简历文本内容：\n{{text}}\n\n请直接返回一个合法的 JSON 对象，不要包含 markdown 代码块标记或其他说明文字。JSON 的结构如下：\n{\n  \"personalInfo\": { \"fullName\": \"\", \"phone\": \"\", \"email\": \"\", \"photoUrl\": \"\", \"jobSearchStatus\": \"\", \"targetRole\": \"\", \"preferredLocation\": \"\", \"customFields\": [], \"fieldConfig\": { \"order\": [], \"hidden\": [], \"labelOverrides\": {}, \"iconOverrides\": {} } },\n  \"summary\": \"\",\n  \"education\": [{ \"id\": \"\", \"school\": \"\", \"major\": \"\", \"degree\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"details\": \"\" }],\n  \"workExperience\": [{ \"id\": \"\", \"company\": \"\", \"location\": \"\", \"position\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"description\": \"\" }],\n  \"projects\": [{ \"id\": \"\", \"name\": \"\", \"role\": \"\", \"startDate\": \"\", \"endDate\": \"\", \"link\": \"\", \"description\": \"\" }],\n  \"skills\": \"\",\n  \"honors\": []\n}"
   },
   "export": {
     "defaultFileName": "简历",

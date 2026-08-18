@@ -22,7 +22,7 @@ export function ProjectPreview() {
     <ActiveSectionWrapper sectionKey="projects" className="mb-5">
       <SectionHeader title={data.sectionConfig.titleOverrides.projects ?? moduleTitles.projects} sectionKey="projects" />
       {data.projects.map((proj, i) => {
-        const lines = (proj.highlights ?? '').split('\n');
+        const lines = (proj.description ?? '').split('\n');
         const nonEmptyProjHighlights = lines.filter((line) => line !== '');
         const hasNumberedLines = lines.some((line) => NUMBERED_RE.test(line));
         const hasBulletedLines = lines.some((line) => BULLET_RE.test(line));
@@ -71,7 +71,7 @@ export function ProjectPreview() {
               <ul
                 data-section="projects"
                 data-entry-id={proj.id}
-                data-field="highlights"
+                data-field="description"
                 className="list-none space-y-1"
               >
                 {lines.map((line, i) => {
