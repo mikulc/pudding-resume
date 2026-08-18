@@ -1,26 +1,166 @@
+/* Distilled from blog.anheyu.com: compact, top-centred, softly tinted toast. */
 @keyframes toast-enter {
   from {
     opacity: 0;
-    transform: translateY(-12px) scale(0.96);
+    transform: translateY(-40px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
-.toast-enter {
-  animation: toast-enter 0.25s ease-out;
+.toast-region {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: 50%;
+  z-index: 99999;
+  display: flex;
+  width: min(90vw, 420px);
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
 }
 
-/* 暗色模式 Toast - 覆盖全局 bg-*-50 半透明规则（14% 不透明度），确保 Toast 实体可见 */
-.dark .toast-enter.bg-emerald-50 {
-  background-color: rgba(6, 78, 59, 0.92) !important;
-}
-.dark .toast-enter.bg-red-50 {
-  background-color: rgba(127, 29, 29, 0.92) !important;
-}
-.dark .toast-enter.bg-blue-50 {
-  background-color: rgba(23, 37, 84, 0.92) !important;
+.toast {
+  --toast-bg: hsl(146.67 64.29% 94.51%);
+  --toast-border: hsl(145.71 61.4% 88.82%);
+  --toast-text: hsl(145.79 79.26% 26.47%);
+  --toast-icon: hsl(145.96 79.46% 43.92%);
+
+  position: relative;
+  display: flex;
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 34px 8px 16px;
+  overflow: hidden;
+  color: var(--toast-text);
+  border: 1px solid var(--toast-border);
+  border-radius: 16px;
+  background: var(--toast-bg);
+  box-shadow: 0 3px 6px -1px rgb(0 0 0 / 6%), 0 6px 18px rgb(0 0 0 / 4%);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  pointer-events: auto;
+  animation: toast-enter 300ms ease-out backwards;
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+  will-change: opacity, transform;
 }
 
+.toast--error {
+  --toast-bg: hsl(339.13 92% 95.1%);
+  --toast-border: hsl(340 91.84% 90.39%);
+  --toast-text: hsl(339.11 85.99% 30.78%);
+  --toast-icon: hsl(339.2 90.36% 51.18%);
+}
+
+.toast--info {
+  --toast-bg: hsl(212.5 92.31% 94.9%);
+  --toast-border: hsl(211.84 92.45% 89.61%);
+  --toast-text: hsl(212.24 100% 28.82%);
+  --toast-icon: hsl(212.02 100% 46.67%);
+}
+
+.toast--exiting {
+  opacity: 0;
+  transform: translateY(-40px);
+  pointer-events: none;
+}
+
+.toast__icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  color: var(--toast-icon);
+}
+
+.toast__message {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toast__close {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: grid;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  transform: translateY(-50%) scale(0.85);
+  place-items: center;
+  color: var(--toast-text);
+  border: 1px solid var(--toast-border);
+  border-radius: 50%;
+  background: var(--toast-bg);
+  opacity: 0;
+  cursor: pointer;
+  pointer-events: none;
+  transition: opacity 160ms ease, transform 160ms ease, background-color 160ms ease;
+}
+
+.toast__close svg {
+  width: 14px;
+  height: 14px;
+}
+
+.toast:hover .toast__close,
+.toast:focus-within .toast__close {
+  transform: translateY(-50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.toast__close:hover {
+  background: var(--toast-border);
+}
+
+.toast__close:focus-visible {
+  outline: 2px solid var(--toast-icon);
+  outline-offset: 2px;
+}
+
+.dark .toast {
+  --toast-bg: hsl(145.71 77.78% 8.82%);
+  --toast-border: hsl(146.2 79.78% 17.45%);
+  --toast-text: hsl(146.2 61.74% 77.45%);
+  --toast-icon: hsl(146.01 62.45% 55.1%);
+  box-shadow: 0 3px 6px -1px rgb(0 0 0 / 20%), 0 6px 18px rgb(0 0 0 / 10%);
+}
+
+.dark .toast--error {
+  --toast-bg: hsl(340 84.91% 10.39%);
+  --toast-border: hsl(339.33 86.54% 20.39%);
+  --toast-text: hsl(339.33 90% 80.39%);
+  --toast-icon: hsl(339 90% 60.78%);
+}
+
+.dark .toast--info {
+  --toast-bg: hsl(211.84 100% 9.61%);
+  --toast-border: hsl(211.84 100% 19.22%);
+  --toast-text: hsl(211.84 92.45% 79.22%);
+  --toast-icon: hsl(212.14 92.45% 58.43%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+    transition: opacity 120ms linear;
+  }
+
+  .toast__close {
+    transition: none;
+  }
+
+  .toast--exiting {
+    transform: none;
+  }
+}

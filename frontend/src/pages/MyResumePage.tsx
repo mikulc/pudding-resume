@@ -8,7 +8,6 @@ import { TopNavLinks } from '../components/common/TopNavLinks';
 import { useAuth, isLocalStorageEnabled } from '../context/AuthContext';
 import { ImportButton } from '../components/import/ImportButton';
 import { CreateResumeModal } from '../components/resume/CreateResumeModal';
-import { ResumePreviewSkeleton } from '../components/preview/ResumePreviewSkeleton';
 import { useResumeLibrary } from './my-resume/useResumeLibrary';
 import { ResumeCard } from './my-resume/ResumeCard';
 import { useResumeMenu } from './my-resume/useResumeMenu';
@@ -132,7 +131,15 @@ export default function MyResumePage() {
                       {t('list.resumeCount', { count: totalResumeCount })}
                     </span>
                   </div>
-                  <div className="w-full flex-shrink-0 sm:w-auto">
+                  <div className="flex w-full flex-shrink-0 items-center gap-2 sm:w-auto">
+                    <button
+                      type="button"
+                      onClick={handleNewResume}
+                      className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[var(--theme-accent)] bg-[var(--theme-accent)] px-4 text-sm font-medium text-[var(--theme-accent-foreground)] transition-opacity hover:opacity-90 active:scale-[0.98] sm:w-auto"
+                    >
+                      <Plus className="h-4 w-4" />
+                      <span>{t('list.newResume')}</span>
+                    </button>
                     <ImportButton onImportComplete={refreshList} />
                   </div>
                 </div>
@@ -146,39 +153,6 @@ export default function MyResumePage() {
             >
               <div className="mx-auto w-full max-w-[1360px] px-4 pb-6 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]" data-global-toolbar-content>
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6">
-                  {/* New Resume Card 鈥?always shown */}
-                  <button
-                    type="button"
-                    onClick={handleNewResume}
-                    className="theme-color-transition new-resume-card resume-blank-card relative w-full text-left rounded-[22px] border border-dashed border-slate-200/80 cursor-pointer flex flex-col overflow-hidden group"
-                  >
-                    <div className="pointer-events-none invisible w-full" aria-hidden="true">
-                      <div className="aspect-[4/5] w-full" />
-                      <div className="resume-grid-card-footer-spacer" />
-                    </div>
-                    <div className="theme-color-transition new-resume-card-surface absolute inset-0">
-                      <div className="absolute inset-x-4 top-4 bottom-4">
-                        <ResumePreviewSkeleton variant="create" />
-                      </div>
-
-                      <div className="new-resume-card-cta absolute inset-0 flex items-center justify-center">
-                        <div className="new-resume-card-cta-content theme-color-transition flex flex-col items-center gap-4 text-gray-400">
-                          <div className="theme-color-transition new-resume-plus-box w-16 h-16 rounded-[20px] flex items-center justify-center">
-                            <Plus className="w-8 h-8" />
-                          </div>
-                          <div className="text-center">
-                            <p className="resume-card-title theme-color-transition text-base font-semibold text-gray-500">
-                              {t('list.newResume')}
-                            </p>
-                            <p className="theme-color-transition text-xs text-gray-400 mt-1">
-                              {t('list.newResumeDesc')}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-
                   {resumes.map((resume) => (
                     <ResumeCard
                       key={resume.id}
