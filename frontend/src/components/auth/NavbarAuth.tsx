@@ -261,7 +261,7 @@ export function NavbarAuth({ settingsShortcut }: NavbarAuthProps) {
             color: 'var(--theme-accent-foreground)',
           } : undefined}
           className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)] ${
-            isAdminActive ? '' : 'text-gray-600 dark:text-slate-300'
+            isAdminActive ? '' : 'text-gray-600 dark:!text-white'
           }`}
         >
           <Shield className="h-[18px] w-[18px]" strokeWidth={3.2} />

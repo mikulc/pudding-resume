@@ -43,7 +43,7 @@ export function ResumeRenamePopover({
         <button type="button" onClick={onCancel} className="h-8 rounded-lg px-2.5 text-xs font-medium text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-900 dark:hover:text-slate-300">
           {t('common:button.cancel')}
         </button>
-        <button type="button" onClick={onSubmit} className="h-8 rounded-[10px] bg-slate-900 px-3.5 text-xs font-medium text-white transition-colors hover:bg-slate-800 active:scale-[0.98] dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-white">
+        <button type="button" onClick={onSubmit} className="h-8 rounded-[10px] bg-[var(--theme-accent)] px-3.5 text-xs font-medium text-[var(--theme-accent-foreground)] transition-[filter,transform] hover:brightness-95 active:scale-[0.98]">
           {t('common:button.ok')}
         </button>
       </div>

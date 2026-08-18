@@ -85,4 +85,16 @@ describe('NavbarAuth', () => {
     expect(toastMocks.showToast).toHaveBeenCalledWith('\u672a\u767b\u5f55\uff0c\u8bf7\u5148\u767b\u5f55', 'info');
     expect(screen.getByTestId('location').textContent).toBe('/zh-CN/login');
   });
+
+  it('uses the same dark-mode icon color for usage and admin actions', () => {
+    authState.isLoggedIn = true;
+    authState.role = 'admin';
+    renderNavbar();
+
+    const usageButton = document.querySelector('svg.lucide-chart-column')?.closest('button');
+    const adminButton = document.querySelector('svg.lucide-shield')?.closest('button');
+
+    expect(usageButton?.classList.contains('dark:!text-white')).toBe(true);
+    expect(adminButton?.classList.contains('dark:!text-white')).toBe(true);
+  });
 });

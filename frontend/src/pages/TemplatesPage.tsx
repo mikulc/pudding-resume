@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, Eye, Loader2 } from 'lucide-react';
 import { NavbarAuth } from '../components/auth/NavbarAuth';
@@ -20,19 +20,24 @@ import {
 } from '../components/template/ResumeTemplateLibrary';
 import { useCreateResumeFromTemplate } from '../components/template/useCreateResumeFromTemplate';
 import { TemplatePagination } from '../components/template/TemplatePagination';
+import { buildTemplateCategorySearch, readTemplateCategory } from './templateCategoryNavigation';
 
 const TEMPLATES_PER_PAGE = 8;
 
 export default function TemplatesPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useTranslation('resume');
   const { creatingLayoutId, createFromTemplate } = useCreateResumeFromTemplate();
-  const [activeCategory, setActiveCategory] = useState(ALL_TEMPLATE_CATEGORY);
   const [currentPage, setCurrentPage] = useState(1);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { entries, categories: categoryEntries, loading } = useResumeTemplateLibrary(!creatingLayoutId);
 
   const categories = useMemo(() => deriveTemplateCategories(categoryEntries), [categoryEntries]);
+  const requestedCategory = readTemplateCategory(searchParams);
+  const activeCategory = categories.includes(requestedCategory)
+    ? requestedCategory
+    : ALL_TEMPLATE_CATEGORY;
   const filteredEntries = useMemo(
     () => filterResumeTemplates(entries, activeCategory),
     [entries, activeCategory],
@@ -49,14 +54,16 @@ export default function TemplatesPage() {
     window.scrollTo({ top: 0, left: 0 });
   }, []);
   useEffect(() => {
-    if (!categories.includes(activeCategory)) setActiveCategory(ALL_TEMPLATE_CATEGORY);
-  }, [activeCategory, categories]);
+    if (!loading && requestedCategory !== ALL_TEMPLATE_CATEGORY && !categories.includes(requestedCategory)) {
+      setSearchParams({}, { replace: true });
+    }
+  }, [categories, loading, requestedCategory, setSearchParams]);
   useEffect(() => {
     if (totalPages > 0 && currentPage > totalPages) setCurrentPage(totalPages);
   }, [currentPage, totalPages]);
 
   const handleCategoryChange = (category: string) => {
-    setActiveCategory(category);
+    setSearchParams(buildTemplateCategorySearch(category), { replace: true });
     setCurrentPage(1);
   };
 
@@ -106,13 +113,13 @@ export default function TemplatesPage() {
                     </span>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-2 pb-1 sm:flex-nowrap sm:overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-2 pb-1">
                   {categories.map((cat) => (
                     <button
                       key={cat}
                       type="button"
                       onClick={() => handleCategoryChange(cat)}
-                      className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full px-4 text-[15px] font-bold tracking-normal transition-colors ${activeCategory === cat
+                      className={`inline-flex h-9 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-4 text-[15px] font-bold tracking-normal transition-colors ${activeCategory === cat
                           ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)]'
                           : 'text-gray-800 hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] dark:text-[color:var(--text-secondary)]'
                         }`}
@@ -174,7 +181,7 @@ export default function TemplatesPage() {
                               <div className="pointer-events-auto absolute inset-0 flex translate-y-0 items-center gap-2 p-2 opacity-100 transition-all duration-200 sm:pointer-events-none sm:translate-y-1 sm:opacity-0 sm:group-hover:pointer-events-auto sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:group-focus-within:pointer-events-auto sm:group-focus-within:translate-y-0 sm:group-focus-within:opacity-100">
                                 <button
                                   type="button"
-                                  onClick={() => navigate(`/templates/${encodeURIComponent(entry.id)}/preview`)}
+                                  onClick={() => navigate(`/templates/${encodeURIComponent(entry.id)}/preview${buildTemplateCategorySearch(activeCategory)}`)}
                                   className="inline-flex h-9 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition-colors hover:!border-[var(--theme-accent)] hover:!bg-[var(--theme-accent-soft)] hover:!text-[var(--theme-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-accent)]"
                                   aria-label={t('templatesPage.previewAria', { name: entry.name })}
                                 >

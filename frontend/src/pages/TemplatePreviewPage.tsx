@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, ChevronLeft, Loader2 } from 'lucide-react';
 import { ResumePreview } from '../components/preview/PreviewComponents';
@@ -155,6 +155,7 @@ function TemplatePreviewCanvas({ entry, onBack, onUse }: TemplatePreviewCanvasPr
 export default function TemplatePreviewPage() {
   const { templateId } = useParams<{ templateId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation('resume');
   const { entries, loading } = useResumeTemplateLibrary(true);
   const { creatingLayoutId, createFromTemplate } = useCreateResumeFromTemplate();
@@ -188,7 +189,7 @@ export default function TemplatePreviewPage() {
         <p className="text-sm text-gray-500">{t('templatesPage.notFound')}</p>
         <button
           type="button"
-          onClick={() => navigate('/templates', { replace: true })}
+          onClick={() => navigate(`/templates${location.search}`, { replace: true })}
           className="inline-flex h-9 items-center gap-1 rounded-xl bg-gray-900 px-4 text-sm font-semibold text-white hover:bg-gray-800"
         >
           <ChevronLeft className="h-4 w-4" />
@@ -201,7 +202,7 @@ export default function TemplatePreviewPage() {
   return (
     <TemplatePreviewCanvas
       entry={entry}
-      onBack={() => navigate('/templates')}
+      onBack={() => navigate(`/templates${location.search}`)}
       onUse={() => void createFromTemplate(entry)}
     />
   );
