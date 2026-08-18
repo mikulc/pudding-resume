@@ -10,7 +10,7 @@ import (
 type ThemeLibrary struct {
 	ID              UUID            `json:"id" gorm:"type:uuid;primaryKey"`
 	Name            string          `json:"name" gorm:"size:128;not null"`
-	LayoutID        string          `json:"layout_id" gorm:"size:32;not null;index"`
+	LayoutID        string          `json:"layout_id" gorm:"size:32;not null;uniqueIndex:ux_theme_library_layout_id"`
 	CategoryEntries []ThemeCategory `json:"-" gorm:"many2many:theme_category_relation;foreignKey:ID;joinForeignKey:ThemeID;references:ID;joinReferences:CategoryID"`
 	CategoryIDs     []UUID          `json:"category_ids" gorm:"-"`
 	Categories      []string        `json:"categories" gorm:"-"`

@@ -23,7 +23,8 @@ type adminTemplateInput struct {
 	CategoryIDs    []string        `json:"category_ids"`
 	Categories     []string        `json:"categories"` // legacy JSON-import compatibility
 	Content        json.RawMessage `json:"content"`
-	DefaultThemeID string          `json:"default_theme_id"`
+	LayoutID       string          `json:"layout_id"`
+	DefaultThemeID string          `json:"default_theme_id"` // legacy JSON-import compatibility
 	Status         string          `json:"status"`
 	SortOrder      int             `json:"sort_order"`
 }
@@ -100,9 +101,11 @@ func CreateAdminTemplate(c *gin.Context) {
 		return
 	}
 	err = database.DB.Transaction(func(tx *gorm.DB) error {
-		if err := ensureThemeExists(tx, entry.DefaultThemeID); err != nil {
+		theme, err := resolveTemplateTheme(tx, input)
+		if err != nil {
 			return err
 		}
+		entry.DefaultThemeID = theme.ID
 		categories, err := resolveTemplateCategories(tx, input)
 		if err != nil {
 			return err
@@ -139,10 +142,12 @@ func ImportAdminTemplates(c *gin.Context) {
 			if err != nil {
 				return errors.New("第 " + strconv.Itoa(index+1) + " 个模板：" + err.Error())
 			}
-			if err := ensureThemeExists(tx, entry.DefaultThemeID); err != nil {
+			theme, err := resolveTemplateTheme(tx, input)
+			if err != nil {
 				return errors.New("第 " + strconv.Itoa(index+1) + " 个模板：" + err.Error())
 			}
-			categories, err := resolveTemplateCategories(tx, input)
+			entry.DefaultThemeID = theme.ID
+			categories, err := resolveImportedTemplateCategories(tx, input)
 			if err != nil {
 				return errors.New("第 " + strconv.Itoa(index+1) + " 个模板：" + err.Error())
 			}
@@ -184,9 +189,11 @@ func UpdateAdminTemplate(c *gin.Context) {
 		return
 	}
 	err = database.DB.Transaction(func(tx *gorm.DB) error {
-		if err := ensureThemeExists(tx, updated.DefaultThemeID); err != nil {
+		theme, err := resolveTemplateTheme(tx, input)
+		if err != nil {
 			return err
 		}
+		updated.DefaultThemeID = theme.ID
 		categories, err := resolveTemplateCategories(tx, input)
 		if err != nil {
 			return err
@@ -225,13 +232,14 @@ func DeleteAdminTemplate(c *gin.Context) {
 
 func buildTemplate(input adminTemplateInput) (models.TemplateLibrary, error) {
 	input.Name = strings.TrimSpace(input.Name)
+	input.LayoutID = strings.TrimSpace(input.LayoutID)
 	input.DefaultThemeID = strings.TrimSpace(input.DefaultThemeID)
 	input.Status = strings.TrimSpace(input.Status)
 	if input.Name == "" || len([]rune(input.Name)) > 128 {
 		return models.TemplateLibrary{}, errors.New("模板名称必填且不能超过 128 个字符")
 	}
-	if input.DefaultThemeID == "" {
-		return models.TemplateLibrary{}, errors.New("请选择默认主题")
+	if input.LayoutID == "" && input.DefaultThemeID == "" {
+		return models.TemplateLibrary{}, errors.New("请选择默认主题或提供 layout_id")
 	}
 	if input.Status == "" {
 		input.Status = "published"
@@ -262,8 +270,7 @@ func buildTemplate(input adminTemplateInput) (models.TemplateLibrary, error) {
 	}
 	return models.TemplateLibrary{
 		Name: input.Name, Content: datatypes.JSON(input.Content),
-		DefaultThemeID: models.UUID(input.DefaultThemeID),
-		Status:         input.Status, SortOrder: input.SortOrder,
+		Status: input.Status, SortOrder: input.SortOrder,
 	}, nil
 }
 
@@ -306,6 +313,47 @@ func resolveTemplateCategories(tx *gorm.DB, input adminTemplateInput) ([]models.
 	return ordered, nil
 }
 
+// resolveImportedTemplateCategories accepts the portable category-name list
+// used by template JSON files. Missing categories are created atomically with
+// the imported templates; disabled categories must still be enabled manually.
+func resolveImportedTemplateCategories(tx *gorm.DB, input adminTemplateInput) ([]models.TemplateCategory, error) {
+	names := cleanStringList(input.Categories)
+	if len(names) == 0 {
+		return resolveTemplateCategories(tx, input)
+	}
+
+	var maxSortOrder int
+	if err := tx.Model(&models.TemplateCategory{}).
+		Select("COALESCE(MAX(sort_order), 0)").Row().Scan(&maxSortOrder); err != nil {
+		return nil, errors.New("读取模板分类排序失败")
+	}
+
+	categories := make([]models.TemplateCategory, 0, len(names))
+	for _, name := range names {
+		if len([]rune(name)) > 64 {
+			return nil, errors.New("模板分类名称不能超过 64 个字符")
+		}
+
+		var category models.TemplateCategory
+		err := tx.Where("name = ?", name).First(&category).Error
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			maxSortOrder++
+			category = models.TemplateCategory{
+				Name: name, Status: "enabled", SortOrder: maxSortOrder,
+			}
+			if err := tx.Create(&category).Error; err != nil {
+				return nil, errors.New("创建模板分类「" + name + "」失败")
+			}
+		} else if err != nil {
+			return nil, errors.New("校验模板分类失败")
+		} else if category.Status != "enabled" {
+			return nil, errors.New("模板分类「" + name + "」已停用")
+		}
+		categories = append(categories, category)
+	}
+	return categories, nil
+}
+
 func replaceTemplateCategoryRelations(tx *gorm.DB, templateID models.UUID, categories []models.TemplateCategory) error {
 	if err := tx.Where("template_id = ?", templateID).Delete(&models.TemplateCategoryRelation{}).Error; err != nil {
 		return err
@@ -336,13 +384,30 @@ func cleanStringList(values []string) []string {
 	return cleaned
 }
 
-func ensureThemeExists(tx *gorm.DB, id models.UUID) error {
-	var count int64
-	if err := tx.Model(&models.ThemeLibrary{}).Where("id = ?", id).Count(&count).Error; err != nil {
-		return errors.New("校验默认主题失败")
+func resolveTemplateTheme(tx *gorm.DB, input adminTemplateInput) (models.ThemeLibrary, error) {
+	layoutID := strings.TrimSpace(input.LayoutID)
+	legacyThemeID := strings.TrimSpace(input.DefaultThemeID)
+	var theme models.ThemeLibrary
+
+	if layoutID != "" {
+		if err := tx.Where("layout_id = ?", layoutID).First(&theme).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+			return models.ThemeLibrary{}, errors.New("layout_id 对应的主题不存在")
+		} else if err != nil {
+			return models.ThemeLibrary{}, errors.New("校验 layout_id 失败")
+		}
+		if legacyThemeID != "" && string(theme.ID) != legacyThemeID {
+			return models.ThemeLibrary{}, errors.New("layout_id 与 default_theme_id 指向不同主题")
+		}
+		return theme, nil
 	}
-	if count == 0 {
-		return errors.New("默认主题不存在")
+
+	if legacyThemeID == "" {
+		return models.ThemeLibrary{}, errors.New("layout_id 必填")
 	}
-	return nil
+	if err := tx.First(&theme, "id = ?", legacyThemeID).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return models.ThemeLibrary{}, errors.New("默认主题不存在")
+	} else if err != nil {
+		return models.ThemeLibrary{}, errors.New("校验默认主题失败")
+	}
+	return theme, nil
 }

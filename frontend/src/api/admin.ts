@@ -4,6 +4,7 @@ import type {
   AdminUserListResponse,
   UpdateUserQuotaRequest,
   AdminTemplateInput,
+  AdminTemplateImportInput,
   AdminTemplateItem,
   AdminTemplateListResponse,
   AdminCategory,
@@ -79,7 +80,7 @@ export function createAdminTemplate(data: AdminTemplateInput): Promise<{ templat
   return api.post('/api/admin/templates', data);
 }
 
-export function importAdminTemplates(templates: AdminTemplateInput[]): Promise<{ message: string; count: number }> {
+export function importAdminTemplates(templates: AdminTemplateImportInput[]): Promise<{ message: string; count: number }> {
   return api.post('/api/admin/templates/import', { templates });
 }
 

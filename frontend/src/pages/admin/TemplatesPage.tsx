@@ -20,6 +20,7 @@ import {
   AdminFormModalFooter, AdminFormModalHeader, AdminIconButton, AdminInput,
   AdminPage, AdminPageHeader, AdminSelect,
 } from './adminStyles';
+import { normalizeImportedTemplate } from './templateImport';
 
 type TemplateForm = Omit<AdminTemplateInput, 'content'> & {
   content: string;
@@ -32,10 +33,10 @@ const emptyResume: ResumeData = {
   sectionConfig: { order: [...DEFAULT_SECTION_ORDER], titleOverrides: {}, hidden: [] },
 };
 
-function newForm(themeId = ''): TemplateForm {
+function newForm(layoutId = ''): TemplateForm {
   return {
     name: '', category_ids: [],
-    content: JSON.stringify(emptyResume, null, 2), default_theme_id: themeId,
+    content: JSON.stringify(emptyResume, null, 2), layout_id: layoutId,
     status: 'published', sort_order: 0,
   };
 }
@@ -53,7 +54,7 @@ function formToPayload(form: TemplateForm): AdminTemplateInput {
 function itemToForm(item: AdminTemplateItem): TemplateForm {
   return {
     name: item.name, category_ids: item.category_ids ?? [],
-    content: JSON.stringify(item.content, null, 2), default_theme_id: item.default_theme_id,
+    content: JSON.stringify(item.content, null, 2), layout_id: item.default_theme?.layout_id ?? '',
     status: item.status, sort_order: item.sort_order,
   };
 }
@@ -94,8 +95,8 @@ export default function AdminTemplatesPage() {
   useEffect(() => {
     getThemeLibraries().then((items) => {
       setThemes(items);
-      setForm((current) => current.default_theme_id || !items[0]
-        ? current : { ...current, default_theme_id: items[0].id });
+      setForm((current) => current.layout_id || !items[0]
+        ? current : { ...current, layout_id: items[0].layoutId });
     }).catch(() => undefined);
   }, []);
   useEffect(() => {
@@ -105,7 +106,7 @@ export default function AdminTemplatesPage() {
   }, [showToast, t]);
 
   const openCreate = () => {
-    setForm(newForm(themes[0]?.id));
+    setForm(newForm(themes[0]?.layoutId));
     setEditing(null);
   };
   const openEdit = (item: AdminTemplateItem) => {
@@ -115,7 +116,7 @@ export default function AdminTemplatesPage() {
   const closeForm = () => { if (!saving) setEditing(undefined); };
 
   const save = async () => {
-    if (!form.name.trim() || !form.default_theme_id || form.category_ids.length === 0) {
+    if (!form.name.trim() || !form.layout_id || form.category_ids.length === 0) {
       showToast(t('templatesAdmin.toast.required'), 'error');
       return;
     }
@@ -189,11 +190,11 @@ export default function AdminTemplatesPage() {
         return candidates.map((candidate, index) => normalizeImportedTemplate(
           candidate,
           themes,
-          categories,
           candidates.length === 1 ? fileName : `${fileName}-${index + 1}`,
         ));
       }))).flat();
       const result = await importAdminTemplates(payloads);
+      void fetchAdminTemplateCategories().then(setCategories).catch(() => undefined);
       showToast(t('templatesAdmin.toast.imported', { count: result.count }), 'success');
       invalidateResumeTemplateLibraryCache();
       setPage(1);
@@ -284,25 +285,6 @@ export default function AdminTemplatesPage() {
   );
 }
 
-function normalizeImportedTemplate(value: unknown, themes: ThemeLibraryEntry[], categories: AdminCategory[], fallbackName: string): AdminTemplateInput {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('JSON 中存在无效模板');
-  const item = value as Partial<AdminTemplateInput> & { defaultThemeId?: string; categories?: string[] };
-  const rawContent = item.content && typeof item.content === 'object' ? item.content : value;
-  const themeId = item.default_theme_id || item.defaultThemeId || themes[0]?.id || '';
-  if (!themeId || !rawContent || typeof rawContent !== 'object' || Array.isArray(rawContent)) throw new Error('模板缺少有效的 content 或 default_theme_id');
-  const categoryIds = Array.isArray(item.category_ids) ? item.category_ids.map(String) : [];
-  if (categoryIds.length === 0 && Array.isArray(item.categories)) {
-    const byName = new Map(categories.map((category) => [category.name, category.id]));
-    categoryIds.push(...item.categories.map((name) => byName.get(String(name)) ?? '').filter(Boolean));
-  }
-  if (categoryIds.length === 0) throw new Error('模板缺少有效的 category_ids');
-  return {
-    name: String(item.name || fallbackName), category_ids: categoryIds,
-    content: rawContent as ResumeData, default_theme_id: themeId,
-    status: item.status === 'draft' ? 'draft' : 'published', sort_order: Number(item.sort_order) || 0,
-  };
-}
-
 function TemplateFields({ form, themes, categories, onCreateCategory, onChange, t }: {
   form: TemplateForm;
   themes: ThemeLibraryEntry[];
@@ -333,7 +315,7 @@ function TemplateFields({ form, themes, categories, onCreateCategory, onChange, 
   };
   return <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
     <Field label={t('templatesAdmin.form.name')}><AdminInput className={fieldClass} value={form.name} onChange={(e) => update('name', e.target.value)} /></Field>
-    <Field label={t('templatesAdmin.form.theme')}><AdminSelect className="w-full" value={form.default_theme_id} options={themes.map((theme) => ({ value: theme.id, label: theme.name }))} onChange={(value) => update('default_theme_id', value)} /></Field>
+    <Field label={t('templatesAdmin.form.theme')}><AdminSelect className="w-full" value={form.layout_id} options={themes.map((theme) => ({ value: theme.layoutId, label: theme.name }))} onChange={(value) => update('layout_id', value)} /></Field>
     <div className="sm:col-span-2"><Field label={t('templatesAdmin.form.categories')} hint={t('templatesAdmin.form.categoriesHint')}>
       <div className="rounded-[12px] border border-[#E6EAF2] p-3 dark:border-slate-700">
         <div className="flex flex-wrap gap-2">

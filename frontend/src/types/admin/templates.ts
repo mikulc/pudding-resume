@@ -22,9 +22,14 @@ export interface AdminTemplateInput {
   name: string;
   category_ids: string[];
   content: ResumeData;
-  default_theme_id: string;
+  layout_id: string;
   status: 'published' | 'draft';
   sort_order: number;
+}
+
+export interface AdminTemplateImportInput extends Omit<AdminTemplateInput, 'category_ids'> {
+  category_ids?: string[];
+  categories?: string[];
 }
 
 export interface AdminCategory {

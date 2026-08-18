@@ -47,3 +47,16 @@ func TestLibraryCategoryJoinColumns(t *testing.T) {
 		}
 	}
 }
+
+func TestThemeLayoutIDHasUniqueIndex(t *testing.T) {
+	parsed, err := schema.Parse(&ThemeLibrary{}, &sync.Map{}, schema.NamingStrategy{})
+	if err != nil {
+		t.Fatalf("parse schema: %v", err)
+	}
+	for _, index := range parsed.ParseIndexes() {
+		if index.Name == "ux_theme_library_layout_id" && index.Class == "UNIQUE" {
+			return
+		}
+	}
+	t.Fatal("theme_library.layout_id unique index is missing")
+}
