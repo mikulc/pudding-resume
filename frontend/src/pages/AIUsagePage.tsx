@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle, Bot, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { AlertCircle, Bot, Loader2 } from 'lucide-react';
 import {
   Bar,
   BarChart,
@@ -11,6 +11,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { AppPagination } from '../components/common/AppPagination';
 import {
   fetchAIUsage,
   type AIUsageDailyTrend,
@@ -338,33 +339,19 @@ function UsageLogsTable({
         })}
       </div>
       {showPagination && (
-        <div className="flex flex-col gap-3 border-t border-gray-100 px-4 py-4 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <p>
+        <div className="space-y-4 border-t border-gray-100 px-4 py-4 text-sm text-gray-500 sm:px-8">
+          <p className="text-center">
             {t('aiUsage.pagination.range', { start: startIndex, end: endIndex, total })}
           </p>
-          <div className="flex items-center justify-between gap-2 sm:justify-end">
-            <button
-              type="button"
-              onClick={() => onPageChange(page - 1)}
-              disabled={page <= 1}
-              className="inline-flex h-9 items-center gap-1.5 rounded-md border border-gray-200 px-3 text-sm font-medium text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:bg-white"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              {t('aiUsage.pagination.previous')}
-            </button>
-            <span className="min-w-[88px] text-center text-xs font-medium text-gray-500">
-              {t('aiUsage.pagination.page', { page, totalPages })}
-            </span>
-            <button
-              type="button"
-              onClick={() => onPageChange(page + 1)}
-              disabled={page >= totalPages}
-              className="inline-flex h-9 items-center gap-1.5 rounded-md border border-gray-200 px-3 text-sm font-medium text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:bg-white"
-            >
-              {t('aiUsage.pagination.next')}
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
+          <AppPagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+            previousLabel={t('aiUsage.pagination.previous')}
+            nextLabel={t('aiUsage.pagination.next')}
+            jumpLabel={t('aiUsage.pagination.label')}
+            pageLabel={(targetPage) => t('aiUsage.pagination.pageAria', { page: targetPage })}
+          />
         </div>
       )}
     </section>

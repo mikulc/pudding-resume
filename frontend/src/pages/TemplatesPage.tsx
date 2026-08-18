@@ -19,12 +19,16 @@ import {
   useResumeTemplateLibrary,
 } from '../components/template/ResumeTemplateLibrary';
 import { useCreateResumeFromTemplate } from '../components/template/useCreateResumeFromTemplate';
+import { TemplatePagination } from '../components/template/TemplatePagination';
+
+const TEMPLATES_PER_PAGE = 8;
 
 export default function TemplatesPage() {
   const navigate = useNavigate();
   const { t } = useTranslation('resume');
   const { creatingLayoutId, createFromTemplate } = useCreateResumeFromTemplate();
   const [activeCategory, setActiveCategory] = useState(ALL_TEMPLATE_CATEGORY);
+  const [currentPage, setCurrentPage] = useState(1);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { entries, categories: categoryEntries, loading } = useResumeTemplateLibrary(!creatingLayoutId);
 
@@ -33,12 +37,33 @@ export default function TemplatesPage() {
     () => filterResumeTemplates(entries, activeCategory),
     [entries, activeCategory],
   );
+  const totalPages = Math.ceil(filteredEntries.length / TEMPLATES_PER_PAGE);
+  const visibleEntries = useMemo(
+    () => filteredEntries.slice(
+      (currentPage - 1) * TEMPLATES_PER_PAGE,
+      currentPage * TEMPLATES_PER_PAGE,
+    ),
+    [currentPage, filteredEntries],
+  );
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
   }, []);
   useEffect(() => {
     if (!categories.includes(activeCategory)) setActiveCategory(ALL_TEMPLATE_CATEGORY);
   }, [activeCategory, categories]);
+  useEffect(() => {
+    if (totalPages > 0 && currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
+
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen bg-[var(--bg-page)] text-gray-900 flex flex-col theme-color-transition">
@@ -86,7 +111,7 @@ export default function TemplatesPage() {
                     <button
                       key={cat}
                       type="button"
-                      onClick={() => setActiveCategory(cat)}
+                      onClick={() => handleCategoryChange(cat)}
                       className={`inline-flex h-9 items-center justify-center whitespace-nowrap rounded-full px-4 text-[15px] font-bold tracking-normal transition-colors ${activeCategory === cat
                           ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)]'
                           : 'text-gray-800 hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] dark:text-[color:var(--text-secondary)]'
@@ -109,7 +134,7 @@ export default function TemplatesPage() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6">
-                    {filteredEntries.map((entry) => {
+                    {visibleEntries.map((entry) => {
                       const previewTheme = buildResumePreviewTheme(entry.defaultTheme);
 
                       return (
@@ -171,6 +196,19 @@ export default function TemplatesPage() {
                         </div>
                       );
                     })}
+                  </div>
+                )}
+                {totalPages > 1 && (
+                  <div className="mt-7 pb-4 sm:mt-8">
+                    <TemplatePagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                      previousLabel={t('templatesPage.pagination.previous')}
+                      nextLabel={t('templatesPage.pagination.next')}
+                      jumpLabel={t('templatesPage.pagination.label')}
+                      pageLabel={(page) => t('templatesPage.pagination.pageAria', { page })}
+                    />
                   </div>
                 )}
               </div>

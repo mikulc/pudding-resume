@@ -242,6 +242,12 @@
     "renameResume": "重命名",
     "deleteResume": "删除简历",
     "loadingResumes": "加载简历列表中...",
+    "pagination": {
+      "label": "我的简历分页",
+      "previous": "上页",
+      "next": "下页",
+      "pageAria": "前往第 {{page}} 页"
+    },
     "loadFailed": "加载失败",
     "loadFailedDesc": "加载简历列表失败，请检查网络连接后重试",
     "reload": "重新加载",
@@ -372,7 +378,9 @@
       "range": "显示第 {{start}}-{{end}} 条，共 {{total}} 条",
       "page": "第 {{page}} / {{totalPages}} 页",
       "previous": "上一页",
-      "next": "下一页"
+      "next": "下一页",
+      "label": "AI 用量记录分页",
+      "pageAria": "前往第 {{page}} 页"
     },
     "types": {
       "ats": "ATS 检测"
@@ -403,6 +411,12 @@
     "use": "使用",
     "previewAria": "预览 {{name}} 模板",
     "useAria": "使用 {{name}} 模板",
+    "pagination": {
+      "label": "模板分页",
+      "previous": "上页",
+      "next": "下页",
+      "pageAria": "前往第 {{page}} 页"
+    },
     "backToList": "返回模板列表",
     "previous": "上一个",
     "next": "下一个",

@@ -54,7 +54,12 @@
     "deleted": "已停用",
     "notLimited": "不限",
     "empty": "暂无用户数据",
-    "pagination": "第 {{page}}/{{totalPages}} 页，共 {{total}} 条",
+    "pagination": {
+      "label": "用户管理分页",
+      "previous": "上页",
+      "next": "下页",
+      "pageAria": "前往第 {{page}} 页"
+    },
     "quota": {
       "title": "修改配额 — {{username}}",
       "maxResumes": "最大简历数",
@@ -121,6 +126,12 @@
     "create": "新建模板",
     "import": "批量导入 JSON",
     "edit": "编辑模板",
+    "pagination": {
+      "label": "简历模板管理分页",
+      "previous": "上页",
+      "next": "下页",
+      "pageAria": "前往第 {{page}} 页"
+    },
     "status": {
       "all": "全部状态",
       "published": "已发布",

@@ -242,6 +242,12 @@
     "renameResume": "Rename",
     "deleteResume": "Delete Resume",
     "loadingResumes": "Loading resumes...",
+    "pagination": {
+      "label": "My resumes pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "pageAria": "Go to page {{page}}"
+    },
     "loadFailed": "Failed to load",
     "loadFailedDesc": "Failed to load the resume list. Check your network connection and try again.",
     "reload": "Reload",
@@ -373,7 +379,9 @@
       "range": "Showing {{start}}-{{end}} of {{total}}",
       "page": "Page {{page}} / {{totalPages}}",
       "previous": "Previous",
-      "next": "Next"
+      "next": "Next",
+      "label": "AI usage records pagination",
+      "pageAria": "Go to page {{page}}"
     }
   },
   "templatesPage": {
@@ -401,6 +409,12 @@
     "use": "Use",
     "previewAria": "Preview {{name}} template",
     "useAria": "Use {{name}} template",
+    "pagination": {
+      "label": "Template pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "pageAria": "Go to page {{page}}"
+    },
     "backToList": "Back to template list",
     "previous": "Previous",
     "next": "Next",

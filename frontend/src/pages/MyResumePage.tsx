@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { RefreshCw, AlertCircle, HardDrive, Plus } from 'lucide-react';
@@ -14,18 +15,21 @@ import { useResumeMenu } from './my-resume/useResumeMenu';
 import { useResumeActions } from './my-resume/useResumeActions';
 import { ResumeActionsMenu } from './my-resume/ResumeActionsMenu';
 import { ResumeRenamePopover } from './my-resume/ResumeRenamePopover';
+import { TemplatePagination } from '../components/template/TemplatePagination';
 
+const RESUMES_PER_PAGE = 8;
 
 export default function MyResumePage() {
   const navigate = useNavigate();
   const { isLoggedIn, sessionLoading } = useAuth();
   const { t } = useTranslation(['resume', 'common', 'homepage']);
   const showHintCard = !sessionLoading && !isLoggedIn && !isLocalStorageEnabled();
+  const [currentPage, setCurrentPage] = useState(1);
   const {
-    resumes, loading, loadingMore, hasMore, totalResumeCount, error,
-    scrollContainerRef, loadMoreTriggerRef, handleResumeListScroll,
-    handleResumeListWheel, refreshList, removeResumeFromList, addResumeToList,
-  } = useResumeLibrary(isLoggedIn, sessionLoading);
+    resumes, loading, totalResumeCount, error, scrollContainerRef,
+    refreshList, removeResumeFromList, addResumeToList,
+  } = useResumeLibrary(isLoggedIn, sessionLoading, currentPage, RESUMES_PER_PAGE);
+  const totalPages = Math.ceil(totalResumeCount / RESUMES_PER_PAGE);
 
   const menu = useResumeMenu();
   const {
@@ -41,6 +45,20 @@ export default function MyResumePage() {
     handleCopy, handleUploadToCloud, handleRenameStart, handleRenameCancel,
     handleRenameSubmit, handleNewResume, openSettings,
   } = actions;
+
+  useEffect(() => {
+    if (totalPages === 0 && currentPage !== 1) {
+      setCurrentPage(1);
+      return;
+    }
+    if (totalPages > 0 && currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
+
+  const handlePageChange = (page: number) => {
+    handleMenuClose();
+    setCurrentPage(page);
+    scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen bg-[var(--bg-page)] text-gray-900 flex flex-col theme-color-transition">
@@ -125,8 +143,6 @@ export default function MyResumePage() {
             <div
               ref={scrollContainerRef}
               className="-mt-1 flex-1 overflow-y-auto pt-1"
-              onScroll={handleResumeListScroll}
-              onWheel={handleResumeListWheel}
             >
               <div className="mx-auto w-full max-w-[1360px] px-4 pb-6 sm:px-6 lg:w-[calc(100%-3rem)] xl:w-[calc(100%-5rem)]" data-global-toolbar-content>
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-6">
@@ -169,27 +185,25 @@ export default function MyResumePage() {
                       resume={resume}
                       isMenuOpen={menuOpenId === resume.id}
                       isRenaming={renamingId === resume.id}
-                      scrollContainerRef={scrollContainerRef}
                       menuBtnRefs={menuBtnRefs}
                       onPreview={handleCardPreviewClick}
                       onMenuToggle={handleMenuToggle}
                     />
                   ))}
-                  {(hasMore || loadingMore) && (
-                    <div
-                      ref={loadMoreTriggerRef}
-                      className="col-span-full flex h-10 items-center justify-center"
-                      aria-live="polite"
-                    >
-                      {loadingMore && (
-                        <div className="flex items-center gap-2 text-xs text-slate-400">
-                          <div className="h-4 w-4 rounded-full border-2 border-slate-200 border-t-slate-400 animate-spin" />
-                          <span>{t('list.loadingResumes')}</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                </div>
+                {totalPages > 1 && (
+                  <div className="mt-7 pb-4 sm:mt-8">
+                    <TemplatePagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                      previousLabel={t('list.pagination.previous')}
+                      nextLabel={t('list.pagination.next')}
+                      jumpLabel={t('list.pagination.label')}
+                      pageLabel={(page) => t('list.pagination.pageAria', { page })}
+                    />
                   </div>
+                )}
               </div>
             </div>
           </div>

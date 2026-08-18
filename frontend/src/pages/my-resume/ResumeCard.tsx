@@ -1,17 +1,16 @@
-import type { MouseEvent, MutableRefObject, RefObject } from 'react';
+import type { MouseEvent, MutableRefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { Clock, Cloud, HardDrive, MoreHorizontal } from 'lucide-react';
 import { getLayoutName } from '../../registry/layouts';
 import { Tooltip } from '../../components/common/Tooltip';
-import { LazyResumeCardPreview } from '../../components/preview/ResumeCardPreview';
+import { ResumeCardPreview } from '../../components/preview/ResumeCardPreview';
 import type { DisplayResume } from './useResumeLibrary';
 
 interface ResumeCardProps {
   resume: DisplayResume;
   isMenuOpen: boolean;
   isRenaming: boolean;
-  scrollContainerRef: RefObject<HTMLDivElement | null>;
   menuBtnRefs: MutableRefObject<Record<string, HTMLButtonElement | null>>;
   onPreview: (id: string) => void;
   onMenuToggle: (event: MouseEvent<HTMLButtonElement>, id: string) => void;
@@ -24,7 +23,7 @@ export function formatResumeTime(iso: string): string {
 }
 
 export function ResumeCard({
-  resume, isMenuOpen, isRenaming, scrollContainerRef, menuBtnRefs,
+  resume, isMenuOpen, isRenaming, menuBtnRefs,
   onPreview, onMenuToggle,
 }: ResumeCardProps) {
   const { t } = useTranslation(['resume', 'common']);
@@ -47,10 +46,9 @@ export function ResumeCard({
                             className="resume-grid-card-preview absolute inset-0 z-0 h-full w-full cursor-pointer block border-0 bg-white p-0 overflow-hidden"
                           >
                             <div className="resume-grid-card-preview-surface absolute inset-0 bg-gray-100">
-                              <LazyResumeCardPreview
+                              <ResumeCardPreview
                                 content={resume.content}
                                 theme={resume.settings}
-                                scrollRootRef={scrollContainerRef as RefObject<Element>}
                               />
                             </div>
                           </button>

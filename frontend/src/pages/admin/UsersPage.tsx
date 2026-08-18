@@ -17,6 +17,7 @@ import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { DesktopUserTable } from './DesktopUserTable';
 import { MobileUserCardList } from './MobileUserCardList';
 import { getErrorMessage } from '../../utils/errors';
+import { AppPagination } from '../../components/common/AppPagination';
 
 export default function UsersPage() {
   const { isLoggedIn, role } = useAuth();
@@ -182,8 +183,6 @@ export default function UsersPage() {
   const labelLastLogin = t('users.table.lastLogin');
   const labelActions = t('users.table.actions');
   const labelDeleted = t('users.deleted');
-  const labelPagination = (opts: { page: number; totalPages: number; total: number }) =>
-    t('users.pagination', opts);
   const labelEmpty = t('users.empty');
 
   return (
@@ -253,10 +252,6 @@ export default function UsersPage() {
       ) : (
         <DesktopUserTable
           users={users}
-          total={total}
-          page={page}
-          totalPages={totalPages}
-          onSetPage={handlePageChange}
           onOpenQuota={openQuotaModal}
           onResetPassword={(id, username) => { setPasswordModal({ id, username }); setNewPassword(''); }}
           onDelete={handleDelete}
@@ -270,7 +265,6 @@ export default function UsersPage() {
           labelLastLogin={labelLastLogin}
           labelActions={labelActions}
           labelDeleted={labelDeleted}
-          labelPagination={labelPagination}
           labelEmpty={labelEmpty}
           actionLabelQuota={t('users.actionLabels.quota')}
           actionLabelPassword={t('users.actionLabels.resetPassword')}
@@ -279,6 +273,16 @@ export default function UsersPage() {
           actionLabelPermanentDelete={t('users.actionLabels.permanentDelete')}
         />
       )}
+
+      <AppPagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        previousLabel={t('users.pagination.previous')}
+        nextLabel={t('users.pagination.next')}
+        jumpLabel={t('users.pagination.label')}
+        pageLabel={(targetPage) => t('users.pagination.pageAria', { page: targetPage })}
+      />
 
       {/* ---- Quota Modal ---- */}
       <AdminModal

@@ -54,7 +54,12 @@
     "deleted": "Deactivated",
     "notLimited": "Unlimited",
     "empty": "No user data yet",
-    "pagination": "Page {{page}} of {{totalPages}} · {{total}} entries",
+    "pagination": {
+      "label": "User management pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "pageAria": "Go to page {{page}}"
+    },
     "quota": {
       "title": "Edit Quota — {{username}}",
       "maxResumes": "Max Resumes",
@@ -121,6 +126,12 @@
     "create": "New Template",
     "import": "Batch Import JSON",
     "edit": "Edit template",
+    "pagination": {
+      "label": "Resume template management pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "pageAria": "Go to page {{page}}"
+    },
     "status": {
       "all": "All statuses",
       "published": "Published",

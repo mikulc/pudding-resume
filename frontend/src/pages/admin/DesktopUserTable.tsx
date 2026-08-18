@@ -1,6 +1,6 @@
 import {
   SlidersHorizontal,
-  Key, Trash2, ChevronLeft, ChevronRight, RotateCcw,
+  Key, Trash2, RotateCcw,
 } from 'lucide-react';
 import type { AdminUserItem } from '../../types/admin';
 import {
@@ -10,10 +10,6 @@ import {
 
 interface DesktopUserTableProps {
   users: AdminUserItem[];
-  total: number;
-  page: number;
-  totalPages: number;
-  onSetPage: (page: number) => void;
   onOpenQuota: (user: AdminUserItem) => void;
   onResetPassword: (id: string, username: string) => void;
   onDelete: (id: string, username: string) => void;
@@ -27,7 +23,6 @@ interface DesktopUserTableProps {
   labelLastLogin: string;
   labelActions: string;
   labelDeleted: string;
-  labelPagination: (opts: { page: number; totalPages: number; total: number }) => string;
   labelEmpty: string;
   actionLabelQuota: string;
   actionLabelPassword: string;
@@ -37,13 +32,12 @@ interface DesktopUserTableProps {
 }
 
 export function DesktopUserTable({
-  users, total, page, totalPages,
-  onSetPage,
+  users,
   onOpenQuota,
   onResetPassword, onDelete, onRestore, onPermanentDelete,
   labelUser, labelEmail, labelRole, labelResumes,
   labelRegistered, labelLastLogin, labelActions,
-  labelDeleted, labelPagination, labelEmpty,
+  labelDeleted, labelEmpty,
   actionLabelQuota,
   actionLabelPassword, actionLabelDelete, actionLabelRestore, actionLabelPermanentDelete,
 }: DesktopUserTableProps) {
@@ -136,31 +130,6 @@ export function DesktopUserTable({
           </tbody>
         </table>
       </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-slate-800">
-          <span className="text-sm text-slate-500">
-            {labelPagination({ page, totalPages, total })}
-          </span>
-          <div className="flex gap-1">
-            <button
-              onClick={() => onSetPage(Math.max(1, page - 1))}
-              disabled={page <= 1}
-              className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <button
-              onClick={() => onSetPage(Math.min(totalPages, page + 1))}
-              disabled={page >= totalPages}
-              className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
-      )}
     </AdminTableCard>
   );
 }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ChevronLeft, ChevronRight, FileJson, Pencil, Plus, Search,
+  FileJson, Pencil, Plus, Search,
   Trash2, Upload, X,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,7 @@ import {
 } from '../../api/admin';
 import { getThemeLibraries } from '../../api/templates';
 import { useConfirm } from '../../components/common/ConfirmModal';
+import { AppPagination } from '../../components/common/AppPagination';
 import { useToast } from '../../components/common/Toast';
 import { invalidateResumeTemplateLibraryCache } from '../../components/template/ResumeTemplateLibrary';
 import type { AdminCategory, AdminTemplateInput, AdminTemplateItem } from '../../types/admin';
@@ -75,7 +76,7 @@ export default function AdminTemplatesPage() {
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState<AdminTemplateItem | null | undefined>(undefined);
   const [form, setForm] = useState<TemplateForm>(() => newForm());
-  const pageSize = 20;
+  const pageSize = 10;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   const load = useCallback(async () => {
@@ -270,11 +271,15 @@ export default function AdminTemplatesPage() {
         </div>
       )}
 
-      {totalPages > 1 && <div className="flex items-center justify-end gap-2">
-        <AdminIconButton disabled={page <= 1} onClick={() => setPage((value) => value - 1)}><ChevronLeft size={18} /></AdminIconButton>
-        <span className="text-sm text-slate-500">{page} / {totalPages}</span>
-        <AdminIconButton disabled={page >= totalPages} onClick={() => setPage((value) => value + 1)}><ChevronRight size={18} /></AdminIconButton>
-      </div>}
+      <AppPagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        previousLabel={t('templatesAdmin.pagination.previous')}
+        nextLabel={t('templatesAdmin.pagination.next')}
+        jumpLabel={t('templatesAdmin.pagination.label')}
+        pageLabel={(targetPage) => t('templatesAdmin.pagination.pageAria', { page: targetPage })}
+      />
 
       <AdminFormDrawer open={editing !== undefined} onClose={closeForm} closeOnBackdrop={false}>
         <AdminFormModalHeader title={t(editing ? 'templatesAdmin.form.editTitle' : 'templatesAdmin.form.createTitle')} onClose={closeForm} />
