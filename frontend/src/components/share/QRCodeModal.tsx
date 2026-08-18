@@ -16,7 +16,7 @@ export function QRCodePopover({ open, shareState }: QRCodePopoverProps) {
 
   return (
     <div
-      className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg p-4 z-50 flex flex-col items-center gap-2"
+      className="anheyu-glass-popover absolute right-0 top-full mt-1 rounded-xl p-4 z-50 flex flex-col items-center gap-2"
       style={{ animation: 'dropdown-appear 0.15s ease-out' }}
     >
       <style>{`
@@ -26,7 +26,7 @@ export function QRCodePopover({ open, shareState }: QRCodePopoverProps) {
         }
       `}</style>
 
-      <h3 className="text-xs font-medium text-gray-500">{t('share.qrCodeHint')}</h3>
+      <h3 className="text-xs font-medium text-gray-500 dark:text-slate-300">{t('share.qrCodeHint')}</h3>
 
       <div className="p-3 bg-white rounded-lg border border-gray-100">
         <QRCodeSVG

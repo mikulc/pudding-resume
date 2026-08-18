@@ -112,7 +112,7 @@ function EditorContent({ resumeId }: { resumeId?: string }) {
       message: t('diagnosisPanel.runConfirm.message'),
       confirmText: t('diagnosisPanel.runConfirm.confirm'),
       cancelText: t('diagnosisPanel.runConfirm.cancel'),
-      confirmVariant: 'primary',
+      confirmVariant: 'theme',
     });
     if (!confirmed) return;
 

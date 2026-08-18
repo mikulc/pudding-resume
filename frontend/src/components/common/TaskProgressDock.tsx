@@ -100,14 +100,13 @@ export function TaskProgressDock({
   return createPortal(
     <div
       className={[
-        'task-progress-dock theme-transition-target pointer-events-auto overflow-hidden rounded-[20px] border bg-white/88 text-gray-800 shadow-[0_10px_30px_rgba(15,23,42,0.12)] ring-1 ring-slate-900/5 backdrop-blur-2xl',
+        'task-progress-dock anheyu-glass-popover theme-transition-target pointer-events-auto overflow-hidden rounded-[20px] text-gray-800',
         'dark:text-[rgba(255,255,255,0.92)]',
         exiting ? 'task-progress-dock-exit' : 'diagnosis-progress-dock-enter',
         mobile ? 'mx-auto w-full max-w-[360px]' : 'w-[320px] max-md:mx-auto max-md:w-full max-md:max-w-[360px]',
       ].join(' ')}
       data-export-exclude={excludeId}
       data-task-type={taskType}
-      style={{ WebkitBackdropFilter: 'blur(24px) saturate(1.3)', backdropFilter: 'blur(24px) saturate(1.3)' }}
     >
         <div className="flex items-start gap-3 px-4 pb-3 pt-4">
           <div

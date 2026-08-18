@@ -60,7 +60,7 @@ export const AISuggestionBubble = forwardRef<HTMLDivElement, AISuggestionBubbleP
   return (
     <div
       ref={ref}
-      className={`ai-suggestion-bubble ${visibilityClass} ${className}`}
+      className={`ai-suggestion-bubble anheyu-glass-popover ${visibilityClass} ${className}`}
       style={{ ...style, ...arrowStyle }}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}

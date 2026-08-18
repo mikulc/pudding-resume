@@ -185,7 +185,7 @@ export function ShareDropdown({ resumeId, compact = false }: ShareDropdownProps)
         ].join(' ')}
       >
         <svg
-          className="w-3.5 h-3.5"
+          className="w-4 h-4"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -220,7 +220,7 @@ export function ShareDropdown({ resumeId, compact = false }: ShareDropdownProps)
       {/* Dropdown menu */}
       {open && (
         <div
-          className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-[14px] shadow-[0_10px_28px_rgba(15,23,42,0.10)] p-1.5 z-50 min-w-[150px] dark:bg-slate-950 dark:border-slate-800"
+          className="anheyu-glass-popover absolute right-0 top-full mt-1 rounded-[14px] p-1.5 z-50 min-w-[150px]"
           style={{ animation: 'dropdown-appear 0.15s ease-out' }}
         >
           <style>{`

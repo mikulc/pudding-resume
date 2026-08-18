@@ -272,7 +272,7 @@ export function EditorReadyLayout({
       message: t('translation.confirmMessage'),
       confirmText: t('translation.confirmAction'),
       cancelText: t('translation.cancelAction'),
-      confirmVariant: 'primary',
+      confirmVariant: 'theme',
     });
     if (!confirmed) return;
 

@@ -1,95 +1,176 @@
-/* ===== Toast 通知动画 ===== */
-@keyframes context-menu-enter {
-  from {
-    opacity: 0;
-    transform: translateY(4px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+@keyframes context-menu-show {
+  from { opacity: 0; transform: scale(0.9) translateY(-10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-.context-menu-enter {
-  transform-origin: top left;
-  animation: context-menu-enter 140ms ease-out both;
+@keyframes context-menu-hide {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to { opacity: 0; transform: scale(0.9) translateY(0); }
+}
+
+/* Shared AnHeYu glass surface for popovers and embedded translucent panels. */
+.anheyu-glass-popover,
+.anheyu-glass-surface {
+  color: #363636;
+  background-color: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid #e3e8f7;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  isolation: isolate;
+}
+
+.anheyu-glass-surface--embedded {
+  border-width: 0;
+  border-top: 1px solid #e3e8f7;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36);
+}
+
+.dark .anheyu-glass-popover,
+.dark .anheyu-glass-surface {
+  color: #f7f7fa;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-color: #3d3d3f;
+}
+
+.dark .anheyu-glass-surface--embedded {
+  border-top-color: #3d3d3f;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+.anheyu-glass-divider {
+  width: 100%;
+  border: 0;
+  border-top: 2px dashed rgba(22, 59, 242, 0.14);
+}
+
+.dark .anheyu-glass-divider {
+  border-top-color: rgba(223, 166, 33, 0.14);
 }
 
 .global-context-menu {
-  background-color: rgba(255, 255, 255, 0.70) !important;
-  background-clip: border-box;
-  border-color: transparent !important;
-  box-shadow:
-    0 0 10px rgba(15, 23, 42, 0.10),
-    0 18px 42px rgba(15, 23, 42, 0.16) !important;
-  -webkit-backdrop-filter: blur(36px) saturate(165%) brightness(1.04) !important;
-  backdrop-filter: blur(36px) saturate(165%) brightness(1.04) !important;
-  color: #3d3d3d !important;
+  --context-menu-accent: #163bf2;
+  --context-menu-accent-soft: rgba(22, 59, 242, 0.14);
+  position: fixed;
+  width: 158px;
+  padding: 8px;
+  color: #363636;
+  font-size: 14px;
+  line-height: 20px;
+  background-color: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid #e3e8f7;
+  border-radius: 12px;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.global-context-menu-icon-button {
-  color: #2f343b !important;
+.global-context-menu-visible {
+  pointer-events: auto;
+  animation: context-menu-show 200ms ease-out forwards;
 }
 
+.global-context-menu-hiding {
+  animation: context-menu-hide 100ms ease-in forwards;
+}
+
+.global-context-menu-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.global-context-menu-group:not(:last-child) {
+  margin-bottom: 4px;
+}
+
+.global-context-menu-group-line {
+  flex-direction: column;
+  padding-top: 4px;
+  border-top: 2px dashed var(--context-menu-accent-soft);
+}
+
+.global-context-menu-icon-button,
 .global-context-menu-item {
-  color: #3d3d3d !important;
-}
-
-.global-context-menu-item-icon {
-  color: #383d42 !important;
+  appearance: none;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 200ms, color 200ms;
 }
 
 .global-context-menu-icon-button:hover,
 .global-context-menu-item:hover {
-  background-color: #2135f5 !important;
-  color: #ffffff !important;
+  color: #fff;
+  background-color: var(--context-menu-accent);
 }
 
-.global-context-menu-icon-button:active,
-.global-context-menu-item:active {
-  background-color: #183fdd !important;
+.global-context-menu-small .global-context-menu-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
 }
 
-.global-context-menu-item:hover .global-context-menu-item-icon {
-  color: #ffffff !important;
+.global-context-menu-icon-button-glyph,
+.global-context-menu-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.global-context-menu-divider {
-  border-top-color: #dfe3ff !important;
+.global-context-menu-icon-button-glyph > svg,
+.global-context-menu-item-icon > svg {
+  width: 1em;
+  height: 1em;
+  stroke-width: 2.4;
+}
+
+.global-context-menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px 10px;
+  text-align: left;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.global-context-menu-item-icon {
+  width: 1em;
+  height: 1em;
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.global-context-menu-item-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dark .global-context-menu {
-  background-color: rgba(24, 24, 27, 0.72) !important;
-  border-color: transparent !important;
-  box-shadow:
-    0 0 10px rgba(0, 0, 0, 0.24),
-    0 18px 42px rgba(0, 0, 0, 0.38) !important;
-  -webkit-backdrop-filter: blur(36px) saturate(140%) brightness(0.88) !important;
-  backdrop-filter: blur(36px) saturate(140%) brightness(0.88) !important;
-  color: #ffffff !important;
+  --context-menu-accent: #dfa621;
+  --context-menu-accent-soft: rgba(223, 166, 33, 0.14);
+  color: #f7f7fa;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-color: #3d3d3f;
 }
 
-.dark .global-context-menu-icon-button,
-.dark .global-context-menu-item,
-.dark .global-context-menu-item-icon {
-  color: #ffffff !important;
-}
-
-.dark .global-context-menu-icon-button:hover,
-.dark .global-context-menu-item:hover {
-  background-color: #fbbf24 !important;
-  color: #ffffff !important;
-}
-
-.dark .global-context-menu-icon-button:active,
-.dark .global-context-menu-item:active {
-  background-color: #f59e0b !important;
-}
-
-.dark .global-context-menu-item:hover .global-context-menu-item-icon {
-  color: #ffffff !important;
-}
-
-.dark .global-context-menu-divider {
-  border-top-color: rgba(148, 163, 184, 0.16) !important;
+@media (prefers-reduced-motion: reduce) {
+  .global-context-menu-visible,
+  .global-context-menu-hiding {
+    animation-duration: 1ms;
+  }
 }

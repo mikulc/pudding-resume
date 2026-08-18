@@ -21,6 +21,26 @@ function ConfirmTrigger() {
   );
 }
 
+function ThemeConfirmTrigger() {
+  const confirm = useConfirm();
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        void confirm.confirm({
+          title: '开始 AI 诊断？',
+          message: '确认开始诊断',
+          confirmText: '开始诊断',
+          confirmVariant: 'theme',
+        });
+      }}
+    >
+      打开主题色确认框
+    </button>
+  );
+}
+
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
@@ -36,6 +56,20 @@ afterEach(() => {
 });
 
 describe('ConfirmProvider', () => {
+  it('uses the light and dark theme accent variables for theme confirmations', () => {
+    render(
+      <ConfirmProvider>
+        <ThemeConfirmTrigger />
+      </ConfirmProvider>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '打开主题色确认框' }));
+
+    const confirmButton = screen.getByRole('button', { name: '开始诊断' });
+    expect(confirmButton.className).toContain('bg-[var(--theme-accent)]');
+    expect(confirmButton.className).toContain('text-[var(--theme-accent-foreground)]');
+  });
+
   it('locks the root scrollbar and covers the full screen while open', () => {
     render(
       <ConfirmProvider>

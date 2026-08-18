@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, ArrowUp, Copy, Languages, Moon, RotateCw, Settings, Sun } from 'lucide-react';
@@ -11,10 +11,11 @@ import { applyThemeMode, readStoredThemeMode, resolveThemeMode, saveThemeMode } 
 import type { UserProfile } from '../../types/auth';
 import { useToast } from './Toast';
 
-const MENU_WIDTH = 157.6;
-const MENU_ESTIMATED_HEIGHT = 210;
-const VIEWPORT_PADDING = 12;
+const MENU_WIDTH = 158;
+const MENU_ESTIMATED_HEIGHT = 198;
+const VIEWPORT_PADDING = 5;
 const GLOBAL_CONTEXT_MENU_Z_INDEX = 10050;
+const MENU_EXIT_DURATION = 100;
 
 const zh = {
   back: '\u540e\u9000',
@@ -36,6 +37,7 @@ const zh = {
 interface MenuPosition {
   x: number;
   y: number;
+  transformOrigin: string;
 }
 
 function shouldKeepNativeContextMenu(target: EventTarget | null): boolean {
@@ -52,12 +54,13 @@ function shouldKeepNativeContextMenu(target: EventTarget | null): boolean {
 }
 
 function getClampedPosition(clientX: number, clientY: number): MenuPosition {
-  const maxX = Math.max(VIEWPORT_PADDING, window.innerWidth - MENU_WIDTH - VIEWPORT_PADDING);
-  const maxY = Math.max(VIEWPORT_PADDING, window.innerHeight - MENU_ESTIMATED_HEIGHT - VIEWPORT_PADDING);
+  const opensLeft = clientX + MENU_WIDTH > window.innerWidth;
+  const opensUp = clientY + MENU_ESTIMATED_HEIGHT > window.innerHeight;
 
   return {
-    x: Math.min(Math.max(VIEWPORT_PADDING, clientX), maxX),
-    y: Math.min(Math.max(VIEWPORT_PADDING, clientY), maxY),
+    x: Math.max(VIEWPORT_PADDING, opensLeft ? clientX - MENU_WIDTH : clientX),
+    y: Math.max(VIEWPORT_PADDING, opensUp ? clientY - MENU_ESTIMATED_HEIGHT : clientY),
+    transformOrigin: `${opensUp ? 'bottom' : 'top'} ${opensLeft ? 'right' : 'left'}`,
   };
 }
 
@@ -67,7 +70,9 @@ export function GlobalContextMenu() {
   const { isLoggedIn, profile, setProfile } = useAuth();
   const { showToast } = useToast();
   const menuRef = useRef<HTMLDivElement>(null);
+  const exitTimerRef = useRef<number | null>(null);
   const [position, setPosition] = useState<MenuPosition | null>(null);
+  const [isHiding, setIsHiding] = useState(false);
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => readStoredThemeMode());
   const [language, setLanguage] = useState<SupportedLanguage>(() => (
     normalizeLanguage(loadSettings()?.language || i18n.language)
@@ -94,6 +99,17 @@ export function GlobalContextMenu() {
       ? (isZh ? zh.lightMode : 'Light mode')
       : (isZh ? zh.darkMode : 'Dark mode'),
   }), [isDark, isZh, language]);
+
+  const close = useCallback(() => {
+    if (exitTimerRef.current !== null) return;
+
+    setIsHiding(true);
+    exitTimerRef.current = window.setTimeout(() => {
+      setPosition(null);
+      setIsHiding(false);
+      exitTimerRef.current = null;
+    }, MENU_EXIT_DURATION);
+  }, []);
 
   useEffect(() => {
     const syncLanguage = () => {
@@ -138,12 +154,15 @@ export function GlobalContextMenu() {
   }, []);
 
   useEffect(() => {
-    const close = () => setPosition(null);
-
     const handleContextMenu = (event: MouseEvent) => {
       if (event.defaultPrevented || shouldKeepNativeContextMenu(event.target)) return;
 
       event.preventDefault();
+      if (exitTimerRef.current !== null) {
+        window.clearTimeout(exitTimerRef.current);
+        exitTimerRef.current = null;
+      }
+      setIsHiding(false);
       setPosition(getClampedPosition(event.clientX, event.clientY));
     };
 
@@ -170,11 +189,13 @@ export function GlobalContextMenu() {
       window.removeEventListener('resize', close);
       window.removeEventListener('scroll', close, true);
     };
-  }, [position]);
+  }, [close, position]);
+
+  useEffect(() => () => {
+    if (exitTimerRef.current !== null) window.clearTimeout(exitTimerRef.current);
+  }, []);
 
   if (!position) return null;
-
-  const close = () => setPosition(null);
 
   const runAction = (action: () => void | Promise<void>) => {
     void Promise.resolve(action()).finally(close);
@@ -248,13 +269,18 @@ export function GlobalContextMenu() {
   return createPortal(
     <div
       ref={menuRef}
-      style={{ left: position.x, top: position.y, zIndex: GLOBAL_CONTEXT_MENU_Z_INDEX }}
-      className="global-context-menu fixed w-[157.6px] overflow-hidden rounded-[12px] border border-transparent bg-white/70 px-1.5 py-1 text-[#2f343b] shadow-[0_0_10px_rgba(15,23,42,0.10),0_18px_42px_rgba(15,23,42,0.16)] backdrop-blur-[36px] backdrop-saturate-[1.65] context-menu-enter dark:border-transparent dark:bg-[#18181b]/72 dark:text-white dark:shadow-[0_0_10px_rgba(0,0,0,0.24),0_18px_42px_rgba(0,0,0,0.38)]"
+      style={{
+        left: position.x,
+        top: position.y,
+        zIndex: GLOBAL_CONTEXT_MENU_Z_INDEX,
+        transformOrigin: position.transformOrigin,
+      }}
+      className={`global-context-menu ${isHiding ? 'global-context-menu-hiding' : 'global-context-menu-visible'}`}
       role="menu"
       aria-label="Context menu"
       onContextMenu={(event) => event.preventDefault()}
     >
-      <div className="flex h-10 items-center justify-between">
+      <div className="global-context-menu-group global-context-menu-small">
         <IconButton label={labels.back} onClick={() => runAction(() => window.history.back())}>
           <ArrowLeft />
         </IconButton>
@@ -269,31 +295,31 @@ export function GlobalContextMenu() {
         </IconButton>
       </div>
 
-      <MenuDivider />
+      <div className="global-context-menu-group global-context-menu-group-line">
+        <MenuItem
+          icon={<Settings />}
+          label={labels.settings}
+          onClick={() => runAction(() => navigate('/settings'))}
+        />
+        <MenuItem
+          icon={<Languages />}
+          label={labels.language}
+          onClick={() => runAction(toggleLanguage)}
+        />
+      </div>
 
-      <MenuItem
-        icon={<Settings />}
-        label={labels.settings}
-        onClick={() => runAction(() => navigate('/settings'))}
-      />
-      <MenuItem
-        icon={<Languages />}
-        label={labels.language}
-        onClick={() => runAction(toggleLanguage)}
-      />
-
-      <MenuDivider />
-
-      <MenuItem
-        icon={<Copy />}
-        label={labels.copyAddress}
-        onClick={() => runAction(copyAddress)}
-      />
-      <MenuItem
-        icon={<ThemeIcon />}
-        label={labels.darkMode}
-        onClick={() => runAction(toggleTheme)}
-      />
+      <div className="global-context-menu-group global-context-menu-group-line">
+        <MenuItem
+          icon={<Copy />}
+          label={labels.copyAddress}
+          onClick={() => runAction(copyAddress)}
+        />
+        <MenuItem
+          icon={<ThemeIcon />}
+          label={labels.darkMode}
+          onClick={() => runAction(toggleTheme)}
+        />
+      </div>
     </div>,
     document.body,
   );
@@ -313,10 +339,10 @@ function IconButton({
       type="button"
       aria-label={label}
       onClick={onClick}
-      className="global-context-menu-icon-button inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] text-[#2f343b] transition-colors duration-150 hover:bg-[#1f4af7] hover:text-white active:bg-[#183fdd] dark:text-white dark:hover:bg-[#fbbf24] dark:hover:text-white dark:active:bg-[#f59e0b]"
+      className="global-context-menu-icon-button"
     >
       {children && (
-        <span className="flex items-center justify-center leading-none [&>svg]:h-[18px] [&>svg]:w-[18px] [&>svg]:stroke-[2.45]">
+        <span className="global-context-menu-icon-button-glyph">
           {children}
         </span>
       )}
@@ -338,16 +364,12 @@ function MenuItem({
       type="button"
       role="menuitem"
       onClick={onClick}
-      className="global-context-menu-item group flex h-[38px] w-full items-center gap-2 rounded-[8px] px-2 text-left text-[15px] leading-none text-[#3d3d3d] transition-colors duration-150 hover:bg-[#2135f5] hover:text-white dark:text-white dark:hover:bg-[#fbbf24] dark:hover:text-white dark:active:bg-[#f59e0b]"
+      className="global-context-menu-item"
     >
-      <span className="global-context-menu-item-icon flex h-5 w-5 shrink-0 items-center justify-center text-[#383d42] transition-colors duration-150 group-hover:text-[#1f4af7] dark:text-white dark:group-hover:text-white [&>svg]:h-5 [&>svg]:w-5 [&>svg]:stroke-[2.35]">
+      <span className="global-context-menu-item-icon">
         {icon}
       </span>
-      <span className="min-w-0 flex-1 truncate">{label}</span>
+      <span className="global-context-menu-item-label">{label}</span>
     </button>
   );
-}
-
-function MenuDivider() {
-  return <div className="global-context-menu-divider mx-1 my-1 border-t border-dashed border-[#c7d2fe] dark:border-slate-400/15" />;
 }

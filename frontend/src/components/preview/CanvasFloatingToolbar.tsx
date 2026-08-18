@@ -548,10 +548,9 @@ export function CanvasFloatingToolbar({
         ) : (
         <div
           className={[
-            'canvas-floating-toolbar inline-flex items-center border border-white/70 bg-white/75 text-gray-700 shadow-[0_12px_32px_rgba(15,23,42,0.16)] ring-1 ring-slate-900/5 backdrop-blur-xl',
+            'anheyu-glass-popover canvas-floating-toolbar inline-flex items-center text-gray-700',
             isVertical ? 'flex-col rounded-[24px] p-1.5' : `${isCompactHorizontal ? 'px-1.5' : 'px-2'} rounded-full py-1.5`,
           ].join(' ')}
-          style={{ WebkitBackdropFilter: 'blur(18px)', backdropFilter: 'blur(18px)' }}
           data-global-toolbar-bottom-bar
           role="toolbar"
           aria-orientation={isVertical ? 'vertical' : 'horizontal'}

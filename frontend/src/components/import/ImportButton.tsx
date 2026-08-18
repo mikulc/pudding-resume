@@ -248,7 +248,7 @@ export function ImportButton({ onImportComplete }: ImportButtonProps) {
       {/* Dropdown menu */}
       {open && (
         <div
-          className="resume-popover-enter absolute right-0 top-full mt-2 bg-white/95 border border-slate-200/70 rounded-[14px] shadow-[0_10px_28px_rgba(15,23,42,0.10)] backdrop-blur-xl p-1.5 z-50 min-w-[178px] dark:bg-slate-950 dark:border-slate-800"
+          className="anheyu-glass-popover resume-popover-enter absolute right-0 top-full mt-2 rounded-[14px] p-1.5 z-50 min-w-[178px]"
         >
           <button
             onClick={() => handleSelectFormat('pdf')}

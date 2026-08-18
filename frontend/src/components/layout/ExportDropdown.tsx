@@ -62,7 +62,7 @@ export function ExportDropdown({ isExportingPDF, isExportingPNG, isExportingMD, 
       >
         {isExporting ? (
           <>
-            <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
@@ -70,7 +70,7 @@ export function ExportDropdown({ isExportingPDF, isExportingPNG, isExportingMD, 
           </>
         ) : (
           <>
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             {!compact && (
@@ -88,7 +88,7 @@ export function ExportDropdown({ isExportingPDF, isExportingPNG, isExportingMD, 
       {/* Dropdown menu */}
       {open && (
         <div
-          className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-[14px] shadow-[0_10px_28px_rgba(15,23,42,0.10)] p-1.5 z-50 min-w-[188px] dark:bg-slate-950 dark:border-slate-800"
+          className="anheyu-glass-popover absolute right-0 top-full mt-1 rounded-[14px] p-1.5 z-50 min-w-[188px]"
           style={{ animation: 'dropdown-appear 0.15s ease-out' }}
         >
           <style>{`

@@ -132,6 +132,7 @@ export default function MyResumePage() {
                     </span>
                   </div>
                   <div className="flex w-full flex-shrink-0 items-center gap-2 sm:w-auto">
+                    <ImportButton onImportComplete={refreshList} />
                     <button
                       type="button"
                       onClick={handleNewResume}
@@ -140,7 +141,6 @@ export default function MyResumePage() {
                       <Plus className="h-4 w-4" />
                       <span>{t('list.newResume')}</span>
                     </button>
-                    <ImportButton onImportComplete={refreshList} />
                   </div>
                 </div>
               </div>

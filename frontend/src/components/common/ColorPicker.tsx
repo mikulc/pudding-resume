@@ -261,7 +261,7 @@ export function ColorPicker({ value, onChange, size = 'sm' }: ColorPickerProps) 
       {open && createPortal(
         <div
           ref={popoverRef}
-          className="fixed z-[10030] bg-white rounded-xl shadow-lg border border-gray-200 p-3 w-[220px] overflow-y-auto"
+          className="anheyu-glass-popover fixed z-[10030] rounded-xl p-3 w-[220px] overflow-y-auto"
           style={{
             left: popoverPosition.left,
             top: popoverPosition.top,

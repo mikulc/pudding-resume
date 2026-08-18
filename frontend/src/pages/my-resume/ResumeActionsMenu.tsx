@@ -34,7 +34,7 @@ createPortal(
             {/* Dropdown */}
             <div
               ref={menuRef}
-              className="resume-popover-enter fixed z-[101] w-[148px] overflow-hidden rounded-[14px] border border-slate-200/70 bg-white/95 p-1.5 shadow-[0_10px_28px_rgba(15,23,42,0.10)] backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/95"
+              className="anheyu-glass-popover resume-popover-enter fixed z-[101] w-[148px] overflow-hidden rounded-[14px] p-1.5"
               style={{ top: menuPos.top, left: menuPos.left }}
             >
               <button
@@ -61,7 +61,7 @@ createPortal(
 
                 return (
                   <>
-                    <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+                    <div className="anheyu-glass-divider my-1" />
                     <button
                       type="button"
                       onClick={() => {
@@ -75,7 +75,7 @@ createPortal(
                   </>
                 );
               })()}
-              <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
+              <div className="anheyu-glass-divider my-1" />
               <button
                 type="button"
                 onClick={() => {

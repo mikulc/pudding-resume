@@ -103,7 +103,7 @@ export function ThemeDrawer({ open, onClose, currentLayoutId, content, onApply }
         }}
       >
         {/* Header */}
-        <div className="flex-shrink-0 flex items-center gap-3 px-5 py-4 border-b border-gray-100 dark:border-[color:var(--border-soft)]">
+        <div className="flex-shrink-0 flex items-center gap-3 px-5 py-4">
           <button
             onClick={handleCancel}
             className="theme-drawer-back-button p-1.5 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors dark:text-[color:var(--text-secondary)]"
@@ -121,7 +121,7 @@ export function ThemeDrawer({ open, onClose, currentLayoutId, content, onApply }
         </div>
 
         {/* Visual style categories */}
-        <div className="flex-shrink-0 border-b border-gray-50 px-5 py-3 dark:border-[color:var(--border-soft)]">
+        <div className="flex-shrink-0 px-5 py-3">
           <div className="flex flex-wrap items-center gap-2 pb-1 sm:flex-nowrap sm:overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {categories.map((category) => (
               <button

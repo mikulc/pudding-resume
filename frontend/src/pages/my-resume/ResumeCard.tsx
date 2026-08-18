@@ -55,7 +55,7 @@ export function ResumeCard({
 
                           {/* 涓嬫柟锛氱畝鍘嗕俊鎭尯鍩?鈥?涓嶈繘鍏ョ紪杈戦〉锛屾瘺鐜荤拑瑕嗙洊鍦ㄩ瑙堝尯搴曢儴 */}
                           <div
-                            className="resume-grid-card-footer absolute inset-x-0 bottom-0 z-10 px-4 py-3.5 border-t border-slate-200/70"
+                            className="anheyu-glass-surface anheyu-glass-surface--embedded resume-grid-card-footer absolute inset-x-0 bottom-0 z-10 px-4 py-3.5"
                             onMouseDown={(e) => e.stopPropagation()}
                           >
                             <div className="flex items-center gap-1.5 min-w-0">

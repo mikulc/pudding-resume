@@ -61,7 +61,7 @@ export function FloatingToolbar({
   return (
     <div
       data-toolbar="true"
-      className="floating-toolbar"
+      className="anheyu-glass-popover floating-toolbar"
       style={{
         position: 'absolute',
         top: `${top}px`,

@@ -8,7 +8,7 @@ interface ConfirmOptions {
   message: string;
   confirmText?: string;
   cancelText?: string;
-  confirmVariant?: 'danger' | 'primary';
+  confirmVariant?: 'danger' | 'primary' | 'theme';
 }
 
 interface ConfirmContextType {
@@ -91,10 +91,12 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
                 </button>
                 <button
                   onClick={() => handleClose(true)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-[color,background-color,filter] ${
                     state.confirmVariant === 'danger'
-                      ? 'bg-red-500 hover:bg-red-600'
-                      : 'bg-blue-500 hover:bg-blue-600'
+                      ? 'bg-red-500 text-white hover:bg-red-600'
+                      : state.confirmVariant === 'theme'
+                        ? 'bg-[var(--theme-accent)] text-[var(--theme-accent-foreground)] hover:brightness-105 active:brightness-95'
+                        : 'bg-blue-500 text-white hover:bg-blue-600'
                   }`}
                 >
                   {state.confirmText || t('button.confirm')}
