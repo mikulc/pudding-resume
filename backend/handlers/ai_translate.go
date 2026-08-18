@@ -38,8 +38,14 @@ func TranslateResumeToEnglish(c *gin.Context) {
 		return
 	}
 
+	translationProjection, err := buildResumeTranslationProjection(req.ResumeData)
+	if err != nil {
+		respondError(c, http.StatusBadRequest, "简历 JSON 结构无效")
+		return
+	}
+
 	var compact bytes.Buffer
-	if err := json.Compact(&compact, req.ResumeData); err != nil {
+	if err := json.Compact(&compact, translationProjection); err != nil {
 		respondError(c, http.StatusBadRequest, "简历 JSON 格式无效")
 		return
 	}
@@ -117,7 +123,7 @@ func TranslateResumeToEnglish(c *gin.Context) {
 		cfg.ApiKey,
 		cfg.Model,
 		translateResumeSystemPrompt,
-		"请将以下简历 JSON 翻译为英文简历 JSON：\n"+compact.String(),
+		"请将以下简历可见文本 JSON 翻译为英文。必须逐字段返回完全相同的 JSON 结构：\n"+compact.String(),
 		120,
 		func(accumulated string) {
 			receivedChars := len(accumulated)
@@ -172,38 +178,17 @@ func TranslateResumeToEnglish(c *gin.Context) {
 		return
 	}
 
-	var translatedTopLevel map[string]json.RawMessage
-	if err := json.Unmarshal(result.Content, &translatedTopLevel); err != nil {
-		sendError(fmt.Sprintf("Failed to parse AI translation result: %v", err))
-		return
-	}
-	if translatedTopLevel == nil {
-		sendError("AI translation result is not a resume JSON object")
-		return
-	}
-
-	if !sameTopLevelKeys(originalTopLevel, translatedTopLevel) {
-		sendError("AI translation result top-level structure does not match the original resume")
+	mergedResume, err := mergeResumeTranslation(req.ResumeData, translationProjection, result.Content)
+	if err != nil {
+		sendError(fmt.Sprintf("AI translation result structure does not match the current resume: %v", err))
 		return
 	}
 
 	sendSSE("result", translateResumeStreamEvent{
 		Stage:      "complete",
 		Progress:   100,
-		ResumeData: json.RawMessage(result.Content),
+		ResumeData: mergedResume,
 	})
-}
-
-func sameTopLevelKeys(a, b map[string]json.RawMessage) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for key := range a {
-		if _, ok := b[key]; !ok {
-			return false
-		}
-	}
-	return true
 }
 
 // callAiApi 调用 OpenAI-compatible Chat Completions API。
