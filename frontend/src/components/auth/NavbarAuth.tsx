@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react
 import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BarChart3, FileText, LayoutDashboard, LayoutTemplate, Settings, User, Shield } from 'lucide-react';
+import { BarChart3, FileText, LayoutTemplate, Settings, User, Shield } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getLocaleFromPath } from '../../utils/localePath';
 import { normalizeLanguage } from '../../utils/localSettings';
@@ -17,6 +17,16 @@ interface NavbarSettingsShortcut {
 
 interface NavbarAuthProps {
   settingsShortcut?: NavbarSettingsShortcut;
+}
+
+function ControlCenterGlyph({ open }: { open: boolean }) {
+  return (
+    <span className="control-center-glyph" data-open={open || undefined} aria-hidden="true">
+      <i className="control-center-glyph__block control-center-glyph__block--left" />
+      <i className="control-center-glyph__block control-center-glyph__block--center" />
+      <i className="control-center-glyph__block control-center-glyph__block--right" />
+    </span>
+  );
 }
 
 /**
@@ -47,7 +57,7 @@ function ProfileAvatarButton({
         active ? '' : 'text-gray-600 dark:!text-white'
       }`}
     >
-      <User className="h-[18px] w-[18px]" strokeWidth={3.2} />
+      <User className="h-5 w-5" strokeWidth={3.6} />
     </button>
   );
 }
@@ -155,9 +165,9 @@ function ControlCenterMenu({
             setOpen(true);
           }
         }}
-        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-gray-700 transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 dark:text-slate-200 md:hidden"
+        className="control-center-trigger inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-gray-700 transition-colors hover:!bg-[var(--theme-accent)] hover:!text-[var(--theme-accent-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 dark:text-slate-200 md:hidden"
       >
-        <LayoutDashboard className="h-[18px] w-[18px]" strokeWidth={3.2} />
+        <ControlCenterGlyph open={open} />
       </button>
 
       {open && createPortal(
@@ -165,7 +175,7 @@ function ControlCenterMenu({
           ref={portalRef}
           role="menu"
           aria-label={label}
-          className="navbar-avatar-dropdown min-w-[210px] overflow-hidden rounded-[18px] border border-white/55 bg-white p-1.5 shadow-[0_18px_60px_rgba(15,23,42,0.16)] dark:border-white/10 dark:bg-[#202329] md:hidden"
+          className="anheyu-glass-popover navbar-avatar-dropdown min-w-[210px] overflow-hidden rounded-[18px] p-1.5 md:hidden"
           style={{ ...menuStyle, animation: exiting ? 'avatar-dropdown-exit 0.16s ease-in forwards' : 'avatar-dropdown-appear 0.18s ease-out' }}
         >
           {items.map(({ path, label: itemLabel, icon: Icon }) => {
@@ -248,7 +258,7 @@ export function NavbarAuth({ settingsShortcut }: NavbarAuthProps) {
           isUsageActive ? '' : 'text-gray-600 dark:!text-white'
         }`}
       >
-        <BarChart3 className="h-[18px] w-[18px]" strokeWidth={3.2} />
+        <BarChart3 className="h-5 w-5" strokeWidth={3.6} />
       </button>
       {isLoggedIn && role === 'admin' && (
         <button
@@ -264,7 +274,7 @@ export function NavbarAuth({ settingsShortcut }: NavbarAuthProps) {
             isAdminActive ? '' : 'text-gray-600 dark:!text-white'
           }`}
         >
-          <Shield className="h-[18px] w-[18px]" strokeWidth={3.2} />
+          <Shield className="h-5 w-5" strokeWidth={3.6} />
         </button>
       )}
       <ControlCenterMenu settingsShortcut={settingsShortcut} />

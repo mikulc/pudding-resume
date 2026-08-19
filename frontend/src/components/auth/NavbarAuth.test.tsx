@@ -86,15 +86,43 @@ describe('NavbarAuth', () => {
     expect(screen.getByTestId('location').textContent).toBe('/zh-CN/login');
   });
 
-  it('uses the same dark-mode icon color for usage and admin actions', () => {
+  it('uses the same heavier visual weight and dark-mode color for navbar actions', () => {
     authState.isLoggedIn = true;
     authState.role = 'admin';
     renderNavbar();
 
+    const profileIcon = document.querySelector('svg.lucide-user');
     const usageButton = document.querySelector('svg.lucide-chart-column')?.closest('button');
     const adminButton = document.querySelector('svg.lucide-shield')?.closest('button');
+    const actionIcons = [
+      profileIcon,
+      usageButton?.querySelector('svg'),
+      adminButton?.querySelector('svg'),
+    ];
 
     expect(usageButton?.classList.contains('dark:!text-white')).toBe(true);
     expect(adminButton?.classList.contains('dark:!text-white')).toBe(true);
+    actionIcons.forEach((icon) => {
+      expect(icon?.classList.contains('h-5')).toBe(true);
+      expect(icon?.getAttribute('stroke-width')).toBe('3.6');
+    });
+  });
+
+  it('uses the three-piece control-center glyph and exposes its open state', () => {
+    renderNavbar();
+
+    const trigger = screen.getByRole('button', { name: '\u4e2d\u63a7\u53f0' });
+    const glyph = trigger.querySelector('.control-center-glyph');
+
+    expect(glyph?.querySelectorAll('.control-center-glyph__block')).toHaveLength(3);
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+
+    fireEvent.click(trigger);
+
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    expect(glyph?.getAttribute('data-open')).toBe('true');
+    const menu = screen.getByRole('menu', { name: '\u4e2d\u63a7\u53f0' });
+    expect(menu).not.toBeNull();
+    expect(menu.classList.contains('anheyu-glass-popover')).toBe(true);
   });
 });

@@ -25,6 +25,7 @@
 @import "./styles/features/diagnosis/issue-types.css";
 @import "./styles/foundation/print.css";
 @import "./styles/components/navbar-user-menu.css";
+@import "./styles/components/control-center-trigger.css";
 @import "./styles/features/editor/toolbar-menu-motion.css";
 @import "./styles/components/drawer.css";
 @import "./styles/components/context-menu.css";

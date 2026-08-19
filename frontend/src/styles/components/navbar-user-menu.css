@@ -10,38 +10,6 @@
   }
 }
 
-/* ===== 头像下拉浮层：深色毛玻璃（与任务提示卡片 / 底部悬浮工具栏统一） ===== */
-.dark .navbar-avatar-dropdown {
-  background: #202329;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 10px 28px rgba(0, 0, 0, 0.30),
-    0 2px 8px rgba(0, 0, 0, 0.18);
-}
-
-/* 顶部轻微高光，强化玻璃质感（仅作装饰，不遮挡内容） */
-.dark .navbar-avatar-dropdown::before {
-  display: none;
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.10) 0%,
-    rgba(255, 255, 255, 0.03) 22%,
-    rgba(255, 255, 255, 0.00) 50%
-  );
-}
-
-/* 让浮层内的真实内容始终位于高光层之上 */
-.dark .navbar-avatar-dropdown > * {
-  position: relative;
-  z-index: 1;
-}
-
 @keyframes avatar-dropdown-appear {
   from {
     opacity: 0;
