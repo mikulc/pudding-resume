@@ -16,7 +16,7 @@
   left: 50%;
   z-index: 99999;
   display: flex;
-  width: min(90vw, 420px);
+  width: min(calc(100vw - 24px), 560px);
   transform: translateX(-50%);
   flex-direction: column;
   align-items: center;
@@ -81,10 +81,11 @@
 }
 
 .toast__message {
+  flex: 1 1 auto;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .toast__close {

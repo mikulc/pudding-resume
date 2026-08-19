@@ -1,9 +1,10 @@
 import i18n from '../i18n';
 import { normalizeThemeSettings, type ThemeSettings } from '../../types/resume';
-import type { ImportResult } from './types';
+import type { ImportProgressCallback, ImportResult } from './types';
 import { ensureDefaults, validateResumeData } from './validation';
 
-export async function importFromJSON(file: File): Promise<ImportResult> {
+export async function importFromJSON(file: File, onProgress?: ImportProgressCallback): Promise<ImportResult> {
+  onProgress?.({ stage: 'reading', progress: 8 });
   const text = await file.text();
 
   let parsed: unknown;
@@ -45,6 +46,7 @@ export async function importFromJSON(file: File): Promise<ImportResult> {
     throw new Error(i18n.t('import.error.jsonMissingRequiredFields', { ns: 'resume' }));
   }
 
+  onProgress?.({ stage: 'normalizing', progress: 68 });
   const rawResumeData = data as unknown as Record<string, unknown>;
   const rawPersonalInfo = rawResumeData.personalInfo;
   const resumeData = ensureDefaults(data);

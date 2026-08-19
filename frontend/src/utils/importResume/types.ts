@@ -9,3 +9,14 @@ export interface ImportResult {
   settings?: ThemeSettings | null;
 }
 
+export type ImportProgressStage = 'reading' | 'extracting' | 'parsing' | 'normalizing';
+
+export interface ImportProgressUpdate {
+  stage: ImportProgressStage;
+  progress: number;
+  current?: number;
+  total?: number;
+}
+
+export type ImportProgressCallback = (update: ImportProgressUpdate) => void;
+

@@ -43,4 +43,17 @@ describe('ToastProvider', () => {
     act(() => vi.runAllTimers());
     vi.useRealTimers();
   });
+
+  it('wraps long messages instead of truncating them', () => {
+    vi.useFakeTimers();
+    render(<ToastProvider><ToastTrigger /></ToastProvider>);
+
+    const message = screen.getByText('保存失败');
+    expect(message.classList.contains('whitespace-pre-wrap')).toBe(true);
+    expect(message.classList.contains('break-words')).toBe(true);
+    expect(message.classList.contains('[overflow-wrap:anywhere]')).toBe(true);
+
+    act(() => vi.runAllTimers());
+    vi.useRealTimers();
+  });
 });

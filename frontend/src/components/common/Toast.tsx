@@ -93,7 +93,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 role={toast.type === 'error' ? 'alert' : 'status'}
               >
                 <ToastIcon type={toast.type} />
-                <span className="toast__message" title={toast.message}>{toast.message}</span>
+                <span
+                  className="toast__message whitespace-pre-wrap break-words [overflow-wrap:anywhere]"
+                  title={toast.message}
+                >
+                  {toast.message}
+                </span>
                 <button
                   type="button"
                   className="toast__close"

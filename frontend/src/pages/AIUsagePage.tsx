@@ -255,8 +255,6 @@ function UsageLogsTable({
   t: (key: string, options?: Record<string, string | number>) => string;
 }) {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const startIndex = total === 0 ? 0 : (page - 1) * pageSize + 1;
-  const endIndex = Math.min(page * pageSize, total);
   const showPagination = total > pageSize;
 
   if (records.length === 0) {
@@ -339,10 +337,7 @@ function UsageLogsTable({
         })}
       </div>
       {showPagination && (
-        <div className="space-y-4 border-t border-gray-100 px-4 py-4 text-sm text-gray-500 sm:px-8">
-          <p className="text-center">
-            {t('aiUsage.pagination.range', { start: startIndex, end: endIndex, total })}
-          </p>
+        <div className="border-t border-gray-100 px-4 py-4 text-sm text-gray-500 sm:px-8">
           <AppPagination
             currentPage={page}
             totalPages={totalPages}

@@ -9,6 +9,19 @@ function jsonFile(value: unknown, name = 'resume.json'): File {
 }
 
 describe('importFromJSON personal information compatibility', () => {
+  it('reports file reading and structure normalization progress', async () => {
+    const updates: Array<{ stage: string; progress: number }> = [];
+
+    await importFromJSON(jsonFile({ personalInfo: { fullName: 'Pudding' } }), (update) => {
+      updates.push(update);
+    });
+
+    expect(updates).toEqual([
+      { stage: 'reading', progress: 8 },
+      { stage: 'normalizing', progress: 68 },
+    ]);
+  });
+
   it('migrates legacy content fields while preserving legacy header settings', async () => {
     const result = await importFromJSON(jsonFile({
       content: {

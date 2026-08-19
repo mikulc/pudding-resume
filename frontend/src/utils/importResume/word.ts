@@ -1,13 +1,15 @@
 import i18n from '../i18n';
-import type { ImportResult } from './types';
+import type { ImportProgressCallback, ImportResult } from './types';
 import { parseTextWithAI } from './markdown';
 
-export async function importFromWord(file: File): Promise<ImportResult> {
+export async function importFromWord(file: File, onProgress?: ImportProgressCallback): Promise<ImportResult> {
+  onProgress?.({ stage: 'reading', progress: 6 });
   // 动态导入 mammoth，避免增大初始 bundle
   const mammoth = await import('mammoth');
 
   const arrayBuffer = await file.arrayBuffer();
   const result = await mammoth.extractRawText({ arrayBuffer });
+  onProgress?.({ stage: 'extracting', progress: 45 });
 
   const extractedText = result.value.trim();
   if (!extractedText) {
@@ -17,7 +19,7 @@ export async function importFromWord(file: File): Promise<ImportResult> {
   const resumeName = file.name.replace(/\.docx?$/i, '');
 
   // 调用 AI fill 智能解析
-  const resumeData = await parseTextWithAI(extractedText);
+  const resumeData = await parseTextWithAI(extractedText, onProgress);
 
   return { resumeData, resumeName };
 }

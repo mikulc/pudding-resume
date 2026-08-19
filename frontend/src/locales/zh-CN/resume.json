@@ -102,6 +102,17 @@
     "saveFailedRetry": "保存失败，请重试",
     "saveLocalFailed": "保存到本地失败，请检查本地目录权限",
     "parsingFormat": "解析 {{format}} 中...",
+    "progress": {
+      "title": "导入 {{format}} 简历",
+      "reading": "正在读取文件",
+      "extracting": "正在提取简历文本",
+      "extractingPage": "正在提取第 {{current}}/{{total}} 页",
+      "parsing": "AI 正在识别并整理简历内容",
+      "normalizing": "正在校验并适配简历结构",
+      "saving": "正在保存简历",
+      "success": "简历导入完成",
+      "close": "关闭导入进度"
+    },
     "options": {
       "pdf": {
         "title": "PDF 导入",
@@ -375,7 +386,6 @@
       "total": "总计"
     },
     "pagination": {
-      "range": "显示第 {{start}}-{{end}} 条，共 {{total}} 条",
       "page": "第 {{page}} / {{totalPages}} 页",
       "previous": "上一页",
       "next": "下一页",

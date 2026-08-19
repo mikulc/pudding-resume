@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { CheckCircle2, Loader2, X, XCircle, type LucideIcon } from 'lucide-react';
 
 export type TaskProgressStatus = 'loading' | 'success' | 'error';
-export type TaskProgressType = 'translate' | 'diagnosis' | 'ats' | 'export';
+export type TaskProgressType = 'translate' | 'diagnosis' | 'ats' | 'export' | 'import';
 
 interface TaskProgressDockProps {
   visible: boolean;

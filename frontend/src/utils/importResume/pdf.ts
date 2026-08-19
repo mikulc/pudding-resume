@@ -1,9 +1,10 @@
 import i18n from '../i18n';
-import type { ImportResult } from './types';
+import type { ImportProgressCallback, ImportResult } from './types';
 import { extractPdfPageText } from './pdfText';
 import { parseTextWithAI } from './markdown';
 
-export async function importFromPDF(file: File): Promise<ImportResult> {
+export async function importFromPDF(file: File, onProgress?: ImportProgressCallback): Promise<ImportResult> {
+  onProgress?.({ stage: 'reading', progress: 6 });
   // 动态导入 pdfjs-dist，避免增大初始 bundle
   const pdfjsLib = await import('pdfjs-dist');
 
@@ -15,6 +16,7 @@ export async function importFromPDF(file: File): Promise<ImportResult> {
 
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  onProgress?.({ stage: 'extracting', progress: 14, current: 0, total: pdf.numPages });
 
   // Extract page text while preserving the PDF's visual line breaks.
   const textParts: string[] = [];
@@ -25,6 +27,12 @@ export async function importFromPDF(file: File): Promise<ImportResult> {
     if (pageText.trim()) {
       textParts.push(pageText);
     }
+    onProgress?.({
+      stage: 'extracting',
+      progress: 14 + Math.round((pageNum / pdf.numPages) * 42),
+      current: pageNum,
+      total: pdf.numPages,
+    });
   }
 
   const extractedText = textParts.join('\n\n').trim();
@@ -35,7 +43,7 @@ export async function importFromPDF(file: File): Promise<ImportResult> {
   const resumeName = file.name.replace(/\.pdf$/i, '');
 
   // 调用 AI fill 智能解析
-  const resumeData = await parseTextWithAI(extractedText);
+  const resumeData = await parseTextWithAI(extractedText, onProgress);
 
   return { resumeData, resumeName };
 }

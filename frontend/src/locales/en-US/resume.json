@@ -102,6 +102,17 @@
     "saveFailedRetry": "Save failed. Please try again.",
     "saveLocalFailed": "Failed to save locally. Check local folder permissions.",
     "parsingFormat": "Parsing {{format}}...",
+    "progress": {
+      "title": "Import {{format}} resume",
+      "reading": "Reading the file",
+      "extracting": "Extracting resume text",
+      "extractingPage": "Extracting page {{current}} of {{total}}",
+      "parsing": "AI is identifying and organizing resume content",
+      "normalizing": "Validating and adapting the resume structure",
+      "saving": "Saving the resume",
+      "success": "Resume import complete",
+      "close": "Close import progress"
+    },
     "options": {
       "pdf": {
         "title": "Import PDF",
@@ -376,7 +387,6 @@
       "total": "Total"
     },
     "pagination": {
-      "range": "Showing {{start}}-{{end}} of {{total}}",
       "page": "Page {{page}} / {{totalPages}}",
       "previous": "Previous",
       "next": "Next",

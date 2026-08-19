@@ -2,12 +2,13 @@ import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Upload, FileJson, FileText, FileCode2 } from 'lucide-react';
 import { useToast } from '../common/Toast';
+import { TaskProgressDock, type TaskProgressStatus } from '../common/TaskProgressDock';
 import { importFromJSON, importFromPDF, importFromWord, importFromMarkdown } from '../../utils/importResume';
 import { getAuthToken } from '../../utils/api';
 import { createResume } from '../../api/resumes';
 import { generateLocalId, saveResumeToLocal } from '../../utils/localStorage';
 import { isLocalStorageEnabled } from '../../context/AuthContext';
-import type { ImportResult } from '../../utils/importResume';
+import type { ImportProgressUpdate, ImportResult } from '../../utils/importResume';
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 
 interface ImportButtonProps {
@@ -16,12 +17,27 @@ interface ImportButtonProps {
 
 type ImportFormat = 'json' | 'pdf' | 'word' | 'markdown';
 
+interface ImportTaskState {
+  status: TaskProgressStatus;
+  title: string;
+  description: string;
+  progress: number;
+}
+
+const IMPORT_FORMAT_LABELS: Record<ImportFormat, string> = {
+  json: 'JSON',
+  pdf: 'PDF',
+  word: 'Word',
+  markdown: 'Markdown',
+};
+
 export function ImportButton({ onImportComplete }: ImportButtonProps) {
   const { showToast } = useToast();
   const { t } = useTranslation(['resume', 'common']);
   const [open, setOpen] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importFormat, setImportFormat] = useState<ImportFormat | null>(null);
+  const [importTask, setImportTask] = useState<ImportTaskState | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const jsonInputRef = useRef<HTMLInputElement>(null);
   const pdfInputRef = useRef<HTMLInputElement>(null);
@@ -64,32 +80,69 @@ export function ImportButton({ onImportComplete }: ImportButtonProps) {
 
     setImporting(true);
     setImportFormat(format);
+    const formatLabel = IMPORT_FORMAT_LABELS[format];
+    const taskTitle = t('import.progress.title', { format: formatLabel });
+    setImportTask({
+      status: 'loading',
+      title: taskTitle,
+      description: t('import.progress.reading'),
+      progress: 4,
+    });
+
+    const handleProgress = (update: ImportProgressUpdate) => {
+      const description = update.stage === 'extracting' && (update.current ?? 0) > 0 && update.total
+        ? t('import.progress.extractingPage', { current: update.current, total: update.total })
+        : t(`import.progress.${update.stage}`);
+      setImportTask((current) => ({
+        status: 'loading',
+        title: current?.title ?? taskTitle,
+        description,
+        progress: Math.max(current?.progress ?? 0, update.progress),
+      }));
+    };
 
     let result: ImportResult;
     try {
       if (format === 'json') {
-        result = await importFromJSON(file);
+        result = await importFromJSON(file, handleProgress);
       } else if (format === 'pdf') {
-        result = await importFromPDF(file);
+        result = await importFromPDF(file, handleProgress);
       } else if (format === 'word') {
-        result = await importFromWord(file);
+        result = await importFromWord(file, handleProgress);
       } else {
-        result = await importFromMarkdown(file);
+        result = await importFromMarkdown(file, handleProgress);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : t('import.failedRetry');
       showToast(message, 'error');
+      setImportTask({ status: 'error', title: taskTitle, description: message, progress: 100 });
       setImporting(false);
       setImportFormat(null);
       return;
     }
 
+    const handleSuccess = (message: string) => {
+      showToast(message, 'success');
+      setImportTask({
+        status: 'success',
+        title: taskTitle,
+        description: t('import.progress.success'),
+        progress: 100,
+      });
+      onImportComplete();
+    };
+
+    const handleFailure = (message: string) => {
+      showToast(message, 'error');
+      setImportTask({ status: 'error', title: taskTitle, description: message, progress: 100 });
+    };
+
     try {
-      // 辅助函数：导入成功回调
-      const handleSuccess = (message: string) => {
-        showToast(message, 'success');
-        onImportComplete();
-      };
+      setImportTask((current) => current && {
+        ...current,
+        description: t('import.progress.saving'),
+        progress: 94,
+      });
 
       // JSON 导入：如果开启了本地存储，直接存本地（不存云端）
       if (format === 'json' && isLocalStorageEnabled()) {
@@ -127,7 +180,7 @@ export function ImportButton({ onImportComplete }: ImportButtonProps) {
     } catch (error) {
       // JSON 导入的本地保存失败，不重试
       if (format === 'json' && isLocalStorageEnabled()) {
-        showToast(t('import.saveLocalFailed'), 'error');
+        handleFailure(t('import.saveLocalFailed'));
         return;
       }
 
@@ -143,18 +196,17 @@ export function ImportButton({ onImportComplete }: ImportButtonProps) {
             updated_at: new Date().toISOString(),
           });
           if (ok) {
-            showToast(t('import.savedLocal', { name: result.resumeName }), 'success');
-            onImportComplete();
+            handleSuccess(t('import.savedLocal', { name: result.resumeName }));
           } else {
             throw new Error(t('import.saveFailed'));
           }
         } catch {
           const message = error instanceof Error ? error.message : t('import.saveFailedRetry');
-          showToast(message, 'error');
+          handleFailure(message);
         }
       } else {
         const message = error instanceof Error ? error.message : t('import.saveFailedRetry');
-        showToast(message, 'error');
+        handleFailure(message);
       }
     } finally {
       setImporting(false);
@@ -163,13 +215,24 @@ export function ImportButton({ onImportComplete }: ImportButtonProps) {
   };
 
   /** Format label for loading state */
-  const formatLabel =
-    importFormat === 'json' ? 'JSON' :
-    importFormat === 'pdf' ? 'PDF' :
-    importFormat === 'word' ? 'Word' : 'Markdown';
+  const formatLabel = importFormat ? IMPORT_FORMAT_LABELS[importFormat] : '';
 
   return (
     <div ref={containerRef} className="relative flex w-full sm:inline-flex sm:w-auto">
+      {importTask && (
+        <TaskProgressDock
+          visible
+          taskType="import"
+          status={importTask.status}
+          title={importTask.title}
+          description={importTask.description}
+          progress={importTask.progress}
+          excludeId="import-progress-dock"
+          closeLabel={t('import.progress.close')}
+          duration={importTask.status === 'error' ? 4800 : importTask.status === 'success' ? 3200 : undefined}
+          onClose={() => setImportTask(null)}
+        />
+      )}
       {/* Hidden file inputs */}
       <input
         id="import-json"
