@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import '../../utils/i18n';
@@ -8,6 +8,15 @@ const authState = vi.hoisted(() => ({
   username: null as string | null,
   role: 'user',
   sessionLoading: false,
+  profile: null as null | {
+    max_resumes: number;
+    used_resumes: number;
+    export_count: number;
+    daily_limit_tokens: number;
+    monthly_limit_tokens: number;
+  },
+  profileLoading: false,
+  refreshProfile: vi.fn(),
 }));
 
 const toastMocks = vi.hoisted(() => ({
@@ -29,10 +38,13 @@ function LocationProbe() {
   return <output data-testid="location">{location.pathname}</output>;
 }
 
-function renderNavbar(initialEntry = '/zh-CN') {
+function renderNavbar(
+  initialEntry = '/zh-CN',
+  settingsShortcut?: { label: string; onClick: () => void },
+) {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
-      <NavbarAuth />
+      <NavbarAuth settingsShortcut={settingsShortcut} />
       <Routes>
         <Route path="*" element={<LocationProbe />} />
       </Routes>
@@ -41,13 +53,19 @@ function renderNavbar(initialEntry = '/zh-CN') {
 }
 
 describe('NavbarAuth', () => {
-  afterEach(() => cleanup());
+  afterEach(() => {
+    vi.useRealTimers();
+    cleanup();
+  });
 
   beforeEach(() => {
     authState.isLoggedIn = false;
     authState.username = null;
     authState.role = 'user';
     authState.sessionLoading = false;
+    authState.profile = null;
+    authState.profileLoading = false;
+    authState.refreshProfile.mockReset();
     toastMocks.showToast.mockReset();
   });
 
@@ -123,6 +141,68 @@ describe('NavbarAuth', () => {
     expect(glyph?.getAttribute('data-open')).toBe('true');
     const menu = screen.getByRole('menu', { name: '\u4e2d\u63a7\u53f0' });
     expect(menu).not.toBeNull();
-    expect(menu.classList.contains('anheyu-glass-popover')).toBe(true);
+    expect(menu.classList.contains('mobile-control-center__panel')).toBe(true);
+    expect(screen.getByText('\u529f\u80fd')).not.toBeNull();
+    expect(screen.getByText('\u9875\u9762')).not.toBeNull();
+    expect(screen.getByRole('menuitem', { name: '\u6df1\u8272\u6a21\u5f0f' })).not.toBeNull();
+    expect(screen.getByRole('menuitem', { name: '\u6211\u7684\u7b80\u5386' })).not.toBeNull();
+    expect(screen.getByRole('menuitem', { name: '\u7b80\u5386\u6a21\u677f' })).not.toBeNull();
+    expect(screen.getByRole('menuitem', { name: '\u8bbe\u7f6e' })).not.toBeNull();
+  });
+
+  it('shows profile usage metrics at the top of the mobile control center', () => {
+    authState.isLoggedIn = true;
+    authState.profile = {
+      max_resumes: 10,
+      used_resumes: 3,
+      export_count: 18,
+      daily_limit_tokens: 2_000,
+      monthly_limit_tokens: 50_000,
+    };
+    renderNavbar();
+
+    fireEvent.click(screen.getByRole('button', { name: '\u4e2d\u63a7\u53f0' }));
+
+    const stats = screen.getByLabelText('\u8d26\u6237\u7528\u91cf');
+    expect(stats.textContent).toContain('\u6211\u7684\u7b80\u53863');
+    expect(stats.textContent).toContain('\u5269\u4f59\u540d\u989d7');
+    expect(stats.textContent).toContain('\u5269\u4f59\u5bfc\u51fa18');
+    expect(stats.textContent).toContain('AI \u989d\u5ea65\u4e07');
+    expect(authState.refreshProfile).toHaveBeenCalledTimes(1);
+  });
+
+  it('finishes the sidebar exit animation before navigating to a selected page', () => {
+    vi.useFakeTimers();
+    renderNavbar('/zh-CN');
+
+    fireEvent.click(screen.getByRole('button', { name: '\u4e2d\u63a7\u53f0' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: '\u6211\u7684\u7b80\u5386' }));
+
+    expect(document.querySelector('.mobile-control-center')?.classList.contains('is-closing')).toBe(true);
+    expect(screen.getByTestId('location').textContent).toBe('/zh-CN');
+
+    act(() => vi.advanceTimersByTime(499));
+    expect(screen.getByTestId('location').textContent).toBe('/zh-CN');
+
+    act(() => vi.advanceTimersByTime(1));
+    expect(screen.getByTestId('location').textContent).toBe('/resumes');
+    expect(screen.queryByRole('menu', { name: '\u4e2d\u63a7\u53f0' })).toBeNull();
+  });
+
+  it('finishes the exit animation before running the settings shortcut', () => {
+    vi.useFakeTimers();
+    const openSettings = vi.fn();
+    renderNavbar('/resumes', { label: '\u8bbe\u7f6e', onClick: openSettings });
+
+    fireEvent.click(screen.getByRole('button', { name: '\u4e2d\u63a7\u53f0' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: '\u8bbe\u7f6e' }));
+
+    expect(openSettings).not.toHaveBeenCalled();
+    act(() => vi.advanceTimersByTime(499));
+    expect(openSettings).not.toHaveBeenCalled();
+
+    act(() => vi.advanceTimersByTime(1));
+    expect(openSettings).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('location').textContent).toBe('/resumes');
   });
 });

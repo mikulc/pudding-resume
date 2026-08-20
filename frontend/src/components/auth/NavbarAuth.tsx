@@ -1,14 +1,20 @@
-import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BarChart3, FileText, LayoutTemplate, Settings, User, Shield } from 'lucide-react';
+import { BarChart3, FileText, LayoutTemplate, Moon, Settings, Shield, Sun, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getLocaleFromPath } from '../../utils/localePath';
 import { normalizeLanguage } from '../../utils/localSettings';
 import { buildAuthPath } from '../../utils/authNavigation';
-import { useOutsideClick } from '../../hooks/useOutsideClick';
 import { useToast } from '../common/Toast';
+import {
+  applyThemeMode,
+  readStoredThemeMode,
+  resolveThemeMode,
+  saveThemeMode,
+  type ThemeMode,
+} from '../../utils/themeMode';
 
 interface NavbarSettingsShortcut {
   label: string;
@@ -69,69 +75,70 @@ function ControlCenterMenu({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation(['auth', 'resume', 'homepage']);
+  const { t, i18n } = useTranslation(['auth', 'resume', 'homepage']);
+  const { isLoggedIn, profile, profileLoading, refreshProfile } = useAuth();
   const [open, setOpen] = useState(false);
   const [exiting, setExiting] = useState(false);
+  const [themeMode, setThemeMode] = useState<ThemeMode>(() => readStoredThemeMode());
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const portalRef = useRef<HTMLDivElement>(null);
   const closingRef = useRef(false);
-  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({
-    position: 'fixed',
-    top: 0,
-    right: 0,
-    zIndex: 9999,
-    visibility: 'hidden',
-    pointerEvents: 'none',
-  });
+  const closeTimerRef = useRef<number | null>(null);
+  const isDark = resolveThemeMode(themeMode);
 
-  const updatePosition = useCallback(() => {
-    if (!triggerRef.current) return;
-    const rect = triggerRef.current.getBoundingClientRect();
-    setMenuStyle({
-      position: 'fixed',
-      top: rect.bottom + 4,
-      right: window.innerWidth - rect.right,
-      zIndex: 9999,
-      visibility: 'visible',
-      pointerEvents: 'auto',
-    });
-  }, []);
-
-  const requestClose = useCallback(() => {
+  const requestClose = useCallback((onClosed?: () => void) => {
     if (closingRef.current) return;
     closingRef.current = true;
     setExiting(true);
-    window.setTimeout(() => {
+    closeTimerRef.current = window.setTimeout(() => {
+      closeTimerRef.current = null;
       closingRef.current = false;
       setExiting(false);
       setOpen(false);
-    }, 170);
+      onClosed?.();
+    }, 500);
   }, []);
 
-  useLayoutEffect(() => {
-    if (open) updatePosition();
-  }, [open, updatePosition]);
+  useEffect(() => () => {
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+    }
+  }, []);
 
   useEffect(() => {
     if (!open) return;
-    window.addEventListener('scroll', updatePosition, true);
-    window.addEventListener('resize', updatePosition);
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') requestClose();
     };
     document.addEventListener('keydown', handleKey);
+    const previousOverflow = document.body.style.overflow;
+    const previousRootOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
     return () => {
-      window.removeEventListener('scroll', updatePosition, true);
-      window.removeEventListener('resize', updatePosition);
       document.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = previousRootOverflow;
     };
-  }, [open, requestClose, updatePosition]);
+  }, [open, requestClose]);
 
-  useOutsideClick({
-    open,
-    refs: [triggerRef, portalRef],
-    onOutsideClick: requestClose,
-  });
+  useEffect(() => {
+    if (open && isLoggedIn) {
+      void refreshProfile();
+    }
+  }, [isLoggedIn, open, refreshProfile]);
+
+  useEffect(() => {
+    const syncTheme = () => setThemeMode(readStoredThemeMode());
+    const media = window.matchMedia?.('(prefers-color-scheme: dark)');
+    media?.addEventListener('change', syncTheme);
+    window.addEventListener('pudding:settings-changed', syncTheme);
+    window.addEventListener('storage', syncTheme);
+    return () => {
+      media?.removeEventListener('change', syncTheme);
+      window.removeEventListener('pudding:settings-changed', syncTheme);
+      window.removeEventListener('storage', syncTheme);
+    };
+  }, []);
 
   const items = [
     { path: '/resumes', label: t('resume:list.myResumes'), icon: FileText },
@@ -139,13 +146,58 @@ function ControlCenterMenu({
     { path: '/settings', label: t('resume:list.settings'), icon: Settings },
   ];
 
+  const metricLocale = i18n.resolvedLanguage || i18n.language || 'zh-CN';
+  const formatMetric = (value: number) => new Intl.NumberFormat(metricLocale, {
+    notation: value >= 10_000 ? 'compact' : 'standard',
+    maximumFractionDigits: 1,
+  }).format(value);
+  const metricFallback = '\u2014';
+  const hasMetrics = isLoggedIn && !!profile && !profileLoading;
+  const maxResumes = profile?.max_resumes ?? 0;
+  const usedResumes = profile?.used_resumes ?? 0;
+  const dailyAiQuota = profile?.daily_limit_tokens ?? 0;
+  const monthlyAiQuota = profile?.monthly_limit_tokens ?? 0;
+  const unlimitedLabel = t('auth:controlCenterStats.unlimited', { defaultValue: '不限' });
+  const metrics = [
+    {
+      label: t('auth:controlCenterStats.resumeCount', { defaultValue: '我的简历' }),
+      value: hasMetrics ? formatMetric(usedResumes) : metricFallback,
+    },
+    {
+      label: t('auth:controlCenterStats.resumeRemaining', { defaultValue: '剩余名额' }),
+      value: hasMetrics
+        ? (maxResumes <= 0 ? unlimitedLabel : formatMetric(Math.max(maxResumes - usedResumes, 0)))
+        : metricFallback,
+    },
+    {
+      label: t('auth:controlCenterStats.exportRemaining', { defaultValue: '剩余导出' }),
+      value: hasMetrics ? formatMetric(profile?.export_count ?? 0) : metricFallback,
+    },
+    {
+      label: t('auth:controlCenterStats.aiQuota', { defaultValue: 'AI 额度' }),
+      value: hasMetrics
+        ? (dailyAiQuota <= 0 && monthlyAiQuota <= 0
+          ? unlimitedLabel
+          : formatMetric(Math.max(dailyAiQuota, monthlyAiQuota)))
+        : metricFallback,
+    },
+  ];
+
   const openItem = (path: string) => {
-    setOpen(false);
-    if (path === '/settings' && settingsShortcut) {
-      settingsShortcut.onClick();
-      return;
-    }
-    navigate(path);
+    requestClose(() => {
+      if (path === '/settings' && settingsShortcut) {
+        settingsShortcut.onClick();
+        return;
+      }
+      navigate(path);
+    });
+  };
+
+  const toggleTheme = () => {
+    const nextMode: ThemeMode = isDark ? 'light' : 'dark';
+    setThemeMode(nextMode);
+    saveThemeMode(nextMode);
+    applyThemeMode(nextMode, { transition: true });
   };
 
   const label = t('controlCenter', { defaultValue: '中控台' });
@@ -161,7 +213,8 @@ function ControlCenterMenu({
         onClick={() => {
           if (open) requestClose();
           else {
-            updatePosition();
+            closingRef.current = false;
+            setExiting(false);
             setOpen(true);
           }
         }}
@@ -172,31 +225,69 @@ function ControlCenterMenu({
 
       {open && createPortal(
         <div
-          ref={portalRef}
-          role="menu"
-          aria-label={label}
-          className="anheyu-glass-popover navbar-avatar-dropdown min-w-[210px] overflow-hidden rounded-[18px] p-1.5 md:hidden"
-          style={{ ...menuStyle, animation: exiting ? 'avatar-dropdown-exit 0.16s ease-in forwards' : 'avatar-dropdown-appear 0.18s ease-out' }}
+          className={`mobile-control-center md:hidden ${exiting ? 'is-closing' : 'is-open'}`}
         >
-          {items.map(({ path, label: itemLabel, icon: Icon }) => {
-            const active = location.pathname.startsWith(path);
-            return (
+          <button
+            type="button"
+            className="mobile-control-center__mask"
+            aria-label={t('auth:controlCenterClose', { defaultValue: '关闭中控台' })}
+            onClick={() => requestClose()}
+          />
+          <aside
+            role="menu"
+            aria-label={label}
+            className="mobile-control-center__panel"
+          >
+            <div className="mobile-control-center__stats" aria-label={t('auth:controlCenterStats.label', { defaultValue: '账户用量' })}>
+              {metrics.map((metric) => (
+                <div key={metric.label} className="mobile-control-center__stat">
+                  <span>{metric.label}</span>
+                  <strong className={!hasMetrics ? 'is-loading' : undefined}>{metric.value}</strong>
+                </div>
+              ))}
+            </div>
+
+            <section className="mobile-control-center__section">
+              <p className="mobile-control-center__heading">
+                {t('auth:controlCenterFeatures', { defaultValue: '功能' })}
+              </p>
               <button
-                key={path}
                 type="button"
                 role="menuitem"
-                onClick={() => openItem(path)}
-                className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:!bg-[rgba(66,90,239,0.10)] hover:!text-[rgb(66,90,239)] dark:hover:!bg-[rgba(255,200,72,0.12)] dark:hover:!text-[rgb(255,200,72)] ${
-                  active
-                    ? 'bg-[rgba(66,90,239,0.10)] text-[rgb(66,90,239)] dark:bg-[rgba(255,200,72,0.12)] dark:text-[rgb(255,200,72)]'
-                    : 'text-gray-700 dark:text-white/88'
-                }`}
+                onClick={toggleTheme}
+                className={`mobile-control-center__theme ${isDark ? 'is-dark' : ''}`}
               >
-                <Icon className="h-4 w-4" />
-                {itemLabel}
+                {isDark ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
+                <span>{isDark
+                  ? t('auth:lightMode', { defaultValue: '浅色模式' })
+                  : t('auth:darkMode', { defaultValue: '深色模式' })}</span>
               </button>
-            );
-          })}
+            </section>
+
+            <section className="mobile-control-center__section">
+              <p className="mobile-control-center__heading">
+                {t('auth:controlCenterPages', { defaultValue: '页面' })}
+              </p>
+              <div className="mobile-control-center__grid">
+                {items.map(({ path, label: itemLabel, icon: Icon }) => {
+                  const active = location.pathname.startsWith(path);
+                  return (
+                    <button
+                      key={path}
+                      type="button"
+                      role="menuitem"
+                      aria-current={active ? 'page' : undefined}
+                      onClick={() => openItem(path)}
+                      className={`mobile-control-center__item ${active ? 'is-active' : ''}`}
+                    >
+                      <Icon aria-hidden="true" />
+                      <span>{itemLabel}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          </aside>
         </div>,
         document.body,
       )}

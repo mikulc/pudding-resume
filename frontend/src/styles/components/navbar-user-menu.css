@@ -31,3 +31,249 @@
     transform: translateY(-4px);
   }
 }
+
+/* Mobile control center distilled from AnHeYu's right sidebar. */
+.mobile-control-center {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 10020;
+}
+
+.mobile-control-center__mask {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  cursor: default;
+  background: rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  animation: mobile-control-center-mask-in 180ms ease-out both;
+}
+
+.mobile-control-center__panel {
+  position: absolute;
+  top: 2vh;
+  right: 10px;
+  width: min(280px, calc(100vw - 20px));
+  height: 96vh;
+  padding: 15px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  color: #363636;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  scrollbar-width: none;
+  animation: mobile-control-center-panel-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.mobile-control-center__panel::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-control-center__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  height: 66px;
+  margin-top: 5px;
+  overflow: hidden;
+  border: 1px solid #e3e8f2;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.mobile-control-center__stat {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  text-align: center;
+}
+
+.mobile-control-center__stat span {
+  max-width: 100%;
+  overflow: hidden;
+  color: #363636;
+  font-size: 12px;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-control-center__stat strong {
+  max-width: 100%;
+  overflow: hidden;
+  color: #303238;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-control-center__stat strong.is-loading {
+  color: #a3a8b3;
+  font-weight: 600;
+}
+
+.mobile-control-center__stats + .mobile-control-center__section {
+  margin-top: 26px;
+}
+
+.mobile-control-center__section + .mobile-control-center__section {
+  margin-top: 18px;
+}
+
+.mobile-control-center__heading {
+  margin: 0 0 8px 4px;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.mobile-control-center__theme,
+.mobile-control-center__item {
+  border: 1px solid #e3e8f2;
+  color: inherit;
+  background: #f7f9fe;
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+
+.mobile-control-center__theme {
+  display: flex;
+  width: 100%;
+  height: 34px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.mobile-control-center__theme svg,
+.mobile-control-center__item svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  stroke-width: 2;
+}
+
+.mobile-control-center__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.mobile-control-center__item {
+  display: flex;
+  min-width: 0;
+  height: 53px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.mobile-control-center__item:hover,
+.mobile-control-center__item.is-active {
+  color: rgb(66, 90, 239);
+  border-color: rgba(66, 90, 239, 0.28);
+  background: rgba(66, 90, 239, 0.1);
+}
+
+.dark .mobile-control-center__mask {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.dark .mobile-control-center__panel {
+  color: #f7f7fa;
+  background: #1d1e22;
+}
+
+.dark .mobile-control-center__heading {
+  color: #a4a4aa;
+}
+
+.dark .mobile-control-center__stats {
+  border-color: #3a3c43;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.dark .mobile-control-center__stat span,
+.dark .mobile-control-center__stat strong {
+  color: #f7f7fa;
+}
+
+.dark .mobile-control-center__stat strong.is-loading {
+  color: #777b84;
+}
+
+.dark .mobile-control-center__theme,
+.dark .mobile-control-center__item {
+  border-color: #34363d;
+  background: #1b1c20;
+}
+
+.dark .mobile-control-center__theme.is-dark {
+  color: #24201a;
+  border-color: #ff963f;
+  background: #ff963f;
+}
+
+.dark .mobile-control-center__item:hover,
+.dark .mobile-control-center__item.is-active {
+  color: rgb(255, 200, 72);
+  border-color: rgba(255, 200, 72, 0.34);
+  background: rgba(255, 200, 72, 0.12);
+}
+
+.mobile-control-center.is-closing .mobile-control-center__mask {
+  animation: mobile-control-center-mask-out 180ms ease-in both;
+}
+
+.mobile-control-center.is-closing .mobile-control-center__panel {
+  pointer-events: none;
+  animation: mobile-control-center-panel-out 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes mobile-control-center-mask-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes mobile-control-center-mask-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes mobile-control-center-panel-in {
+  from { transform: translateX(calc(100% + 20px)); }
+  to { transform: translateX(0); }
+}
+
+@keyframes mobile-control-center-panel-out {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(100% + 20px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-control-center__mask,
+  .mobile-control-center__panel,
+  .mobile-control-center.is-closing .mobile-control-center__mask,
+  .mobile-control-center.is-closing .mobile-control-center__panel {
+    animation-duration: 1ms;
+  }
+}
