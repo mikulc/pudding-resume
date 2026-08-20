@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  FileJson, Pencil, Plus, Search,
+  FileJson, FileText, Pencil, Plus, Search,
   Trash2, Upload, X,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -248,27 +248,64 @@ export default function AdminTemplatesPage() {
           <FileJson size={34} strokeWidth={1.5} /><p className="text-sm">{t('templatesAdmin.empty')}</p>
         </AdminCard>
       ) : (
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <AdminCard className="overflow-hidden">
+          <div className="hidden grid-cols-[minmax(0,1.7fr)_minmax(140px,0.75fr)_108px_72px_76px] items-center gap-5 border-b border-gray-100 bg-[#F9FAFB] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400 dark:border-white/[0.08] dark:bg-white/[0.025] md:grid">
+            <span>{t('templatesAdmin.table.template')}</span>
+            <span>{t('templatesAdmin.table.categories')}</span>
+            <span>{t('templatesAdmin.table.status')}</span>
+            <span>{t('templatesAdmin.table.sortOrder')}</span>
+            <span className="text-right">{t('templatesAdmin.table.actions')}</span>
+          </div>
           {templates.map((item) => (
-            <AdminCard key={item.id} className="p-5">
-              <div className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]"><FileJson size={21} /></div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="truncate font-semibold text-slate-900 dark:text-white">{item.name}</h3>
-                    <AdminBadge tone={item.status === 'published' ? 'success' : 'neutral'}>{t(`templatesAdmin.status.${item.status}`)}</AdminBadge>
-                  </div>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{item.default_theme?.name || themeNames.get(item.default_theme_id) || '-'}</p>
-                  <div className="mt-3 flex flex-wrap gap-1.5">{item.categories.map((tag) => <AdminBadge key={tag}>{tag}</AdminBadge>)}</div>
+            <div
+              key={item.id}
+              className="relative border-b border-gray-100 px-4 py-4 transition-colors last:border-b-0 hover:bg-[#FAFBFF] dark:border-white/[0.08] dark:hover:bg-white/[0.025] sm:px-5 md:grid md:grid-cols-[minmax(0,1.7fr)_minmax(140px,0.75fr)_108px_72px_76px] md:items-center md:gap-5 md:py-3.5"
+            >
+              <div className="flex min-w-0 items-center gap-3.5 pr-20 md:pr-0">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[color:var(--theme-accent)]/15 bg-[var(--theme-accent-soft)] text-[var(--theme-accent)]">
+                  <FileText size={18} strokeWidth={1.8} />
                 </div>
-                <div className="flex shrink-0 gap-1">
-                  <AdminIconButton tone="brand" onClick={() => openEdit(item)} aria-label={t('templatesAdmin.edit')}><Pencil size={16} /></AdminIconButton>
-                  <AdminIconButton tone="danger" onClick={() => void remove(item)} aria-label={t('templatesAdmin.delete.confirm')}><Trash2 size={16} /></AdminIconButton>
+                <div className="min-w-0">
+                  <h3 className="truncate text-sm font-semibold text-slate-900 dark:text-white" title={item.name}>{item.name}</h3>
+                  <p className="mt-1 truncate text-xs text-slate-400 dark:text-slate-500">
+                    {item.default_theme?.name || themeNames.get(item.default_theme_id) || '-'}
+                  </p>
                 </div>
               </div>
-            </AdminCard>
+
+              <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-slate-500 dark:text-slate-400 md:mt-0 md:block md:truncate">
+                <span className="mr-1 text-slate-400 md:hidden">{t('templatesAdmin.table.categories')}</span>
+                {item.categories.length > 0
+                  ? item.categories.map((tag, index) => (
+                    <span key={tag} className="whitespace-nowrap">
+                      {index > 0 && <span className="mr-1.5 text-slate-300 dark:text-slate-600">/</span>}
+                      {tag}
+                    </span>
+                  ))
+                  : <span>-</span>}
+              </div>
+
+              <div className="mt-2 flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300 md:mt-0">
+                <span className={`h-1.5 w-1.5 rounded-full ${item.status === 'published' ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'}`} />
+                {t(`templatesAdmin.status.${item.status}`)}
+              </div>
+
+              <div className="mt-2 text-xs tabular-nums text-slate-400 md:mt-0 md:text-sm">
+                <span className="mr-1 md:hidden">{t('templatesAdmin.table.sortOrder')}</span>
+                {item.sort_order}
+              </div>
+
+              <div className="absolute right-3 top-3 flex shrink-0 items-center justify-end gap-0.5 rounded-lg bg-white/90 p-0.5 shadow-sm ring-1 ring-slate-900/[0.05] backdrop-blur-sm dark:bg-slate-900/90 dark:ring-white/[0.08] md:static md:bg-transparent md:p-0 md:shadow-none md:ring-0 md:backdrop-blur-none">
+                <AdminIconButton className="h-8 w-8 rounded-lg" tone="brand" onClick={() => openEdit(item)} aria-label={t('templatesAdmin.edit')} title={t('templatesAdmin.edit')}>
+                  <Pencil size={15} />
+                </AdminIconButton>
+                <AdminIconButton className="h-8 w-8 rounded-lg" tone="danger" onClick={() => void remove(item)} aria-label={t('templatesAdmin.delete.confirm')} title={t('templatesAdmin.delete.confirm')}>
+                  <Trash2 size={15} />
+                </AdminIconButton>
+              </div>
+            </div>
           ))}
-        </div>
+        </AdminCard>
       )}
 
       <AppPagination

@@ -126,6 +126,13 @@
     "create": "New Template",
     "import": "Batch Import JSON",
     "edit": "Edit template",
+    "table": {
+      "template": "Template",
+      "categories": "Categories",
+      "status": "Status",
+      "sortOrder": "Order",
+      "actions": "Actions"
+    },
     "pagination": {
       "label": "Resume template management pagination",
       "previous": "Previous",

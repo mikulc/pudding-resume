@@ -126,6 +126,13 @@
     "create": "新建模板",
     "import": "批量导入 JSON",
     "edit": "编辑模板",
+    "table": {
+      "template": "模板",
+      "categories": "适用分类",
+      "status": "状态",
+      "sortOrder": "排序",
+      "actions": "操作"
+    },
     "pagination": {
       "label": "简历模板管理分页",
       "previous": "上页",
