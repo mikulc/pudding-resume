@@ -35,7 +35,7 @@ function getTaskProgressDockRoot() {
   if (!root) {
     root = document.createElement('div');
     root.id = TASK_PROGRESS_DOCK_ROOT_ID;
-    root.className = 'no-print pointer-events-none fixed bottom-6 right-6 z-[10030] flex max-h-[calc(100vh-48px)] flex-col-reverse gap-3 max-md:inset-x-3 max-md:bottom-[84px] max-md:right-auto';
+    root.className = 'no-print pointer-events-none fixed bottom-6 right-6 z-[10030] flex max-h-[calc(100vh-48px)] flex-col-reverse gap-3 max-md:inset-x-3 max-md:bottom-[84px]';
     root.dataset.exportExclude = 'task-progress-dock-root';
     document.body.appendChild(root);
   }
