@@ -238,6 +238,8 @@ chromium --version
 | `APP_ENV` | 运行环境；生产部署设为 `production` | `development` |
 | `SERVER_PORT` | 后端服务端口 | `8080` |
 | `COOKIE_SECURE` | 刷新令牌 Cookie 仅通过 HTTPS 发送 | 开发环境 `false`，生产环境 `true` |
+| `LOG_LEVEL` | JSON 结构化日志最低级别：`debug` / `info` / `warn` / `error` | `info` |
+| `LOG_BUFFER_SIZE` | 管理后台可查询的当前进程日志条数 | `2000` |
 | `DB_DRIVER` | 数据库驱动：`postgres` 或 `mysql` | `postgres` |
 | `DB_HOST` | 数据库主机 | `localhost` |
 | `DB_PORT` | 数据库端口 | PostgreSQL `5432`；MySQL `3306` |
@@ -282,6 +284,8 @@ chromium --version
 | `FONTS_DIR` | 字体文件目录 | `./fonts` |
 | `FONT_CDN_BASE_URL` | 字体 CDN 基础地址（导出用） | jsDelivr CDN 地址 |
 | `ALLOWED_ORIGINS` | CORS 允许来源（逗号分隔） | `http://localhost:5173,...` |
+
+后端日志以单行 JSON 输出到 stderr，适合由 systemd journal、Docker 日志驱动或 Loki 等平台统一采集。管理后台保留当前进程最近 `LOG_BUFFER_SIZE` 条日志用于快速排障；这部分内存缓冲会在进程重启后清空，不替代部署平台的持久化日志。
 
 先生成独立的验证码摘要密钥：
 

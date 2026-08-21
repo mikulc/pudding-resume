@@ -9,6 +9,7 @@ import type {
   AdminTemplateListResponse,
   AdminCategory,
   AdminCategoryInput,
+  AdminLogResponse,
 } from '../types/admin';
 
 // --- Dashboard ---
@@ -29,6 +30,20 @@ export function normalizeDashboardData(data: DashboardPayload): DashboardData {
 
 export function fetchDashboard(): Promise<DashboardData> {
   return api.get<DashboardPayload>('/api/admin/dashboard').then(normalizeDashboardData);
+}
+
+// --- Backend logs ---
+export function fetchAdminLogs(params: {
+  limit?: number; after?: number; level?: string; source?: string; query?: string;
+}): Promise<AdminLogResponse> {
+  const sp = new URLSearchParams();
+  if (params.limit) sp.set('limit', String(params.limit));
+  if (params.after) sp.set('after', String(params.after));
+  if (params.level) sp.set('level', params.level);
+  if (params.source) sp.set('source', params.source);
+  if (params.query) sp.set('query', params.query);
+  const qs = sp.toString();
+  return api.get(`/api/admin/logs${qs ? `?${qs}` : ''}`);
 }
 
 // --- Users ---

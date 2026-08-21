@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -38,6 +39,13 @@ func main() {
 	if err := cfg.Validate(); err != nil {
 		log.Fatalf("Invalid configuration: %v", err)
 	}
+	logLevel := parseLogLevel(cfg.LogLevel)
+	logStore := services.NewLogStore(cfg.LogBufferSize)
+	baseLogger := slog.New(slog.NewMultiHandler(
+		slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{Level: logLevel, ReplaceAttr: services.RedactSlogAttr}),
+		logStore.Handler("app", logLevel),
+	))
+	slog.SetDefault(baseLogger.With("source", "app"))
 
 	// Initialize database
 	database.Init(cfg)
@@ -95,6 +103,8 @@ func main() {
 
 	r := NewRouter(cfg, avatarDir, AuthDependencies{
 		EmailCodes: emailCodes,
+		Logs:       logStore,
+		Logger:     baseLogger.With("source", "http"),
 	})
 
 	// Start server with graceful shutdown
@@ -155,10 +165,25 @@ func loadDotEnv(path string) error {
 	return nil
 }
 
+func parseLogLevel(value string) slog.Level {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "debug":
+		return slog.LevelDebug
+	case "warn":
+		return slog.LevelWarn
+	case "error":
+		return slog.LevelError
+	default:
+		return slog.LevelInfo
+	}
+}
+
 // NewRouter constructs the complete HTTP adapter without starting a server.
 // Keeping composition here lets tests exercise routing and middleware independently.
 type AuthDependencies struct {
 	EmailCodes handlers.EmailCodeService
+	Logs       *services.LogStore
+	Logger     *slog.Logger
 }
 
 func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDependencies) *gin.Engine {
@@ -166,10 +191,16 @@ func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDepende
 	if len(dependencies) > 0 {
 		authDependencies = dependencies[0]
 	}
+	if authDependencies.Logs == nil {
+		authDependencies.Logs = services.NewLogStore(cfg.LogBufferSize)
+	}
+	if authDependencies.Logger == nil {
+		authDependencies.Logger = slog.Default().With("source", "http")
+	}
 	// Create Gin router. Request IDs run before logging/recovery so every
 	// response can be correlated with upstream and application logs.
 	r := gin.New()
-	r.Use(middleware.RequestID(), gin.Logger(), gin.Recovery())
+	r.Use(middleware.RequestID(), middleware.RequestLogger(authDependencies.Logger), middleware.Recovery(authDependencies.Logger))
 
 	// Set max multipart memory for file uploads (2 MB)
 	r.MaxMultipartMemory = 2 * 1024 * 1024
@@ -289,6 +320,7 @@ func NewRouter(cfg *config.Config, avatarDir string, dependencies ...AuthDepende
 		{
 			// Dashboard
 			admin.GET("/dashboard", handlers.GetDashboard)
+			admin.GET("/logs", handlers.GetAdminLogs(authDependencies.Logs))
 
 			// User management
 			admin.GET("/users", handlers.ListUsers)

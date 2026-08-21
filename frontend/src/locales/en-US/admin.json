@@ -8,7 +8,8 @@
   "nav": {
     "dashboard": "Dashboard",
     "users": "Users",
-    "templates": "Resume Templates"
+    "templates": "Resume Templates",
+    "logs": "Backend Logs"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -115,6 +116,23 @@
       "restore": "Restore",
       "permanentDelete": "Delete Permanently"
     }
+  },
+  "logs": {
+    "title": "Backend Logs",
+    "subtitle": "Inspect application and HTTP access logs from the current backend process",
+    "total": "{{count}} captured",
+    "refresh": "Refresh",
+    "pause": "Pause",
+    "resume": "Resume",
+    "live": "Live",
+    "paused": "Paused",
+    "search": "Search log messages...",
+    "loadFailed": "Failed to load logs",
+    "empty": "No logs match the current filters",
+    "dropped": "The buffer has overwritten {{count}} older entries",
+    "details": "View {{count}} structured fields",
+    "level": { "label": "Log level", "all": "All levels", "debug": "Debug", "info": "Info", "warn": "Warning", "error": "Error" },
+    "source": { "label": "Log source", "all": "All sources", "app": "App", "http": "HTTP" }
   },
   "templatesAdmin": {
     "title": "Resume Template Management",

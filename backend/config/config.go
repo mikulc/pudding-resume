@@ -15,9 +15,11 @@ const defaultDevelopmentJWTSecret = "pudding-resume-dev-secret-change-in-product
 
 // Config holds all configuration for the application.
 type Config struct {
-	AppEnv       string
-	ServerPort   string
-	CookieSecure bool
+	AppEnv        string
+	ServerPort    string
+	CookieSecure  bool
+	LogLevel      string
+	LogBufferSize int
 
 	// Database (PostgreSQL or MySQL)
 	DBDriver   string
@@ -95,9 +97,11 @@ func Load() *Config {
 		dbPassword = ""
 	}
 	return &Config{
-		AppEnv:       appEnv,
-		ServerPort:   getEnv("SERVER_PORT", "8080"),
-		CookieSecure: getEnvBool("COOKIE_SECURE", false),
+		AppEnv:        appEnv,
+		ServerPort:    getEnv("SERVER_PORT", "8080"),
+		CookieSecure:  getEnvBool("COOKIE_SECURE", false),
+		LogLevel:      strings.ToLower(getEnv("LOG_LEVEL", "info")),
+		LogBufferSize: getEnvInt("LOG_BUFFER_SIZE", 2000),
 
 		DBDriver:   dbDriver,
 		DBHost:     getEnv("DB_HOST", "localhost"),
@@ -155,6 +159,12 @@ func Load() *Config {
 // Validate rejects development-only defaults when running in production.
 func (c *Config) Validate() error {
 	var problems []string
+	if c.LogLevel != "" && c.LogLevel != "debug" && c.LogLevel != "info" && c.LogLevel != "warn" && c.LogLevel != "error" {
+		problems = append(problems, "LOG_LEVEL must be debug, info, warn, or error")
+	}
+	if c.LogBufferSize != 0 && (c.LogBufferSize < 100 || c.LogBufferSize > 100000) {
+		problems = append(problems, "LOG_BUFFER_SIZE must be between 100 and 100000")
+	}
 	if driver := normalizeDBDriver(c.DBDriver); driver != "postgres" && driver != "mysql" {
 		problems = append(problems, "DB_DRIVER must be postgres or mysql")
 	}

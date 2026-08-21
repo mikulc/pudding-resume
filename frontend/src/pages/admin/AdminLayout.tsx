@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FileStack, LayoutDashboard, RefreshCw, Users } from 'lucide-react';
+import { FileStack, LayoutDashboard, RefreshCw, ScrollText, Users } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { NavbarAuth } from '../../components/auth/NavbarAuth';
 import LogoIcon from '../../components/common/LogoIcon';
@@ -11,6 +11,7 @@ const navItems = [
   { to: '/admin', icon: LayoutDashboard, key: 'dashboard', end: true },
   { to: '/admin/users', icon: Users, key: 'users', end: false },
   { to: '/admin/templates', icon: FileStack, key: 'templates', end: false },
+  { to: '/admin/logs', icon: ScrollText, key: 'logs', end: false },
 ] as const;
 
 export default function AdminLayout() {

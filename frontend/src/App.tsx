@@ -13,6 +13,7 @@ const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
 const UsersPage = lazy(() => import('./pages/admin/UsersPage'));
 const AdminTemplatesPage = lazy(() => import('./pages/admin/TemplatesPage'));
+const AdminLogsPage = lazy(() => import('./pages/admin/LogsPage'));
 import { LoginModal } from './components/auth/LoginModal';
 import { RegisterModal } from './components/auth/RegisterModal';
 import { AuthProvider } from './context/AuthContext';
@@ -265,6 +266,7 @@ function App() {
                   <Route index element={<DashboardPage />} />
                   <Route path="users" element={<UsersPage />} />
                   <Route path="templates" element={<AdminTemplatesPage />} />
+                  <Route path="logs" element={<AdminLogsPage />} />
                 </Route>
               </Routes>
             </Suspense>

@@ -8,7 +8,8 @@
   "nav": {
     "dashboard": "仪表盘",
     "users": "用户管理",
-    "templates": "简历模板"
+    "templates": "简历模板",
+    "logs": "后端日志"
   },
   "dashboard": {
     "title": "仪表盘",
@@ -115,6 +116,23 @@
       "restore": "恢复",
       "permanentDelete": "永久删除"
     }
+  },
+  "logs": {
+    "title": "后端日志",
+    "subtitle": "查看当前后端进程的应用日志与 HTTP 访问日志",
+    "total": "累计 {{count}} 条",
+    "refresh": "刷新",
+    "pause": "暂停刷新",
+    "resume": "继续刷新",
+    "live": "实时",
+    "paused": "已暂停",
+    "search": "搜索日志内容...",
+    "loadFailed": "日志加载失败",
+    "empty": "暂无符合条件的日志",
+    "dropped": "缓冲区已覆盖 {{count}} 条较早日志",
+    "details": "查看 {{count}} 个结构化字段",
+    "level": { "label": "日志级别", "all": "全部级别", "debug": "调试", "info": "信息", "warn": "警告", "error": "错误" },
+    "source": { "label": "日志来源", "all": "全部来源", "app": "应用", "http": "HTTP" }
   },
   "templatesAdmin": {
     "title": "简历模板管理",
