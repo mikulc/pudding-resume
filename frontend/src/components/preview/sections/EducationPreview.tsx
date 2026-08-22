@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useDiagnosisContext } from '../../../context/DiagnosisContext';
 import { useAppUI,useResume } from '../../../context/ResumeContext';
 import { DiagnosisBoldText } from '../diagnosis';
+import { formatDateRange } from '../../../utils/dateRange';
 
 import { ActiveSectionWrapper,SectionHeader,useResumeModuleTitles } from '../PreviewShared';
 
@@ -25,7 +26,7 @@ export function EducationPreview() {
         const hasContent = lines.some((line) => line.trim() !== '');
         const isListMode = lines.some((line) => NUMBERED_RE.test(line) || BULLET_RE.test(line));
         const subtitle = [edu.major, edu.degree].filter(Boolean).join(' · ');
-        const timeStr = `${edu.startDate} - ${edu.endDate}`;
+        const timeStr = formatDateRange(edu.startDate, edu.endDate);
 
         return (
           <div key={edu.id} className="mb-3" data-section="education" data-entry-index={i} data-page-entry>
@@ -51,7 +52,7 @@ export function EducationPreview() {
                   {edu.degree && <span className="text-gray-400 text-sm ml-2">· {edu.degree}</span>}
                 </div>
                 <span className="text-sm text-gray-500 shrink-0 whitespace-nowrap">
-                  {edu.startDate} - {edu.endDate}
+                  {timeStr}
                 </span>
               </div>
             )}

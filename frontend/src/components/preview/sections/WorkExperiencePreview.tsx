@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useDiagnosisContext } from '../../../context/DiagnosisContext';
 import { useAppUI,useResume } from '../../../context/ResumeContext';
 import { DiagnosisBoldText } from '../diagnosis';
+import { formatDateRange } from '../../../utils/dateRange';
 
 import { ActiveSectionWrapper,SectionHeader,useResumeModuleTitles } from '../PreviewShared';
 
@@ -29,7 +30,7 @@ export function WorkExperiencePreview() {
         const isListMode = hasNumberedLines || hasBulletedLines;
 
         const subtitle = [work.position, work.location].filter(Boolean).join(' · ');
-        const timeStr = `${work.startDate} - ${work.endDate}`;
+        const timeStr = formatDateRange(work.startDate, work.endDate);
 
         return (
           <div key={work.id} className="mb-4" data-section="work" data-entry-index={i} data-page-entry>
@@ -55,7 +56,7 @@ export function WorkExperiencePreview() {
                   {work.location && <span className="text-gray-400 text-sm ml-2">· {work.location}</span>}
                 </div>
                 <span className="text-sm text-gray-500 shrink-0 whitespace-nowrap">
-                  {work.startDate} - {work.endDate}
+                  {timeStr}
                 </span>
               </div>
             )}

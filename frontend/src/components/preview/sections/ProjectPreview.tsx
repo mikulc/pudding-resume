@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useDiagnosisContext } from '../../../context/DiagnosisContext';
 import { useAppUI,useResume } from '../../../context/ResumeContext';
 import { DiagnosisBoldText } from '../diagnosis';
+import { formatDateRange } from '../../../utils/dateRange';
 
 import { ActiveSectionWrapper,SectionHeader,useResumeModuleTitles } from '../PreviewShared';
 
@@ -27,10 +28,11 @@ export function ProjectPreview() {
         const hasNumberedLines = lines.some((line) => NUMBERED_RE.test(line));
         const hasBulletedLines = lines.some((line) => BULLET_RE.test(line));
         const isListMode = hasNumberedLines || hasBulletedLines;
+        const timeStr = formatDateRange(proj.startDate, proj.endDate);
 
         const timeBlock = (
           <div className="text-sm text-gray-500 text-right shrink-0 whitespace-nowrap">
-            <div>{proj.startDate} - {proj.endDate}</div>
+            <div>{timeStr}</div>
             {proj.link && (
               <div className="text-blue-500 text-xs">{proj.link}</div>
             )}
@@ -44,7 +46,7 @@ export function ProjectPreview() {
                 <span className="entity-title truncate">{proj.name || t('field.projectName')}</span>
                 <span className="text-gray-500 text-sm text-center truncate">{proj.role}</span>
                 <div className="text-sm text-gray-500 text-right whitespace-nowrap">
-                  <div>{proj.startDate} - {proj.endDate}</div>
+                  <div>{timeStr}</div>
                   {proj.link && (
                     <div className="text-blue-500 text-xs truncate">{proj.link}</div>
                   )}
