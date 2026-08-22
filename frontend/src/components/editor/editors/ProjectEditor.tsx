@@ -103,9 +103,9 @@ export function ProjectEditor() {
               <EntryCardHeader index={i} onDelete={() => dispatch({ type: 'DELETE_PROJECT', payload: proj.id })} />
           <StyledInput label={t('resume:field.projectName')} value={proj.name} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, name: v } })} placeholder={t('resume:placeholder.projectNameExample')} size="md" />
           <StyledInput label={t('resume:field.projectRole')} value={proj.role} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, role: v } })} placeholder={t('resume:placeholder.projectRoleExample')} size="md" />
-          <div className="grid grid-cols-2 gap-1">
-            <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.startDate')} value={proj.startDate} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, startDate: v } })} placeholder="2022-03" size="md" />
-            <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.endDate')} value={proj.endDate} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, endDate: v } })} placeholder="2022-12" size="md" />
+          <div className="grid grid-cols-1 gap-3">
+            <StyledDateInput label={t('resume:field.startDate')} value={proj.startDate} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, startDate: v } })} placeholder="2022-03" size="md" />
+            <StyledDateInput label={t('resume:field.endDate')} value={proj.endDate} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, endDate: v } })} placeholder="2022-12" size="md" />
           </div>
           <StyledInput label={`${t('resume:field.projectLink')} (${t('common:optional')})`} value={proj.link} onChange={(v) => dispatch({ type: 'UPDATE_PROJECT', payload: { ...proj, link: v } })} placeholder="https://github.com/example" size="md" />
           <LongTextFieldEntry

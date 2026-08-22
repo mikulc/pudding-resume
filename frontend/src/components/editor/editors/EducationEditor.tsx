@@ -259,9 +259,9 @@ export function EducationEditor() {
               placeholder={t('resume:placeholder.degreeInput')}
               size="md"
             />
-            <div className="grid grid-cols-2 gap-1">
-              <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.startDate')} value={edu.startDate} onChange={(v) => handleStartDateChange(edu, v)} placeholder="2020-09" size="md" />
-              <StyledDateInput className="min-w-0 !px-0" label={t('resume:field.endDate')} value={edu.endDate} onChange={(v) => handleEndDateChange(edu, v)} placeholder="2024-06" size="md" />
+            <div className="grid grid-cols-1 gap-3">
+              <StyledDateInput label={t('resume:field.startDate')} value={edu.startDate} onChange={(v) => handleStartDateChange(edu, v)} placeholder="2020-09" size="md" />
+              <StyledDateInput label={t('resume:field.endDate')} value={edu.endDate} onChange={(v) => handleEndDateChange(edu, v)} placeholder="2024-06" size="md" />
             </div>
             {hint && (
               <div className="flex items-start gap-1.5 px-0.5">
